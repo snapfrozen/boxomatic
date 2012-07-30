@@ -17,17 +17,17 @@
 
 	<div class="row">
 		<?php echo $form->label($model,'box_size_value'); ?>
-		<?php echo $form->textField($model,'box_size_value',array('size'=>45,'maxlength'=>45)); ?>
+		<?php echo $form->textField($model,'box_size_value',array('size'=>7,'maxlength'=>7)); ?>
 	</div>
 
 	<div class="row">
 		<?php echo $form->label($model,'box_size_markup'); ?>
-		<?php echo $form->textField($model,'box_size_markup',array('size'=>45,'maxlength'=>45)); ?>
+		<?php echo $form->textField($model,'box_size_markup',array('size'=>7,'maxlength'=>7)); ?>
 	</div>
 
 	<div class="row">
 		<?php echo $form->label($model,'box_size_price'); ?>
-		<?php echo $form->textField($model,'box_size_price',array('size'=>45,'maxlength'=>45)); ?>
+		<?php echo $form->textField($model,'box_size_price',array('size'=>7,'maxlength'=>7)); ?>
 	</div>
 
 	<div class="row buttons">

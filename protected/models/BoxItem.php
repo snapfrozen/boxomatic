@@ -38,8 +38,8 @@ class BoxItem extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('box_item_id', 'required'),
-			array('box_item_id, box_id, grower_id', 'numerical', 'integerOnly'=>true),
+//			array('box_item_id', 'required'),
+			array('box_item_id, box_id, grower_id, item_quantity', 'numerical', 'integerOnly'=>true),
 			array('item_name, item_value', 'length', 'max'=>45),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
@@ -55,6 +55,8 @@ class BoxItem extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'Box' => array(self::BELONGS_TO, 'Box', 'box_id'),
+			'Grower' => array(self::BELONGS_TO, 'Grower', 'grower_id')
 		);
 	}
 

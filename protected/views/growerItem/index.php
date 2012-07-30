@@ -1,8 +1,4 @@
 <?php
-$this->breadcrumbs=array(
-	'Grower Items',
-);
-
 $this->menu=array(
 	array('label'=>'Create Grower Item', 'url'=>array('create')),
 	array('label'=>'Manage Grower Item', 'url'=>array('admin')),

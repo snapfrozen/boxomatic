@@ -44,8 +44,11 @@ class GrowerItem extends CActiveRecord
 	
 	public function getUnitList()
 	{
-	    $unit_list = array('KG' => 'Kilograms',
-	                       'EA' => 'Each');
+	    $unit_list = array(
+			'KG' => 'Per kg',
+	        'EA' => 'Each',
+			'BUNCH' => 'Per bunch',
+		);
 	    return $unit_list;
 	}
 	
@@ -87,7 +90,7 @@ class GrowerItem extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'grower' => array(self::BELONGS_TO, 'Grower', 'grower_id'),
+			'Grower' => array(self::BELONGS_TO, 'Grower', 'grower_id'),
 		);
 	}
 
@@ -119,33 +122,18 @@ class GrowerItem extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-        $criteria->with = array( 'grower' );
+        $criteria->with = array( 'Grower' );
 		$criteria->compare('item_id',$this->item_id);
 		$criteria->compare('grower_id',$this->grower_id);
-		$criteria->compare( 'grower.grower_name', $this->grower_search, true );
+		$criteria->compare('Grower.grower_name', $this->grower_search, true );
 		$criteria->compare('item_name',$this->item_name,true);
 		$criteria->compare('item_value',$this->item_value,true);
 		$criteria->compare('item_unit',$this->item_unit,true);
 		$criteria->compare('item_available_from',$this->item_available_from,true);
 		$criteria->compare('item_available_to',$this->item_available_to,true);
 
-        /*
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
-		*/
-		
-		return new CActiveDataProvider( $this, array(
-            'criteria'=>$criteria,
-            'sort'=>array(
-            'attributes'=>array(
-            'grower_search'=>array(
-                'asc'=>'grower.grower_name',
-                'desc'=>'grower.grower_name DESC',
-                    ),
-                 '*',
-                 ),
-            ),
-        ));
 	}
 }

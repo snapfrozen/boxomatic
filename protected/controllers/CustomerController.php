@@ -31,15 +31,13 @@ class CustomerController extends Controller
 				'actions'=>array('register'),
 				'users'=>array('*'),
 			),
-			/*
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array(),
-				'users'=>array('@'),
+				'actions'=>array('update'),
+				'roles'=>array('customer'),
 			),
-			*/
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete', 'index', 'view', 'update'),
-				'users'=>array('admin'),
+				'actions'=>array('admin','delete', 'index', 'view'),
+				'roles'=>array('admin'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),

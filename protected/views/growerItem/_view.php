@@ -5,7 +5,7 @@
 	<br />
 	
 	<b><?php echo CHtml::encode($data->getAttributeLabel('grower_name')); ?>:</b>
-	<?php echo CHtml::encode($data->grower->grower_name); ?>
+	<?php echo CHtml::encode($data->Grower->grower_name); ?>
 	<br />
 
 	<b><?php echo CHtml::encode($data->getAttributeLabel('item_name')); ?>:</b>

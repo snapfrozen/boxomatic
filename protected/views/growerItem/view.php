@@ -1,9 +1,4 @@
 <?php
-$this->breadcrumbs=array(
-	'Grower Items'=>array('index'),
-	$model->item_name,
-);
-
 $this->menu=array(
 	array('label'=>'List GrowerItem', 'url'=>array('index')),
 	array('label'=>'Create GrowerItem', 'url'=>array('create')),
@@ -13,17 +8,16 @@ $this->menu=array(
 );
 ?>
 
-<h1>View GrowerItem #<?php echo $model->item_id; ?></h1>
+<h1><?php echo $model->item_name; ?></h1>
 
 <?php $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,
 	'attributes'=>array(
-		'item_id',
-		'grower_id',
+		'Grower.grower_name',
 		'item_name',
 		'item_value',
 		'item_unit',
-		'item_available_from',
-		'item_available_to',
+		array( 'name'=>'item_available_from', 'value'=>Yii::app()->snapFormat->getMonthName($model->item_available_from) ),
+		array( 'name'=>'item_available_to', 'value'=>Yii::app()->snapFormat->getMonthName($model->item_available_to) ),
 	),
 )); ?>

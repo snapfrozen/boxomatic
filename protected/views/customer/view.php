@@ -19,17 +19,7 @@ $this->menu=array(
 	'data'=>$model,
 	'attributes'=>array(
 		'customer_id',
-		'customer_name',
-		'customer_phone',
-		'customer_mobile',
-		'customer_address',
-		'customer_address2',
-		'customer_suburb',
-		'customer_state',
-		'customer_postcode',
 		'location_id',
 		'customer_notes',
-		'customer_email',
-		'customer_password',
 	),
 )); ?>

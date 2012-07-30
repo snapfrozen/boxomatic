@@ -7,35 +7,46 @@
  */
 class UserIdentity extends CUserIdentity
 {
+	private $_id;
+	
 	/**
-	 * Authenticates a user.
-	 * The example implementation makes sure if the username and password
-	 * are both 'demo'.
-	 * In practical applications, this should be changed to authenticate
-	 * against some persistent user identity storage (e.g. database).
-	 * @return boolean whether authentication succeeds.
-	 */
+	* Authenticates a user using the User data model.
+	* @return boolean whether authentication succeeds.
+	*/
 	public function authenticate()
-	{
-		
-		//user authentication from customers table
-		$users = CHtml::listData(Customer::model()->findAll(), 'customer_email', 'customer_password');
-		$users['admin'] = 'admin';
-		
-		if(!empty($this->username)
-		and $this->username == 'admin'
-		and $users[$this->username] == $this->password)
-		    Yii::app()->user->setState('isAdmin', true);
-		else
-		    Yii::app()->user->setState('isAdmin', false);
-		   
-				
-		if(!isset($users[$this->username]))
+	{		
+		$user=User::model()->findByAttributes(array('user_email'=>$this->username));
+		if($user===null)
+		{
 			$this->errorCode=self::ERROR_USERNAME_INVALID;
-		else if($users[$this->username]!==$this->password)
-			$this->errorCode=self::ERROR_PASSWORD_INVALID;
-		else
-			$this->errorCode=self::ERROR_NONE;
+		} 
+		else 
+		{
+			if($user->password!==Yii::app()->snap->encrypt($this->password))
+			{
+				$this->errorCode=self::ERROR_PASSWORD_INVALID;
+			} 
+			else
+			{
+				$this->_id = $user->id;
+				if(null===$user->last_login_time)
+				{
+					$lastLogin = time();
+				} else {
+					$lastLogin = strtotime($user->last_login_time);
+				}
+				$this->setState('last_login_time', $lastLogin); 
+				$this->setState('customer_id', $user->customer_id); 
+				$this->setState('grower_id', $user->grower_id); 
+				$this->errorCode=self::ERROR_NONE;
+			}
+		}
 		return !$this->errorCode;
 	}
+	
+	public function getId()
+	{
+		return $this->_id;
+	}
+	
 }

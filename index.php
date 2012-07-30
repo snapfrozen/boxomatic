@@ -1,8 +1,14 @@
 <?php
 
 // change the following paths if necessary
-$yii=dirname(__FILE__).'/../yii-1.1.10.r3566/framework/yii.php';
-$config=dirname(__FILE__).'/protected/config/main.php';
+$yii=dirname(__FILE__).'/../yii/framework/yii.php';
+$configPathYii=dirname(__FILE__).'/protected/config/main.php';
+$configPathDatabase=dirname(__FILE__).'/protected/config/database.php';
+
+$configYii=require($configPathYii);
+$configDatabase=require($configPathDatabase);
+
+$configYii['components']['db'] = $configDatabase;
 
 // remove the following lines when in production mode
 defined('YII_DEBUG') or define('YII_DEBUG',true);
@@ -10,4 +16,4 @@ defined('YII_DEBUG') or define('YII_DEBUG',true);
 defined('YII_TRACE_LEVEL') or define('YII_TRACE_LEVEL',3);
 
 require_once($yii);
-Yii::createWebApplication($config)->run();
+Yii::createWebApplication($configYii)->run();

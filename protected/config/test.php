@@ -7,11 +7,13 @@ return CMap::mergeArray(
 			'fixture'=>array(
 				'class'=>'system.test.CDbFixtureManager',
 			),
-			/* uncomment the following to provide test database connection
 			'db'=>array(
-				'connectionString'=>'DSN for test database',
+				'connectionString' => 'mysql:host=francis-laptop;dbname=foodbox_test',
+				'emulatePrepare' => true,
+				'username' => 'root',
+				'password' => 'localdev',
+				'charset' => 'utf8',
 			),
-			*/
 		),
 	)
 );

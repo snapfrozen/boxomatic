@@ -20,4 +20,16 @@ class Controller extends CController
 	 * for more details on how to specify this property.
 	 */
 	public $breadcrumbs=array();
+	
+	/**
+	 * Set default user states so the application won't crash
+	 * when trying to access these properies and they don't exist
+	 */
+	public function init() 
+	{	
+		if( !Yii::app()->user->hasState('customer_id') )
+			Yii::app()->user->setState('customer_id', false);
+		if( !Yii::app()->user->hasState('business_id') )
+			Yii::app()->user->setState('business_id', false);
+	}
 }

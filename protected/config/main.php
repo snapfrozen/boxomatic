@@ -15,10 +15,11 @@ return array(
 	// autoloading model and component classes
 	'import'=>array(
 		'application.models.*',
+		'application.models.snap.*',
 		'application.components.*',
+		'application.components.snap.*',
 		'application.modules.user.models.*',
 	),
-
 
 	'modules'=>array(
 		// uncomment the following to enable the Gii tool
@@ -42,7 +43,24 @@ return array(
    
 	// application components
 	'components'=>array(
+		
+		'snap'=>array(
+			'class'=>'SnapEncrypt',
+			'salt'=>'x,QN,,Z@f~MD!9fpVV6AlED#=S:Pa:I!_?b1F{7fz7&5H'
+		),
+		
+		'snapFormat'=>array(
+			'class'=>'SnapFormat',
+		),
 
+		'authManager'=>array(
+			'class'=>'CDbAuthManager',
+			'connectionID'=>'db',
+			'itemTable'=>'auth_item',
+			'itemChildTable'=>'auth_item_child',
+			'assignmentTable'=>'auth_assignment',
+		),
+		
 		// uncomment the following to enable URLs in path-format
 		/*
 		'urlManager'=>array(
@@ -61,10 +79,10 @@ return array(
 		// uncomment the following to use a MySQL database
 	
 		'db'=>array(
-			'connectionString' => 'mysql:host=localhost;dbname=foodbox',
+			'connectionString' => 'mysql:host=francis-laptop;dbname=foodbox',
 			'emulatePrepare' => true,
 			'username' => 'root',
-			'password' => 'root',
+			'password' => 'localdev',
 			'tablePrefix' => '',
 			'charset' => 'utf8',
 		),
@@ -102,6 +120,17 @@ return array(
 	// using Yii::app()->params['paramName']
 	'params'=>array(
 		// this is used in contact page
-		'adminEmail'=>'webmaster@example.com',
+		'adminEmail'=>'francis.beresford@gmail.com',
+		'states'=>array(
+			''=>' - Select - ',
+			'ACT'=>'Australian Capital Territory',
+			'NSW'=>'New South Wales',
+			'NT'=>'Northern Territory',
+			'QLD'=>'Queensland',
+			'SA'=>'South Australia',
+			'TAS'=>'Tasmania',
+			'VIC'=>'Victoria',
+			'WA'=>'Western Australia',
+		),
 	),
 );

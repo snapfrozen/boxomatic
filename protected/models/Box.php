@@ -57,8 +57,9 @@ class Box extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'week' => array(self::BELONGS_TO, 'Weeks', 'week_id'),
-			'size' => array(self::BELONGS_TO, 'BoxSizes', 'size_id'),
+			'Week' => array(self::BELONGS_TO, 'Week', 'week_id'),
+			'BoxSize' => array(self::BELONGS_TO, 'BoxSize', 'size_id'),
+			'BoxItems' => array(self::HAS_MANY, 'BoxItem', 'box_id'),
 		);
 	}
 

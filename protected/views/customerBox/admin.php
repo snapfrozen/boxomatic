@@ -1,9 +1,4 @@
 <?php
-$this->breadcrumbs=array(
-	'Customer Boxes'=>array('index'),
-	'Manage',
-);
-
 $this->menu=array(
 	array('label'=>'List CustomerBox', 'url'=>array('index')),
 	array('label'=>'Create CustomerBox', 'url'=>array('create')),
@@ -23,7 +18,7 @@ $('.search-form form').submit(function(){
 ");
 ?>
 
-<h1>Manage Customer Boxes</h1>
+<h1>Manage orders</h1>
 
 <p>
 You may optionally enter a comparison operator (<b>&lt;</b>, <b>&lt;=</b>, <b>&gt;</b>, <b>&gt;=</b>, <b>&lt;&gt;</b>
@@ -42,9 +37,8 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
 	'columns'=>array(
-		'customer_box_id',
-		'customer_id',
-		'box_id',
+		'Customer.User.user_name',
+		'Box.BoxSize.box_size_name',
 		'quantity',
 		array(
 			'class'=>'CButtonColumn',

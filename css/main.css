@@ -60,7 +60,8 @@ body
 
 #mainmenu ul li
 {
-	display: inline;
+	display:inline;
+	position:relative;
 }
 
 #mainmenu ul li a
@@ -79,6 +80,28 @@ body
 	background-color:#EFF4FA;
 	text-decoration:none;
 }
+
+#mainmenu ul ul 
+{
+	position:absolute;
+	display:none;
+	width:130px;
+	top:20px;
+	padding:5px;
+	left:0;
+	background:#298dcd;
+}
+
+#mainmenu ul li:hover ul 
+{
+	display:block;
+}
+
+#mainmenu ul li li a
+{
+	display:block;
+}
+
 
 div.flash-error, div.flash-notice, div.flash-success
 {
@@ -226,4 +249,9 @@ div.search-form
 .operations li a:hover
 {
 	background: #80CFFF;
+}
+
+#content table.detail-view
+{
+	margin-bottom:2em;
 }

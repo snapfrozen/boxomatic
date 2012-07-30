@@ -1,9 +1,4 @@
 <?php
-$this->breadcrumbs=array(
-	'Grower Items'=>array('index'),
-	'Manage',
-);
-
 $this->menu=array(
 	array('label'=>'List GrowerItem', 'url'=>array('index')),
 	array('label'=>'Create GrowerItem', 'url'=>array('create')),
@@ -42,12 +37,12 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
 	'columns'=>array(
-		'item_id',
-         array( 'name'=>'grower_search', 'value'=>'$data->grower->grower_name' ),
+        array( 'name'=>'grower_search', 'value'=>'$data->Grower->grower_name' ),
 		'item_name',
 		'item_value',
 		'item_unit',
-		'item_available_from',
+		array( 'name'=>'item_available_from', 'value'=>'Yii::app()->snapFormat->getMonthName($data->item_available_from)' ),
+		array( 'name'=>'item_available_to', 'value'=>'Yii::app()->snapFormat->getMonthName($data->item_available_to)' ),
 		/*
 		'item_available_to',
 		*/

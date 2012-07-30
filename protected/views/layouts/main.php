@@ -24,27 +24,41 @@
 	<div id="header">
 		<div id="logo"><?php echo CHtml::encode(Yii::app()->name); ?></div>
 	</div><!-- header -->
-
 	<div id="mainmenu">
 		<?php 
-		    
-		    
+
 		    $this->widget('zii.widgets.CMenu',array(
 			'items'=>array(
 				array('label'=>'Home', 'url'=>array('/site/index')),
-				array('label'=>'About', 'url'=>array('/site/page', 'view'=>'about')),
-				array('label'=>'Contact', 'url'=>array('/site/contact')),
-				array('label'=>'Register', 'url'=>array('/customer/register')),
-				array('label'=>'Customers', 'url'=>array('customer/admin'), 'visible'=>Yii::app()->user->getState('isAdmin')),
-				array('label'=>'Growers', 'url'=>array('grower/admin'), 'visible'=>Yii::app()->user->getState('isAdmin')),
-				array('label'=>'Items', 'url'=>array('growerItem/admin'), 'visible'=>!Yii::app()->user->isGuest),
-				array('label'=>'Locations', 'url'=>array('location/admin'), 'visible'=>!Yii::app()->user->isGuest),
-				array('label'=>'Boxes', 'url'=>array('box/admin'), 'visible'=>!Yii::app()->user->isGuest),
+//				array('label'=>'About', 'url'=>array('/site/page', 'view'=>'about')),
+//				array('label'=>'Contact', 'url'=>array('/site/contact')),
+				
+				array('label'=>'Profile', 'url'=>array('/user/view','id'=>Yii::app()->user->id), 'visible'=>!Yii::app()->user->isGuest),
+				
+				array('label' => 'Customer', 'url' => '#', 'visible' => Yii::app()->user->checkAccess('customer'), 'items' => array(
+					array('label'=>'Manage orders', 'url'=>array('customerBox/admin')),
+				)),
+				
+				array('label' => 'Grower', 'url' => '#', 'visible' => Yii::app()->user->checkAccess('grower'), 'items' => array(
+					
+					array('label'=>'Items', 'url'=>array('growerItem/admin')),
+					
+				)),
+				
+				array('label' => 'Admin', 'url' => '#', 'visible' => Yii::app()->user->checkAccess('admin'), 'items' => array(
+					array('label'=>'Users', 'url'=>array('user/admin')),
+					array('label'=>'Growers', 'url'=>array('grower/admin')),
+					array('label'=>'Locations', 'url'=>array('location/admin')),
+					array('label'=>'Boxes', 'url'=>array('box/admin')),
+					array('label'=>'Boxes Items', 'url'=>array('boxItem/admin')),
+					array('label'=>'Box Sizes', 'url'=>array('boxSize/admin'), 'visible'=>Yii::app()->user->checkAccess('admin')),
+				)),
+
+				array('label'=>'Register', 'url'=>array('/customer/register'), 'visible'=>Yii::app()->user->isGuest),
 				array('label'=>'Login', 'url'=>array('/site/login'), 'visible'=>Yii::app()->user->isGuest),
 				array('label'=>'Logout ('.Yii::app()->user->name.')', 'url'=>array('/site/logout'), 'visible'=>!Yii::app()->user->isGuest)
 			),
 		));
-		
 		
 		?>
 	</div><!-- mainmenu -->
