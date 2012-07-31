@@ -158,3 +158,25 @@ div.wide.form .buttons, div.wide.form .hint, div.wide.form .errorMessage
 	clear: left;
 	padding-left: 110px;
 }
+
+/* Foodbox overrides */
+
+.section.half
+{
+	float:left;
+	width:50%;
+}
+
+.row h2
+{
+	margin:0;
+}
+
+div.grid-view
+{
+	padding-top:0;
+}
+
+.padLeft > * {
+	padding-left:20px;
+}

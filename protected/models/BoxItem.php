@@ -41,6 +41,7 @@ class BoxItem extends CActiveRecord
 //			array('box_item_id', 'required'),
 			array('box_item_id, box_id, grower_id, item_quantity', 'numerical', 'integerOnly'=>true),
 			array('item_name, item_value', 'length', 'max'=>45),
+			array('item_unit', 'length', 'max'=>5),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('box_item_id, item_name, box_id, item_value, grower_id', 'safe', 'on'=>'search'),

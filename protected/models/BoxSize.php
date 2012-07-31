@@ -66,11 +66,10 @@ class BoxSize extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'box_sizes' => 'Box Sizes',
-			'box_size_name' => 'Box Size Name',
-			'box_size_value' => 'Box Size Value',
-			'box_size_markup' => 'Box Size Markup',
-			'box_size_price' => 'Box Size Price',
+			'box_size_name' => 'Name',
+			'box_size_value' => 'Value',
+			'box_size_markup' => 'Markup',
+			'box_size_price' => 'Price',
 		);
 	}
 
@@ -85,7 +84,6 @@ class BoxSize extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('box_sizes',$this->box_sizes);
 		$criteria->compare('box_size_name',$this->box_size_name,true);
 		$criteria->compare('box_size_value',$this->box_size_value,true);
 		$criteria->compare('box_size_markup',$this->box_size_markup,true);

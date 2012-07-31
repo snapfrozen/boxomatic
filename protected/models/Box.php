@@ -60,6 +60,9 @@ class Box extends CActiveRecord
 			'Week' => array(self::BELONGS_TO, 'Week', 'week_id'),
 			'BoxSize' => array(self::BELONGS_TO, 'BoxSize', 'size_id'),
 			'BoxItems' => array(self::HAS_MANY, 'BoxItem', 'box_id'),
+			'totalValue'=>array(
+                self::STAT, 'BoxItem', 'box_id', 'select' => 'SUM(item_value * item_quantity)'
+            ),
 		);
 	}
 
@@ -95,5 +98,12 @@ class Box extends CActiveRecord
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
+	}
+	
+	public function getRetailPrice()
+	{
+		$value = $this->totalValue;
+		$markup = $this->BoxSize->box_size_markup/100;
+		return $value + ($value * $markup);
 	}
 }

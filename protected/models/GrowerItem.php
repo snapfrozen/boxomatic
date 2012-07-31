@@ -74,7 +74,7 @@ class GrowerItem extends CActiveRecord
 			array('grower_id', 'numerical', 'integerOnly'=>true),
 			array('item_name', 'length', 'max'=>45),
 			array('item_value', 'length', 'max'=>7),
-			array('item_unit', 'length', 'max'=>2),
+			array('item_unit', 'length', 'max'=>5),
 			array('item_available_from, item_available_to', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.

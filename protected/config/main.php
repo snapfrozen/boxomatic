@@ -132,5 +132,10 @@ return array(
 			'VIC'=>'Victoria',
 			'WA'=>'Western Australia',
 		),
+		'itemUnits'=>array(
+			'KG' => 'Per kg',
+	        'EA' => 'Each',
+			'BUNCH' => 'Per bunch',
+		)
 	),
 );

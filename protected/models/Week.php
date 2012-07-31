@@ -5,7 +5,7 @@
  *
  * The followings are the available columns in table 'weeks':
  * @property integer $week_id
- * @property string $week_num
+ * @property string $week_starting
  * @property string $week_notes
  *
  * The followings are the available model relations:
@@ -39,10 +39,10 @@ class Week extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('week_num, week_notes', 'length', 'max'=>45),
+			array('week_starting, week_notes', 'length', 'max'=>45),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('week_id, week_num, week_notes', 'safe', 'on'=>'search'),
+			array('week_id, week_starting, week_notes', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -65,7 +65,7 @@ class Week extends CActiveRecord
 	{
 		return array(
 			'week_id' => 'Week',
-			'week_num' => 'Week Num',
+			'week_starting' => 'Week Starting',
 			'week_notes' => 'Week Notes',
 		);
 	}
@@ -79,14 +79,18 @@ class Week extends CActiveRecord
 		// Warning: Please modify the following code to remove attributes that
 		// should not be searched.
 
-		$criteria=new CDbCriteria;
+		$criteria=new CDbCriteria();
 
 		$criteria->compare('week_id',$this->week_id);
-		$criteria->compare('week_num',$this->week_num,true);
+		$criteria->compare('week_starting',$this->week_starting,true);
 		$criteria->compare('week_notes',$this->week_notes,true);
 
+		$criteria->condition = 'week_starting > NOW()';
+		$criteria->limit = 5;
+		
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+			'pagination'=>false,
 		));
 	}
 }

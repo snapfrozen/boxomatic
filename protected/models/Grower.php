@@ -87,7 +87,7 @@ class Grower extends CActiveRecord
 	{
 		return array(
 			'grower_id' => 'Grower',
-			'grower_name' => 'Name',
+			'grower_name' => 'Grower Name',
 			'grower_mobile' => 'Mobile',
 			'grower_phone' => 'Phone',
 			'grower_address' => 'Address',
