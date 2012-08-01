@@ -94,10 +94,10 @@
 					'item_quantity',
 					array(
 						'class'=>'CButtonColumn',
-						'template'=>'{myDelete}{delete}',
+						'template'=>'{myDelete}',
 						'buttons'=>array(
 							'myDelete' => array(
-								'label'=>'Delete',
+								'label'=>'Remove',
 								'url'=>'array("boxItem/delete","id"=>$data->box_item_id)',
 								'click'=>'deleteBoxItem'
 							),
