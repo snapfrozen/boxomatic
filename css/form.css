@@ -177,6 +177,12 @@ div.grid-view
 	padding-top:0;
 }
 
-.padLeft > * {
+.padLeft > * 
+{
 	padding-left:20px;
+}
+
+#grower-item-grid_c0
+{
+	width:250px;
 }

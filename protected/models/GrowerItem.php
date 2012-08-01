@@ -102,11 +102,11 @@ class GrowerItem extends CActiveRecord
 		return array(
 			'item_id' => 'Item',
 			'grower_id' => 'Grower',
-			'item_name' => 'Item Name',
-			'item_value' => 'Item Value',
-			'item_unit' => 'Item Unit',
-			'item_available_from' => 'Item Available From',
-			'item_available_to' => 'Item Available To',
+			'item_name' => 'Name',
+			'item_value' => 'Value',
+			'item_unit' => 'Unit',
+			'item_available_from' => 'Available From',
+			'item_available_to' => 'Available To',
 			'grower_search' => 'Grower Name',
 		);
 	}
@@ -122,10 +122,10 @@ class GrowerItem extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-        $criteria->with = array( 'Grower' );
+//        $criteria->with = array( 'Grower' );
 		$criteria->compare('item_id',$this->item_id);
 		$criteria->compare('grower_id',$this->grower_id);
-		$criteria->compare('Grower.grower_name', $this->grower_search, true );
+//		$criteria->compare('Grower.grower_name', $this->grower_search, true );
 		$criteria->compare('item_name',$this->item_name,true);
 		$criteria->compare('item_value',$this->item_value,true);
 		$criteria->compare('item_unit',$this->item_unit,true);

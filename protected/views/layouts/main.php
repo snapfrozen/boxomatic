@@ -46,6 +46,7 @@
 				)),
 				
 				array('label' => 'Admin', 'url' => '#', 'visible' => Yii::app()->user->checkAccess('admin'), 'items' => array(
+					array('label'=>'Create a box', 'url'=>array('boxItem/create')),
 					array('label'=>'Users', 'url'=>array('user/admin')),
 					array('label'=>'Growers', 'url'=>array('grower/admin')),
 					array('label'=>'Locations', 'url'=>array('location/admin')),

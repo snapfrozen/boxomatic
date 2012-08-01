@@ -1,14 +1,5 @@
 <div class="form">
 
-<?php $form=$this->beginWidget('CActiveForm', array(
-	'id'=>'box-item-form',
-	'enableAjaxValidation'=>false,
-)); ?>
-
-	<p class="note">Fields with <span class="required">*</span> are required.</p>
-
-	<?php echo $form->errorSummary($model); ?>
-	
 	<div class="section half">
 		<div class="row">
 			<h2>1. Select week</h2>
@@ -71,6 +62,8 @@
 				'item_name',
 				'item_value',
 				'item_unit',
+				array( 'name'=>'item_available_from', 'value'=>'Yii::app()->snapFormat->getMonthName($data->item_available_from)' ),
+				array( 'name'=>'item_available_to', 'value'=>'Yii::app()->snapFormat->getMonthName($data->item_available_to)' ),
 			),
 		)); ?>
 		
@@ -101,7 +94,14 @@
 					'item_quantity',
 					array(
 						'class'=>'CButtonColumn',
-						'template'=>'{delete}'
+						'template'=>'{myDelete}{delete}',
+						'buttons'=>array(
+							'myDelete' => array(
+								'label'=>'Delete',
+								'url'=>'array("boxItem/delete","id"=>$data->box_item_id)',
+								'click'=>'deleteBoxItem'
+							),
+						)
 					)
 				),
 			));
@@ -110,9 +110,15 @@
 		
 	</div>
 	
+	
+	<?php $form=$this->beginWidget('CActiveForm', array(
+	'id'=>'box-item-form',
+	'enableAjaxValidation'=>false,
+	)); ?>	
+	
 	<div class="section half">
 		
-		<h2>Box totals</h2>
+		<h2>Box stats</h2>
 		<div id="totals">
 			<?php if($CurrentBox): ?>
 			
@@ -130,19 +136,20 @@
 		</div>
 		
 	</div>
-
+	
 	<div class="section half padLeft">
 
-		<h2>Add item</h2>
+		<?php echo $form->errorSummary($model); ?>
+		
+		<h2>Add/Update item</h2>
 
+		<?php echo $form->hiddenField($model,'box_item_id'); ?>
 		<?php echo $form->hiddenField($model,'box_id',array('value'=>isset($CurrentBox) ? $CurrentBox->box_id : '')); ?>
-		<?php echo $form->error($model,'box_id'); ?>
 		<?php echo $form->hiddenField($model,'grower_id'); ?>
-		<?php echo $form->error($model,'grower_id'); ?>
 
 		<div class="row">
 			<?php echo $form->labelEx(Grower::model(),'grower_name'); ?>
-			<?php echo CHtml::textField('grower_name','',array('size'=>45,'maxlength'=>45,'disabled'=>'disabled')); ?>
+			<?php echo CHtml::textField('grower_name',$model->Grower ? $model->Grower->grower_name : '',array('size'=>45,'maxlength'=>45,'disabled'=>'disabled')); ?>
 		</div>
 		
 		<div class="row">
@@ -190,6 +197,9 @@
 	var $ItemUnit = $('#BoxItem_item_unit');
 	var $ItemGrower = $('#BoxItem_grower_id');
 	var $ItemGrowerName = $('#grower_name');
+	var $ItemQuantity = $('#BoxItem_item_quantity');
+	var $ItemId = $('#BoxItem_box_item_id');
+	
 	var $ItemValue = $('#BoxItem_item_value');
 	var $ItemBox = $('#BoxItem_box_id');
 	var $submitButton = $('#addToBox');
@@ -205,10 +215,7 @@
 		
 		var url = $('#box-item-form').attr('action') + '&weekId=' + weekId + '&sizeId=' + sizeId;;
 		var data = $('#box-item-form').serialize();
-		
-		//Only do the ajax query if we have a week and size
-		if(!weekId.length || !sizeId.length) return false;
-	
+
 		var ajaxUpdate = ['current-box','BoxItem_box_id','totals'];
 		$.ajax({
 			type: 'POST',
@@ -238,34 +245,62 @@
 		var selectedIndex = $gridTable.find('> tr').index($selectedRow);
 		var cells = $.fn.yiiGridView.getRow(id,selectedIndex);
 
-		var growerItemId = $.fn.yiiGridView.getSelection(id);
+		var itemId = '';
 		var growerId = cells[0].className.replace('grower-','');
 		var growerName = cells[0].innerHTML;
 		var itemName = cells[1].innerHTML;
 		var itemValue = cells[2].innerHTML;
 		var itemUnit = cells[3].innerHTML;
+		var itemQuantity = 1;
 
+		if(id == currentItemsGridId) 
+		{
+			itemQuantity = cells[4].innerHTML;
+			//set the box_item_id to update instead of create a new one
+			itemId = $.fn.yiiGridView.getSelection(id);
+		}
+
+		$ItemId.val(itemId);
 		$ItemName.val(itemName);
 		$ItemUnit.val(itemUnit);
 		$ItemValue.val(itemValue);
 		$ItemGrower.val(growerId);
 		$ItemGrowerName.val(growerName);
+		$ItemQuantity.val(itemQuantity);
+		
 		
 		updateSubmitButton();
 	}
 	
 	function selectBox(id)
 	{
-		var settings = $.fn.yiiGridView.settings[id];
+		reloadBox();
+	}
+	
+	function deleteBoxItem()
+	{
+		var deleteUrl = $(this).attr('href') + '&ajax=1';
+
+		$.ajax({
+			type: 'POST',
+			url: deleteUrl,
+			success: function() {
+				reloadBox();
+			}
+		});
+
+		return false;
+	}
+	
+	function reloadBox()
+	{
+		var settings = $.fn.yiiGridView.settings[currentItemsGridId];
 		var weekId = $.fn.yiiGridView.getSelection(weekGridId);
 		var sizeId = $.fn.yiiGridView.getSelection(boxSizesGridId);
 		
-		var url = $.fn.yiiGridView.getUrl(id) + '&weekId=' + weekId + '&sizeId=' + sizeId;
-		
-		//Only do the ajax query if we have a week and size
-		if(!weekId.length || !sizeId.length) return false;
-		
-		$('#'+id).addClass(settings.loadingClass);
+		var url = $.fn.yiiGridView.getUrl(currentItemsGridId) + '&weekId=' + weekId + '&sizeId=' + sizeId;
+
+		$('#'+currentItemsGridId).addClass(settings.loadingClass);
 		var ajaxUpdate = ['current-box','BoxItem_box_id','totals'];
 		$.ajax({
 			type: 'GET',
@@ -275,8 +310,8 @@
 					var id='#'+v;
 					$(id).replaceWith($(id,'<div>'+data+'</div>'));
 				});
-				$('#'+id).removeClass(settings.loadingClass);
-				$.fn.yiiGridView.selectCheckedRows(id);
+				$('#'+currentItemsGridId).removeClass(settings.loadingClass);
+				$.fn.yiiGridView.selectCheckedRows(currentItemsGridId);
 				
 				updateSubmitButton();
 			}

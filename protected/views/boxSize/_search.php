@@ -6,11 +6,6 @@
 )); ?>
 
 	<div class="row">
-		<?php echo $form->label($model,'box_sizes'); ?>
-		<?php echo $form->textField($model,'box_sizes'); ?>
-	</div>
-
-	<div class="row">
 		<?php echo $form->label($model,'box_size_name'); ?>
 		<?php echo $form->textField($model,'box_size_name',array('size'=>45,'maxlength'=>45)); ?>
 	</div>

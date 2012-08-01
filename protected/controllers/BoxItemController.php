@@ -58,10 +58,15 @@ class BoxItemController extends Controller
 	public function actionCreate($weekId=null,$sizeId=null)
 	{
 		$model=new BoxItem;
-		
+			
 		$GrowerItems=new GrowerItem('search');
+		$GrowerItems->unsetAttributes();  // clear any default values
+		if(isset($_GET['GrowerItem']))
+			$GrowerItems->attributes=$_GET['GrowerItem'];
+		
 		$Weeks=new Week('search');
 		$BoxSizes=new BoxSize('search');
+
 		$CurrentBox=null;
 		$BoxItemData=null;
 		$criteria=new CDbCriteria();
@@ -93,11 +98,11 @@ class BoxItemController extends Controller
 		$this->performAjaxValidation($model);
 		if(isset($_POST['BoxItem']))
 		{
+			if(!empty($_POST['BoxItem']['box_item_id']))
+				$model=$this->loadModel($_POST['BoxItem']['box_item_id']);
+			
 			$model->attributes=$_POST['BoxItem'];
-			if($model->save()) {
-//				$this->redirect(array('view','id'=>$model->box_item_id));
-			}
-				
+			$model->save();				
 		}
 
 		$this->render('create',array(
