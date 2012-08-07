@@ -56,7 +56,7 @@ CREATE TABLE `customers` (
   PRIMARY KEY (`customer_id`),
   KEY `location_id` (`location_id`),
   CONSTRAINT `location_id` FOREIGN KEY (`location_id`) REFERENCES `locations` (`location_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -65,7 +65,7 @@ CREATE TABLE `customers` (
 
 LOCK TABLES `customers` WRITE;
 /*!40000 ALTER TABLE `customers` DISABLE KEYS */;
-INSERT INTO `customers` VALUES (1,NULL,NULL);
+INSERT INTO `customers` VALUES (1,7,'Testing notes'),(2,9,'');
 /*!40000 ALTER TABLE `customers` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -132,7 +132,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,1,1,'admin@snapfrozen.com.au','66cbef2423f117231b6e039d204896c6','Francis Beresford','','','','','','','','2012-08-01 08:38:06','2012-07-27 13:43:02',1,'0000-00-00 00:00:00',NULL),(2,1,NULL,'customer@customer.com','66cbef2423f117231b6e039d204896c6','Joe Bloggs','','','','','','','','2012-08-01 08:37:47','2012-07-27 14:00:05',2,'2012-07-26 16:04:07',1);
+INSERT INTO `users` VALUES (1,1,1,'admin@snapfrozen.com.au','66cbef2423f117231b6e039d204896c6','Francis Beresford','','','','','','','','2012-08-07 14:29:59','2012-08-07 10:50:57',1,'0000-00-00 00:00:00',NULL),(2,2,NULL,'customer@customer.com','a36d7c1b2832bb7c0f1001ae3e6051bb','Joe Bloggs','','','','','','','','2012-08-07 14:44:20','2012-08-07 14:50:07',2,'2012-07-26 16:04:07',1);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -188,7 +188,7 @@ CREATE TABLE `locations` (
 
 LOCK TABLES `locations` WRITE;
 /*!40000 ALTER TABLE `locations` DISABLE KEYS */;
-INSERT INTO `locations` VALUES (5,'Bellingen - collect from 19 Casuarina Ave',NULL),(6,'Bellingen CBD & Coffs Harbour Region delivery',7.00),(7,'Thora - collect from Thora Hall',7.00),(8,'Dorrigo - collect from United Service Station',7.00),(9,'Dorrigo - delivery to home or workplace',7.00);
+INSERT INTO `locations` VALUES (5,'Bellingen - collect from 19 Casuarina Ave',0.00),(6,'Bellingen CBD & Coffs Harbour Region delivery',7.00),(7,'Thora - collect from Thora Hall',7.00),(8,'Dorrigo - collect from United Service Station',7.00),(9,'Dorrigo - delivery to home or workplace',7.00);
 /*!40000 ALTER TABLE `locations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -270,7 +270,7 @@ CREATE TABLE `box_items` (
   KEY `grower_id` (`grower_id`),
   CONSTRAINT `fk_boxItems_boxes` FOREIGN KEY (`box_id`) REFERENCES `boxes` (`box_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_boxItems_grower` FOREIGN KEY (`grower_id`) REFERENCES `growers` (`grower_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=58 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -279,7 +279,7 @@ CREATE TABLE `box_items` (
 
 LOCK TABLES `box_items` WRITE;
 /*!40000 ALTER TABLE `box_items` DISABLE KEYS */;
-INSERT INTO `box_items` VALUES (11,'Bananas',1,2,5.00,'KG',5),(12,'Apples',1,3,5.00,'KG',1),(19,'Apples',12,3,4.00,'KG',4),(21,'Bananas',12,2,5.00,'KG',1);
+INSERT INTO `box_items` VALUES (11,'Bananas',1,2,5.00,'KG',5),(12,'Apples',1,3,5.00,'KG',1),(19,'Apples',12,3,4.00,'KG',4),(21,'Bananas',12,2,5.00,'KG',1),(49,'Apples',12,3,5.00,'KG',2),(50,'Bananas',10,2,5.00,'KG',1),(51,'Apples',10,3,5.00,'KG',1),(52,'Apples',11,3,5.00,'KG',1),(53,'Beans',11,1,7.00,'KG',1),(55,'Beans',14,1,7.00,'KG',1),(56,'Beans',14,1,7.00,'KG',1),(57,'Beans',14,1,7.00,'KG',1);
 /*!40000 ALTER TABLE `box_items` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -322,12 +322,13 @@ CREATE TABLE `customer_boxes` (
   `customer_id` int(11) DEFAULT NULL,
   `box_id` int(11) DEFAULT NULL,
   `quantity` int(11) DEFAULT NULL,
+  `delivery_cost` decimal(9,2) DEFAULT '0.00',
   PRIMARY KEY (`customer_box_id`),
   KEY `customer_id` (`customer_id`),
   KEY `box_id` (`box_id`),
   CONSTRAINT `box_id` FOREIGN KEY (`box_id`) REFERENCES `boxes` (`box_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `customer_id` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`customer_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -336,8 +337,38 @@ CREATE TABLE `customer_boxes` (
 
 LOCK TABLES `customer_boxes` WRITE;
 /*!40000 ALTER TABLE `customer_boxes` DISABLE KEYS */;
-INSERT INTO `customer_boxes` VALUES (2,1,1,1);
+INSERT INTO `customer_boxes` VALUES (13,2,11,1,0.00),(14,1,10,2,14.00),(15,1,10,2,14.00),(16,1,14,1,7.00);
 /*!40000 ALTER TABLE `customer_boxes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `customer_payments`
+--
+
+DROP TABLE IF EXISTS `customer_payments`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `customer_payments` (
+  `payment_id` int(11) NOT NULL AUTO_INCREMENT,
+  `payment_value` decimal(7,2) DEFAULT NULL,
+  `payment_type` varchar(45) DEFAULT NULL,
+  `payment_date` datetime DEFAULT NULL,
+  `customer_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`payment_id`),
+  KEY `customer_id` (`customer_id`),
+  KEY `fk_Customer_Payments` (`customer_id`),
+  CONSTRAINT `fk_Customer_Payments` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`customer_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `customer_payments`
+--
+
+LOCK TABLES `customer_payments` WRITE;
+/*!40000 ALTER TABLE `customer_payments` DISABLE KEYS */;
+INSERT INTO `customer_payments` VALUES (3,30.00,'Credit Card','2012-08-07 13:49:19',1);
+/*!40000 ALTER TABLE `customer_payments` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -403,7 +434,7 @@ CREATE TABLE `growers` (
 
 LOCK TABLES `growers` WRITE;
 /*!40000 ALTER TABLE `growers` DISABLE KEYS */;
-INSERT INTO `growers` VALUES (1,'Sonja Engelhardt','sonniengel@gmail.com','',NULL,NULL,'Orara Valley',NULL,NULL,NULL,NULL,'','','','','','','blueberries, mandarins, kiwi, citrus, walnuts','inactive - doesn\'t have supply to make the distance travelled worthwhile.',NULL),(2,'Alan Johnstone Biodynamic Agriculture','bdpreps@biodynamics.net.au','',NULL,NULL,'Maher\'s Rd, Bellingen/Boggy Creek',NULL,NULL,NULL,NULL,'','','','','','',NULL,NULL,NULL),(3,'Bamboo Gardens Farmstay (Richard Hersel)','bamboogardensfarmstay@gmail.com ','www.bamboosatnambuccavalley.com.au','02 6564 8089 ',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `growers` VALUES (1,'Sonja Engelhardt','sonniengel@gmail.com','',NULL,NULL,'Orara Valley',NULL,NULL,NULL,NULL,'','','','','','','blueberries, mandarins, kiwi, citrus, walnuts','inactive - doesn\'t have supply to make the distance travelled worthwhile.','test'),(2,'Alan Johnstone Biodynamic Agriculture','bdpreps@biodynamics.net.au','',NULL,NULL,'Maher\'s Rd, Bellingen/Boggy Creek',NULL,NULL,NULL,NULL,'','','','','','',NULL,NULL,NULL),(3,'Bamboo Gardens Farmstay (Richard Hersel)','bamboogardensfarmstay@gmail.com ','www.bamboosatnambuccavalley.com.au','02 6564 8089 ',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `growers` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -416,4 +447,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2012-08-01  9:50:05
+-- Dump completed on 2012-08-07 15:12:31

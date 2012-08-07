@@ -182,8 +182,6 @@ class User extends SnapActiveRecord
 		{
 			return parent::defaultScope();
 		}
-		
-		return parent::defaultScope();
 	}
 	
 }
