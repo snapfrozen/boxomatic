@@ -1,9 +1,4 @@
 <?php
-$this->breadcrumbs=array(
-	'Weeks'=>array('index'),
-	$model->week_id,
-);
-
 $this->menu=array(
 	array('label'=>'List Week', 'url'=>array('index')),
 	array('label'=>'Create Week', 'url'=>array('create')),

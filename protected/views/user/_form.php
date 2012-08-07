@@ -69,7 +69,7 @@
 	
 	<div class="row">
 		<?php echo $form->labelEx($Customer,'location_id'); ?>
-		<?php echo $form->textField($Customer,'location_id'); ?>
+		<?php echo $form->dropDownList($Customer,'location_id',CHtml::listData(Location::model()->findAll(),'location_id','location_and_delivery')); ?>
 		<?php echo $form->error($Customer,'location_id'); ?>
 	</div>
 

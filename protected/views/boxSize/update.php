@@ -1,10 +1,4 @@
 <?php
-$this->breadcrumbs=array(
-	'Box Sizes'=>array('index'),
-	$model->box_sizes=>array('view','id'=>$model->box_sizes),
-	'Update',
-);
-
 $this->menu=array(
 	array('label'=>'List BoxSize', 'url'=>array('index')),
 	array('label'=>'Create BoxSize', 'url'=>array('create')),

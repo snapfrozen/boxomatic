@@ -1,9 +1,4 @@
 <?php
-$this->breadcrumbs=array(
-	'Boxes'=>array('index'),
-	'Create',
-);
-
 $this->menu=array(
 	array('label'=>'List Box', 'url'=>array('index')),
 	array('label'=>'Manage Box', 'url'=>array('admin')),

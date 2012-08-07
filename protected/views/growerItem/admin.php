@@ -37,7 +37,11 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
 	'columns'=>array(
-        array( 'name'=>'grower_search', 'value'=>'$data->Grower->grower_name' ),
+        array( 
+			'name'=>'grower_search', 
+			'value'=>'$data->Grower->grower_name',
+			'visible'=>Yii::app()->user->checkAccess('admin'),
+		),
 		'item_name',
 		'item_value',
 		'item_unit',

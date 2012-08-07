@@ -1,10 +1,4 @@
 <?php
-$this->breadcrumbs=array(
-	'Customers'=>array('index'),
-	$model->customer_id=>array('view','id'=>$model->customer_id),
-	'Update',
-);
-
 $this->menu=array(
 	array('label'=>'List Customer', 'url'=>array('index')),
 	array('label'=>'Create Customer', 'url'=>array('create')),

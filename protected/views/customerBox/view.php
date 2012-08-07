@@ -1,9 +1,4 @@
 <?php
-$this->breadcrumbs=array(
-	'Customer Boxes'=>array('index'),
-	$model->customer_box_id,
-);
-
 $this->menu=array(
 	array('label'=>'List CustomerBox', 'url'=>array('index')),
 	array('label'=>'Create CustomerBox', 'url'=>array('create')),
@@ -13,14 +8,28 @@ $this->menu=array(
 );
 ?>
 
-<h1>View CustomerBox #<?php echo $model->customer_box_id; ?></h1>
+<h1>View Box</h1>
 
 <?php $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,
 	'attributes'=>array(
-		'customer_box_id',
-		'customer_id',
-		'box_id',
+		'Customer.User.user_name',
+		'Box.BoxSize.box_size_name',
+		'Box.box_price',
+		'Box.Week.week_starting',
 		'quantity',
+		'total_price',
 	),
 )); ?>
+
+<h2>Items</h2>
+
+<?php 
+$this->widget('zii.widgets.CListView', array(
+	'summaryText'=>'',
+	'enablePagination'=>false,
+	'enableSorting'=>false,
+    'dataProvider'=>$items,
+    'itemView'=>'../boxItem/_view',
+));
+?>

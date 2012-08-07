@@ -1,8 +1,4 @@
 <?php
-$this->breadcrumbs=array(
-	'Locations',
-);
-
 $this->menu=array(
 	array('label'=>'Create Location', 'url'=>array('create')),
 	array('label'=>'Manage Location', 'url'=>array('admin')),

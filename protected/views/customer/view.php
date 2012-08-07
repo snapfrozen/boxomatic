@@ -1,9 +1,4 @@
 <?php
-$this->breadcrumbs=array(
-	'Customers'=>array('index'),
-	$model->customer_id,
-);
-
 $this->menu=array(
 	array('label'=>'List Customer', 'url'=>array('index')),
 	array('label'=>'Create Customer', 'url'=>array('create')),
@@ -13,12 +8,11 @@ $this->menu=array(
 );
 ?>
 
-<h1>View Customer #<?php echo $model->customer_id; ?></h1>
+<h1><?php echo $model->User->user_name; ?></h1>
 
 <?php $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,
 	'attributes'=>array(
-		'customer_id',
 		'location_id',
 		'customer_notes',
 	),

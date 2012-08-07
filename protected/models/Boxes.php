@@ -1,22 +1,25 @@
 <?php
 
 /**
- * This is the model class for table "customers".
+ * This is the model class for table "boxes".
  *
- * The followings are the available columns in table 'customers':
- * @property integer $customer_id
- * @property integer $location_id
- * @property string $customer_notes
+ * The followings are the available columns in table 'boxes':
+ * @property integer $box_id
+ * @property integer $size_id
+ * @property string $box_price
+ * @property integer $week_id
  *
  * The followings are the available model relations:
+ * @property BoxItems[] $boxItems
+ * @property BoxSizes $size
+ * @property Weeks $week
  * @property CustomerBoxes[] $customerBoxes
- * @property Locations $location
  */
-class Customer extends CActiveRecord
+class Boxes extends CActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
-	 * @return Customer the static model class
+	 * @return Boxes the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
@@ -28,7 +31,7 @@ class Customer extends CActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'customers';
+		return 'boxes';
 	}
 
 	/**
@@ -39,11 +42,11 @@ class Customer extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('location_id', 'numerical', 'integerOnly'=>true),
-			array('customer_notes', 'length', 'max'=>500),
+			array('size_id, week_id', 'numerical', 'integerOnly'=>true),
+			array('box_price', 'length', 'max'=>7),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('customer_id, location_id, customer_notes', 'safe', 'on'=>'search'),
+			array('box_id, size_id, box_price, week_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -55,15 +58,10 @@ class Customer extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'User' => array(self::HAS_ONE, 'User', 'id'),
-			'CustomerBoxes' => array(self::HAS_MANY, 'CustomerBoxes', 'customer_id'),
-			'Location' => array(self::BELONGS_TO, 'Location', 'location_id'),
-			'totalOrders'=>array(
-                self::STAT, 'Box', 'customer_boxes(customer_id, box_id)', 'select' => 'SUM((box_price * quantity) + delivery_cost) '
-            ),
-			'totalPayments'=>array(
-                self::STAT, 'CustomerPayment', 'customer_id', 'select' => 'SUM(payment_value)'
-            ),
+			'BoxItems' => array(self::HAS_MANY, 'BoxItems', 'box_id'),
+			'BoxSize' => array(self::BELONGS_TO, 'BoxSize', 'size_id'),
+			'Week' => array(self::BELONGS_TO, 'Week', 'week_id'),
+			'CustomerBoxes' => array(self::HAS_MANY, 'CustomerBox', 'box_id'),
 		);
 	}
 
@@ -73,9 +71,10 @@ class Customer extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'customer_id' => 'Customer',
-			'location_id' => 'Delivery Location',
-			'customer_notes' => 'Customer Notes',
+			'box_id' => 'Box',
+			'size_id' => 'Size',
+			'box_price' => 'Box Price',
+			'week_id' => 'Week',
 		);
 	}
 
@@ -88,19 +87,21 @@ class Customer extends CActiveRecord
 		// Warning: Please modify the following code to remove attributes that
 		// should not be searched.
 
+		$days=Yii::app()->params['orderDeadlineDays'];
+		
 		$criteria=new CDbCriteria;
-
-		$criteria->compare('customer_id',$this->customer_id);
-		$criteria->compare('location_id',$this->location_id);
-		$criteria->compare('customer_notes',$this->customer_notes,true);
+		
+		$criteria->with = array('Week');
+		$criteria->addCondition("date_sub(Week.week_starting, interval $days day) > NOW()");
+		
+		$criteria->compare('box_id',$this->box_id);
+		$criteria->compare('size_id',$this->size_id);
+		$criteria->compare('box_price',$this->box_price,true);
+		$criteria->compare($this->getTableAlias(false, false) . '.week_id',$this->week_id);
+		$criteria->order='Week.week_starting';
 
 		return new CActiveDataProvider(get_class($this), array(
 			'criteria'=>$criteria,
 		));
-	}
-	
-	public function getBalance()
-	{
-		return Yii::app()->numberFormatter->format('#,##0.00', $this->totalOrders - $this->totalPayments);
 	}
 }

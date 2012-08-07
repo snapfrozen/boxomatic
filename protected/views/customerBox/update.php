@@ -1,10 +1,4 @@
 <?php
-$this->breadcrumbs=array(
-	'Customer Boxes'=>array('index'),
-	$model->customer_box_id=>array('view','id'=>$model->customer_box_id),
-	'Update',
-);
-
 $this->menu=array(
 	array('label'=>'List CustomerBox', 'url'=>array('index')),
 	array('label'=>'Create CustomerBox', 'url'=>array('create')),
@@ -13,6 +7,11 @@ $this->menu=array(
 );
 ?>
 
-<h1>Update CustomerBox <?php echo $model->customer_box_id; ?></h1>
+<h1>Update Order</h1>
 
-<?php echo $this->renderPartial('_form', array('model'=>$model)); ?>
+<?php echo $this->renderPartial('_form', array(
+	'model'=>$model,
+	'Boxes'=>$Boxes,
+	'items'=>$items,
+	'SelectedBox'=>$SelectedBox)); 
+?>

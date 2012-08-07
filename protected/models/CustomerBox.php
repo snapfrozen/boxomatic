@@ -41,6 +41,8 @@ class CustomerBox extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
+			array('customer_id, quantity', 'required'),
+			array('box_id', 'required', 'message'=>'Please select a box'),
 			array('customer_id, box_id, quantity', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
@@ -94,4 +96,40 @@ class CustomerBox extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+	
+	public function getTotal_delivery_price()
+	{
+		$price = $this->Customer->Location->location_delivery_value * $this->quantity;
+		return Yii::app()->numberFormatter->format('#,##0.00',$price);
+	}
+	
+	public function getTotal_box_price()
+	{
+		$price = $this->Box->box_price * $this->quantity;
+		return Yii::app()->numberFormatter->format('#,##0.00',$price);
+	}
+	
+	public function getTotal_price()
+	{
+		$price = ($this->Box->box_price * $this->quantity) + ($this->Customer->Location->location_delivery_value * $this->quantity);
+		return Yii::app()->numberFormatter->format('#,##0.00',$price);
+	}
+	
+	/**
+	* Only allow admins to access all user information
+	*/
+	public function defaultScope()
+	{
+		if(!Yii::app()->user->checkAccess('admin')) 
+		{
+			return array(
+				'condition' => "customer_id = '" . Yii::app()->user->customer_id . "'",
+			);
+		}
+		else
+		{
+			return parent::defaultScope();
+		}
+	}
+	
 }

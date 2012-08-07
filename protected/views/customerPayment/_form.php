@@ -21,18 +21,6 @@
 		<?php echo $form->error($model,'payment_type'); ?>
 	</div>
 
-	<div class="row">
-		<?php echo $form->labelEx($model,'payment_date'); ?>
-		<?php echo $form->textField($model,'payment_date'); ?>
-		<?php echo $form->error($model,'payment_date'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'customer_id'); ?>
-		<?php echo $form->textField($model,'customer_id'); ?>
-		<?php echo $form->error($model,'customer_id'); ?>
-	</div>
-
 	<div class="row buttons">
 		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
 	</div>

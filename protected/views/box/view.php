@@ -1,9 +1,4 @@
 <?php
-$this->breadcrumbs=array(
-	'Boxes'=>array('index'),
-	$model->BoxSize->box_size_name,
-);
-
 $this->menu=array(
 	array('label'=>'List Box', 'url'=>array('index')),
 	array('label'=>'Create Box', 'url'=>array('create')),
@@ -20,17 +15,18 @@ $this->menu=array(
 	'attributes'=>array(
 		'BoxSize.box_size_name',
 		'box_price',
-		'Week.week_num',
+		'Week.week_starting',
 	),
 )); ?>
 
 <h2>Items</h2>
 
 <?php 
-
 $this->widget('zii.widgets.CListView', array(
+	'summaryText'=>'',
+	'enablePagination'=>false,
+	'enableSorting'=>false,
     'dataProvider'=>$items,
     'itemView'=>'../boxItem/_view',
 ));
-
 ?>

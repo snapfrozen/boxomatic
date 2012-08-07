@@ -1,10 +1,4 @@
 <?php
-$this->breadcrumbs=array(
-	'Customer Payments'=>array('index'),
-	$model->payment_id=>array('view','id'=>$model->payment_id),
-	'Update',
-);
-
 $this->menu=array(
 	array('label'=>'List CustomerPayment', 'url'=>array('index')),
 	array('label'=>'Create CustomerPayment', 'url'=>array('create')),

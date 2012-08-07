@@ -27,11 +27,11 @@ class UserController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view'),
+				'actions'=>array('index'),
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('update'),
+				'actions'=>array('update','view'),
 				'roles'=>array('customer'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -90,16 +90,36 @@ class UserController extends Controller
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
+		$allSaved=true;
+		if(isset($_POST['Customer']))
+		{
+			$Customer=$model->Customer;
+			$Customer->attributes=$_POST['Customer'];
+			if(!$Customer->update())
+				$allSaved=false;
+				
+		}
+		
+		if(isset($_POST['Grower']))
+		{
+			$Grower=$model->Grower;
+			$Grower->attributes=$_POST['Grower'];
+			if(!$Grower->update())
+				$allSaved=false;
+		}
+		
+		if(isset($_POST['role'])) {
+			$model->setRole($_POST['role']);
+		}
+		
 		if(isset($_POST['User']))
 		{
 			$model->attributes=$_POST['User'];
-			if($model->update())
-			{
-				if(isset($_POST['role'])) {
-					$model->setRole($_POST['role']);
-				}
+			if(!$model->update())
+				$allSaved=false;
+			
+			if($allSaved)
 				$this->redirect(array('view','id'=>$model->id));
-			}
 		}
 
 		$this->render('update',array(

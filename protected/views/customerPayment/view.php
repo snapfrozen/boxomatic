@@ -1,9 +1,4 @@
 <?php
-$this->breadcrumbs=array(
-	'Customer Payments'=>array('index'),
-	$model->payment_id,
-);
-
 $this->menu=array(
 	array('label'=>'List CustomerPayment', 'url'=>array('index')),
 	array('label'=>'Create CustomerPayment', 'url'=>array('create')),
@@ -13,15 +8,14 @@ $this->menu=array(
 );
 ?>
 
-<h1>View CustomerPayment #<?php echo $model->payment_id; ?></h1>
+<h1>Payment made <?php echo $model->payment_date; ?></h1>
 
 <?php $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,
 	'attributes'=>array(
-		'payment_id',
-		'payment_value',
+		'Customer.User.user_name',
 		'payment_type',
+		'payment_value',
 		'payment_date',
-		'customer_id',
 	),
 )); ?>

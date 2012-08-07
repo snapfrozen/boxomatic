@@ -66,8 +66,8 @@ class Location extends CActiveRecord
 	{
 		return array(
 			'location_id' => 'Location',
-			'location_name' => 'Location Name',
-			'location_delivery_value' => 'Location Delivery Value',
+			'location_name' => 'Delivery Location',
+			'location_delivery_value' => 'Delivery',
 		);
 	}
 
@@ -89,5 +89,11 @@ class Location extends CActiveRecord
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
+	}
+	
+		
+	public function getLocation_and_delivery()
+	{
+		return $this->location_name . ' (' . $this->location_delivery_value . ')';
 	}
 }

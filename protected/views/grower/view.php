@@ -1,9 +1,4 @@
 <?php
-$this->breadcrumbs=array(
-	'Growers'=>array('index'),
-	$model->grower_id,
-);
-
 $this->menu=array(
 	array('label'=>'List Grower', 'url'=>array('index')),
 	array('label'=>'Create Grower', 'url'=>array('create')),
@@ -13,14 +8,25 @@ $this->menu=array(
 );
 ?>
 
-<h1>View Grower #<?php echo $model->grower_id; ?></h1>
+<h1><?php echo $model->grower_name; ?></h1>
 
 <?php $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,
 	'attributes'=>array(
-		'grower_id',
-		'grower_website',
+		array(
+			'name'=>'grower_website',
+			'type'=>'raw',
+			'value'=>CHtml::link($model->grower_website, Yii::app()->snapFormat->createExternalUrl($model->grower_website)),
+		),
 		'grower_distance_kms',
+	),
+)); ?>
+
+<?php if(Yii::app()->user->checkAccess('admin')): ?>
+
+<?php $this->widget('zii.widgets.CDetailView', array(
+	'data'=>$model,
+	'attributes'=>array(
 		'grower_bank_account_name',
 		'grower_bank_bsb',
 		'grower_bank_acc',
@@ -31,3 +37,5 @@ $this->menu=array(
 		'grower_payment_details',
 	),
 )); ?>
+
+<?php endif; ?>

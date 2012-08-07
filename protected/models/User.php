@@ -172,16 +172,16 @@ class User extends SnapActiveRecord
 	*/
 	public function defaultScope()
 	{
-//		if(!Yii::app()->user->checkAccess('admin')) 
-//		{
-//			return array(
-//				'condition' => "id = '" . Yii::app()->user->id . "'",
-//			);
-//		}
-//		else
-//		{
-//			return parent::defaultScope();
-//		}
+		if(!Yii::app()->user->checkAccess('admin')) 
+		{
+			return array(
+				'condition' => "id = '" . Yii::app()->user->id . "'",
+			);
+		}
+		else
+		{
+			return parent::defaultScope();
+		}
 		
 		return parent::defaultScope();
 	}

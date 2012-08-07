@@ -36,13 +36,14 @@
 				array('label'=>'Profile', 'url'=>array('/user/view','id'=>Yii::app()->user->id), 'visible'=>!Yii::app()->user->isGuest),
 				
 				array('label' => 'Customer', 'url' => '#', 'visible' => Yii::app()->user->checkAccess('customer'), 'items' => array(
-					array('label'=>'Manage orders', 'url'=>array('customerBox/admin')),
+					array('label'=>'New order', 'url'=>array('customerBox/create')),
+					array('label'=>'All orders', 'url'=>array('customerBox/admin')),
+					array('label'=>'Make a payment', 'url'=>array('customerPayment/create')),
+					array('label'=>'View Payments', 'url'=>array('customerPayment/index')),
 				)),
 				
 				array('label' => 'Grower', 'url' => '#', 'visible' => Yii::app()->user->checkAccess('grower'), 'items' => array(
-					
 					array('label'=>'Items', 'url'=>array('growerItem/admin')),
-					
 				)),
 				
 				array('label' => 'Admin', 'url' => '#', 'visible' => Yii::app()->user->checkAccess('admin'), 'items' => array(
@@ -79,6 +80,13 @@
 	</div><!-- footer -->
 
 </div><!-- page -->
+<?php
+	$controller = Yii::app()->controller->id; //current controller
+	$action = Yii::app()->controller->getAction()->getId(); //current action
 
+	$jsFile = 'js/' . strtolower($controller) . '/' . strtolower($action) . '.js'; // filename to load
+	if( is_file($jsFile) ) { ?>
+	<script type="text/javascript" src="<?php echo Yii::app()->request->baseUrl . '/' . $jsFile;?>"></script>
+	<?php }	?>
 </body>
 </html>

@@ -13,7 +13,11 @@ $this->menu=array(
 <?php $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,
 	'attributes'=>array(
-		'user_email',
+		array(
+			'name'=>'user_email',
+			'type'=>'raw',
+			'value'=>CHtml::mailto($model->user_email,$model->user_email)
+		),	
 		'user_name',
 		'user_phone',
 		'user_mobile',
@@ -25,3 +29,40 @@ $this->menu=array(
 		'last_login_time',
 	),
 )); ?>
+
+<?php if($model->Customer): ?>
+
+<h2>Delivery details</h2>
+<?php $this->widget('zii.widgets.CDetailView', array(
+	'data'=>$model->Customer,
+	'attributes'=>array(
+		'Location.location_name',
+		'Location.location_delivery_value',
+		'customer_notes',
+	),
+)); ?>
+
+
+<div class="half">
+
+	<h2>Orders and Payments</h2>
+
+	<div class="info">
+		<div class="row">
+			<span class="label">Total Orders</span>
+			<span class="value number"><?php echo $model->Customer->totalOrders ?></span>
+		</div>
+		<div class="row">
+			<span class="label">Total Payments</span>
+			<span class="value number"><?php echo $model->Customer->totalPayments ?></span>
+		</div>
+		<div class="row total">
+			<span class="label">Balance</span>
+			<span class="value number"><?php echo $model->Customer->balance ?></span>
+		</div>
+	</div>
+
+</div>
+
+<?php endif; //Customer ?>
+

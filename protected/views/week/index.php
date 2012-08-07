@@ -1,8 +1,4 @@
 <?php
-$this->breadcrumbs=array(
-	'Weeks',
-);
-
 $this->menu=array(
 	array('label'=>'Create Week', 'url'=>array('create')),
 	array('label'=>'Manage Week', 'url'=>array('admin')),

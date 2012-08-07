@@ -27,16 +27,12 @@ class CustomerPaymentController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view'),
-				'users'=>array('*'),
-			),
-			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update'),
-				'users'=>array('@'),
+				'actions'=>array('index','view','create'),
+				'roles'=>array('customer'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete'),
-				'users'=>array('admin'),
+				'actions'=>array('admin','delete','update'),
+				'roles'=>array('admin'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -69,6 +65,9 @@ class CustomerPaymentController extends Controller
 		if(isset($_POST['CustomerPayment']))
 		{
 			$model->attributes=$_POST['CustomerPayment'];
+			$model->customer_id=Yii::app()->user->customer_id;
+			$model->payment_date=new CDbExpression('NOW()');
+			
 			if($model->save())
 				$this->redirect(array('view','id'=>$model->payment_id));
 		}

@@ -7,7 +7,7 @@
 // CWebApplication properties can be configured here.
 return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
-	'name'=>'box o matic',
+	'name'=>'Food Box',
 
 	// preloading 'log' component
 	'preload'=>array('log'),
@@ -136,6 +136,8 @@ return array(
 			'KG' => 'Per kg',
 	        'EA' => 'Each',
 			'BUNCH' => 'Per bunch',
-		)
+		),
+		'orderDeadlineDays'=>7, //orders must be placed within 7 days of delivery 
+		
 	),
 );

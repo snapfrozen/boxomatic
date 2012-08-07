@@ -1,10 +1,4 @@
 <?php
-$this->breadcrumbs=array(
-	'Weeks'=>array('index'),
-	$model->week_id=>array('view','id'=>$model->week_id),
-	'Update',
-);
-
 $this->menu=array(
 	array('label'=>'List Week', 'url'=>array('index')),
 	array('label'=>'Create Week', 'url'=>array('create')),

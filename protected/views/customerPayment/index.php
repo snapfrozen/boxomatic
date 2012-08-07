@@ -1,8 +1,4 @@
 <?php
-$this->breadcrumbs=array(
-	'Customer Payments',
-);
-
 $this->menu=array(
 	array('label'=>'Create CustomerPayment', 'url'=>array('create')),
 	array('label'=>'Manage CustomerPayment', 'url'=>array('admin')),

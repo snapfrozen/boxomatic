@@ -1,10 +1,4 @@
 <?php
-$this->breadcrumbs=array(
-	'Grower Items'=>array('index'),
-	$model->item_id=>array('view','id'=>$model->item_id),
-	'Update',
-);
-
 $this->menu=array(
 	array('label'=>'List GrowerItem', 'url'=>array('index')),
 	array('label'=>'Create GrowerItem', 'url'=>array('create')),

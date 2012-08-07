@@ -46,8 +46,11 @@ class CustomerBoxController extends Controller
 	 */
 	public function actionView($id)
 	{
+		$model=$this->loadModel($id);
+		$items=new CActiveDataProvider('BoxItem',array('criteria'=>array('condition'=>'box_id = ' . $model->box_id)));
 		$this->render('view',array(
-			'model'=>$this->loadModel($id),
+			'model'=>$model,
+			'items'=>$items
 		));
 	}
 
@@ -55,22 +58,46 @@ class CustomerBoxController extends Controller
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
-	public function actionCreate()
+	public function actionCreate($boxId=null, $quantity=null)
 	{
+		$User=User::model()->findByPk(Yii::app()->user->id);
+		
 		$model=new CustomerBox;
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		if(!$quantity)
+			$model->quantity=1;//default 1 box
+		else
+			$model->quantity=$quantity;
+		
+		$model->customer_id=$User->Customer->customer_id;
+		
+		$Boxes=new Boxes('search');
+		$Boxes->unsetAttributes();  // clear any default values
+		if(isset($_GET['Boxes']))
+			$Boxes->attributes=$_GET['Boxes'];
+		
+		$items=null;
+		$SelectedBox=null;
+		if($boxId)
+		{
+			$items=new CActiveDataProvider('BoxItem',array('criteria'=>array('condition'=>'box_id=' . (int)$boxId)));
+			$SelectedBox=Box::model()->findByPk($boxId);
+			$model->box_id=$boxId;
+		}
 
 		if(isset($_POST['CustomerBox']))
 		{
 			$model->attributes=$_POST['CustomerBox'];
+			$model->customer_id=Yii::app()->user->id;
+			$model->delivery_cost=$model->total_delivery_price;
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->customer_box_id));
+				$this->redirect(array('admin','id'=>$model->customer_box_id));
 		}
 
 		$this->render('create',array(
 			'model'=>$model,
+			'Boxes'=>$Boxes,
+			'items'=>$items,
+			'SelectedBox'=>$SelectedBox,
 		));
 	}
 
@@ -79,22 +106,43 @@ class CustomerBoxController extends Controller
 	 * If update is successful, the browser will be redirected to the 'view' page.
 	 * @param integer $id the ID of the model to be updated
 	 */
-	public function actionUpdate($id)
+	public function actionUpdate($id, $boxId=null, $quantity=null)
 	{
 		$model=$this->loadModel($id);
 
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$Boxes=new Boxes('search');
+		$Boxes->unsetAttributes();  // clear any default values
+		if(isset($_GET['Boxes']))
+			$Boxes->attributes=$_GET['Boxes'];
+		
+		if($quantity)
+			$model->quantity=$quantity;
+		
+		if($boxId)
+		{
+			$items=new CActiveDataProvider('BoxItem',array('criteria'=>array('condition'=>'box_id=' . (int)$boxId)));
+			$SelectedBox=Box::model()->findByPk($boxId);
+			$model->box_id=$boxId;
+		}
+		else
+		{
+			$items=new CActiveDataProvider('BoxItem',array('criteria'=>array('condition'=>'box_id=' . $model->box_id)));
+			$SelectedBox=$model->Box;
+		}
 
 		if(isset($_POST['CustomerBox']))
 		{
 			$model->attributes=$_POST['CustomerBox'];
+			$model->delivery_cost=$model->total_delivery_price;
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->customer_box_id));
+				$this->redirect(array('admin','id'=>$model->customer_box_id));
 		}
 
 		$this->render('update',array(
 			'model'=>$model,
+			'Boxes'=>$Boxes,
+			'items'=>$items,
+			'SelectedBox'=>$SelectedBox,
 		));
 	}
 

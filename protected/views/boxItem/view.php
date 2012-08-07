@@ -1,9 +1,4 @@
 <?php
-$this->breadcrumbs=array(
-	'Box Items'=>array('index'),
-	$model->box_item_id,
-);
-
 $this->menu=array(
 	array('label'=>'List BoxItem', 'url'=>array('index')),
 	array('label'=>'Create BoxItem', 'url'=>array('create')),
@@ -13,7 +8,7 @@ $this->menu=array(
 );
 ?>
 
-<h1>View BoxItem #<?php echo $model->box_item_id; ?></h1>
+<h1>View BoxItem</h1>
 
 <?php $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,
