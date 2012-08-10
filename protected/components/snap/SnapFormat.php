@@ -14,13 +14,31 @@ class SnapFormat extends CApplicationComponent
 	
 	/**
 	 * Make sure the url is a valid external hyperlink, e.g. contains http://
-	 * @param type $url 
+	 * @param string $url 
 	 */
 	public function createExternalUrl($url)
 	{
 		if(!strpos($url,'http://') || !strpos($url,'https://'))
 			$url = 'http://' . $url;
 		return $url;
+	}
+	
+	/**
+	 * Format a week string
+	 * @param string $day
+	 */
+	public function dayOfYear($day)
+	{
+		return Yii::app()->dateFormatter->format("EEEE, MMMM d, yyy",$day);
+	}
+	
+	/**
+	 * Format a week string
+	 * @param double $url 
+	 */
+	public function currency($amount)
+	{
+		return Yii::app()->numberFormatter->format('$#,##0.00', (float)$amount);
 	}
 }
 ?>

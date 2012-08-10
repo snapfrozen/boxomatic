@@ -14,7 +14,7 @@
 				'enableSorting'=>false,
 				'selectionChanged'=>'selectBox',
 				'columns'=>array(
-					'week_starting',
+					'week_delivery_date',
 					'week_notes',
 				),
 			)); ?>

@@ -16,7 +16,7 @@ $this->menu=array(
 		'Customer.User.user_name',
 		'Box.BoxSize.box_size_name',
 		'Box.box_price',
-		'Box.Week.week_starting',
+		'Box.Week.week_delivery_date',
 		'quantity',
 		'total_price',
 	),

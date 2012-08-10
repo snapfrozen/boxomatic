@@ -15,7 +15,7 @@ $this->menu=array(
 	'attributes'=>array(
 		'BoxSize.box_size_name',
 		'box_price',
-		'Week.week_starting',
+		'Week.week_delivery_date',
 	),
 )); ?>
 

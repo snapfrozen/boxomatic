@@ -5,7 +5,7 @@
  *
  * The followings are the available columns in table 'weeks':
  * @property integer $week_id
- * @property string $week_starting
+ * @property string $week_delivery_date
  * @property string $week_notes
  *
  * The followings are the available model relations:
@@ -39,10 +39,10 @@ class Week extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('week_starting, week_notes', 'length', 'max'=>45),
+			array('week_delivery_date, week_notes', 'length', 'max'=>45),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('week_id, week_starting, week_notes', 'safe', 'on'=>'search'),
+			array('week_id, week_delivery_date, week_notes', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -54,7 +54,7 @@ class Week extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'boxes' => array(self::HAS_MANY, 'Boxes', 'week_id'),
+			'Boxes' => array(self::HAS_MANY, 'Box', 'week_id'),
 		);
 	}
 
@@ -65,7 +65,7 @@ class Week extends CActiveRecord
 	{
 		return array(
 			'week_id' => 'Week',
-			'week_starting' => 'Week Starting',
+			'week_delivery_date' => 'Week Starting',
 			'week_notes' => 'Week Notes',
 		);
 	}
@@ -82,15 +82,35 @@ class Week extends CActiveRecord
 		$criteria=new CDbCriteria();
 
 		$criteria->compare('week_id',$this->week_id);
-		$criteria->compare('week_starting',$this->week_starting,true);
+		$criteria->compare('week_delivery_date',$this->week_delivery_date,true);
 		$criteria->compare('week_notes',$this->week_notes,true);
 
-		$criteria->condition = 'week_starting > NOW()';
+		$criteria->condition = 'week_delivery_date > NOW()';
 		$criteria->limit = 5;
 		
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 			'pagination'=>false,
 		));
+	}
+	
+	/**
+	 * Get the week id for the next delivery
+	 */
+	public function getCurrentWeekId()
+	{
+		$week=$this->findByAttributes('week_delivery_date > NOW()');
+		return $week ? $week->id : false;
+	}
+	
+	/**
+	 * Get week object for the last week entered
+	 */
+	public static function getLastEnteredWeek()
+	{
+		$criteria=new CDbCriteria;
+		$criteria->order='week_delivery_date DESC';
+		$week=self::model()->find($criteria);
+		return $week;
 	}
 }

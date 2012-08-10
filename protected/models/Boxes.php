@@ -92,13 +92,13 @@ class Boxes extends CActiveRecord
 		$criteria=new CDbCriteria;
 		
 		$criteria->with = array('Week');
-		$criteria->addCondition("date_sub(Week.week_starting, interval $days day) > NOW()");
+		$criteria->addCondition("date_sub(Week.week_delivery_date, interval $days day) > NOW()");
 		
 		$criteria->compare('box_id',$this->box_id);
 		$criteria->compare('size_id',$this->size_id);
 		$criteria->compare('box_price',$this->box_price,true);
 		$criteria->compare($this->getTableAlias(false, false) . '.week_id',$this->week_id);
-		$criteria->order='Week.week_starting';
+		$criteria->order='Week.week_delivery_date';
 
 		return new CActiveDataProvider(get_class($this), array(
 			'criteria'=>$criteria,

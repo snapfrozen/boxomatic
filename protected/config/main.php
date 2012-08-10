@@ -85,6 +85,8 @@ return array(
 			'password' => 'localdev',
 			'tablePrefix' => '',
 			'charset' => 'utf8',
+//			'enableProfiling' => true, //
+//			'enableParamLogging' => true, //
 		),
 		        
         'user' => array(
@@ -106,6 +108,10 @@ return array(
 					'class'=>'CFileLogRoute',
 					'levels'=>'error, warning',
 				),
+//				array(
+//					'class'=>'CWebLogRoute',
+//					'categories'=>'system.db.CDbCommand',
+//				),
 				// uncomment the following to show log messages on web pages
 				/*
 				array(
@@ -138,6 +144,7 @@ return array(
 			'BUNCH' => 'Per bunch',
 		),
 		'orderDeadlineDays'=>7, //orders must be placed within 7 days of delivery 
-		
+		'deliveryDayOfWeek'=>3, //0 (for Sunday) through 6 (for Saturday)
+		'autoCreateWeeks'=>24   //Amount of weeks to auto create boxes for in advance
 	),
 );

@@ -6,7 +6,7 @@ class CustomerBoxController extends Controller
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
 	 * using two-column layout. See 'protected/views/layouts/column2.php'.
 	 */
-	public $layout='//layouts/column2';
+	public $layout='//layouts/column1';
 
 	/**
 	 * @return array action filters
@@ -26,12 +26,12 @@ class CustomerBoxController extends Controller
 	public function accessRules()
 	{
 		return array(
-			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin'),
+			array('allow',
+				'actions'=>array('index','view','create','update','admin','delete','order'),
 				'roles'=>array('customer'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete'),
+				'actions'=>array('admin'),
 				'roles'=>array('admin'),
 			),
 			array('deny',  // deny all users
@@ -189,6 +189,57 @@ class CustomerBoxController extends Controller
 
 		$this->render('admin',array(
 			'model'=>$model,
+		));
+	}
+	
+	
+	/**
+	 * Manages all models.
+	 */
+	public function actionOrder()
+	{
+		$model=new CustomerBox();
+		$Customer=Customer::model()->findByPk(Yii::app()->user->customer_id);
+
+		$days=Yii::app()->params['orderDeadlineDays'];
+		$Weeks=Week::model()->findAll("date_sub(week_delivery_date, interval $days day) > NOW()");
+		$BoxSizes=BoxSize::model()->findAll();
+		
+		if(isset($_POST['Orders']))
+		{
+			foreach($_POST['Orders'] as $key=>$quantity)
+			{
+				$boxId=str_replace('b_','',$key);
+				$CustBox=CustomerBox::model()->findByAttributes(array('customer_id'=>$Customer->customer_id,'box_id'=>$boxId));
+				
+				//Customer doesn't have a record for this box so create one
+				if(!$CustBox && $quantity)
+				{
+					$CustBox=new CustomerBox;
+				}
+				
+				if($CustBox && $quantity)
+				{
+					$CustBox->customer_id=$Customer->customer_id;
+					$CustBox->box_id=$boxId;
+					$CustBox->quantity=$quantity;
+					$CustBox->delivery_cost=$Customer->Location->location_delivery_value;
+					$CustBox->save();
+				}
+				
+				//Customer set the quantity to 0 for an existing box
+				if($CustBox && !$quantity)
+				{
+					$CustBox->delete();
+				}
+			}
+		}
+
+		$this->render('order',array(
+			'model'=>$model,
+			'Weeks'=>$Weeks,
+			'Customer'=>$Customer,
+			'BoxSizes'=>$BoxSizes,
 		));
 	}
 

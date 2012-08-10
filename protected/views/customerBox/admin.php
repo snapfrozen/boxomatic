@@ -5,9 +5,11 @@ $this->menu=array(
 );
 ?>
 
-<h1>All orders</h1>
+<h1>Manage Customer Boxes</h1>
 
-<?php $this->widget('zii.widgets.grid.CGridView', array(
+<?php 
+
+$this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'customer-box-grid',
 	'dataProvider'=>$model->search(),
 //	'filter'=>$model,
@@ -24,10 +26,12 @@ $this->menu=array(
 		'total_price',
 		array(
 			'name'=>'Box.week_id',
-			'value'=>'Yii::app()->dateFormatter->format("EEE, MMM d",$data->Box->Week->week_starting)',
+			'value'=>'Yii::app()->dateFormatter->format("EEE, MMM d",$data->Box->Week->week_delivery_date)',
 		),
 		array(
 			'class'=>'CButtonColumn',
 		),
 	),
-)); ?>
+)); 
+
+?>

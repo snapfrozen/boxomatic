@@ -29,8 +29,8 @@
 			),
 			array(
 				'name'=>'week_id',
-				'value'=>'Yii::app()->dateFormatter->format("EEE, MMM d",$data->Week->week_starting)',
-				'filter'=>CHtml::listData(Week::model()->findAll(array('order'=>'week_starting')), 'week_id', 'week_starting'),
+				'value'=>'Yii::app()->dateFormatter->format("EEE, MMM d",$data->Week->week_delivery_date)',
+				'filter'=>CHtml::listData(Week::model()->findAll(array('order'=>'week_delivery_date')), 'week_id', 'week_delivery_date'),
 			)
 		),
 	)); ?>

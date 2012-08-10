@@ -15,6 +15,7 @@
  */
 class CustomerBox extends CActiveRecord
 {
+	public $week_total=null;
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
@@ -100,19 +101,19 @@ class CustomerBox extends CActiveRecord
 	public function getTotal_delivery_price()
 	{
 		$price = $this->Customer->Location->location_delivery_value * $this->quantity;
-		return Yii::app()->numberFormatter->format('#,##0.00',$price);
+		return Yii::app()->snapFormat->currency($price);
 	}
 	
 	public function getTotal_box_price()
 	{
 		$price = $this->Box->box_price * $this->quantity;
-		return Yii::app()->numberFormatter->format('#,##0.00',$price);
+		return Yii::app()->snapFormat->currency($price);
 	}
 	
 	public function getTotal_price()
 	{
 		$price = ($this->Box->box_price * $this->quantity) + ($this->Customer->Location->location_delivery_value * $this->quantity);
-		return Yii::app()->numberFormatter->format('#,##0.00',$price);
+		return Yii::app()->snapFormat->currency($price);
 	}
 	
 	/**

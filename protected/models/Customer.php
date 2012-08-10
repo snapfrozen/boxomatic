@@ -56,10 +56,12 @@ class Customer extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'User' => array(self::HAS_ONE, 'User', 'id'),
-			'CustomerBoxes' => array(self::HAS_MANY, 'CustomerBoxes', 'customer_id'),
+			'CustomerBoxes' => array(self::HAS_MANY, 'CustomerBox', 'customer_id'),
+			'Boxes' => array(self::MANY_MANY, 'Box', 'customer_boxes(customer_id,box_id)'),
+			
 			'Location' => array(self::BELONGS_TO, 'Location', 'location_id'),
 			'totalOrders'=>array(
-                self::STAT, 'Box', 'customer_boxes(customer_id, box_id)', 'select' => 'SUM((box_price * quantity) + delivery_cost) '
+                self::STAT, 'Box', 'customer_boxes(customer_id, box_id)', 'select' => 'SUM((box_price * quantity) + delivery_cost)',
             ),
 			'totalPayments'=>array(
                 self::STAT, 'CustomerPayment', 'customer_id', 'select' => 'SUM(payment_value)'
@@ -101,6 +103,45 @@ class Customer extends CActiveRecord
 	
 	public function getBalance()
 	{
-		return Yii::app()->numberFormatter->format('#,##0.00', $this->totalOrders - $this->totalPayments);
+		return Yii::app()->snapFormat->currency($this->totalOrders - $this->totalPayments);
+	}
+	
+	public function TotalByWeek($weekId)
+	{
+		$customerId=Yii::app()->user->customer_id;
+		
+		$criteria=new CDbCriteria;
+		$criteria->condition = 'week_id=:weekId AND customer_id=:customerId';
+		$criteria->params = array(':weekId'=>$weekId,':customerId'=>$customerId);
+		$criteria->select = 'SUM((box_price * quantity) + delivery_cost) as week_total';
+		
+		$result = CustomerBox::model()->with('Box')->find($criteria);		
+		return $result ? $result->week_total : '';
+	}
+	
+	public function TotalDeliveryByWeek($weekId)
+	{
+		$customerId=Yii::app()->user->customer_id;
+		
+		$criteria=new CDbCriteria;
+		$criteria->condition = 'week_id=:weekId AND customer_id=:customerId';
+		$criteria->params = array(':weekId'=>$weekId,':customerId'=>$customerId);
+		$criteria->select = 'SUM(delivery_cost) as week_total';
+		
+		$result = CustomerBox::model()->with('Box')->find($criteria);		
+		return $result ? $result->week_total : '';
+	}
+	
+	public function TotalBoxesByWeek($weekId)
+	{
+		$customerId=Yii::app()->user->customer_id;
+		
+		$criteria=new CDbCriteria;
+		$criteria->condition = 'week_id=:weekId AND customer_id=:customerId';
+		$criteria->params = array(':weekId'=>$weekId,':customerId'=>$customerId);
+		$criteria->select = 'SUM((box_price * quantity)) as week_total';
+		
+		$result = CustomerBox::model()->with('Box')->find($criteria);		
+		return $result ? $result->week_total : '';
 	}
 }
