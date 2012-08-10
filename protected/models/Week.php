@@ -54,7 +54,10 @@ class Week extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'Boxes' => array(self::HAS_MANY, 'Box', 'week_id'),
+			'Boxes' => array(self::HAS_MANY, 'Box', 'week_id',
+				'with'=>'BoxSize',
+				'order'=>'box_size_name DESC'
+			),
 		);
 	}
 

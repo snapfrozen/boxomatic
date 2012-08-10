@@ -61,7 +61,8 @@ class Customer extends CActiveRecord
 			
 			'Location' => array(self::BELONGS_TO, 'Location', 'location_id'),
 			'totalOrders'=>array(
-                self::STAT, 'Box', 'customer_boxes(customer_id, box_id)', 'select' => 'SUM((box_price * quantity) + delivery_cost)',
+                self::STAT, 'Box', 'customer_boxes(customer_id, box_id)', 
+				'select' => 'SUM((box_price * quantity) + delivery_cost)',
             ),
 			'totalPayments'=>array(
                 self::STAT, 'CustomerPayment', 'customer_id', 'select' => 'SUM(payment_value)'
@@ -103,10 +104,10 @@ class Customer extends CActiveRecord
 	
 	public function getBalance()
 	{
-		return Yii::app()->snapFormat->currency($this->totalOrders - $this->totalPayments);
+		return $this->totalPayments - $this->fulfilled_order_total;
 	}
 	
-	public function TotalByWeek($weekId)
+	public function totalByWeek($weekId)
 	{
 		$customerId=Yii::app()->user->customer_id;
 		
@@ -119,7 +120,7 @@ class Customer extends CActiveRecord
 		return $result ? $result->week_total : '';
 	}
 	
-	public function TotalDeliveryByWeek($weekId)
+	public function totalDeliveryByWeek($weekId)
 	{
 		$customerId=Yii::app()->user->customer_id;
 		
@@ -132,7 +133,7 @@ class Customer extends CActiveRecord
 		return $result ? $result->week_total : '';
 	}
 	
-	public function TotalBoxesByWeek($weekId)
+	public function totalBoxesByWeek($weekId)
 	{
 		$customerId=Yii::app()->user->customer_id;
 		
@@ -143,5 +144,22 @@ class Customer extends CActiveRecord
 		
 		$result = CustomerBox::model()->with('Box')->find($criteria);		
 		return $result ? $result->week_total : '';
+	}
+	
+	public function getFulfilled_order_total()
+	{
+		$deadlineDays=Yii::app()->params['orderDeadlineDays'];
+		
+		$customerId=Yii::app()->user->customer_id;
+		$weekDeadline=date('Y-m-d', strtotime('+' . $deadlineDays . ' days'));
+		
+		$criteria=new CDbCriteria;
+		$criteria->with = array('Box.Week');
+		$criteria->condition = 'week_delivery_date<=:weekDeadline AND customer_id=:customerId';
+		$criteria->params = array(':weekDeadline'=>$weekDeadline,':customerId'=>$customerId);
+		$criteria->select = 'SUM((box_price * quantity) + delivery_cost) as fulfilled_total';
+		
+		$result = CustomerBox::model()->with('Box')->find($criteria);		
+		return $result ? $result->fulfilled_total : 0;
 	}
 }

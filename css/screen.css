@@ -243,14 +243,28 @@ hr.space {background:#fff;color:#fff;visibility:hidden;}
 	margin-bottom:1em;
 }
 
-/* All Orders Page */
+.section {
+	margin-bottom:2em;
+}
 
+/* All Orders Page */
+#reccuring-customer-order-form table,
 #allOrders table {
 	width:auto;
 }
-	#allOrders .date {
-		color:#999;
+	#allOrders .enoughCredit {
+		background:#d8ffd8;
 	}
-		#allOrders .date td {
-			padding-top:1.25em;
+	#allOrders .pastDeadline {
+		background:#eee;
+	}
+	#allOrders .date {
+		color:#888;
+	}
+		#allOrders td {
+			padding-bottom:.5em;
 		}
+		#allOrders .date td {
+			padding-top:.75em;
+		}
+		

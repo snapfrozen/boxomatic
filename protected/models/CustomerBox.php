@@ -15,7 +15,9 @@
  */
 class CustomerBox extends CActiveRecord
 {
-	public $week_total=null;
+	public $week_total=null;		//holds an aggregate total for the week;
+	public $fulfilled_total=null;	//holds an aggregate total for all orders before the deadline
+	
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.

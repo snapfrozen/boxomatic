@@ -36,8 +36,7 @@
 				array('label'=>'Profile', 'url'=>array('/user/view','id'=>Yii::app()->user->id), 'visible'=>!Yii::app()->user->isGuest),
 				
 				array('label' => 'Customer', 'url' => '#', 'visible' => Yii::app()->user->checkAccess('customer'), 'items' => array(
-					array('label'=>'New order', 'url'=>array('customerBox/create')),
-					array('label'=>'All orders', 'url'=>array('customerBox/admin')),
+					array('label'=>'All orders', 'url'=>array('customerBox/order')),
 					array('label'=>'Make a payment', 'url'=>array('customerPayment/create')),
 					array('label'=>'View Payments', 'url'=>array('customerPayment/index')),
 				)),
@@ -51,9 +50,9 @@
 					array('label'=>'Users', 'url'=>array('user/admin')),
 					array('label'=>'Growers', 'url'=>array('grower/admin')),
 					array('label'=>'Locations', 'url'=>array('location/admin')),
-					array('label'=>'Boxes', 'url'=>array('box/admin')),
-					array('label'=>'Boxes Items', 'url'=>array('boxItem/admin')),
-					array('label'=>'Box Sizes', 'url'=>array('boxSize/admin'), 'visible'=>Yii::app()->user->checkAccess('admin')),
+//					array('label'=>'Boxes', 'url'=>array('box/admin')),
+//					array('label'=>'Boxes Items', 'url'=>array('boxItem/admin')),
+//					array('label'=>'Box Sizes', 'url'=>array('boxSize/admin'), 'visible'=>Yii::app()->user->checkAccess('admin')),
 				)),
 
 				array('label'=>'Register', 'url'=>array('/customer/register'), 'visible'=>Yii::app()->user->isGuest),

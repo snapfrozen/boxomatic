@@ -201,9 +201,56 @@ class CustomerBoxController extends Controller
 		$model=new CustomerBox();
 		$Customer=Customer::model()->findByPk(Yii::app()->user->customer_id);
 
-		$days=Yii::app()->params['orderDeadlineDays'];
-		$Weeks=Week::model()->findAll("date_sub(week_delivery_date, interval $days day) > NOW()");
-		$BoxSizes=BoxSize::model()->findAll();
+		$deadlineDays=Yii::app()->params['orderDeadlineDays'];
+//		$Weeks=Week::model()->findAll("date_sub(week_delivery_date, interval $deadlineDays day) > NOW()");
+		$Weeks=Week::model()->findAll("week_delivery_date > NOW()");
+//		$Weeks=Week::model()->findAll();
+		$BoxSizes=BoxSize::model()->findAll(array('order'=>'box_size_name DESC'));
+		
+		if(isset($_POST['btn_recurring'])) //recurring order button pressed
+		{
+			foreach($_POST['Recurring'] as $key=>$quantity)
+			{
+				$boxSizeId=str_replace('bs_','',$key);
+				$Boxes=Box::model()->with('Week')->findAll("
+					date_sub(week_delivery_date, interval $deadlineDays day) > NOW() AND
+					size_id=$boxSizeId");
+				
+				foreach($Boxes as $Box)
+				{
+					$CustBox=CustomerBox::model()->findByAttributes(array('customer_id'=>$Customer->customer_id,'box_id'=>$Box->box_id));
+					
+					//Only create a records if an entry doesn't already exist
+					if(!$CustBox && $quantity)
+					{
+						$CustBox=new CustomerBox;
+						$CustBox->customer_id=$Customer->customer_id;
+						$CustBox->box_id=$Box->box_id;
+						$CustBox->quantity=$quantity;
+						$CustBox->delivery_cost=$Customer->Location->location_delivery_value;
+						$CustBox->save();
+					}
+				}
+			}
+		}
+		
+		if(isset($_POST['btn_clear_orders'])) //clear orders button pressed
+		{
+			//Get all boxes beyond the deadline date
+			$Boxes=Box::model()->with('Week')->findAll("
+				date_sub(week_delivery_date, interval $deadlineDays day) > NOW()");
+
+			foreach($Boxes as $Box)
+			{
+				$CustBox=CustomerBox::model()->findByAttributes(array('customer_id'=>$Customer->customer_id,'box_id'=>$Box->box_id));
+
+				//Only create a records if an entry doesn't already exist
+				if($CustBox)
+				{
+					$CustBox->delete();
+				}
+			}
+		}
 		
 		if(isset($_POST['Orders']))
 		{
@@ -240,6 +287,7 @@ class CustomerBoxController extends Controller
 			'Weeks'=>$Weeks,
 			'Customer'=>$Customer,
 			'BoxSizes'=>$BoxSizes,
+			'deadline'=>strtotime('+'.$deadlineDays.' days'),
 		));
 	}
 

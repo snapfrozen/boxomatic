@@ -1405,3 +1405,331 @@ REQUEST_URI=/foodbox/index.php?r=customerBox/order
 in C:\wamp\www\foodbox\protected\models\Customer.php (120)
 in C:\wamp\www\foodbox\protected\views\customerBox\order.php (57)
 in C:\wamp\www\foodbox\protected\controllers\CustomerBoxController.php (243)
+2012/08/10 07:21:21 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'The system is unable to find the requested action "orders".' in C:\wamp\www\yii\framework\web\CController.php:484
+Stack trace:
+#0 C:\wamp\www\yii\framework\web\CController.php(271): CController->missingAction('orders')
+#1 C:\wamp\www\yii\framework\web\CWebApplication.php(283): CController->run('orders')
+#2 C:\wamp\www\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('customerBox/ord...')
+#3 C:\wamp\www\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#4 C:\wamp\www\foodbox\index.php(19): CApplication->run()
+#5 {main}
+REQUEST_URI=/foodbox/index.php?r=customerBox/orders
+HTTP_REFERER=http://localhost/foodbox/index.php?r=customerBox/order
+---
+2012/08/10 07:52:26 [error] [exception.CException] exception 'CException' with message 'Property "Week.delivery_date" is not defined.' in C:\wamp\www\yii\framework\base\CComponent.php:131
+Stack trace:
+#0 C:\wamp\www\yii\framework\db\ar\CActiveRecord.php(144): CComponent->__get('delivery_date')
+#1 C:\wamp\www\foodbox\protected\views\customerBox\order.php(24): CActiveRecord->__get('delivery_date')
+#2 C:\wamp\www\yii\framework\web\CBaseController.php(127): require('C:\wamp\www\foo...')
+#3 C:\wamp\www\yii\framework\web\CBaseController.php(96): CBaseController->renderInternal('C:\wamp\www\foo...', Array, true)
+#4 C:\wamp\www\yii\framework\web\CController.php(870): CBaseController->renderFile('C:\wamp\www\foo...', Array, true)
+#5 C:\wamp\www\yii\framework\web\CController.php(783): CController->renderPartial('order', Array, true)
+#6 C:\wamp\www\foodbox\protected\controllers\CustomerBoxController.php(245): CController->render('order', Array)
+#7 C:\wamp\www\yii\framework\web\actions\CInlineAction.php(50): CustomerBoxController->actionOrder()
+#8 C:\wamp\www\yii\framework\web\CController.php(309): CInlineAction->runWithParams(Array)
+#9 C:\wamp\www\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#10 C:\wamp\www\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#11 C:\wamp\www\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#12 C:\wamp\www\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#13 C:\wamp\www\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#14 C:\wamp\www\yii\framework\web\CController.php(292): CFilterChain->run()
+#15 C:\wamp\www\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#16 C:\wamp\www\yii\framework\web\CWebApplication.php(283): CController->run('order')
+#17 C:\wamp\www\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('customerBox/ord...')
+#18 C:\wamp\www\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#19 C:\wamp\www\foodbox\index.php(19): CApplication->run()
+#20 {main}
+REQUEST_URI=/foodbox/index.php?r=customerBox/order
+---
+2012/08/10 08:19:34 [error] [exception.CException] exception 'CException' with message 'Property "CStatRelation.with" is not defined.' in C:\wamp\www\yii\framework\base\CComponent.php:174
+Stack trace:
+#0 C:\wamp\www\yii\framework\db\ar\CActiveRecord.php(1931): CComponent->__set('with', 'Week')
+#1 C:\wamp\www\yii\framework\db\ar\CActiveRecord.php(2309): CBaseActiveRelation->__construct('totalOrders', 'Box', 'customer_boxes(...', Array)
+#2 C:\wamp\www\yii\framework\db\ar\CActiveRecord.php(2290): CActiveRecordMetaData->addRelation('totalOrders', Array)
+#3 C:\wamp\www\yii\framework\db\ar\CActiveRecord.php(383): CActiveRecordMetaData->__construct(Object(Customer))
+#4 C:\wamp\www\foodbox\protected\models\Customer.php(23): CActiveRecord::model('Customer')
+#5 C:\wamp\www\foodbox\protected\controllers\CustomerBoxController.php(202): Customer::model()
+#6 C:\wamp\www\yii\framework\web\actions\CInlineAction.php(50): CustomerBoxController->actionOrder()
+#7 C:\wamp\www\yii\framework\web\CController.php(309): CInlineAction->runWithParams(Array)
+#8 C:\wamp\www\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#9 C:\wamp\www\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#10 C:\wamp\www\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#11 C:\wamp\www\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#12 C:\wamp\www\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#13 C:\wamp\www\yii\framework\web\CController.php(292): CFilterChain->run()
+#14 C:\wamp\www\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#15 C:\wamp\www\yii\framework\web\CWebApplication.php(283): CController->run('order')
+#16 C:\wamp\www\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('customerBox/ord...')
+#17 C:\wamp\www\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#18 C:\wamp\www\foodbox\index.php(19): CApplication->run()
+#19 {main}
+REQUEST_URI=/foodbox/index.php?r=customerBox/order
+---
+2012/08/10 08:29:30 [error] [exception.CException] exception 'CException' with message 'CDbCriteria and its behaviors do not have a method or closure named "with".' in C:\wamp\www\yii\framework\base\CComponent.php:266
+Stack trace:
+#0 C:\wamp\www\foodbox\protected\models\Customer.php(157): CComponent->__call('with', Array)
+#1 C:\wamp\www\foodbox\protected\models\Customer.php(157): CDbCriteria->with('Week')
+#2 C:\wamp\www\yii\framework\base\CComponent.php(112): Customer->getFulfilled_order_total()
+#3 C:\wamp\www\yii\framework\db\ar\CActiveRecord.php(144): CComponent->__get('fulfilled_order...')
+#4 C:\wamp\www\foodbox\protected\views\customerBox\order.php(22): CActiveRecord->__get('fulfilled_order...')
+#5 C:\wamp\www\yii\framework\web\CBaseController.php(127): require('C:\wamp\www\foo...')
+#6 C:\wamp\www\yii\framework\web\CBaseController.php(96): CBaseController->renderInternal('C:\wamp\www\foo...', Array, true)
+#7 C:\wamp\www\yii\framework\web\CController.php(870): CBaseController->renderFile('C:\wamp\www\foo...', Array, true)
+#8 C:\wamp\www\yii\framework\web\CController.php(783): CController->renderPartial('order', Array, true)
+#9 C:\wamp\www\foodbox\protected\controllers\CustomerBoxController.php(245): CController->render('order', Array)
+#10 C:\wamp\www\yii\framework\web\actions\CInlineAction.php(50): CustomerBoxController->actionOrder()
+#11 C:\wamp\www\yii\framework\web\CController.php(309): CInlineAction->runWithParams(Array)
+#12 C:\wamp\www\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#13 C:\wamp\www\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#14 C:\wamp\www\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#15 C:\wamp\www\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#16 C:\wamp\www\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#17 C:\wamp\www\yii\framework\web\CController.php(292): CFilterChain->run()
+#18 C:\wamp\www\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#19 C:\wamp\www\yii\framework\web\CWebApplication.php(283): CController->run('order')
+#20 C:\wamp\www\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('customerBox/ord...')
+#21 C:\wamp\www\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#22 C:\wamp\www\foodbox\index.php(19): CApplication->run()
+#23 {main}
+REQUEST_URI=/foodbox/index.php?r=customerBox/order
+---
+2012/08/10 08:29:48 [error] [exception.CDbException] exception 'CDbException' with message 'Relation "Week" is not defined in active record class "CustomerBox".' in C:\wamp\www\yii\framework\db\ar\CActiveFinder.php:215
+Stack trace:
+#0 C:\wamp\www\yii\framework\db\ar\CActiveFinder.php(278): CActiveFinder->buildJoinTree(Object(CJoinElement), 'Week')
+#1 C:\wamp\www\yii\framework\db\ar\CActiveFinder.php(49): CActiveFinder->buildJoinTree(Object(CJoinElement), Array)
+#2 C:\wamp\www\yii\framework\db\ar\CActiveRecord.php(1290): CActiveFinder->__construct(Object(CustomerBox), Array)
+#3 C:\wamp\www\yii\framework\db\ar\CActiveRecord.php(1391): CActiveRecord->query(Object(CDbCriteria))
+#4 C:\wamp\www\foodbox\protected\models\Customer.php(162): CActiveRecord->find(Object(CDbCriteria))
+#5 C:\wamp\www\yii\framework\base\CComponent.php(112): Customer->getFulfilled_order_total()
+#6 C:\wamp\www\yii\framework\db\ar\CActiveRecord.php(144): CComponent->__get('fulfilled_order...')
+#7 C:\wamp\www\foodbox\protected\views\customerBox\order.php(22): CActiveRecord->__get('fulfilled_order...')
+#8 C:\wamp\www\yii\framework\web\CBaseController.php(127): require('C:\wamp\www\foo...')
+#9 C:\wamp\www\yii\framework\web\CBaseController.php(96): CBaseController->renderInternal('C:\wamp\www\foo...', Array, true)
+#10 C:\wamp\www\yii\framework\web\CController.php(870): CBaseController->renderFile('C:\wamp\www\foo...', Array, true)
+#11 C:\wamp\www\yii\framework\web\CController.php(783): CController->renderPartial('order', Array, true)
+#12 C:\wamp\www\foodbox\protected\controllers\CustomerBoxController.php(245): CController->render('order', Array)
+#13 C:\wamp\www\yii\framework\web\actions\CInlineAction.php(50): CustomerBoxController->actionOrder()
+#14 C:\wamp\www\yii\framework\web\CController.php(309): CInlineAction->runWithParams(Array)
+#15 C:\wamp\www\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#16 C:\wamp\www\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#17 C:\wamp\www\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#18 C:\wamp\www\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#19 C:\wamp\www\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#20 C:\wamp\www\yii\framework\web\CController.php(292): CFilterChain->run()
+#21 C:\wamp\www\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#22 C:\wamp\www\yii\framework\web\CWebApplication.php(283): CController->run('order')
+#23 C:\wamp\www\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('customerBox/ord...')
+#24 C:\wamp\www\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#25 C:\wamp\www\foodbox\index.php(19): CApplication->run()
+#26 {main}
+REQUEST_URI=/foodbox/index.php?r=customerBox/order
+---
+2012/08/10 08:30:17 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'week_delivery_date' in 'where clause'. The SQL statement executed was: SELECT SUM((box_price * quantity)) as fulfilled_total, `t`.`customer_box_id` AS `t0_c0`, `Box`.`box_id` AS `t1_c0`, `Box`.`size_id` AS `t1_c1`, `Box`.`box_price` AS `t1_c2`, `Box`.`week_id` AS `t1_c3` FROM `customer_boxes` `t`  LEFT OUTER JOIN `boxes` `Box` ON (`t`.`box_id`=`Box`.`box_id`)  WHERE (week_delivery_date=:weekDeadline AND customer_id=:customerId).
+in C:\wamp\www\foodbox\protected\models\Customer.php (162)
+in C:\wamp\www\foodbox\protected\views\customerBox\order.php (22)
+in C:\wamp\www\foodbox\protected\controllers\CustomerBoxController.php (245)
+2012/08/10 08:30:17 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'week_delivery_date' in 'where clause'. The SQL statement executed was: SELECT SUM((box_price * quantity)) as fulfilled_total, `t`.`customer_box_id` AS `t0_c0`, `Box`.`box_id` AS `t1_c0`, `Box`.`size_id` AS `t1_c1`, `Box`.`box_price` AS `t1_c2`, `Box`.`week_id` AS `t1_c3` FROM `customer_boxes` `t`  LEFT OUTER JOIN `boxes` `Box` ON (`t`.`box_id`=`Box`.`box_id`)  WHERE (week_delivery_date=:weekDeadline AND customer_id=:customerId)' in C:\wamp\www\yii\framework\db\CDbCommand.php:528
+Stack trace:
+#0 C:\wamp\www\yii\framework\db\CDbCommand.php(390): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 C:\wamp\www\yii\framework\db\ar\CActiveFinder.php(786): CDbCommand->queryAll()
+#2 C:\wamp\www\yii\framework\db\ar\CActiveFinder.php(420): CJoinElement->runQuery(Object(CJoinQuery))
+#3 C:\wamp\www\yii\framework\db\ar\CActiveFinder.php(70): CJoinElement->find(Object(CDbCriteria))
+#4 C:\wamp\www\yii\framework\db\ar\CActiveRecord.php(1291): CActiveFinder->query(Object(CDbCriteria), false)
+#5 C:\wamp\www\yii\framework\db\ar\CActiveRecord.php(1391): CActiveRecord->query(Object(CDbCriteria))
+#6 C:\wamp\www\foodbox\protected\models\Customer.php(162): CActiveRecord->find(Object(CDbCriteria))
+#7 C:\wamp\www\yii\framework\base\CComponent.php(112): Customer->getFulfilled_order_total()
+#8 C:\wamp\www\yii\framework\db\ar\CActiveRecord.php(144): CComponent->__get('fulfilled_order...')
+#9 C:\wamp\www\foodbox\protected\views\customerBox\order.php(22): CActiveRecord->__get('fulfilled_order...')
+#10 C:\wamp\www\yii\framework\web\CBaseController.php(127): require('C:\wamp\www\foo...')
+#11 C:\wamp\www\yii\framework\web\CBaseController.php(96): CBaseController->renderInternal('C:\wamp\www\foo...', Array, true)
+#12 C:\wamp\www\yii\framework\web\CController.php(870): CBaseController->renderFile('C:\wamp\www\foo...', Array, true)
+#13 C:\wamp\www\yii\framework\web\CController.php(783): CController->renderPartial('order', Array, true)
+#14 C:\wamp\www\foodbox\protected\controllers\CustomerBoxController.php(245): CController->render('order', Array)
+#15 C:\wamp\www\yii\framework\web\actions\CInlineAction.php(50): CustomerBoxController->actionOrder()
+#16 C:\wamp\www\yii\framework\web\CController.php(309): CInlineAction->runWithParams(Array)
+#17 C:\wamp\www\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#18 C:\wamp\www\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#19 C:\wamp\www\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#20 C:\wamp\www\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#21 C:\wamp\www\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#22 C:\wamp\www\yii\framework\web\CController.php(292): CFilterChain->run()
+#23 C:\wamp\www\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#24 C:\wamp\www\yii\framework\web\CWebApplication.php(283): CController->run('order')
+#25 C:\wamp\www\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('customerBox/ord...')
+#26 C:\wamp\www\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#27 C:\wamp\www\foodbox\index.php(19): CApplication->run()
+#28 {main}
+REQUEST_URI=/foodbox/index.php?r=customerBox/order
+---
+2012/08/10 08:30:36 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'week_delivery_date' in 'where clause'. The SQL statement executed was: SELECT SUM((box_price * quantity)) as fulfilled_total, `t`.`customer_box_id` AS `t0_c0`, `Box`.`box_id` AS `t1_c0`, `Box`.`size_id` AS `t1_c1`, `Box`.`box_price` AS `t1_c2`, `Box`.`week_id` AS `t1_c3` FROM `customer_boxes` `t`  LEFT OUTER JOIN `boxes` `Box` ON (`t`.`box_id`=`Box`.`box_id`)  WHERE (week_delivery_date=:weekDeadline AND customer_id=:customerId).
+in C:\wamp\www\foodbox\protected\models\Customer.php (162)
+in C:\wamp\www\foodbox\protected\views\customerBox\order.php (22)
+in C:\wamp\www\foodbox\protected\controllers\CustomerBoxController.php (245)
+2012/08/10 08:30:36 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'week_delivery_date' in 'where clause'. The SQL statement executed was: SELECT SUM((box_price * quantity)) as fulfilled_total, `t`.`customer_box_id` AS `t0_c0`, `Box`.`box_id` AS `t1_c0`, `Box`.`size_id` AS `t1_c1`, `Box`.`box_price` AS `t1_c2`, `Box`.`week_id` AS `t1_c3` FROM `customer_boxes` `t`  LEFT OUTER JOIN `boxes` `Box` ON (`t`.`box_id`=`Box`.`box_id`)  WHERE (week_delivery_date=:weekDeadline AND customer_id=:customerId)' in C:\wamp\www\yii\framework\db\CDbCommand.php:528
+Stack trace:
+#0 C:\wamp\www\yii\framework\db\CDbCommand.php(390): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 C:\wamp\www\yii\framework\db\ar\CActiveFinder.php(786): CDbCommand->queryAll()
+#2 C:\wamp\www\yii\framework\db\ar\CActiveFinder.php(420): CJoinElement->runQuery(Object(CJoinQuery))
+#3 C:\wamp\www\yii\framework\db\ar\CActiveFinder.php(70): CJoinElement->find(Object(CDbCriteria))
+#4 C:\wamp\www\yii\framework\db\ar\CActiveRecord.php(1291): CActiveFinder->query(Object(CDbCriteria), false)
+#5 C:\wamp\www\yii\framework\db\ar\CActiveRecord.php(1391): CActiveRecord->query(Object(CDbCriteria))
+#6 C:\wamp\www\foodbox\protected\models\Customer.php(162): CActiveRecord->find(Object(CDbCriteria))
+#7 C:\wamp\www\yii\framework\base\CComponent.php(112): Customer->getFulfilled_order_total()
+#8 C:\wamp\www\yii\framework\db\ar\CActiveRecord.php(144): CComponent->__get('fulfilled_order...')
+#9 C:\wamp\www\foodbox\protected\views\customerBox\order.php(22): CActiveRecord->__get('fulfilled_order...')
+#10 C:\wamp\www\yii\framework\web\CBaseController.php(127): require('C:\wamp\www\foo...')
+#11 C:\wamp\www\yii\framework\web\CBaseController.php(96): CBaseController->renderInternal('C:\wamp\www\foo...', Array, true)
+#12 C:\wamp\www\yii\framework\web\CController.php(870): CBaseController->renderFile('C:\wamp\www\foo...', Array, true)
+#13 C:\wamp\www\yii\framework\web\CController.php(783): CController->renderPartial('order', Array, true)
+#14 C:\wamp\www\foodbox\protected\controllers\CustomerBoxController.php(245): CController->render('order', Array)
+#15 C:\wamp\www\yii\framework\web\actions\CInlineAction.php(50): CustomerBoxController->actionOrder()
+#16 C:\wamp\www\yii\framework\web\CController.php(309): CInlineAction->runWithParams(Array)
+#17 C:\wamp\www\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#18 C:\wamp\www\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#19 C:\wamp\www\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#20 C:\wamp\www\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#21 C:\wamp\www\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#22 C:\wamp\www\yii\framework\web\CController.php(292): CFilterChain->run()
+#23 C:\wamp\www\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#24 C:\wamp\www\yii\framework\web\CWebApplication.php(283): CController->run('order')
+#25 C:\wamp\www\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('customerBox/ord...')
+#26 C:\wamp\www\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#27 C:\wamp\www\foodbox\index.php(19): CApplication->run()
+#28 {main}
+REQUEST_URI=/foodbox/index.php?r=customerBox/order
+---
+2012/08/10 08:44:01 [error] [system.db.CDbCommand] CDbCommand::fetch() failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'box_size_name' in 'order clause'. The SQL statement executed was: SELECT * FROM `customer_boxes` `t` WHERE `t`.`box_id`=:yp0 AND `t`.`customer_id`=:yp1 ORDER BY box_size_name LIMIT 1.
+in C:\wamp\www\foodbox\protected\views\customerBox\order.php (52)
+in C:\wamp\www\foodbox\protected\controllers\CustomerBoxController.php (246)
+in C:\wamp\www\foodbox\index.php (19)
+2012/08/10 08:44:01 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'box_size_name' in 'order clause'. The SQL statement executed was: SELECT * FROM `customer_boxes` `t` WHERE `t`.`box_id`=:yp0 AND `t`.`customer_id`=:yp1 ORDER BY box_size_name LIMIT 1' in C:\wamp\www\yii\framework\db\CDbCommand.php:528
+Stack trace:
+#0 C:\wamp\www\yii\framework\db\CDbCommand.php(408): CDbCommand->queryInternal('fetch', Array, Array)
+#1 C:\wamp\www\yii\framework\db\ar\CActiveRecord.php(1286): CDbCommand->queryRow()
+#2 C:\wamp\www\yii\framework\db\ar\CActiveRecord.php(1454): CActiveRecord->query(Object(CDbCriteria))
+#3 C:\wamp\www\foodbox\protected\views\customerBox\order.php(52): CActiveRecord->findByAttributes(Array, Array)
+#4 C:\wamp\www\yii\framework\web\CBaseController.php(127): require('C:\wamp\www\foo...')
+#5 C:\wamp\www\yii\framework\web\CBaseController.php(96): CBaseController->renderInternal('C:\wamp\www\foo...', Array, true)
+#6 C:\wamp\www\yii\framework\web\CController.php(870): CBaseController->renderFile('C:\wamp\www\foo...', Array, true)
+#7 C:\wamp\www\yii\framework\web\CController.php(783): CController->renderPartial('order', Array, true)
+#8 C:\wamp\www\foodbox\protected\controllers\CustomerBoxController.php(246): CController->render('order', Array)
+#9 C:\wamp\www\yii\framework\web\actions\CInlineAction.php(50): CustomerBoxController->actionOrder()
+#10 C:\wamp\www\yii\framework\web\CController.php(309): CInlineAction->runWithParams(Array)
+#11 C:\wamp\www\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#12 C:\wamp\www\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#13 C:\wamp\www\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#14 C:\wamp\www\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#15 C:\wamp\www\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#16 C:\wamp\www\yii\framework\web\CController.php(292): CFilterChain->run()
+#17 C:\wamp\www\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#18 C:\wamp\www\yii\framework\web\CWebApplication.php(283): CController->run('order')
+#19 C:\wamp\www\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('customerBox/ord...')
+#20 C:\wamp\www\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#21 C:\wamp\www\foodbox\index.php(19): CApplication->run()
+#22 {main}
+REQUEST_URI=/foodbox/index.php?r=customerBox/order
+---
+2012/08/10 08:51:23 [error] [exception.CException] exception 'CException' with message 'Property "CHasManyRelation.0" is not defined.' in C:\wamp\www\yii\framework\base\CComponent.php:174
+Stack trace:
+#0 C:\wamp\www\yii\framework\db\ar\CActiveRecord.php(1931): CComponent->__set('0', Array)
+#1 C:\wamp\www\yii\framework\db\ar\CActiveRecord.php(2309): CBaseActiveRelation->__construct('Boxes', 'Box', 'week_id', Array)
+#2 C:\wamp\www\yii\framework\db\ar\CActiveRecord.php(2290): CActiveRecordMetaData->addRelation('Boxes', Array)
+#3 C:\wamp\www\yii\framework\db\ar\CActiveRecord.php(383): CActiveRecordMetaData->__construct(Object(Week))
+#4 C:\wamp\www\foodbox\protected\models\Week.php(23): CActiveRecord::model('Week')
+#5 C:\wamp\www\foodbox\protected\controllers\CustomerBoxController.php(207): Week::model()
+#6 C:\wamp\www\yii\framework\web\actions\CInlineAction.php(50): CustomerBoxController->actionOrder()
+#7 C:\wamp\www\yii\framework\web\CController.php(309): CInlineAction->runWithParams(Array)
+#8 C:\wamp\www\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#9 C:\wamp\www\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#10 C:\wamp\www\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#11 C:\wamp\www\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#12 C:\wamp\www\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#13 C:\wamp\www\yii\framework\web\CController.php(292): CFilterChain->run()
+#14 C:\wamp\www\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#15 C:\wamp\www\yii\framework\web\CWebApplication.php(283): CController->run('order')
+#16 C:\wamp\www\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('customerBox/ord...')
+#17 C:\wamp\www\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#18 C:\wamp\www\foodbox\index.php(19): CApplication->run()
+#19 {main}
+REQUEST_URI=/foodbox/index.php?r=customerBox/order
+---
+2012/08/10 09:14:09 [error] [php] htmlspecialchars() expects parameter 1 to be string, array given (C:\wamp\www\yii\framework\web\helpers\CHtml.php:85)
+Stack trace:
+#0 C:\wamp\www\yii\framework\web\helpers\CHtml.php(140): renderAttributes()
+#1 C:\wamp\www\yii\framework\web\helpers\CHtml.php(1135): tag()
+#2 C:\wamp\www\yii\framework\web\helpers\CHtml.php(567): inputField()
+#3 C:\wamp\www\foodbox\protected\views\customerBox\order.php(118): textField()
+#4 C:\wamp\www\yii\framework\web\CBaseController.php(127): require()
+#5 C:\wamp\www\yii\framework\web\CBaseController.php(96): CustomerBoxController->renderInternal()
+#6 C:\wamp\www\yii\framework\web\CController.php(870): CustomerBoxController->renderFile()
+#7 C:\wamp\www\yii\framework\web\CController.php(783): CustomerBoxController->renderPartial()
+#8 C:\wamp\www\foodbox\protected\controllers\CustomerBoxController.php(246): CustomerBoxController->render()
+#9 C:\wamp\www\yii\framework\web\actions\CInlineAction.php(50): CustomerBoxController->actionOrder()
+#10 C:\wamp\www\yii\framework\web\CController.php(309): CInlineAction->runWithParams()
+#11 C:\wamp\www\yii\framework\web\filters\CFilterChain.php(134): CustomerBoxController->runAction()
+#12 C:\wamp\www\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#13 C:\wamp\www\yii\framework\web\CController.php(1146): CAccessControlFilter->filter()
+#14 C:\wamp\www\yii\framework\web\filters\CInlineFilter.php(59): CustomerBoxController->filterAccessControl()
+#15 C:\wamp\www\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter()
+#16 C:\wamp\www\yii\framework\web\CController.php(292): CFilterChain->run()
+#17 C:\wamp\www\yii\framework\web\CController.php(266): CustomerBoxController->runActionWithFilters()
+#18 C:\wamp\www\yii\framework\web\CWebApplication.php(283): CustomerBoxController->run()
+#19 C:\wamp\www\yii\framework\web\CWebApplication.php(142): CWebApplication->runController()
+#20 C:\wamp\www\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#21 C:\wamp\www\foodbox\index.php(19): CWebApplication->run()
+REQUEST_URI=/foodbox/index.php?r=customerBox/order
+in C:\wamp\www\foodbox\protected\views\customerBox\order.php (118)
+in C:\wamp\www\foodbox\protected\controllers\CustomerBoxController.php (246)
+in C:\wamp\www\foodbox\index.php (19)
+2012/08/10 10:02:38 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'box_size_id' in 'where clause'. The SQL statement executed was: SELECT `t`.`box_id` AS `t0_c0`, `t`.`size_id` AS `t0_c1`, `t`.`box_price` AS `t0_c2`, `t`.`week_id` AS `t0_c3`, `Week`.`week_id` AS `t1_c0`, `Week`.`week_delivery_date` AS `t1_c1`, `Week`.`week_notes` AS `t1_c2` FROM `boxes` `t`  LEFT OUTER JOIN `weeks` `Week` ON (`t`.`week_id`=`Week`.`week_id`)  WHERE (date_sub(week_delivery_date, interval 7 day) > NOW() AND
+						 box_size_id=1).
+in C:\wamp\www\foodbox\protected\controllers\CustomerBoxController.php (220)
+in C:\wamp\www\foodbox\index.php (19)
+2012/08/10 10:02:38 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'box_size_id' in 'where clause'. The SQL statement executed was: SELECT `t`.`box_id` AS `t0_c0`, `t`.`size_id` AS `t0_c1`, `t`.`box_price` AS `t0_c2`, `t`.`week_id` AS `t0_c3`, `Week`.`week_id` AS `t1_c0`, `Week`.`week_delivery_date` AS `t1_c1`, `Week`.`week_notes` AS `t1_c2` FROM `boxes` `t`  LEFT OUTER JOIN `weeks` `Week` ON (`t`.`week_id`=`Week`.`week_id`)  WHERE (date_sub(week_delivery_date, interval 7 day) > NOW() AND
+						 box_size_id=1)' in C:\wamp\www\yii\framework\db\CDbCommand.php:528
+Stack trace:
+#0 C:\wamp\www\yii\framework\db\CDbCommand.php(390): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 C:\wamp\www\yii\framework\db\ar\CActiveFinder.php(786): CDbCommand->queryAll()
+#2 C:\wamp\www\yii\framework\db\ar\CActiveFinder.php(420): CJoinElement->runQuery(Object(CJoinQuery))
+#3 C:\wamp\www\yii\framework\db\ar\CActiveFinder.php(70): CJoinElement->find(Object(CDbCriteria))
+#4 C:\wamp\www\yii\framework\db\ar\CActiveRecord.php(1291): CActiveFinder->query(Object(CDbCriteria), true)
+#5 C:\wamp\www\yii\framework\db\ar\CActiveRecord.php(1405): CActiveRecord->query(Object(CDbCriteria), true)
+#6 C:\wamp\www\foodbox\protected\controllers\CustomerBoxController.php(220): CActiveRecord->findAll('date_sub(week_d...')
+#7 C:\wamp\www\yii\framework\web\actions\CInlineAction.php(50): CustomerBoxController->actionOrder()
+#8 C:\wamp\www\yii\framework\web\CController.php(309): CInlineAction->runWithParams(Array)
+#9 C:\wamp\www\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#10 C:\wamp\www\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#11 C:\wamp\www\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#12 C:\wamp\www\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#13 C:\wamp\www\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#14 C:\wamp\www\yii\framework\web\CController.php(292): CFilterChain->run()
+#15 C:\wamp\www\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#16 C:\wamp\www\yii\framework\web\CWebApplication.php(283): CController->run('order')
+#17 C:\wamp\www\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('customerBox/ord...')
+#18 C:\wamp\www\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#19 C:\wamp\www\foodbox\index.php(19): CApplication->run()
+#20 {main}
+REQUEST_URI=/foodbox/index.php?r=customerBox/order
+HTTP_REFERER=http://localhost/foodbox/index.php?r=customerBox/order
+---
+2012/08/10 10:07:30 [error] [exception.CException] exception 'CException' with message 'Property "Box.id" is not defined.' in C:\wamp\www\yii\framework\base\CComponent.php:131
+Stack trace:
+#0 C:\wamp\www\yii\framework\db\ar\CActiveRecord.php(144): CComponent->__get('id')
+#1 C:\wamp\www\foodbox\protected\controllers\CustomerBoxController.php(223): CActiveRecord->__get('id')
+#2 C:\wamp\www\yii\framework\web\actions\CInlineAction.php(50): CustomerBoxController->actionOrder()
+#3 C:\wamp\www\yii\framework\web\CController.php(309): CInlineAction->runWithParams(Array)
+#4 C:\wamp\www\yii\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#5 C:\wamp\www\yii\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#6 C:\wamp\www\yii\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#7 C:\wamp\www\yii\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#8 C:\wamp\www\yii\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#9 C:\wamp\www\yii\framework\web\CController.php(292): CFilterChain->run()
+#10 C:\wamp\www\yii\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#11 C:\wamp\www\yii\framework\web\CWebApplication.php(283): CController->run('order')
+#12 C:\wamp\www\yii\framework\web\CWebApplication.php(142): CWebApplication->runController('customerBox/ord...')
+#13 C:\wamp\www\yii\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#14 C:\wamp\www\foodbox\index.php(19): CApplication->run()
+#15 {main}
+REQUEST_URI=/foodbox/index.php?r=customerBox/order
+HTTP_REFERER=http://localhost/foodbox/index.php?r=customerBox/order
+---
