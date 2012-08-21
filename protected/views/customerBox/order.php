@@ -5,8 +5,8 @@
 	$cs->registerCoreScript('jquery.ui');
 	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/ui.spinner.min.js', CClientScript::POS_END);
 ?>
+<p>Time now: <?php echo date('d-m-y H:i:s') ?></p>
 <h1>Orders</h1>
-
 <div id="allOrders" class="half">
 	<?php $form=$this->beginWidget('CActiveForm', array(
 		'id'=>'customer-order-form',
@@ -62,7 +62,7 @@
 			<tr class="date <?php echo $classes ?>">				
 				<td colspan="<?php echo sizeof($BoxSizes)+3 ?>">
 					<strong>Delivery: </strong><?php echo Yii::app()->snapFormat->dayOfYear($Week->week_delivery_date) ?> - 
-					<strong>Deadline: </strong><?php echo Yii::app()->snapFormat->dayOfYear($Week->deadline) ?><br /><br />
+					<strong>Deadline: </strong><?php echo Yii::app()->snapFormat->dayOfYear($Week->deadline) ?>
 				</td>
 			</tr>
 			<tr class="order <?php echo $classes ?>">
