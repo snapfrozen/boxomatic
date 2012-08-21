@@ -203,6 +203,13 @@ div.grid-view
 	padding-left:160px;
 }
 
+.info.half .label {
+	width:350px;
+}
+.info.half .value {
+	padding-left:360px;
+}
+
 .info span.number {
 	text-align:right;
 }

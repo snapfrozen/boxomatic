@@ -1,10 +1,27 @@
+<?php
+	$cs=Yii::app()->clientScript;
+	$cs->registerCssFile(Yii::app()->request->baseUrl . '/css/redmond/jquery-ui.css');
+	$cs->registerCssFile(Yii::app()->request->baseUrl . '/css/ui.spinner.css');
+	$cs->registerCoreScript('jquery.ui');
+	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/ui.spinner.min.js', CClientScript::POS_END);
+?>
 <h1>Orders</h1>
 
 <div id="allOrders" class="half">
 	<?php $form=$this->beginWidget('CActiveForm', array(
 		'id'=>'customer-order-form',
 		'enableAjaxValidation'=>false,
-	)); ?>
+	)); 
+	echo $form->hiddenField($Customer->Location, 'location_delivery_value');
+	?>
+	<p>
+		<?php 
+			if(isset($_GET['all']))
+				echo CHtml::link('View current orders',array('order'));
+			else
+				echo CHtml::link('View all orders',array('order','all'=>'true'));
+		?>
+	</p>
 	<div class="row buttons">
 		<?php echo CHtml::submitButton('Update Orders'); ?>
 	</div>
@@ -19,38 +36,45 @@
 		</thead>
 		<tbody>
 			<?php 
-			$runningBalance=$Customer->fulfilled_order_total; //variable to track how many weeks the current balance will last
+			$runningBalance=$Customer->totalPayments - $Customer->fulfilled_order_total; //variable to track how many weeks the current balance will last
 
 			foreach($Weeks as $Week): 
 				
-			$CustomerBox=null;
-			$runningBalance-=$Customer->totalByWeek($Week->week_id);
-			
-			$disabled='';
-			$classes='';
-			if(strtotime($Week->week_delivery_date) < $deadline) {
-				$disabled='disabled';
-				$classes.=' pastDeadline';
-			}
+				$CustomerBox=null;
+				$disabled='';
+				$classes='';
+				
+				if(strtotime($Week->week_delivery_date) < $deadline) {
+					$disabled='disabled';
+					$classes.=' pastDeadline';
+				} else {
+					//only subtract the running balance if it hasn't already been subtracted from their credit (i.e. past the deadline)
+					$runningBalance-=$Customer->totalByWeek($Week->week_id);
+				}
 
-			if($runningBalance > 0) {
-				$classes.=' enoughCredit';
-			}
+				if($runningBalance >= 0) {
+					$classes.=' enoughCredit';
+				} else if ($runningBalance < 0  && time() > strtotime('-14 days', strtotime($Week->week_delivery_date))) {
+					$classes.=' insufficientCredit';
+				}
 			
 			?>
 			<tr class="date <?php echo $classes ?>">				
 				<td colspan="<?php echo sizeof($BoxSizes)+3 ?>">
-					<?php echo Yii::app()->snapFormat->dayOfYear($Week->week_delivery_date) ?>
-					<?php if(!empty($disabled)) echo ' - Past delivery deadline' ?>
+					<strong>Delivery: </strong><?php echo Yii::app()->snapFormat->dayOfYear($Week->week_delivery_date) ?> - 
+					<strong>Deadline: </strong><?php echo Yii::app()->snapFormat->dayOfYear($Week->deadline) ?><br /><br />
 				</td>
 			</tr>
-			<tr class="<?php echo $classes ?>">
+			<tr class="order <?php echo $classes ?>">
 				<?php foreach($Week->Boxes as $Box): 
 				$CustomerBox=CustomerBox::model()->findByAttributes(array('box_id'=>$Box->box_id, 'customer_id'=>Yii::app()->user->customer_id));
 				$quantity=$CustomerBox ? $CustomerBox->quantity : 0;
+				$attribs=array('class'=>'number','min'=>'0');
+				if($disabled)
+					$attribs+=array('disabled'=>'disabled')
 				?>
 				<td>
-					<?php echo CHtml::textField('Orders[b_' . $Box->box_id . ']', $quantity, array('class'=>'number',$disabled=>$disabled)) ?>
+					<?php echo CHtml::textField('Orders[b_' . $Box->box_id . ']', $quantity, $attribs) ?>
 				</td>
 				<?php endforeach; ?>
 				<td>
@@ -83,7 +107,7 @@
 		</div>
 		<?php endforeach; ?>
 		<div class="row">
-			<span class="label">Delivery (per box)</span>
+			<span class="label">Delivery to <?php echo $Customer->Location->location_name ?> (per box)</span>
 			<span class="value number"><?php echo Yii::app()->snapFormat->currency($Customer->Location->location_delivery_value); ?></span>
 		</div>
 	</div>
@@ -100,7 +124,7 @@
 				<span class="value number"><?php echo Yii::app()->snapFormat->currency($Customer->totalPayments); ?></span>
 			</div>
 			<div class="row total">
-				<span class="label">Credit</span>
+				<span class="label">Credit	</span>
 				<span class="value number"><?php echo Yii::app()->snapFormat->currency($Customer->balance); ?></span>
 			</div>
 		</div>
@@ -130,9 +154,13 @@
 			<tbody>
 			<?php foreach($BoxSizes as $BoxSize): ?>
 			<td>
-				<?php echo CHtml::textField('Recurring[bs_' . $BoxSize->box_size_id . ']','',array('class'=>'number')); ?>
+				<?php echo CHtml::textField('Recurring[bs_' . $BoxSize->box_size_id . ']','0',array('class'=>'number','min'=>0)); ?>
+				<?php echo $form->hiddenField($BoxSize,'box_size_price', array('id'=>'bs_value_' . $BoxSize->box_size_id)); ?>	
 			</td>
 			<?php endforeach; ?>
+			<td class="recBoxes"></td>
+			<td class="recDelivery"></td>
+			<td class="recTotal"></td>
 		</table>
 		
 		<div class="row buttons">

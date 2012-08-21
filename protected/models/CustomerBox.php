@@ -46,7 +46,7 @@ class CustomerBox extends CActiveRecord
 		return array(
 			array('customer_id, quantity', 'required'),
 			array('box_id', 'required', 'message'=>'Please select a box'),
-			array('customer_id, box_id, quantity', 'numerical', 'integerOnly'=>true),
+			array('customer_id, box_id, quantity', 'numerical', 'integerOnly'=>true, 'min'=>0),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('customer_box_id, customer_id, box_id, quantity', 'safe', 'on'=>'search'),
@@ -116,6 +116,19 @@ class CustomerBox extends CActiveRecord
 	{
 		$price = ($this->Box->box_price * $this->quantity) + ($this->Customer->Location->location_delivery_value * $this->quantity);
 		return Yii::app()->snapFormat->currency($price);
+	}
+	
+	/*
+	 * Only allow changes before the delivery deadline if the user is not an admin
+	 */
+	public function beforeSave()
+	{
+		$Week=$this->Box->Week;
+		
+		if(time() > strtotime($Week->deadline) && !Yii::app()->user->checkAccess('admin'))
+			return false;
+		else 
+			return true;
 	}
 	
 	/**

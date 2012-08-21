@@ -116,4 +116,14 @@ class Week extends CActiveRecord
 		$week=self::model()->find($criteria);
 		return $week;
 	}
+	
+	/**
+	 * Get the deadline for this week
+	 */
+	public function getDeadline()
+	{
+		$deadlineDays=Yii::app()->params['orderDeadlineDays'];
+		$deliveryDate=strtotime($this->week_delivery_date);
+		return date('d-m-Y', strtotime('-' . $deadlineDays . ' days', $deliveryDate));
+	}
 }

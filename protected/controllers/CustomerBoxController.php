@@ -202,9 +202,15 @@ class CustomerBoxController extends Controller
 		$Customer=Customer::model()->findByPk(Yii::app()->user->customer_id);
 
 		$deadlineDays=Yii::app()->params['orderDeadlineDays'];
-//		$Weeks=Week::model()->findAll("date_sub(week_delivery_date, interval $deadlineDays day) > NOW()");
-		$Weeks=Week::model()->findAll("week_delivery_date > NOW()");
-//		$Weeks=Week::model()->findAll();
+		
+		if(isset($_GET['all']))
+			$Weeks=Week::model()->findAll();
+		else
+			$Weeks=Week::model()->findAll(array(
+				'condition'=>'week_delivery_date > NOW()',
+				//'limit'=>'10'
+			));
+		
 		$BoxSizes=BoxSize::model()->findAll(array('order'=>'box_size_name DESC'));
 		
 		if(isset($_POST['btn_recurring'])) //recurring order button pressed

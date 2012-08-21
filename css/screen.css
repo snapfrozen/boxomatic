@@ -253,7 +253,10 @@ hr.space {background:#fff;color:#fff;visibility:hidden;}
 	width:auto;
 }
 	#allOrders .enoughCredit {
-		background:#d8ffd8;
+		background:#ddffdd;
+	}
+	#allOrders .insufficientCredit {
+		background:#ffdddd;
 	}
 	#allOrders .pastDeadline {
 		background:#eee;
@@ -262,9 +265,12 @@ hr.space {background:#fff;color:#fff;visibility:hidden;}
 		color:#888;
 	}
 		#allOrders td {
-			padding-bottom:.5em;
+			padding-bottom:.75em;
 		}
 		#allOrders .date td {
 			padding-top:.75em;
+		}
+		#allOrders .order td {
+			border-bottom:1px solid #ccc;
 		}
 		

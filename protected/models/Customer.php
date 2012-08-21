@@ -58,11 +58,10 @@ class Customer extends CActiveRecord
 			'User' => array(self::HAS_ONE, 'User', 'id'),
 			'CustomerBoxes' => array(self::HAS_MANY, 'CustomerBox', 'customer_id'),
 			'Boxes' => array(self::MANY_MANY, 'Box', 'customer_boxes(customer_id,box_id)'),
-			
 			'Location' => array(self::BELONGS_TO, 'Location', 'location_id'),
 			'totalOrders'=>array(
                 self::STAT, 'Box', 'customer_boxes(customer_id, box_id)', 
-				'select' => 'SUM((box_price * quantity) + delivery_cost)',
+				'select' => 'SUM((box_price * quantity) + (delivery_cost * quantity))',
             ),
 			'totalPayments'=>array(
                 self::STAT, 'CustomerPayment', 'customer_id', 'select' => 'SUM(payment_value)'
@@ -114,7 +113,7 @@ class Customer extends CActiveRecord
 		$criteria=new CDbCriteria;
 		$criteria->condition = 'week_id=:weekId AND customer_id=:customerId';
 		$criteria->params = array(':weekId'=>$weekId,':customerId'=>$customerId);
-		$criteria->select = 'SUM((box_price * quantity) + delivery_cost) as week_total';
+		$criteria->select = 'SUM((box_price * quantity) + (delivery_cost * quantity)) as week_total';
 		
 		$result = CustomerBox::model()->with('Box')->find($criteria);		
 		return $result ? $result->week_total : '';
@@ -127,7 +126,7 @@ class Customer extends CActiveRecord
 		$criteria=new CDbCriteria;
 		$criteria->condition = 'week_id=:weekId AND customer_id=:customerId';
 		$criteria->params = array(':weekId'=>$weekId,':customerId'=>$customerId);
-		$criteria->select = 'SUM(delivery_cost) as week_total';
+		$criteria->select = 'SUM(delivery_cost * quantity) as week_total';
 		
 		$result = CustomerBox::model()->with('Box')->find($criteria);		
 		return $result ? $result->week_total : '';
@@ -157,7 +156,7 @@ class Customer extends CActiveRecord
 		$criteria->with = array('Box.Week');
 		$criteria->condition = 'week_delivery_date<=:weekDeadline AND customer_id=:customerId';
 		$criteria->params = array(':weekDeadline'=>$weekDeadline,':customerId'=>$customerId);
-		$criteria->select = 'SUM((box_price * quantity) + delivery_cost) as fulfilled_total';
+		$criteria->select = 'SUM((box_price * quantity) + (delivery_cost * quantity)) as fulfilled_total';
 		
 		$result = CustomerBox::model()->with('Box')->find($criteria);		
 		return $result ? $result->fulfilled_total : 0;

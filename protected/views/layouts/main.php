@@ -84,8 +84,9 @@
 	$action = Yii::app()->controller->getAction()->getId(); //current action
 
 	$jsFile = 'js/' . strtolower($controller) . '/' . strtolower($action) . '.js'; // filename to load
-	if( is_file($jsFile) ) { ?>
-	<script type="text/javascript" src="<?php echo Yii::app()->request->baseUrl . '/' . $jsFile;?>"></script>
-	<?php }	?>
+	if( is_file($jsFile) ) { 
+		Yii::app()->clientScript->registerCoreScript('jquery');
+		Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl . '/' . $jsFile,CClientScript::POS_END);
+	} ?>
 </body>
 </html>

@@ -29,7 +29,7 @@ class SnapFormat extends CApplicationComponent
 	 */
 	public function dayOfYear($day)
 	{
-		return Yii::app()->dateFormatter->format("EEEE, MMMM d, yyy",$day);
+		return Yii::app()->dateFormatter->format("EEE MMM d, yyy", $day);
 	}
 	
 	/**
