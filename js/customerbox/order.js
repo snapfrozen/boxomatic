@@ -1,10 +1,16 @@
 $('span.btnAdvanced').show();
 $('input.number').spinner();
 
-var $orderFormHeadings = $('form#customer-order-form thead th');
+var $orderFormHeadings = $('input.boxSizeLabel');
 var $recurringForm = $('form#reccuring-customer-order-form');
 var $recurringInputs = $('form#reccuring-customer-order-form input[type="text"]');
 var deliveryCost = parseFloat($('input#Location_location_delivery_value').val());
+
+$('select.deliverySelect').change(function(){
+	$elem = $(this);
+	var $tr = $elem.parents('tr:eq(0)');
+	$tr.next().find('.advanced input.number').trigger('change');
+});
 
 $recurringInputs.change(function(){
 	var boxTotal=0;
@@ -22,12 +28,13 @@ $recurringInputs.change(function(){
 	$recurringForm.find('td.recTotal').html('$' + (boxTotal + deliveryTotal).toFixed(2));
 });
 
-$('td.advanced input.number').change(function(){
+$('div.advanced input.number').change(function(){
 	var $elem = $(this);
 	var $tr = $elem.parents('tr:eq(0)');
-	var $inputs = $tr.find('td.advanced input.number');
+	var $inputs = $tr.find('div.advanced input.number');
 	var boxTotal=0;
 	var deliveryTotal=0;
+	var deliveryCost=locCosts[$tr.prev().find('select.deliverySelect').val()];
 	
 	$tr.addClass('dirty');
 	
@@ -45,30 +52,48 @@ $('td.advanced input.number').change(function(){
 
 $('span.btnAdvanced').click(function(){
 	var $elem = $(this);
+	
 	if($elem.hasClass('selected')) {
-		$elem.removeClass('selected');
-		$elem
-			.parents('tr:eq(0)')
-			.next()
-			.removeClass('show')
-			.next()
-			.addClass('show');
 		
+		if(window.confirm('This will reset your order for the week, are you sure?')) {
+			$elem.removeClass('selected');
+			$elem
+				.parents('td:eq(0)')
+				.next()
+				.find('div.advanced')
+				.removeClass('show')
+				.next()
+				.addClass('show');
+			
+				$elem
+					.parents('td:eq(0)')
+					.next()
+					.find('div.advanced input.number').val(0)
+					.trigger('change');
+
+				$elem
+					.parents('td:eq(0)')
+					.next()
+					.find('div.slider').slider('value',0);
+		}
+			
 	} else {
 		$elem.addClass('selected');
 		$elem
-			.parents('tr:eq(0)')
+			.parents('td:eq(0)')
 			.next()
+			.find('div.advanced')
 			.addClass('show')
 			.next()
 			.removeClass('show');
 	}
+
 });
 
 $('table div.slider').each(function(key,item){
 	
 	var $slider = $(item)
-	var $fields = $slider.parents('tr:eq(0)').prev().find('.advanced input.number');
+	var $fields = $slider.parents('td:eq(0)').find('.advanced input.number');
 	var $sliderLabels = $slider.next();
 	var sliderVal = 0;
 	var disabled = false;
@@ -90,7 +115,7 @@ $('table div.slider').each(function(key,item){
 		var quantity = parseInt($(this).val());
 		totalQuantity += quantity;
 		
-		var $newSpan = $('<span>' + $orderFormHeadings.eq(key+1).html() +  '</span>');
+		var $newSpan = $('<span>' + $orderFormHeadings.eq(key).val() +  '</span>');
 		$newSpan.css('left', percent + '%');
 		percent += percentIncrement;
 		$sliderLabels.append($newSpan);
@@ -99,11 +124,14 @@ $('table div.slider').each(function(key,item){
 	if(totalQuantity <= 1) //Hide advanced form if quantity less than one
 	{
 		$slider
-			.parents('tr:eq(0)')
+			.parents('div.simple')
 			.addClass('show')
 			.prev()
 			.removeClass('show')
-			.prev()
+			.prev();
+		
+		$slider
+			.parents('tr:eq(0)')
 			.find('.btnAdvanced')
 			.removeClass('selected');
 	}

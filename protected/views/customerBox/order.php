@@ -6,6 +6,9 @@
 	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/ui.touch-punch.min.js', CClientScript::POS_END);
 	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/ui.spinner.min.js', CClientScript::POS_END);
 ?>
+<script type="text/javascript">
+	var locCosts = <?php echo json_encode(CHtml::listData(Location::model()->findAll(),'location_id','location_delivery_value')) ?>;
+</script>
 <div id="allOrders" class="half">
 	<p>Time now: <?php echo date('d-m-y H:i:s') ?></p>
 	<h1>Orders</h1>
@@ -15,6 +18,9 @@
 	)); 
 	echo $form->hiddenField($Customer->Location, 'location_delivery_value');
 	echo CHtml::hiddenField('box_size_count', count($BoxSizes));
+	foreach($BoxSizes as $BoxSize){
+		echo CHtml::hiddenField('box_size_label_' . $BoxSize->box_size_id, $BoxSize->box_size_name[0], array('class'=>'boxSizeLabel'));
+	}
 	?>
 	<p><?php 
 		if(isset($_GET['all']))
@@ -28,9 +34,7 @@
 	<table>
 		<thead>
 			<th></th>
-			<?php foreach($BoxSizes as $BoxSize): ?>
-			<th class="center"><?php echo $BoxSize->box_size_name[0]; //Get first letter ?></th>
-			<?php endforeach; ?>
+			<th class="sizes">Sizes</th>
 			<th>Boxes</th>
 			<th>Delivery</th>
 			<th>Total</th>
@@ -61,49 +65,58 @@
 			
 			?>
 			<tr class="date <?php echo $classes ?>">
-				<td class="button"><span class="btnAdvanced selected">Adv</span></td>
-				<td colspan="<?php echo sizeof($BoxSizes)+3 ?>">
-					<strong>Delivery: </strong><?php echo Yii::app()->snapFormat->dayOfYear($Week->week_delivery_date) ?> 
+				<td colspan="5">
+					<strong><?php echo Yii::app()->snapFormat->dayOfYear($Week->week_delivery_date) ?></strong>
 					<?php 
-					
-						$TmpBox = $Week->Boxes[0];
-						$CustBox = CustomerBox::model()->findByAttributes(array('box_id'=>$TmpBox->box_id, 'customer_id'=>Yii::app()->user->customer_id));
-
+						$CustomerWeek=CustomerWeek::model()->findByAttributes(array('week_id'=>$Week->week_id, 'customer_id'=>Yii::app()->user->customer_id));
+						if(!$CustomerWeek) {
+							$CustomerWeek=new CustomerWeek;
+							$CustomerWeek->week_id=$Week->week_id;
+							$CustomerWeek->customer_id=Yii::app()->user->customer_id;
+							$CustomerWeek->location_id=$Customer->Location->location_id;
+							$CustomerWeek->save();
+						}
+						echo CHtml::hiddenField('delivery_price_'.$CustomerWeek->customer_week_id, $CustomerWeek->Location->location_delivery_value);
+						
+						$attribs=array('class'=>'deliverySelect');
+						if($disabled)
+							$attribs+=array('disabled'=>'disabled');
+						echo CHtml::dropDownList('CustWeeks[' . $CustomerWeek->customer_week_id . ']', $CustomerWeek->Location->location_id, CHtml::listData(Location::model()->findAll(),'location_id','location_and_delivery'),$attribs); 
 					?>
 					<!-- <strong>Order by: </strong><?php echo Yii::app()->snapFormat->dayOfYear($Week->deadline) ?> -->
 				</td>
 			</tr>
-			<tr class="show <?php echo $classes ?>">
-				<td class="advanced"></td>
-				<?php foreach($Week->Boxes as $Box):
-				$CustomerBox=CustomerBox::model()->findByAttributes(array('box_id'=>$Box->box_id, 'customer_id'=>Yii::app()->user->customer_id));
-				$quantity=$CustomerBox ? $CustomerBox->quantity : 0;
-				$attribs=array('class'=>'number','min'=>'0');
-				if($disabled)
-					$attribs+=array('disabled'=>'disabled')
-				?>
-				<td class="advanced">
-					<span class="content">
-						<?php echo CHtml::textField('Orders[b_' . $Box->box_id . ']', $quantity, $attribs) ?>
-						<?php echo CHtml::hiddenField('box_value', $Box->box_price,  array('id'=>'b_value_' . $Box->box_id)); ?>	
-					</span>
+			<tr class="bottom <?php echo $classes ?>">
+				<td class="button"><span class="btnAdvanced selected" title="Buy more than one box">Advanced</span></td>
+				<td>
+					<div class="advanced show">
+					<?php foreach($Week->Boxes as $Box):
+					$CustomerBox=CustomerBox::model()->findByAttributes(array('box_id'=>$Box->box_id, 'customer_id'=>Yii::app()->user->customer_id));
+					$quantity=$CustomerBox ? $CustomerBox->quantity : 0;
+					$attribs=array('class'=>'number','min'=>'0');
+					if($disabled)
+						$attribs+=array('disabled'=>'disabled')
+					?>
+						<div>
+							<?php echo CHtml::textField('Orders[b_' . $Box->box_id . ']', $quantity, $attribs) ?>
+							<?php echo CHtml::hiddenField('box_value', $Box->box_price,  array('id'=>'b_value_' . $Box->box_id)); ?>	
+							<span class="units"><?php echo $Box->BoxSize->box_size_name[0]; ?></span>
+						</div>
+					<?php endforeach; ?>
+					</div>
+					<div class="simple">
+						<div class="slider"></div>
+						<div class="sliderLabels"></div>
+					</div>
 				</td>
-				<?php endforeach; ?>
-				<td class="bottom price boxes" rowspan="2">
+				<td class="bottom price boxes">
 					<?php echo Yii::app()->snapFormat->currency($Customer->totalBoxesByWeek($Week->week_id)) ?>
 				</td>
-				<td class="bottom price delivery" rowspan="2">
+				<td class="bottom price delivery">
 				<?php echo Yii::app()->snapFormat->currency($Customer->totalDeliveryByWeek($Week->week_id)); ?>
 				</td>
-				<td class="bottom price total" rowspan="2">
+				<td class="bottom price total">
 					<strong><?php echo Yii::app()->snapFormat->currency($Customer->totalByWeek($Week->week_id)) ?></strong>
-				</td>
-			</tr>
-			<tr class="selector bottom <?php echo $classes ?>">
-				<td colspan="<?php echo count($Week->Boxes) + 1?>">
-					<div class="slider"></div>
-					<div class="sliderLabels">
-					</div>
 				</td>
 			</tr>
 			<?php endforeach; ?>

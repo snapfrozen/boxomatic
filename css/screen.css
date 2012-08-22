@@ -248,15 +248,17 @@ hr.space {background:#fff;color:#fff;visibility:hidden;}
 }
 
 /* All Orders Page */
-th.center {
+th.sizes {
 	text-align:center;
-	min-width:42px;
+	min-width:160px;
 }
 .dirty .price {
 	color:#a00;
 }
+
 #allOrders td.button {
 	padding:8px 0 0 8px;
+	vertical-align:top;
 }
 
 #reccuring-customer-order-form table,
@@ -264,10 +266,10 @@ th.center {
 	width:auto;
 }
 	#allOrders .enoughCredit {
-		background:#ddffdd;
+		background:#eeffee;
 	}
 	#allOrders .insufficientCredit {
-		background:#ffdddd;
+		background:#ffeeee;
 	}
 	#allOrders .pastDeadline {
 		background:#eee;
@@ -275,6 +277,10 @@ th.center {
 	#allOrders .date {
 		color:#888;
 	}
+		#allOrders .date strong {
+			padding:1px 0 3px 5px;
+			float:left;
+		}
 		#allOrders tr.show td.advanced,
 		#allOrders tr.selector.show td,
 		#allOrders td {
@@ -284,27 +290,52 @@ th.center {
 		#allOrders .bottom td {
 			border-bottom:1px solid #ccc;
 		}
-		
-#allOrders .slider {
-	margin:4px 20px 0 15px;
-	height:12px;
+#allOrders .deliverySelect {
+	border:1px solid transparent;
+	color:#888;
+	background:transparent;
+	width:280px;
+	float:right;
+	margin:0 0 0 15px;
 }
+	#allOrders .deliverySelect:hover {
+		border:1px solid #ccc;
+	}
+
 #allOrders td.advanced,
 #allOrders .selector td {
 	padding:0;
 }
 
-#allOrders tr.selector .sliderLabels,
-#allOrders tr.selector .slider,
-#allOrders td.advanced .content {
+#allOrders .advanced,
+#allOrders .simple {
 	display:none;
 }
-#allOrders tr.selector.show .sliderLabels,
-#allOrders tr.selector.show .slider,
-#allOrders tr.show td.advanced .content {
+#allOrders div.advanced.show,
+#allOrders div.simple.show {
 	display:block;
 }
-#allOrders .sliderLabels {display:block; margin:0 25px 4px 20px; position:relative; display:block; height:15px;}
+	#allOrders div.advanced div {
+		float:left;
+		margin-right:10px;
+	}
+		#allOrders div.advanced div span.units {
+			display:block;
+			font-size:10px;
+			padding-left:12px;
+		}
+		
+#allOrders .price {
+	padding-top:10px;
+	vertical-align:top;
+}		
+		
+#allOrders .slider {
+	margin:4px 0px 0 10px;
+	height:12px;
+}
+
+#allOrders .sliderLabels {display:block; margin:0 5px 4px 15px; position:relative; display:block; height:15px;}
 	#allOrders .sliderLabels span {
 		position:absolute; 
 		background:transparent url('../images/layout/slider_tick.gif') no-repeat scroll 50% -2px;
@@ -318,8 +349,9 @@ th.center {
 
 		
 span.btnAdvanced {
-	width:30px;
-	height:30px;
+	width:20px;
+	height:20px;
+	margin-top:5px;
 	text-indent:-9000px;
 	background:transparent url('../images/icons/advanced.png') no-repeat top left;
 	float:left;
@@ -327,8 +359,11 @@ span.btnAdvanced {
 	display:none;
 }
 span.btnAdvanced.selected {
-	background-position:0 -30px;
+	background-position:0 -20px;
 }
 span.btnAdvanced:hover {
-	background-position:0 -60px;
+	background-position:0 -40px;
+}
+.pastDeadline span.btnAdvanced {
+	display:none !important;
 }

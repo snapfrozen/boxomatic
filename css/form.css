@@ -216,6 +216,7 @@ div.grid-view
 
 input.number {
 	width:35px;
+	padding:2px;
 }
 
 div.total {

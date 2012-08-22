@@ -287,6 +287,27 @@ class CustomerBoxController extends Controller
 				}
 			}
 		}
+		
+		if(isset($_POST['CustWeeks']))
+		{
+			foreach($_POST['CustWeeks'] as $key=>$locationId)
+			{
+				$CustWeek=CustomerWeek::model()->findByPk($key);
+				$CustWeek->location_id=$locationId;
+				$CustWeek->save();
+				
+				$CustBoxesWeek=CustomerBox::model()->with('Box')->findAll(
+					'customer_id=:customerId AND Box.week_id=:weekId', array(
+						'customerId'=>Yii::app()->user->customer_id,
+						'weekId'=>$CustWeek->week_id
+					));
+				
+				foreach($CustBoxesWeek as $CustBox) {
+					$CustBox->delivery_cost=$CustWeek->Location->location_delivery_value;					
+					$CustBox->save();
+				}
+			}
+		}
 
 		$this->render('order',array(
 			'model'=>$model,
