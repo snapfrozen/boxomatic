@@ -215,10 +215,10 @@ div.grid-view
 }
 
 input.number {
-	width:45px;
+	width:35px;
 }
 
-.total {
+div.total {
 	border-top:1px solid #999;
 	padding-top:3px;
 	margin-top:3px;

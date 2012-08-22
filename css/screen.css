@@ -248,6 +248,17 @@ hr.space {background:#fff;color:#fff;visibility:hidden;}
 }
 
 /* All Orders Page */
+th.center {
+	text-align:center;
+	min-width:42px;
+}
+.dirty .price {
+	color:#a00;
+}
+#allOrders td.button {
+	padding:8px 0 0 8px;
+}
+
 #reccuring-customer-order-form table,
 #allOrders table {
 	width:auto;
@@ -264,13 +275,45 @@ hr.space {background:#fff;color:#fff;visibility:hidden;}
 	#allOrders .date {
 		color:#888;
 	}
+		#allOrders tr.show td.advanced,
+		#allOrders tr.selector.show td,
 		#allOrders td {
-			padding-bottom:.75em;
+			padding:8px;
 		}
-		#allOrders .date td {
-			padding-top:.75em;
-		}
-		#allOrders .order td {
+		#allOrders td.bottom,
+		#allOrders .bottom td {
 			border-bottom:1px solid #ccc;
 		}
 		
+#allOrders .slider {
+	margin:4px 25px 4px 15px;
+	height:12px;
+}
+#allOrders td.advanced,
+#allOrders .selector td {
+	padding:0;
+}
+#allOrders tr.selector .slider,
+#allOrders td.advanced .content {
+	display:none;
+}
+#allOrders tr.selector.show .slider,
+#allOrders tr.show td.advanced .content {
+	display:block;
+}
+		
+span.btnAdvanced {
+	width:30px;
+	height:30px;
+	text-indent:-9000px;
+	background:transparent url('../images/icons/advanced.png') no-repeat top left;
+	float:left;
+	cursor:pointer;
+	display:none;
+}
+span.btnAdvanced.selected {
+	background-position:0 -30px;
+}
+span.btnAdvanced:hover {
+	background-position:0 -60px;
+}

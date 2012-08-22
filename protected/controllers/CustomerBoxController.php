@@ -208,7 +208,7 @@ class CustomerBoxController extends Controller
 		else
 			$Weeks=Week::model()->findAll(array(
 				'condition'=>'week_delivery_date > NOW()',
-				//'limit'=>'10'
+				'limit'=>'5'
 			));
 		
 		$BoxSizes=BoxSize::model()->findAll(array('order'=>'box_size_name DESC'));

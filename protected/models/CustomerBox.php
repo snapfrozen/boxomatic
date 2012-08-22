@@ -125,7 +125,7 @@ class CustomerBox extends CActiveRecord
 	{
 		$Week=$this->Box->Week;
 		
-		if(time() > strtotime($Week->deadline) && !Yii::app()->user->checkAccess('admin'))
+		if(time() > strtotime($Week->deadline))
 			return false;
 		else 
 			return true;
