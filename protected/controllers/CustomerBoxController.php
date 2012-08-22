@@ -196,7 +196,7 @@ class CustomerBoxController extends Controller
 	/**
 	 * Manages all models.
 	 */
-	public function actionOrder()
+	public function actionOrder($show=4)
 	{
 		$model=new CustomerBox();
 		$Customer=Customer::model()->findByPk(Yii::app()->user->customer_id);
@@ -208,7 +208,7 @@ class CustomerBoxController extends Controller
 		else
 			$Weeks=Week::model()->findAll(array(
 				'condition'=>'week_delivery_date > NOW()',
-				'limit'=>'5'
+				'limit'=>$show+1
 			));
 		
 		$BoxSizes=BoxSize::model()->findAll(array('order'=>'box_size_name DESC'));
@@ -294,6 +294,7 @@ class CustomerBoxController extends Controller
 			'Customer'=>$Customer,
 			'BoxSizes'=>$BoxSizes,
 			'deadline'=>strtotime('+'.$deadlineDays.' days'),
+			'show'=>$show,
 		));
 	}
 

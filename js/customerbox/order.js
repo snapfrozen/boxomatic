@@ -1,6 +1,7 @@
 $('span.btnAdvanced').show();
 $('input.number').spinner();
 
+var $orderFormHeadings = $('form#customer-order-form thead th');
 var $recurringForm = $('form#reccuring-customer-order-form');
 var $recurringInputs = $('form#reccuring-customer-order-form input[type="text"]');
 var deliveryCost = parseFloat($('input#Location_location_delivery_value').val());
@@ -16,7 +17,7 @@ $recurringInputs.change(function(){
 		deliveryTotal += deliveryCost * quantity;
 	});
 	
-	$recurringForm.find('td.recBoxes').html('$' + boxTota.toFixed(2));
+	$recurringForm.find('td.recBoxes').html('$' + boxTotal.toFixed(2));
 	$recurringForm.find('td.recDelivery').html('$' + deliveryTotal.toFixed(2));
 	$recurringForm.find('td.recTotal').html('$' + (boxTotal + deliveryTotal).toFixed(2));
 });
@@ -65,8 +66,10 @@ $('span.btnAdvanced').click(function(){
 });
 
 $('table div.slider').each(function(key,item){
+	
 	var $slider = $(item)
 	var $fields = $slider.parents('tr:eq(0)').prev().find('.advanced input.number');
+	var $sliderLabels = $slider.next();
 	var sliderVal = 0;
 	var disabled = false;
 	
@@ -75,11 +78,24 @@ $('table div.slider').each(function(key,item){
 	}
 	
 	var totalQuantity = 0;
-	$fields.each(function(){
+	var percent = 0;
+	var percentIncrement = 100/$fields.length;
+	
+	var $newSpan = $('<span>Nil</span>');
+	$newSpan.css('left', percent + '%');
+	percent += percentIncrement;
+	$sliderLabels.append($newSpan);
+	
+	$fields.each(function(key){
 		var quantity = parseInt($(this).val());
 		totalQuantity += quantity;
+		
+		var $newSpan = $('<span>' + $orderFormHeadings.eq(key+1).html() +  '</span>');
+		$newSpan.css('left', percent + '%');
+		percent += percentIncrement;
+		$sliderLabels.append($newSpan);
 	});
-	
+
 	if(totalQuantity <= 1) //Hide advanced form if quantity less than one
 	{
 		$slider
@@ -106,8 +122,8 @@ $('table div.slider').each(function(key,item){
 			$fields.val(0);
 			if(index >= 0) {
 				$fields.eq(index).val(1);
-				$fields.eq(index).trigger('change');
 			}
+			$fields.eq(0).trigger('change');
 		},
 		value:sliderVal,
 		disabled:disabled

@@ -62,6 +62,7 @@ class CustomerBox extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'Customer' => array(self::BELONGS_TO, 'Customer', 'customer_id'),
+			'Location' => array(self::BELONGS_TO, 'Location', 'location_id'),
 			'Box' => array(self::BELONGS_TO, 'Box', 'box_id'),
 		);
 	}

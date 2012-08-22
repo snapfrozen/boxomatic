@@ -286,21 +286,36 @@ th.center {
 		}
 		
 #allOrders .slider {
-	margin:4px 25px 4px 15px;
+	margin:4px 20px 0 15px;
 	height:12px;
 }
 #allOrders td.advanced,
 #allOrders .selector td {
 	padding:0;
 }
+
+#allOrders tr.selector .sliderLabels,
 #allOrders tr.selector .slider,
 #allOrders td.advanced .content {
 	display:none;
 }
+#allOrders tr.selector.show .sliderLabels,
 #allOrders tr.selector.show .slider,
 #allOrders tr.show td.advanced .content {
 	display:block;
 }
+#allOrders .sliderLabels {display:block; margin:0 25px 4px 20px; position:relative; display:block; height:15px;}
+	#allOrders .sliderLabels span {
+		position:absolute; 
+		background:transparent url('../images/layout/slider_tick.gif') no-repeat scroll 50% -2px;
+		width:15px; 
+		height:15px; 
+		text-align:center; 
+		font-weight:normal; 
+		font-size:10px; 
+		margin-left:-8px; 
+		padding-top:5px}
+
 		
 span.btnAdvanced {
 	width:30px;
