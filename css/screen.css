@@ -278,7 +278,6 @@ th.sizes {
 		color:#888;
 	}
 		#allOrders .date strong {
-			padding:1px 0 3px 5px;
 			float:left;
 		}
 		#allOrders tr.show td.advanced,
@@ -294,17 +293,46 @@ th.sizes {
 	border:1px solid transparent;
 	color:#888;
 	background:transparent;
-	width:280px;
+	width:300px;
 	float:right;
 	margin:0 0 0 15px;
 }
-	#allOrders .deliverySelect:hover {
-		border:1px solid #ccc;
+	body .ui-widget {
+		font-size:1em;
 	}
+	#allOrders .ui-selectmenu {
+		font-size:1em;
+		margin:0;
+		float:right;
+		background:none;
+		border:none;
+		font-weight:normal;
+		height:auto;
+	}
+		.ui-selectmenu-open {
+			z-index:100 !important;
+			font-size:1em;
+		}
+		#allOrders .ui-selectmenu-status {
+			padding-top:0;
+			padding-bottom:0;
+			color:#888;
+			line-height:inherit;
+			white-space:nowrap;
+		}
+		#allOrders .ui-selectmenu-icon {
+			top:0;
+			right:0;
+			margin-top:0;
+			display:none;
+		}
+		#allOrders .ui-selectmenu:hover .ui-selectmenu-icon {
+			display:block;
+		}
 
-#allOrders td.advanced,
-#allOrders .selector td {
-	padding:0;
+#allOrders .advanced {
+	float:right;
+	margin-top:1px;
 }
 
 #allOrders .advanced,
@@ -318,6 +346,9 @@ th.sizes {
 	#allOrders div.advanced div {
 		float:left;
 		margin-right:10px;
+	}
+	#allOrders div.advanced div:last-child {
+		margin:0;
 	}
 		#allOrders div.advanced div span.units {
 			display:block;

@@ -2,9 +2,16 @@
 	$cs=Yii::app()->clientScript;
 	$cs->registerCssFile(Yii::app()->request->baseUrl . '/css/redmond/jquery-ui.css');
 	$cs->registerCssFile(Yii::app()->request->baseUrl . '/css/ui.spinner.css');
+	$cs->registerCssFile(Yii::app()->request->baseUrl . '/css/ui.selectmenu.css');
+	
+	
 	$cs->registerCoreScript('jquery.ui');
 	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/ui.touch-punch.min.js', CClientScript::POS_END);
+	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/jquery.ui.selectmenu.js', CClientScript::POS_END);
 	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/ui.spinner.min.js', CClientScript::POS_END);
+	
+	
+	
 ?>
 <script type="text/javascript">
 	var locCosts = <?php echo json_encode(CHtml::listData(Location::model()->findAll(),'location_id','location_delivery_value')) ?>;

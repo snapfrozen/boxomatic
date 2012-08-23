@@ -1,5 +1,7 @@
 $('span.btnAdvanced').show();
 $('input.number').spinner();
+$('select.deliverySelect').selectmenu();
+$('select.deliverySelect').removeClass('ui-widget')
 
 var $orderFormHeadings = $('input.boxSizeLabel');
 var $recurringForm = $('form#reccuring-customer-order-form');
