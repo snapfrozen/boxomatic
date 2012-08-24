@@ -74,7 +74,7 @@
 							$WeekBox->size_id;
 						?>
 						<th>
-							<?php echo $WeekBox->customerCount ?><br />
+							<?php //echo $WeekBox->customerCount ?><br />
 							<?php echo $WeekBox->BoxSize->box_size_name ?>
 						</th>
 						<?php endforeach; ?>
