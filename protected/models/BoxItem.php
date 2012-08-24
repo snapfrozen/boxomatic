@@ -12,6 +12,7 @@
  */
 class BoxItem extends CActiveRecord
 {
+	public $total;
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
@@ -39,7 +40,8 @@ class BoxItem extends CActiveRecord
 		// will receive user inputs.
 		return array(
 //			array('box_item_id', 'required'),
-			array('box_item_id, box_id, grower_id, item_quantity', 'numerical', 'integerOnly'=>true),
+			array('box_item_id, box_id, grower_id', 'numerical', 'integerOnly'=>true),
+			array('item_quantity', 'numerical'),
 			array('item_name, item_value', 'length', 'max'=>45),
 			array('item_unit', 'length', 'max'=>5),
 			// The following rule is used by search().
@@ -57,7 +59,7 @@ class BoxItem extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'Box' => array(self::BELONGS_TO, 'Box', 'box_id'),
-			'Grower' => array(self::BELONGS_TO, 'Grower', 'grower_id')
+			'Grower' => array(self::BELONGS_TO, 'Grower', 'grower_id'),
 		);
 	}
 
@@ -95,5 +97,23 @@ class BoxItem extends CActiveRecord
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
+	}
+	
+	/**
+	 * Returns the human readable unit label for the BoxItem
+	 */
+	public function getItem_unit_label()
+	{
+		return Yii::app()->params['itemUnits'][$this->item_unit];
+	}
+	
+	static function itemTotal($itemIds)
+	{
+		$Item = self::model()->find(array(
+			'select'=>'SUM(item_value * item_quantity) as total',
+			'condition'=>'box_item_id IN (' . $itemIds . ')',
+		));
+		
+		return $Item->total;
 	}
 }

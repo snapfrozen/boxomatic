@@ -62,6 +62,9 @@ class Boxes extends CActiveRecord
 			'BoxSize' => array(self::BELONGS_TO, 'BoxSize', 'size_id'),
 			'Week' => array(self::BELONGS_TO, 'Week', 'week_id'),
 			'CustomerBoxes' => array(self::HAS_MANY, 'CustomerBox', 'box_id'),
+			'customerCount'=> array(self::STAT, 'CustomerBox', 'box_id',
+
+            ),
 		);
 	}
 

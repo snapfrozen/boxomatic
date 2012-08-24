@@ -5,14 +5,14 @@ $this->menu=array(
 );
 ?>
 
-<h1>Create BoxItem</h1>
+<h1>Fill Boxes</h1>
 
 <?php echo $this->renderPartial('_form', array(
 	'model'=>$model,
 	'GrowerItems'=>$GrowerItems,
 	'Weeks'=>$Weeks,
-	'BoxSizes'=>$BoxSizes,
-	'CurrentBox'=>$CurrentBox,
-	'BoxItemData'=>$BoxItemData,
+	'WeekBoxes'=>$WeekBoxes,
+	'SelectedWeek'=>$SelectedWeek,
+	'NewItem'=>$NewItem,
 )); 
 ?>

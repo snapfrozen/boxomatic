@@ -90,6 +90,7 @@ body
 	padding:5px;
 	left:0;
 	background:#298dcd;
+	z-index:1000;
 }
 
 #mainmenu ul li:hover ul 

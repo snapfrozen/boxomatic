@@ -136,4 +136,12 @@ class GrowerItem extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+	
+	/**
+	 * Returns the human readable unit label for the GrowerItem
+	 */
+	public function getItem_unit_label()
+	{
+		return Yii::app()->params['itemUnits'][$this->item_unit];
+	}
 }

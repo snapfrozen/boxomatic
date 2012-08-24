@@ -217,6 +217,14 @@ div.grid-view
 input.number {
 	width:35px;
 	padding:2px;
+	border:1px solid #bbb;
+}
+
+input.decimal,
+input.currency {
+	width:55px;
+	padding:2px;
+	border:1px solid #bbb;
 }
 
 div.total {

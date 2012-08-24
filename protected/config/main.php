@@ -19,6 +19,7 @@ return array(
 		'application.components.*',
 		'application.components.snap.*',
 		'application.modules.user.models.*',
+		'ext.yii-mail.YiiMailMessage',
 	),
 
 	'modules'=>array(
@@ -52,6 +53,18 @@ return array(
 		'snapFormat'=>array(
 			'class'=>'SnapFormat',
 		),
+		
+		'phpThumb'=>array(
+			'class'=>'ext.EPhpThumb.EPhpThumb',
+		),
+
+		'mail' => array(
+ 			'class' => 'ext.yii-mail.YiiMail',
+ 			'transportType' => 'php',
+ 			'viewPath' => 'application.views.mail',
+ 			'logging' => true,
+ 			'dryRun' => false
+ 		),
 
 		'authManager'=>array(
 			'class'=>'CDbAuthManager',
@@ -139,9 +152,9 @@ return array(
 			'WA'=>'Western Australia',
 		),
 		'itemUnits'=>array(
-			'KG' => 'Per kg',
-	        'EA' => 'Each',
+			'EA' => 'Each',
 			'BUNCH' => 'Per bunch',
+			'KG' => 'Per kg',
 		),
 		'orderDeadlineDays'=>7, //orders must be placed within 7 days of delivery 
 		'deliveryDayOfWeek'=>3, //0 (for Sunday) through 6 (for Saturday)

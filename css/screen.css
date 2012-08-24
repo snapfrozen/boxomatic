@@ -398,3 +398,45 @@ span.btnAdvanced:hover {
 .pastDeadline span.btnAdvanced {
 	display:none !important;
 }
+
+/* Fill Boxes Page */
+
+#current-boxes .selected td,
+.grid-view table.items tr.active td {
+	background:#ffffbb;
+}
+
+#fillBoxForm .calendar {
+	float:left;
+	margin:0 20px 20px 0;
+}
+
+#inventory {
+	padding-left:260px;
+}
+
+#fillBoxForm .grid-view table.items tbody tr:hover {
+	background:transparent;
+}
+
+#fillBoxForm .itemValue {
+	white-space:nowrap;
+}
+
+#box-item-form .growerName {
+	width:100%;
+}
+#box-item-form thead th {
+	vertical-align:bottom;
+}
+
+tfoot tr:first-child td {
+	border-top:1px solid #ccc;
+}
+tfoot td {
+	font-style:normal;
+}
+tfoot td.total {
+	font-weight:bold;
+	text-align:right;
+}

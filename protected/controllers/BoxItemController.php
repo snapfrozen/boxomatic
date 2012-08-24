@@ -6,7 +6,7 @@ class BoxItemController extends Controller
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
 	 * using two-column layout. See 'protected/views/layouts/column2.php'.
 	 */
-	public $layout='//layouts/column2';
+	public $layout='//layouts/column1';
 
 	/**
 	 * @return array action filters
@@ -55,45 +55,83 @@ class BoxItemController extends Controller
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
-	public function actionCreate($weekId=null,$sizeId=null)
-	{
+	public function actionCreate($week=null,$item=null)
+	{	
 		$model=new BoxItem;
-			
+		$SelectedWeek=null;
+		$NewItem=null;
+		
+		if(isset($_POST['bc']))
+		{
+//			print_r($_POST);exit;
+			foreach($_POST['bc'] as $boxContents)
+			{
+				foreach($boxContents['BoxItem'] as $boxItem)
+				{
+					if(isset($boxItem['box_item_id']))
+						$BoxItem=BoxItem::model()->findByPk($boxItem['box_item_id']);
+					else 
+						$BoxItem=new BoxItem;
+					
+					//Delete if boxItem exists and quantity has been set to 0
+					if(isset($boxItem['box_item_id']) && $boxItem['item_quantity']==0) 
+					{
+						$BoxItem->delete();
+					}
+					
+					if($boxItem['item_quantity']>0) 
+					{
+						$BoxItem->item_name=$boxContents['item_name'];
+						$BoxItem->grower_id=$boxContents['grower_id'];
+						$BoxItem->item_unit=$boxContents['item_unit'];
+						$BoxItem->item_value=$boxContents['item_value'];
+						$BoxItem->item_quantity=$boxItem['item_quantity'];
+						$BoxItem->box_id=$boxItem['box_id'];
+						$BoxItem->save();
+					}
+				}
+			}
+		}
+		
 		$GrowerItems=new GrowerItem('search');
 		$GrowerItems->unsetAttributes();  // clear any default values
 		if(isset($_GET['GrowerItem']))
 			$GrowerItems->attributes=$_GET['GrowerItem'];
 		
-		$Weeks=new Week('search');
-		$BoxSizes=new BoxSize('search');
+		$Weeks=Week::model()->findAll();
+		//$Weeks=Week::model()->findAll('week_delivery_date > NOW()');
 
-		$CurrentBox=null;
-		$BoxItemData=null;
-		$criteria=new CDbCriteria();
+		//Item has been selected from inventory, if it doesn't exist in the week
+		//Load it to be added as a new row up the top of the box item list
+		if($item) 
+		{
+			$NewItem=GrowerItem::model()->findByPk($item);
+			$TmpItem=BoxItem::model()->with('Box')->findAll(
+				'item_name=:itemName AND 
+				grower_id=:growerId AND 
+				item_unit=:itemUnit AND 
+				item_value=:itemValue AND 
+				Box.week_id=:weekId',
+				array (
+					':itemName'=>$NewItem->item_name,
+					':growerId'=>$NewItem->grower_id,
+					':itemUnit'=>$NewItem->item_unit,
+					':itemValue'=>$NewItem->item_value,
+					':weekId'=>$week,
+				)
+			);
+			//Selected item already exists in the week, so don't show it 
+			//again at the boxes list
+			//if($TmpItem) 
+				//$NewItem=null;
+		}
 		
-		if($weekId && $sizeId)
-		{
-			$CurrentBox=Box::model()->find('week_id=:weekId AND size_id=:sizeId',array('weekId'=>$weekId,'sizeId'=>$sizeId));
-			if(!$CurrentBox)
-			{
-				$CurrentBox=new Box;
-				$CurrentBox->week_id=$weekId;
-				$CurrentBox->size_id=$sizeId;
-				$CurrentBox->box_price=BoxSize::model()->findByPk($sizeId)->box_size_price;
-				$CurrentBox->save();
-			}
-			$criteria->condition = 'box_id = ' . $CurrentBox->box_id;
+		//Get the boxes for the selected week
+		$WeekBoxes=null;
+		if($week) {
+			$WeekBoxes=Box::model()->findAll('week_id=:weekId',array('weekId'=>$week));
+			$SelectedWeek=Week::model()->findByPk($week);
 		}
-		else
-		{
-			//We need to load the BoxItemData below, but we don't want it to have any results
-			$criteria->condition = 'box_id = -1';
-		}
-
-		$BoxItemData=new CActiveDataProvider(BoxItem::model(), array(
-			'criteria'=>$criteria,
-			'pagination'=>false,
-		));
 
 		$this->performAjaxValidation($model);
 		if(isset($_POST['BoxItem']))
@@ -104,14 +142,14 @@ class BoxItemController extends Controller
 			$model->attributes=$_POST['BoxItem'];
 			$model->save();				
 		}
-
+		
 		$this->render('create',array(
 			'model'=>$model,
 			'GrowerItems'=>$GrowerItems,
 			'Weeks'=>$Weeks,
-			'BoxSizes'=>$BoxSizes,
-			'CurrentBox'=>$CurrentBox,
-			'BoxItemData'=>$BoxItemData,
+			'WeekBoxes'=>$WeekBoxes,
+			'SelectedWeek'=>$SelectedWeek,
+			'NewItem'=>$NewItem,
 		));
 	}
 
