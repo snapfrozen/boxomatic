@@ -404,6 +404,8 @@ span.btnAdvanced:hover {
 td.value {
 	text-align:right;
 }
+select.dirty,
+input.dirty,
 td.red {
 	color:#f00;
 }

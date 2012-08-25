@@ -63,6 +63,7 @@
 		'action'=>$this->createUrl('boxItem/create',array('week'=>Yii::app()->request->getQuery('week'))),
 		)); ?>	
 		<div id="current-boxes">
+		<?php echo CHtml::hiddenField('curUrl', $this->createUrl('boxItem/create',array('week'=>Yii::app()->request->getQuery('week')))); ?>
 		<?php if($SelectedWeek): ?>
 			<table>
 				<thead>

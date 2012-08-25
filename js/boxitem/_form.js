@@ -1,7 +1,61 @@
-$('input.number').spinner();
-$('input.currency, input.decimal').spinner({
-	places:2,
-	step:.05
+
+
+function loadSpinners()
+{
+	$('input.number').spinner();
+	$('input.currency, input.decimal').spinner({
+		places:2,
+		step:.05
+	});
+}
+loadSpinners();
+
+function reloadBoxes(url,data)
+{
+	var ajaxUpdate = ['current-boxes','grower-item-grid'];
+	$.ajax({
+		type: 'GET',
+		url: url,
+		data: data,
+		success: function(data,status) {
+			$.each(ajaxUpdate, function(i,v) {
+				var id='#'+v;
+				$(id).replaceWith($(id,'<div>'+data+'</div>'));
+			});
+			loadSpinners();
+		}
+	});
+}
+
+$('div#inventory, form#box-item-form').on('click', 'table a', function(){
+	var $a = $(this);
+	reloadBoxes($a.attr('href'),{});
+	return false;
+});
+
+$('form#box-item-form').on('change', 'input, select', function(){
+	$(this).addClass('dirty');
+});
+
+$('form#box-item-form').on('blur', 'input', function(){
+	
+	if(!$(this).hasClass('dirty'))
+		return;
+	
+	var ajaxUpdate = ['current-boxes'];
+	$.ajax({
+		type: 'POST',
+		url: $('input#curUrl').val(),
+		data: $('form#box-item-form').serialize(),
+		success: function(data,status) {
+			$.each(ajaxUpdate, function(i,v) {
+				var id='#'+v;
+				$(id).replaceWith($(id,'<div>'+data+'</div>'));
+			});
+			loadSpinners();
+		}
+	});
+	
 });
 
 $('.week-picker').datepicker({
@@ -16,7 +70,7 @@ $('.week-picker').datepicker({
 			var parts = week['week_delivery_date'].split('-');
 			var dateObj = new Date(parts[0],parts[1]-1,parts[2]);
 			if (dateObj.getTime() == date.getTime()) {
-				window.location.href = curUrl + '&week=' + week['week_id'];
+				reloadBoxes(curUrl,{week: week['week_id']});
 			}
 		});
 	},
@@ -54,8 +108,6 @@ $('.week-picker').datepicker({
 				return false; //break out of each loop
 			}
 		});
-		
-		
 
 		if(found)
 			return [true,cssClass,weekNotes];
