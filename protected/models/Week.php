@@ -58,10 +58,11 @@ class Week extends CActiveRecord
 				'with'=>'BoxSize',
 				'order'=>'box_size_name DESC'
 			),
-			'BoxItems' => array(self::HAS_MANY, 'BoxItem', array('box_id'=>'box_id'), 'through'=>'Boxes',
-				'order'=>'grower_id ASC',
-				'select'=>'BoxItem.item_name, BoxItem.grower_id, BoxItem.item_value, BoxItem.item_unit',
-				'group'=>'grower_id, item_name, item_value, item_unit'
+			'BoxItemsContent' => array(self::HAS_MANY, 'BoxItem', array('box_id'=>'box_id'), 'through'=>'Boxes',
+				'order'=>'Grower.grower_name ASC, BoxItemsContent.item_name',
+				'select'=>'BoxItem.item_name, BoxItem.grower_id, BoxItem.item_value, BoxItem.item_unit, GROUP_CONCAT(box_item_id) as box_item_ids',
+				'group'=>'BoxItemsContent.grower_id, item_name, item_value, item_unit',
+				'with'=>'Grower',
 			),
 			'totalBoxValue'=> array(self::STAT, 'Box', 'week_id',
 				'select'=>'SUM(item_value * item_quantity)',

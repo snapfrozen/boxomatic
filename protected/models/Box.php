@@ -63,6 +63,10 @@ class Box extends CActiveRecord
 			'totalValue'=>array(
                 self::STAT, 'BoxItem', 'box_id', 'select' => 'SUM(item_value * item_quantity)'
             ),
+			'CustomerBoxes'=> array(self::HAS_MANY, 'CustomerBox', 'box_id'),
+			'customerCount'=> array(self::STAT, 'CustomerBox', 'box_id',
+				'select'=>'SUM(quantity)'
+            ),
 		);
 	}
 

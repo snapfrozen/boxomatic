@@ -55,7 +55,7 @@ class BoxItemController extends Controller
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
-	public function actionCreate($week=null,$item=null)
+	public function actionCreate($week=null,$item=null,$grower=null)
 	{	
 		$model=new BoxItem;
 		$SelectedWeek=null;
@@ -63,18 +63,17 @@ class BoxItemController extends Controller
 		
 		if(isset($_POST['bc']))
 		{
-//			print_r($_POST);exit;
 			foreach($_POST['bc'] as $boxContents)
 			{
 				foreach($boxContents['BoxItem'] as $boxItem)
-				{
+				{	
 					if(isset($boxItem['box_item_id']))
 						$BoxItem=BoxItem::model()->findByPk($boxItem['box_item_id']);
 					else 
 						$BoxItem=new BoxItem;
 					
 					//Delete if boxItem exists and quantity has been set to 0
-					if(isset($boxItem['box_item_id']) && $boxItem['item_quantity']==0) 
+					if($BoxItem && isset($boxItem['box_item_id']) && $boxItem['item_quantity']==0) 
 					{
 						$BoxItem->delete();
 					}
@@ -101,12 +100,20 @@ class BoxItemController extends Controller
 		$Weeks=Week::model()->findAll();
 		//$Weeks=Week::model()->findAll('week_delivery_date > NOW()');
 
+		//Get the boxes for the selected week
+		$WeekBoxes=null;
+		if($week) {
+			$WeekBoxes=Box::model()->findAll('week_id=:weekId',array('weekId'=>$week));
+			$SelectedWeek=Week::model()->findByPk($week);
+		}
+		
 		//Item has been selected from inventory, if it doesn't exist in the week
 		//Load it to be added as a new row up the top of the box item list
+		$selectedItemId=null;
 		if($item) 
 		{
 			$NewItem=GrowerItem::model()->findByPk($item);
-			$TmpItem=BoxItem::model()->with('Box')->findAll(
+			$TmpItem=BoxItem::model()->with('Box')->find(
 				'item_name=:itemName AND 
 				grower_id=:growerId AND 
 				item_unit=:itemUnit AND 
@@ -120,19 +127,69 @@ class BoxItemController extends Controller
 					':weekId'=>$week,
 				)
 			);
-			//Selected item already exists in the week, so don't show it 
-			//again at the boxes list
-			//if($TmpItem) 
-				//$NewItem=null;
+			
+			if($TmpItem) 
+			{
+				$selectedItemId=$TmpItem->box_item_id;
+			}
+			else 
+			{
+				foreach($WeekBoxes as $WeekBox)
+				{
+					$BoxItem=new BoxItem;
+					$BoxItem->item_name=$NewItem->item_name;
+					$BoxItem->grower_id=$NewItem->grower_id;
+					$BoxItem->item_unit=$NewItem->item_unit;
+					$BoxItem->item_value=$NewItem->item_value;
+					$BoxItem->item_quantity=1;
+					$BoxItem->box_id=$WeekBox->box_id;
+					$BoxItem->save();
+					
+					$selectedItemId=$BoxItem->box_item_id;
+				}
+			}
 		}
 		
-		//Get the boxes for the selected week
-		$WeekBoxes=null;
-		if($week) {
-			$WeekBoxes=Box::model()->findAll('week_id=:weekId',array('weekId'=>$week));
-			$SelectedWeek=Week::model()->findByPk($week);
-		}
+		//User chose to add a new entry by clicking a grower name
+		if($grower)
+		{
+			$TmpItem=BoxItem::model()->with('Box')->find(
+				'item_name=:itemName AND 
+				grower_id=:growerId AND 
+				item_unit=:itemUnit AND 
+				item_value=:itemValue AND 
+				Box.week_id=:weekId',
+				array (
+					':itemName'=>'',
+					':growerId'=>(int)$grower,
+					':itemUnit'=>'KG',
+					':itemValue'=>0,
+					':weekId'=>$week,
+				)
+			);
+			
+			if($TmpItem) 
+			{
+				$selectedItemId=$TmpItem->box_item_id;
+			}
+			else 
+			{
+				foreach($WeekBoxes as $WeekBox)
+				{
+					$BoxItem=new BoxItem;
+					$BoxItem->item_name='';
+					$BoxItem->grower_id=(int)$grower;
+					$BoxItem->item_unit='KG';
+					$BoxItem->item_value=0;
+					$BoxItem->item_quantity=1;
+					$BoxItem->box_id=$WeekBox->box_id;
+					$BoxItem->save();
 
+					$selectedItemId=$BoxItem->box_item_id;
+				}
+			}
+		}
+		
 		$this->performAjaxValidation($model);
 		if(isset($_POST['BoxItem']))
 		{
@@ -149,7 +206,7 @@ class BoxItemController extends Controller
 			'Weeks'=>$Weeks,
 			'WeekBoxes'=>$WeekBoxes,
 			'SelectedWeek'=>$SelectedWeek,
-			'NewItem'=>$NewItem,
+			'selectedItemId'=>$selectedItemId,
 		));
 	}
 

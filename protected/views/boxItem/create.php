@@ -13,6 +13,6 @@ $this->menu=array(
 	'Weeks'=>$Weeks,
 	'WeekBoxes'=>$WeekBoxes,
 	'SelectedWeek'=>$SelectedWeek,
-	'NewItem'=>$NewItem,
+	'selectedItemId'=>$selectedItemId,
 )); 
 ?>

@@ -13,6 +13,7 @@
 class BoxItem extends CActiveRecord
 {
 	public $total;
+	public $box_item_ids;
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
@@ -107,10 +108,26 @@ class BoxItem extends CActiveRecord
 		return Yii::app()->params['itemUnits'][$this->item_unit];
 	}
 	
+	/**
+	 * 
+	 */
 	static function itemTotal($itemIds)
 	{
 		$Item = self::model()->find(array(
 			'select'=>'SUM(item_value * item_quantity) as total',
+			'condition'=>'box_item_id IN (' . $itemIds . ')',
+		));
+		
+		return $Item->total;
+	}
+	
+	/**
+	 * Get the total quantity of items for all customers for the given BoxItem ids
+	 */
+	static function totalQuantity($itemIds)
+	{
+		$Item = self::model()->with(array('Box'=>array('with'=>'CustomerBoxes')))->find(array(
+			'select'=>'SUM(item_quantity * quantity) as total',
 			'condition'=>'box_item_id IN (' . $itemIds . ')',
 		));
 		

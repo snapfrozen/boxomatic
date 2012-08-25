@@ -401,6 +401,16 @@ span.btnAdvanced:hover {
 
 /* Fill Boxes Page */
 
+td.value {
+	text-align:right;
+}
+td.red {
+	color:#f00;
+}
+table tr.group td {
+	border-bottom:1px solid #ddd;
+	padding-top:10px;
+}
 #current-boxes .selected td,
 .grid-view table.items tr.active td {
 	background:#ffffbb;
@@ -431,7 +441,7 @@ span.btnAdvanced:hover {
 }
 
 tfoot tr:first-child td {
-	border-top:1px solid #ccc;
+	border-top:3px double #ccc;
 }
 tfoot td {
 	font-style:normal;
