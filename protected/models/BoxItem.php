@@ -140,7 +140,7 @@ class BoxItem extends CActiveRecord
 	static function weekWholesale($weekId)
 	{
 		$Item = self::model()->with(array('Box'=>array('with'=>'CustomerBoxes')))->find(array(
-			'select'=>'SUM(item_quantity * item_value) as total',
+			'select'=>'SUM(quantity * item_quantity * item_value) as total',
 			'condition'=>'week_id = ' . $weekId . '',
 		));
 		
@@ -153,7 +153,7 @@ class BoxItem extends CActiveRecord
 	static function weekRetail($weekId)
 	{
 		$Item = self::model()->with(array('Box'=>array('with'=>array('CustomerBoxes','BoxSize') )))->find(array(
-			'select'=>'SUM(item_quantity * item_value * (box_size_markup/100) ) + SUM(quantity * item_value) as total',
+			'select'=>'SUM(quantity * item_quantity * item_value * (box_size_markup/100) ) + SUM(quantity * item_quantity * item_value) as total',
 			'condition'=>'week_id = ' . $weekId . '',
 		));
 		
