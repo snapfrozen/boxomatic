@@ -118,7 +118,7 @@ class BoxItem extends CActiveRecord
 			'condition'=>'box_item_id IN (' . $itemIds . ')',
 		));
 		
-		return $Item->total;
+		return $Item ? $Item->total : 0;
 	}
 	
 	/**
@@ -131,7 +131,7 @@ class BoxItem extends CActiveRecord
 			'condition'=>'box_item_id IN (' . $itemIds . ')',
 		));
 		
-		return $Item->total;
+		return $Item ? $Item->total : 0;
 	}
 	
 	/**
@@ -144,7 +144,7 @@ class BoxItem extends CActiveRecord
 			'condition'=>'week_id = ' . $weekId . '',
 		));
 		
-		return $Item->total;
+		return $Item ? $Item->total : 0;
 	}
 	
 	/**
@@ -157,7 +157,7 @@ class BoxItem extends CActiveRecord
 			'condition'=>'week_id = ' . $weekId . '',
 		));
 		
-		return $Item->total;
+		return $Item ? $Item->total : 0;
 	}
 	
 	/**
@@ -170,6 +170,6 @@ class BoxItem extends CActiveRecord
 			'condition'=>'week_id = ' . $weekId . '',
 		));
 		
-		return $Item->total;
+		return $Item ? $Item->total : 0;
 	}
 }
