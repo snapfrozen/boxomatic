@@ -122,10 +122,10 @@ class GrowerItem extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-//        $criteria->with = array( 'Grower' );
+        $criteria->with = array( 'Grower' );
 		$criteria->compare('item_id',$this->item_id);
 		$criteria->compare('grower_id',$this->grower_id);
-//		$criteria->compare('Grower.grower_name', $this->grower_search, true );
+		$criteria->compare('Grower.grower_name', $this->grower_search, true );
 		$criteria->compare('item_name',$this->item_name,true);
 		$criteria->compare('item_value',$this->item_value,true);
 		$criteria->compare('item_unit',$this->item_unit,true);
@@ -134,6 +134,9 @@ class GrowerItem extends CActiveRecord
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+			'pagination'=>array(
+				'pageSize'=>5,
+			)
 		));
 	}
 	

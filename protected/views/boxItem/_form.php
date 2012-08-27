@@ -39,10 +39,11 @@
 			//'selectionChanged'=>'changeBoxItem',
 			'columns'=>array(
 				array(
-					'name'=>'Grower.grower_name',
+					'name'=>'grower_search',
 					'type'=>'raw',
 					'value'=>'CHtml::link($data->Grower->grower_name,array_merge(array("boxItem/create","item"=>$data->item_id,"week"=>Yii::app()->request->getQuery("week"))))',
 					'cssClassExpression'=>'"grower-".$data->Grower->grower_id',
+//					'filter'=>$GrowerItems
 				),
 				'item_name',
 				'item_value',
