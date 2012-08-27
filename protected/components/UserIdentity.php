@@ -44,6 +44,38 @@ class UserIdentity extends CUserIdentity
 		return !$this->errorCode;
 	}
 	
+	/**
+	 * Used by admin user to login as other users 
+	 */
+	public function loginAs($id, $curId)
+	{	
+		if(!isset(Yii::app()->user->shadow_id)) {
+			$shadow=User::model()->resetScope()->findByPk($curId);
+			$this->setState('shadow_id', $curId);
+			$this->setState('shadow_name', $shadow->user_email);
+		} else {
+			$this->setState('shadow_id', null);
+			$this->setState('shadow_name', null);
+		}
+
+		$user=User::model()->resetScope()->findByPk($id);
+		$this->_id = $user->id;
+		
+		if(null===$user->last_login_time)
+		{
+			$lastLogin = time();
+		} else {
+			$lastLogin = strtotime($user->last_login_time);
+		}
+		
+		$this->setState('last_login_time', $lastLogin); 
+		$this->setState('customer_id', $user->customer_id); 
+		$this->setState('grower_id', $user->grower_id); 
+		
+		$this->errorCode=self::ERROR_NONE;
+		return !$this->errorCode;
+	}
+	
 	public function getId()
 	{
 		return $this->_id;

@@ -22,6 +22,9 @@
 <div class="container" id="page">
 
 	<div id="header">
+		<?php if(isset(Yii::app()->user->shadow_id)):
+			echo CHtml::link('Log back in as ' . Yii::app()->user->shadow_name, array('user/loginAs','id'=>Yii::app()->user->shadow_id),array('class'=>'shadow'));
+		endif;?>
 		<div id="logo"><?php echo CHtml::encode(Yii::app()->name); ?></div>
 	</div><!-- header -->
 	<div id="mainmenu">

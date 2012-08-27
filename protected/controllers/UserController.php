@@ -31,7 +31,7 @@ class UserController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('update','view'),
+				'actions'=>array('update','view','loginAs'),
 				'roles'=>array('customer'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -171,6 +171,30 @@ class UserController extends Controller
 		$this->render('admin',array(
 			'model'=>$model,
 		));
+	}
+	
+	/**
+	 *  Login as a different user
+	 */
+	public function actionLoginAs($id)
+	{
+		if(isset(Yii::app()->user->shadow_id) || Yii::app()->user->checkAccess('admin'))
+		{
+			$User=User::model()->resetScope()->findByPk((int)$id);
+			$identity=new UserIdentity($User->user_email,'');
+			$identity->loginAs($id, Yii::app()->user->id);
+			$duration=3600*24*30; // 30 days
+			Yii::app()->user->login($identity, $duration);
+		}
+		else
+		{
+			throw new CHttpException(404,'The requested page does not exist.');
+		}
+		
+		if(isset(Yii::app()->user->shadow_id))
+			$this->redirect(array('customerBox/order'));
+		else
+			$this->redirect(array('user/admin'));
 	}
 
 	/**

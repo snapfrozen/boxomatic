@@ -239,6 +239,11 @@ hr.space {background:#fff;color:#fff;visibility:hidden;}
 
 /* Foodbox styles */
 
+.shadow {
+	float:right;
+	padding:5px;
+}
+
 .buttons {
 	margin-bottom:1em;
 }
