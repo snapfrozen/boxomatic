@@ -165,7 +165,7 @@ class BoxItem extends CActiveRecord
 	 */
 	static function weekTarget($weekId)
 	{
-		$Item = self::model()->with(array('Box'=>array('with'=>array('CustomerBoxes') )))->find(array(
+		$Item = Box::model()->with('CustomerBoxes')->find(array(
 			'select'=>'SUM(quantity * box_price) as total',
 			'condition'=>'week_id = ' . $weekId . '',
 		));
