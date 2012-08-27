@@ -56,12 +56,13 @@
 	<div class="clear"></div>
 	
 	<div class="section">
-		<h2>Boxes</h2>
+		<h2><span>Boxes</span> <span class="loading"></span></h2>
+		<div class="clear"></div>
 		<?php $form=$this->beginWidget('CActiveForm', array(
 		'id'=>'box-item-form',
 		'enableAjaxValidation'=>false,
 		'action'=>$this->createUrl('boxItem/create',array('week'=>Yii::app()->request->getQuery('week'))),
-		)); ?>	
+		)); ?>
 		<div id="current-boxes">
 		<?php echo CHtml::hiddenField('curUrl', $this->createUrl('boxItem/create',array('week'=>Yii::app()->request->getQuery('week')))); ?>
 		<?php if($SelectedWeek): ?>
@@ -80,6 +81,7 @@
 						</th>
 						<?php endforeach; ?>
 						<th>Box Total</th>
+						<th>Quantity</th>
 					</tr>
 				</thead>
 				<tbody>					
@@ -109,8 +111,6 @@
 								$totalQuantity=BoxItem::totalQuantity($WeekItemContent->box_item_ids);
 								$totalValue=$WeekItemContent->item_value*$totalQuantity;
 							?>
-							<?php echo (float)$totalQuantity ?> for <strong><?php echo Yii::app()->snapFormat->currency($totalValue) ?></strong>
-							
 						</td>
 						<td class="itemValue">
 							<?php echo CHtml::textField('bc['.$key.'][item_value]',$WeekItemContent->item_value,array('class'=>'currency')); ?> 
@@ -148,11 +148,12 @@
 								endif;
 							?></td>
 						<?php endforeach; ?>
-							
-							
 						<td class="value">
-							<?php echo Yii::app()->snapFormat->currency(BoxItem::itemTotal($WeekItemContent->box_item_ids)) ?>
+							<?php echo Yii::app()->snapFormat->currency($totalValue) ?>
 						</td>
+						<td class="value">
+							<?php echo (float)$totalQuantity ?>
+						</td>	
 					</tr>
 					<?php endforeach;?>
 				</tbody>
@@ -169,7 +170,8 @@
 						?>
 						<td class="value"><?php echo Yii::app()->snapFormat->currency($value) ?></td>
 						<?php endforeach; ?>
-						<td class="value"><strong><?php echo Yii::app()->snapFormat->currency($totalValue) ?></strong></td>
+						<td class="value"><strong><?php echo Yii::app()->snapFormat->currency(BoxItem::weekWholesale($SelectedWeek->week_id)) ?></strong></td>
+						<td></td>
 					</tr>
 					<tr>
 						<td class="total" colspan="2">
@@ -182,7 +184,8 @@
 						?>
 						<td class="value"><?php echo Yii::app()->snapFormat->currency($WeekBox->box_price) ?></td>
 						<?php endforeach; ?>
-						<td class="value"><strong><?php echo Yii::app()->snapFormat->currency($totalRetal) ?></strong></td>
+						<td class="value"><strong><?php echo Yii::app()->snapFormat->currency(BoxItem::weekTarget($SelectedWeek->week_id)) ?></strong></td>
+						<td></td>
 					</tr>
 					<tr>
 						<td class="total" colspan="2">
@@ -197,7 +200,8 @@
 						?>
 						<td class="value <?php echo $retail > $WeekBox->box_price ? 'red' : '' ?>"><?php echo Yii::app()->snapFormat->currency($retail) ?></td>
 						<?php endforeach; ?>
-						<td class="value"><strong><?php echo Yii::app()->snapFormat->currency($totalRetal) ?></strong></td>
+						<td class="value"><strong><?php echo Yii::app()->snapFormat->currency(BoxItem::weekRetail($SelectedWeek->week_id)) ?></strong></td>
+						<td></td>
 					</tr>
 					
 				</tfoot>

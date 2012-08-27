@@ -86,7 +86,7 @@ class BoxSizeController extends Controller
 		{
 			$model->attributes=$_POST['BoxSize'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->box_sizes));
+				$this->redirect(array('view','id'=>$model->box_size_id));
 		}
 
 		$this->render('update',array(

@@ -114,7 +114,7 @@ class BoxItem extends CActiveRecord
 	static function itemTotal($itemIds)
 	{
 		$Item = self::model()->find(array(
-			'select'=>'SUM(item_value * item_quantity) as total',
+			'select'=>'SUM(item_value * quantity) as total',
 			'condition'=>'box_item_id IN (' . $itemIds . ')',
 		));
 		
@@ -129,6 +129,45 @@ class BoxItem extends CActiveRecord
 		$Item = self::model()->with(array('Box'=>array('with'=>'CustomerBoxes')))->find(array(
 			'select'=>'SUM(item_quantity * quantity) as total',
 			'condition'=>'box_item_id IN (' . $itemIds . ')',
+		));
+		
+		return $Item->total;
+	}
+	
+	/**
+	 * Get the wholesale cost for a given week_id
+	 */
+	static function weekWholesale($weekId)
+	{
+		$Item = self::model()->with(array('Box'=>array('with'=>'CustomerBoxes')))->find(array(
+			'select'=>'SUM(quantity * item_value) as total',
+			'condition'=>'week_id = ' . $weekId . '',
+		));
+		
+		return $Item->total;
+	}
+	
+	/**
+	 * Get the wholesale cost for a given week_id
+	 */
+	static function weekRetail($weekId)
+	{
+		$Item = self::model()->with(array('Box'=>array('with'=>array('CustomerBoxes','BoxSize') )))->find(array(
+			'select'=>'SUM(quantity * item_value * (box_size_markup/100) ) + SUM(quantity * item_value) as total',
+			'condition'=>'week_id = ' . $weekId . '',
+		));
+		
+		return $Item->total;
+	}
+	
+	/**
+	 * Get the week target
+	 */
+	static function weekTarget($weekId)
+	{
+		$Item = self::model()->with(array('Box'=>array('with'=>array('CustomerBoxes') )))->find(array(
+			'select'=>'SUM(quantity * box_price) as total',
+			'condition'=>'week_id = ' . $weekId . '',
 		));
 		
 		return $Item->total;

@@ -1,4 +1,6 @@
-
+var $loading=$('span.loading');
+$loading.css({display:'inline-block'});
+$loading.hide();
 
 function loadSpinners()
 {
@@ -13,6 +15,7 @@ loadSpinners();
 function reloadBoxes(url,data)
 {
 	var ajaxUpdate = ['current-boxes','grower-item-grid'];
+	$loading.show();
 	$.ajax({
 		type: 'GET',
 		url: url,
@@ -23,6 +26,7 @@ function reloadBoxes(url,data)
 				$(id).replaceWith($(id,'<div>'+data+'</div>'));
 			});
 			loadSpinners();
+			$loading.hide();
 		}
 	});
 }
@@ -34,23 +38,25 @@ $('div#inventory, form#box-item-form').on('click', 'table a', function(){
 });
 
 $('form#box-item-form').on('change', 'input, select', function(){
-	$(this).addClass('dirty');
+	$(this).parent('td').addClass('dirty');
 });
 
-$('form#box-item-form').on('blur', 'input', function(){
+$('form#box-item-form').on('blur', 'input, select', function(){
 	
-	if(!$(this).hasClass('dirty'))
+	if(!$(this).parent('td').hasClass('dirty'))
 		return;
 	
+	$loading.show();
 	var ajaxUpdate = ['current-boxes'];
 	$.ajax({
 		type: 'POST',
 		url: $('input#curUrl').val(),
-		data: $('form#box-item-form').serialize(),
+		data: $(this).parents('tr:eq(0)').find('input, select').serialize(), //only post data from the row that was changed
 		success: function(data,status) {
 			$.each(ajaxUpdate, function(i,v) {
 				var id='#'+v;
 				$(id).replaceWith($(id,'<div>'+data+'</div>'));
+				$loading.hide();
 			});
 			loadSpinners();
 		}

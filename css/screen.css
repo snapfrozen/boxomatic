@@ -247,6 +247,18 @@ hr.space {background:#fff;color:#fff;visibility:hidden;}
 	margin-bottom:2em;
 }
 
+h2 {overflow:hidden}
+h2 span {
+	float:left;
+	margin-right:.5em;
+}
+.loading {
+	width:24px;
+	height:24px;
+	background:transparent url('../images/layout/ajax-loader.gif') no-repeat top left;
+	float:left;
+}
+
 /* All Orders Page */
 th.sizes {
 	text-align:center;
@@ -404,8 +416,8 @@ span.btnAdvanced:hover {
 td.value {
 	text-align:right;
 }
-select.dirty,
-input.dirty,
+td.dirty select,
+td.dirty input,
 td.red {
 	color:#f00;
 }
