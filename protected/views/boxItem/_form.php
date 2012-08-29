@@ -47,8 +47,16 @@
 				),
 				'item_name',
 				'item_value',
-				array( 'name'=>'item_available_from', 'value'=>'Yii::app()->snapFormat->getMonthName($data->item_available_from)' ),
-				array( 'name'=>'item_available_to', 'value'=>'Yii::app()->snapFormat->getMonthName($data->item_available_to)' ),
+				array( 
+					'name'=>'item_available_from', 
+					'value'=>'Yii::app()->snapFormat->getMonthName($data->item_available_from)',
+					'filter'=>Yii::app()->params["months"],
+				),
+				array( 
+					'name'=>'item_available_to', 
+					'value'=>'Yii::app()->snapFormat->getMonthName($data->item_available_to)',
+					'filter'=>Yii::app()->params["months"],
+				),
 			),
 		)); ?>
 		
@@ -96,6 +104,7 @@
 						<tr class="group">
 							<td colspan="7">
 								<?php echo CHtml::link($WeekItemContent->Grower->grower_name, array('boxItem/create','grower'=>$WeekItemContent->grower_id,'week'=>Yii::app()->request->getQuery('week'))); ?>
+								(<strong><?php echo Yii::app()->snapFormat->currency(BoxItem::growerTotalByWeek($WeekItemContent->grower_id, $SelectedWeek->week_id)) ?></strong>)
 							</td>
 						</tr>
 					<?php endif; ?>

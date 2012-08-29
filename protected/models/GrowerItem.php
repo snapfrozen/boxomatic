@@ -129,8 +129,12 @@ class GrowerItem extends CActiveRecord
 		$criteria->compare('item_name',$this->item_name,true);
 		$criteria->compare('item_value',$this->item_value,true);
 		$criteria->compare('item_unit',$this->item_unit,true);
-		$criteria->compare('item_available_from',$this->item_available_from,true);
-		$criteria->compare('item_available_to',$this->item_available_to,true);
+		
+		if($this->item_available_from && $this->item_available_to)
+		{
+			$criteria->addCondition('item_available_from <= ' . $this->item_available_from);
+			$criteria->addCondition('item_available_to >= ' . $this->item_available_to);
+		}
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

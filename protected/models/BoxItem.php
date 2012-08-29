@@ -141,7 +141,20 @@ class BoxItem extends CActiveRecord
 	{
 		$Item = self::model()->with(array('Box'=>array('with'=>'CustomerBoxes')))->find(array(
 			'select'=>'SUM(quantity * item_quantity * item_value) as total',
-			'condition'=>'week_id = ' . $weekId . '',
+			'condition'=>'week_id = ' . $weekId,
+		));
+		
+		return $Item ? $Item->total : 0;
+	}
+	
+	/**
+	 * Get the wholesale cost for a given week_id
+	 */
+	static function growerTotalByWeek($growerId, $weekId)
+	{
+		$Item = self::model()->with(array('Box'=>array('with'=>'CustomerBoxes')))->find(array(
+			'select'=>'SUM(quantity * item_quantity * item_value) as total',
+			'condition'=>'week_id = ' . $weekId . ' AND grower_id = ' . $growerId,
 		));
 		
 		return $Item ? $Item->total : 0;
