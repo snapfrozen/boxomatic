@@ -13,7 +13,7 @@ $this->menu=array(
 <?php $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,
 	'attributes'=>array(
-		'id',
+		'payment_id',
 		'Customer.User.user_name',
 		'payment_type',
 		'payment_value',
