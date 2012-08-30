@@ -272,16 +272,6 @@ class CustomerBoxController extends Controller
 				$curQuantity=count($CustBoxes);
 				$diff=$quantity-$curQuantity;
 				
-				//Customer doesn't have a record for this box so create one
-				//if(!$CustBox && $quantity)
-				//{
-				//	$CustBox=new CustomerBox;
-				//}
-				
-//				var_dump($diff);
-//				var_dump($curQuantity);
-//				exit;
-				
 				if($diff > 0)
 				{
 					//Create extra customer box rows
@@ -300,8 +290,9 @@ class CustomerBoxController extends Controller
 				{
 					//Remove any boxes the customer no longer wants;
 					$diff=abs($diff);		
-					foreach($CustBoxes as $CustBox) {
-						$CustBox->delete();
+					for($i=0; $i<$diff; $i++)
+					{
+						$CustBoxes[$i]->delete();
 					}
 				}
 			}

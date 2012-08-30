@@ -9,7 +9,7 @@ class SnapFormat extends CApplicationComponent
 	 */
 	public function getMonthName($month)
 	{
-		return date("F", mktime(0, 0, 0, $month));
+		return date("F", mktime(0, 0, 0, $month, 1));
 	}
 	
 	/**

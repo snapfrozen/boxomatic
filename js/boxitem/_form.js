@@ -47,7 +47,7 @@ $('form#box-item-form').on('blur', 'input, select', function(){
 		return;
 	
 	$loading.show();
-	var ajaxUpdate = ['current-boxes'];
+	var ajaxUpdate = ['current-boxes','grower-item-grid'];
 	$.ajax({
 		type: 'POST',
 		url: $('input#curUrl').val(),

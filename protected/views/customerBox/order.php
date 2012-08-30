@@ -69,7 +69,6 @@
 			?>
 			<tr class="date <?php echo $classes ?>">
 				<td colspan="5">
-					[<?php echo $Week->week_id ?>]
 					<strong><?php echo Yii::app()->snapFormat->dayOfYear($Week->week_delivery_date) ?></strong>
 					<?php 
 						$CustomerWeek=CustomerWeek::model()->findByAttributes(array('week_id'=>$Week->week_id, 'customer_id'=>Yii::app()->user->customer_id));

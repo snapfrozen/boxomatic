@@ -31,7 +31,7 @@ class BoxController extends Controller
 				'roles'=>array('customer'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete','duplicate'),
+				'actions'=>array('admin','delete','duplicate','moveBox'),
 				'roles'=>array('admin'),
 			),
 			array('deny',  // deny all users
@@ -112,10 +112,6 @@ class BoxController extends Controller
 		$weekId=$model->week_id;
 		$model->delete();
 		$this->redirect(array('boxItem/create','week'=>$weekId));
-		
-		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
-//		if(!isset($_GET['ajax']))
-//			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('boxItem/create','week'=>$weekId));
 	}
 	
 	/**
@@ -128,7 +124,26 @@ class BoxController extends Controller
 		$model->duplicate();
 		$this->redirect(array('boxItem/create','week'=>$model->week_id));
 	}
-
+	
+	/**
+	 * Move a customer box to the selected box
+	 * @param integer $from the ID of the box to move a customer box from
+	 * @param integer $to the ID of the box to move a customer box to
+	 * @param integer $cust the ID of the customer to move, if not specified a random customer will be chosen
+	 */
+	public function actionMoveBox($from, $to, $cust=null)
+	{
+		if($cust)
+			$CustBoxFrom=CustomerBox::model()->findByPk($cust);
+		else
+			$CustBoxFrom=CustomerBox::random($from);
+		
+		$CustBoxFrom->box_id=$to;
+		$CustBoxFrom->save();
+		
+		$this->redirect(array('boxItem/create','week'=>$CustBoxFrom->Box->week_id));
+	}
+	
 	/**
 	 * Lists all models.
 	 */

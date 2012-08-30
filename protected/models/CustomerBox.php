@@ -162,4 +162,13 @@ class CustomerBox extends CActiveRecord
 		return $box;
 	}
 	
+	public static function random($boxId)
+	{
+		$criteria=new CDbCriteria;
+		$criteria->addCondition("box_id=$boxId");
+		$criteria->order='RAND()';
+		$box=self::model()->find($criteria);
+		return $box;
+	}
+	
 }

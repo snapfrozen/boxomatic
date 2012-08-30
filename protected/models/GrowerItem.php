@@ -22,6 +22,10 @@ class GrowerItem extends CActiveRecord
      * grower name search attribute
      */
     public $grower_search;
+	/*
+	 * attribute for searching availablity by month
+	 */
+	public $month_available;
     
     
 	/**
@@ -78,7 +82,7 @@ class GrowerItem extends CActiveRecord
 			array('item_available_from, item_available_to', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('item_id, grower_id, grower_search, item_name, item_value, item_unit, item_available_from, item_available_to', 'safe', 'on'=>'search'),
+			array('item_id, grower_id, grower_search, month_available, item_name, item_value, item_unit, item_available_from, item_available_to', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -108,6 +112,7 @@ class GrowerItem extends CActiveRecord
 			'item_available_from' => 'Available From',
 			'item_available_to' => 'Available To',
 			'grower_search' => 'Grower Name',
+			'month_available' => 'Month Available',
 		);
 	}
 
@@ -130,17 +135,17 @@ class GrowerItem extends CActiveRecord
 		$criteria->compare('item_value',$this->item_value,true);
 		$criteria->compare('item_unit',$this->item_unit,true);
 		
-		if($this->item_available_from && $this->item_available_to)
+		if($this->month_available)
 		{
-			$criteria->addCondition('item_available_from <= ' . $this->item_available_from);
-			$criteria->addCondition('item_available_to >= ' . $this->item_available_to);
+			$criteria->addCondition($this->month_available . ' BETWEEN item_available_from AND item_available_to');
 		}
 
+		$criteria->order='Grower.grower_name';
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 			'pagination'=>array(
 				'pageSize'=>5,
-			)
+			),
 		));
 	}
 	

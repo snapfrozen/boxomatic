@@ -89,7 +89,36 @@ class BoxItemController extends Controller
 						$BoxItem->save();
 					}
 				}
-			}
+				
+				//Add an item to the inventory selected
+				if(isset($boxContents['add_to_inventory']))
+				{
+					$GrowerItem=GrowerItem::model()->findByAttributes(array(
+						'grower_id'=>$boxContents['grower_id'],
+						'item_name'=>$boxContents['item_name'],
+						'item_unit'=>$boxContents['item_unit'],
+					));
+					
+					//Update the grower item price already exists
+					if($GrowerItem)
+					{
+						$GrowerItem->item_value=$boxContents['item_value'];
+						$GrowerItem->save();
+					}
+					else
+					{
+						$GrowerItem=new GrowerItem;
+						$GrowerItem->grower_id=$boxContents['grower_id'];
+						$GrowerItem->item_name=$boxContents['item_name'];
+						$GrowerItem->item_value=$boxContents['item_value'];
+						$GrowerItem->item_unit=$boxContents['item_unit'];
+						$GrowerItem->item_available_from=1;
+						$GrowerItem->item_available_to=12;
+						$GrowerItem->save();
+					}
+				}
+				
+			}			
 		}
 		
 		$GrowerItems=new GrowerItem('search');
@@ -103,12 +132,8 @@ class BoxItemController extends Controller
 		//Get the boxes for the selected week
 		$WeekBoxes=null;
 		if($week) {
-			$WeekBoxes=Box::model()->findAll(array(
-				'condition'=>'week_id=:weekId',
-				'params'=>array('weekId'=>$week),
-				'order'=>'size_id',
-			));
 			$SelectedWeek=Week::model()->findByPk($week);
+			$WeekBoxes=$SelectedWeek->MergedBoxes;
 		}
 		
 		//Item has been selected from inventory, if it doesn't exist in the week

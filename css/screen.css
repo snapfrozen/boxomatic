@@ -426,6 +426,38 @@ td.dirty input,
 td.red {
 	color:#f00;
 }
+
+table th div {
+	position:relative;
+}
+	table th div div {
+		display:none;
+		top:0;
+		position:absolute;
+		padding:10px;
+		background:#fff;
+		border:1px solid #ccc;
+		box-shadow:0 0 5px rgba(0,0,0,.5);
+		z-index:100;
+		white-space:nowrap;
+	}
+	table th:hover div {
+		display:block;
+	}
+		table th div a {
+			text-decoration:none;
+		}
+		table th div a:hover {
+			text-decoration:underline;
+		}
+		
+#grower-item-grid_c3 {
+	width:25%;
+}
+#grower-item-grid_c2 {
+	width:15%;
+}
+
 table tr.group td {
 	border-bottom:1px solid #ddd;
 	padding-top:10px;
