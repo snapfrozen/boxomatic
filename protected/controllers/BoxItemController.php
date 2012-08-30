@@ -103,7 +103,11 @@ class BoxItemController extends Controller
 		//Get the boxes for the selected week
 		$WeekBoxes=null;
 		if($week) {
-			$WeekBoxes=Box::model()->findAll('week_id=:weekId',array('weekId'=>$week));
+			$WeekBoxes=Box::model()->findAll(array(
+				'condition'=>'week_id=:weekId',
+				'params'=>array('weekId'=>$week),
+				'order'=>'size_id',
+			));
 			$SelectedWeek=Week::model()->findByPk($week);
 		}
 		

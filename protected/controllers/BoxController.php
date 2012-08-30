@@ -31,7 +31,7 @@ class BoxController extends Controller
 				'roles'=>array('customer'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete'),
+				'actions'=>array('admin','delete','duplicate'),
 				'roles'=>array('admin'),
 			),
 			array('deny',  // deny all users
@@ -108,17 +108,25 @@ class BoxController extends Controller
 	 */
 	public function actionDelete($id)
 	{
-		if(Yii::app()->request->isPostRequest)
-		{
-			// we only allow deletion via POST request
-			$this->loadModel($id)->delete();
-
-			// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
-			if(!isset($_GET['ajax']))
-				$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
-		}
-		else
-			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
+		$model=$this->loadModel($id);
+		$weekId=$model->week_id;
+		$model->delete();
+		$this->redirect(array('boxItem/create','week'=>$weekId));
+		
+		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
+//		if(!isset($_GET['ajax']))
+//			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('boxItem/create','week'=>$weekId));
+	}
+	
+	/**
+	 * Duplicates a Box
+	 * @param integer $id the ID of the Box to be duplicated
+	 */
+	public function actionDuplicate($id)
+	{
+		$model=$this->loadModel($id);
+		$model->duplicate();
+		$this->redirect(array('boxItem/create','week'=>$model->week_id));
 	}
 
 	/**

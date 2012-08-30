@@ -69,6 +69,7 @@
 			?>
 			<tr class="date <?php echo $classes ?>">
 				<td colspan="5">
+					[<?php echo $Week->week_id ?>]
 					<strong><?php echo Yii::app()->snapFormat->dayOfYear($Week->week_delivery_date) ?></strong>
 					<?php 
 						$CustomerWeek=CustomerWeek::model()->findByAttributes(array('week_id'=>$Week->week_id, 'customer_id'=>Yii::app()->user->customer_id));
@@ -93,16 +94,17 @@
 				<td class="button"><span class="btnAdvanced selected" title="Buy more than one box">Advanced</span></td>
 				<td>
 					<div class="advanced show">
-					<?php foreach($Week->Boxes as $Box):
-					$CustomerBox=CustomerBox::model()->findByAttributes(array('box_id'=>$Box->box_id, 'customer_id'=>Yii::app()->user->customer_id));
+					<?php foreach($Week->MergedBoxes as $Box):
+					$CustomerBox=CustomerBox::findCustomerBox($Week->week_id, $Box->size_id, Yii::app()->user->customer_id);
+//					$CustomerBox=CustomerBox::model()->findByAttributes(array('box_id'=>$Box->box_id, 'customer_id'=>Yii::app()->user->customer_id));
 					$quantity=$CustomerBox ? $CustomerBox->quantity : 0;
 					$attribs=array('class'=>'number','min'=>'0');
 					if($disabled)
 						$attribs+=array('disabled'=>'disabled')
 					?>
 						<div>
-							<?php echo CHtml::textField('Orders[b_' . $Box->box_id . ']', $quantity, $attribs) ?>
-							<?php echo CHtml::hiddenField('box_value', $Box->box_price,  array('id'=>'b_value_' . $Box->box_id)); ?>	
+							<?php echo CHtml::textField('Orders[' . $Box->box_id . ']', $quantity, $attribs) ?>
+							<?php echo CHtml::hiddenField('box_value', $Box->box_price,  array('id'=>'b_value_' . $Box->size_id)); ?>	
 							<span class="units"><?php echo $Box->BoxSize->box_size_name[0]; ?></span>
 						</div>
 					<?php endforeach; ?>

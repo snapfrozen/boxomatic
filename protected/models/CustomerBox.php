@@ -149,4 +149,17 @@ class CustomerBox extends CActiveRecord
 		}
 	}
 	
+	public static function findCustomerBox($weekId, $sizeId, $customerId)
+	{
+		$criteria=new CDbCriteria;
+		$criteria->with='Box';
+		$criteria->select='COUNT(customer_box_id) as quantity';
+		$criteria->addCondition("Box.size_id=$sizeId");
+		$criteria->addCondition("Box.week_id=$weekId");
+		$criteria->addCondition("customer_id=$customerId");
+		$box=self::model()->find($criteria);
+		
+		return $box;
+	}
+	
 }

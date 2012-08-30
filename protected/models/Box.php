@@ -15,7 +15,9 @@
  */
 class Box extends CActiveRecord
 {
-	public $total;
+	public $total;    //variable to store different kinds of aggregate totals
+	//public $quantity; //variable to store the aggregate quantity of a box size (see: models/Week.php, relation MergedBoxes)
+	public $box_ids;
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
@@ -103,6 +105,29 @@ class Box extends CActiveRecord
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
+	}
+	
+	/**
+	 * Duplicate a Box and all its items
+	 * @return boolean 
+	 */
+	public function duplicate()
+	{
+		$newBox = new Box;
+		$newBox->attributes=$this->attributes;
+		$newBox->box_id=null;
+		$newBox->save();
+		
+		foreach($this->BoxItems as $BoxItem)
+		{
+			$newBoxItem=new BoxItem;
+			$newBoxItem->attributes=$BoxItem->attributes;
+			$newBoxItem->box_item_id=null;
+			$newBoxItem->box_id=$newBox->box_id;
+			$newBoxItem->save();
+		}
+		
+		return true;
 	}
 	
 	public function getRetailPrice()

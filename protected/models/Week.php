@@ -54,6 +54,12 @@ class Week extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'MergedBoxes' => array(self::HAS_MANY, 'Box', 'week_id',
+				'select'=>'*, MIN(MergedBoxes.box_id) as box_id, GROUP_CONCAT(MergedBoxes.box_id) as box_ids',
+				'with'=>array('BoxSize','CustomerBoxes'),
+				'order'=>'box_size_name DESC',
+				'group'=>'MergedBoxes.week_id, MergedBoxes.size_id'
+			),
 			'Boxes' => array(self::HAS_MANY, 'Box', 'week_id',
 				'with'=>'BoxSize',
 				'order'=>'box_size_name DESC'

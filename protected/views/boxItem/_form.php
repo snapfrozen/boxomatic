@@ -87,6 +87,12 @@
 						<th>
 							<?php echo $WeekBox->customerCount ?><br />
 							<?php echo $WeekBox->BoxSize->box_size_name ?>
+							<div>
+								<?php echo CHtml::link('duplicate', array('box/duplicate','id'=>$WeekBox->box_id)); ?>
+								<?php if(!$WeekBox->customerCount): ?>
+								<?php echo CHtml::link('delete', array('box/delete','id'=>$WeekBox->box_id)); ?>
+								<?php endif; ?>
+							</div>
 						</th>
 						<?php endforeach; ?>
 						<th>Box Total</th>
@@ -94,19 +100,19 @@
 					</tr>
 				</thead>
 				<tbody>					
-					<?php 
-					$lastGrowerId=null;
-					foreach($SelectedWeek->BoxItemsContent as $key=>$WeekItemContent): 
+				<?php 
+				$lastGrowerId=null;
+				foreach($SelectedWeek->BoxItemsContent as $key=>$WeekItemContent): 
 
 					if($lastGrowerId != $WeekItemContent->grower_id): 
-						$lastGrowerId=$WeekItemContent->grower_id;
-						?>
-						<tr class="group">
-							<td colspan="7">
-								<?php echo CHtml::link($WeekItemContent->Grower->grower_name, array('boxItem/create','grower'=>$WeekItemContent->grower_id,'week'=>Yii::app()->request->getQuery('week'))); ?>
-								(<strong><?php echo Yii::app()->snapFormat->currency(BoxItem::growerTotalByWeek($WeekItemContent->grower_id, $SelectedWeek->week_id)) ?></strong>)
-							</td>
-						</tr>
+					$lastGrowerId=$WeekItemContent->grower_id;
+					?>
+					<tr class="group">
+						<td colspan="7">
+							<?php echo CHtml::link($WeekItemContent->Grower->grower_name, array('boxItem/create','grower'=>$WeekItemContent->grower_id,'week'=>Yii::app()->request->getQuery('week'))); ?>
+							(<strong><?php echo Yii::app()->snapFormat->currency(BoxItem::growerTotalByWeek($WeekItemContent->grower_id, $SelectedWeek->week_id)) ?></strong>)
+						</td>
+					</tr>
 					<?php endif; ?>
 						
 					<?php $selectedClass=in_array($selectedItemId,explode(',',$WeekItemContent->box_item_ids)) ? 'class="selected"' : ''; ?>
@@ -128,14 +134,15 @@
 						</td>
 						<?php 						
 						foreach($WeekBoxes as $key2=>$Box): 
-							
+
 							$BoxItem=BoxItem::model()->with('Box')->find(
 								'item_name=:itemName AND 
 								grower_id=:growerId AND 
 								item_unit=:itemUnit AND 
 								item_value=:itemValue AND 
 								Box.week_id=:weekId AND 
-								Box.size_id=:sizeId', 
+								Box.size_id=:sizeId AND
+								t.box_id = ' . $Box->box_id, 
 								array (
 									':itemName'=>$WeekItemContent->item_name,
 									':growerId'=>$WeekItemContent->grower_id,
@@ -144,8 +151,8 @@
 									':weekId'=>$Box->week_id,
 									':sizeId'=>$Box->size_id
 								)
-							);
-							 
+							); 
+							
 							?>
 							<td><?php 
 								if($BoxItem): 
@@ -165,7 +172,7 @@
 							<?php echo (float)$totalQuantity ?>
 						</td>	
 					</tr>
-					<?php endforeach;?>
+				<?php endforeach;?>
 				</tbody>
 				<tfoot>
 					<tr>
@@ -175,7 +182,8 @@
 						<?php 
 						$totalValue=0;
 						foreach($WeekBoxes as $WeekBox): 
-							$value=$SelectedWeek->with(array('totalBoxValue'=>array('params'=>array(':sizeId'=>$WeekBox->size_id))))->findByPk($SelectedWeek->week_id)->totalBoxValue;
+							//$value=$SelectedWeek->with(array('totalBoxValue'=>array('params'=>array(':sizeId'=>$WeekBox->size_id))))->findByPk($SelectedWeek->week_id)->totalBoxValue;
+							$value=$WeekBox->totalValue;
 							$totalValue+=$value;
 						?>
 						<td class="value"><?php echo Yii::app()->snapFormat->currency($value) ?></td>
@@ -204,8 +212,7 @@
 						<?php 
 						$totalRetal=0;
 						foreach($WeekBoxes as $WeekBox): 
-							$value=$SelectedWeek->with(array('totalBoxValue'=>array('params'=>array(':sizeId'=>$WeekBox->size_id))))->findByPk($SelectedWeek->week_id)->totalBoxValue;	
-							$retail=$value+($value*($WeekBox->BoxSize->box_size_markup/100));
+							$retail=$value=$WeekBox->retailPrice;
 							$totalRetal+=$retail;
 						?>
 						<td class="value <?php echo $retail > $WeekBox->box_price ? 'red' : '' ?>"><?php echo Yii::app()->snapFormat->currency($retail) ?></td>

@@ -206,7 +206,7 @@ class CustomerBoxController extends Controller
 		if(isset($_GET['all']))
 			$Weeks=Week::model()->findAll();
 		else
-			$Weeks=Week::model()->findAll(array(
+			$Weeks=Week::model()->with('Boxes')->findAll(array(
 				'condition'=>'week_delivery_date > NOW()',
 				'limit'=>$show+1
 			));
@@ -260,30 +260,49 @@ class CustomerBoxController extends Controller
 		
 		if(isset($_POST['Orders']))
 		{
-			foreach($_POST['Orders'] as $key=>$quantity)
+			foreach($_POST['Orders'] as $boxId=>$quantity)
 			{
-				$boxId=str_replace('b_','',$key);
-				$CustBox=CustomerBox::model()->findByAttributes(array('customer_id'=>$Customer->customer_id,'box_id'=>$boxId));
+				$Box=Box::model()->findByPk($boxId);
+				
+				$CustBoxes=CustomerBox::model()->with('Box')->findAll(array(	
+					'condition'=>'customer_id=:customerId AND size_id=:sizeId AND week_id=:weekId',
+					'params'=>array(':customerId'=>$Customer->customer_id,':sizeId'=>$Box->size_id,':weekId'=>$Box->week_id)
+				));
+				
+				$curQuantity=count($CustBoxes);
+				$diff=$quantity-$curQuantity;
 				
 				//Customer doesn't have a record for this box so create one
-				if(!$CustBox && $quantity)
+				//if(!$CustBox && $quantity)
+				//{
+				//	$CustBox=new CustomerBox;
+				//}
+				
+//				var_dump($diff);
+//				var_dump($curQuantity);
+//				exit;
+				
+				if($diff > 0)
 				{
-					$CustBox=new CustomerBox;
+					//Create extra customer box rows
+					for($i=0; $i<$diff; $i++)
+					{
+						$CustBox=new CustomerBox;
+						$CustBox->customer_id=$Customer->customer_id;
+						$CustBox->box_id=$boxId;
+						$CustBox->quantity=1;
+						$CustBox->delivery_cost=$Customer->Location->location_delivery_value;
+						$CustBox->save();
+					}
 				}
 				
-				if($CustBox && $quantity)
+				if($diff < 0)
 				{
-					$CustBox->customer_id=$Customer->customer_id;
-					$CustBox->box_id=$boxId;
-					$CustBox->quantity=$quantity;
-					$CustBox->delivery_cost=$Customer->Location->location_delivery_value;
-					$CustBox->save();
-				}
-				
-				//Customer set the quantity to 0 for an existing box
-				if($CustBox && !$quantity)
-				{
-					$CustBox->delete();
+					//Remove any boxes the customer no longer wants;
+					$diff=abs($diff);		
+					foreach($CustBoxes as $CustBox) {
+						$CustBox->delete();
+					}
 				}
 			}
 		}
