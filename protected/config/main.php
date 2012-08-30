@@ -166,9 +166,14 @@ return array(
 			'WA'=>'Western Australia',
 		),
 		'itemUnits'=>array(
-			'EA' => 'Each',
-			'BUNCH' => 'Per bunch',
-			'KG' => 'Per kg',
+			'EA'=>'Each',
+			'BUNCH'=>'Per bunch',
+			'KG'=>'Per kg',
+		),
+		'paymentTypes'=>array(
+			'BT'=>'Bank Transfer',
+			'CASH'=>'Cash',
+			'PAYPAL'=>'PayPal',
 		),
 		'orderDeadlineDays'=>7, //orders must be placed within 7 days of delivery 
 		'deliveryDayOfWeek'=>3, //0 (for Sunday) through 6 (for Saturday)

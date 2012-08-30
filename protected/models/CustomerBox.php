@@ -122,20 +122,16 @@ class CustomerBox extends CActiveRecord
 	/*
 	 * Only allow changes before the delivery deadline if the user is not an admin
 	 */
-	/*
 	public function beforeSave()
 	{
 		$Week=$this->Box->Week;
-		
-		
-		if(time() > strtotime($Week->deadline))
+
+		if(time() > strtotime($Week->deadline) && !Yii::app()->user->checkAccess('admin'))
 			return false;
 		else 
 			return true;
-
-		
 	}
-	*/
+	
 	
 	/**
 	* Only allow admins to access all user information

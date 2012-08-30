@@ -31,7 +31,7 @@ class CustomerPaymentController extends Controller
 				'roles'=>array('customer'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete','update'),
+				'actions'=>array('admin','delete','update','enterPayments'),
 				'roles'=>array('admin'),
 			),
 			array('deny',  // deny all users
@@ -146,7 +146,26 @@ class CustomerPaymentController extends Controller
 			'model'=>$model,
 		));
 	}
+	
+	/**
+	 * Allow admins to enter payments on behalf of customers.
+	 */
+	public function actionEnterPayments()
+	{	
+		$model=new CustomerPayment;
 
+		if(isset($_POST['CustomerPayment']))
+		{
+			$model->attributes=$_POST['CustomerPayment'];
+			if($model->save())
+				$this->redirect(array('view','id'=>$model->payment_id));
+		}
+
+		$this->render('enterPayments',array(
+			'model'=>$model,
+		));
+	}
+	
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.

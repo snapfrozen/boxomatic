@@ -50,12 +50,10 @@
 				
 				array('label' => 'Admin', 'url' => '#', 'visible' => Yii::app()->user->checkAccess('admin'), 'items' => array(
 					array('label'=>'Fill Boxes', 'url'=>array('boxItem/create')),
+					array('label'=>'Enter Payments', 'url'=>array('customerPayment/enterPayments')),
 					array('label'=>'Users', 'url'=>array('user/admin')),
 					array('label'=>'Growers', 'url'=>array('grower/admin')),
 					array('label'=>'Locations', 'url'=>array('location/admin')),
-//					array('label'=>'Boxes', 'url'=>array('box/admin')),
-//					array('label'=>'Boxes Items', 'url'=>array('boxItem/admin')),
-//					array('label'=>'Box Sizes', 'url'=>array('boxSize/admin'), 'visible'=>Yii::app()->user->checkAccess('admin')),
 				)),
 
 				array('label'=>'Register', 'url'=>array('/customer/register'), 'visible'=>Yii::app()->user->isGuest),
