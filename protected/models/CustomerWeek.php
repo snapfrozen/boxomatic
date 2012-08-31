@@ -105,7 +105,10 @@ class CustomerWeek extends CActiveRecord
 	{
 		$Week=$this->Week;
 		
-		if(time() > strtotime($Week->deadline))
+		if(time() > strtotime($Week->deadline) && 
+			!Yii::app()->user->checkAccess('admin') && 
+			!isset(Yii::app()->user->shadow_id) && 
+			Yii::app()->getAuthManager()->checkAccess('admin', Yii::app()->user->shadow_id))
 			return false;
 		else 
 			return true;

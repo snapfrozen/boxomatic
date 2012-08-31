@@ -35,8 +35,8 @@ class WeekController extends Controller
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete'),
-				'users'=>array('admin'),
+				'actions'=>array('admin','delete','generatePackingList'),
+				'roles'=>array('admin'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -146,6 +146,66 @@ class WeekController extends Controller
 		$this->render('admin',array(
 			'model'=>$model,
 		));
+	}
+	
+	/**
+	 * Generate a packing list spreadsheet for a given week 
+	 */
+	public function actionGeneratePackingList($week)
+	{
+		$Boxes=Box::model()->with(array(
+			'CustomerBoxes',
+			'BoxItems'=>array(
+				'select'=>'item_name,item_unit',
+				'with'=>array(
+					'Grower'=>array(
+						'select'=>'grower_name'
+					),
+				)
+			),
+		))->findAll(array(
+			'select'=>'size_id, SUM(item_quantity) as total_quantity, GROUP_CONCAT(t.box_id) AS box_ids',
+			'condition'=>'week_id='.$week.' AND customer_box_id is not null',
+			'group'=>'grower_name,item_name',
+			'order'=>'grower_name',
+		));
+		
+		$this->render('../site/index',array(
+			
+		));
+		
+//		$phpExcelPath = Yii::getPathOfAlias('application.external.PHPExcel');
+//		
+//		//disable Yii's Autoload because it messes with PHPExcel's autoloader
+//		spl_autoload_unregister(array('YiiBase','autoload'));  
+//		include($phpExcelPath . DIRECTORY_SEPARATOR . 'PHPExcel.php');
+//		
+//		$objPHPExcel = new PHPExcel();
+//		
+//		$objPHPExcel->setActiveSheetIndex(0);
+//		
+//		$row=0;
+//		foreach($Boxes as $Box)
+//		{
+//			echo $Box->size_id;
+//			$objPHPExcel->getActiveSheet()->SetCellValue('A'.$row, $Box->size_id);
+//			$row++;
+//		}
+//		
+//		$objPHPExcel->getActiveSheet()->SetCellValue('A1', 'Hello');
+//		$objPHPExcel->getActiveSheet()->SetCellValue('B2', 'world!');
+//		$objPHPExcel->getActiveSheet()->SetCellValue('C1', 'Hello');
+//		$objPHPExcel->getActiveSheet()->SetCellValue('D2', 'world!');
+//
+//		// Rename sheet
+//		$objPHPExcel->getActiveSheet()->setTitle('Simple');
+//		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+//		
+//		header('Content-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+//		header('Content-Disposition: attachment; filename="packing-list"');
+//		$objWriter->save('php://output');
+//
+//		exit;
 	}
 
 	/**

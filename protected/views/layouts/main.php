@@ -36,25 +36,24 @@
 //				array('label'=>'About', 'url'=>array('/site/page', 'view'=>'about')),
 //				array('label'=>'Contact', 'url'=>array('/site/contact')),
 				
-				array('label'=>'Profile', 'url'=>array('/user/view','id'=>Yii::app()->user->id), 'visible'=>!Yii::app()->user->isGuest),
+				//array('label'=>'Profile', 'url'=>array('/user/view','id'=>Yii::app()->user->id), 'visible'=>!Yii::app()->user->isGuest),
 				
-				array('label' => 'Customer', 'url' => '#', 'visible' => Yii::app()->user->checkAccess('customer'), 'items' => array(
-					array('label'=>'All orders', 'url'=>array('customerBox/order')),
-					array('label'=>'Make a payment', 'url'=>array('customerPayment/create')),
-					array('label'=>'View Payments', 'url'=>array('customerPayment/index')),
-				)),
+
+				//Customer menu
+				array('label'=>'Orders', 'url'=>array('customerBox/order'), 'visible' => Yii::app()->user->customer_id),
+//				array('label'=>'Make a payment', 'url'=>array('customerPayment/create'), 'visible' => Yii::app()->user->customer_id),
+				array('label'=>'Payments', 'url'=>array('customerPayment/index'), 'visible' => Yii::app()->user->customer_id),
+
+				//Grower menu
+				array('label'=>'Items', 'url'=>array('growerItem/admin'), 'visible' => Yii::app()->user->grower_id),
 				
-				array('label' => 'Grower', 'url' => '#', 'visible' => Yii::app()->user->checkAccess('grower'), 'items' => array(
-					array('label'=>'Items', 'url'=>array('growerItem/admin')),
-				)),
 				
-				array('label' => 'Admin', 'url' => '#', 'visible' => Yii::app()->user->checkAccess('admin'), 'items' => array(
-					array('label'=>'Fill Boxes', 'url'=>array('boxItem/create')),
-					array('label'=>'Enter Payments', 'url'=>array('customerPayment/enterPayments')),
-					array('label'=>'Users', 'url'=>array('user/admin')),
-					array('label'=>'Growers', 'url'=>array('grower/admin')),
-					array('label'=>'Locations', 'url'=>array('location/admin')),
-				)),
+				//Admin menu
+				array('label'=>'Boxes', 'url'=>array('boxItem/create'), 'visible' => Yii::app()->user->checkAccess('admin')),
+				array('label'=>'Payments', 'url'=>array('customerPayment/enterPayments'), 'visible' => Yii::app()->user->checkAccess('admin')),
+				array('label'=>'Customers', 'url'=>array('user/admin'), 'visible' => Yii::app()->user->checkAccess('admin')),
+				array('label'=>'Growers', 'url'=>array('grower/admin'), 'visible' => Yii::app()->user->checkAccess('admin')),
+				array('label'=>'Locations', 'url'=>array('location/admin'), 'visible' => Yii::app()->user->checkAccess('admin')),
 
 				array('label'=>'Register', 'url'=>array('/customer/register'), 'visible'=>Yii::app()->user->isGuest),
 				array('label'=>'Login', 'url'=>array('/site/login'), 'visible'=>Yii::app()->user->isGuest),

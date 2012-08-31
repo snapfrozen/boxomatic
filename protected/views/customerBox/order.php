@@ -52,7 +52,7 @@
 				$disabled='';
 				$classes='';
 				
-				if(strtotime($Week->week_delivery_date) < $deadline) {
+				if(strtotime($Week->week_delivery_date) < $deadline && !isset(Yii::app()->user->shadow_id)) {
 					$disabled='disabled';
 					$classes.=' pastDeadline';
 				} else {
@@ -94,8 +94,8 @@
 				<td>
 					<div class="advanced show">
 					<?php foreach($Week->MergedBoxes as $Box):
+						
 					$CustomerBox=CustomerBox::findCustomerBox($Week->week_id, $Box->size_id, Yii::app()->user->customer_id);
-//					$CustomerBox=CustomerBox::model()->findByAttributes(array('box_id'=>$Box->box_id, 'customer_id'=>Yii::app()->user->customer_id));
 					$quantity=$CustomerBox ? $CustomerBox->quantity : 0;
 					$attribs=array('class'=>'number','min'=>'0');
 					if($disabled)

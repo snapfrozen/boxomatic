@@ -7,7 +7,7 @@
 // CWebApplication properties can be configured here.
 return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
-	'name'=>'Food Box',
+	'name'=>'FoodBox',
 
 	// preloading 'log' component
 	'preload'=>array('log'),
@@ -20,6 +20,7 @@ return array(
 		'application.components.snap.*',
 		'application.modules.user.models.*',
 		'ext.yii-mail.YiiMailMessage',
+		
 	),
 
 	'modules'=>array(
@@ -121,10 +122,10 @@ return array(
 					'class'=>'CFileLogRoute',
 					'levels'=>'error, warning',
 				),
-//				array(
-//					'class'=>'CWebLogRoute',
-//					'categories'=>'system.db.CDbCommand',
-//				),
+				array(
+					'class'=>'CWebLogRoute',
+					'categories'=>'system.db.CDbCommand',
+				),
 				// uncomment the following to show log messages on web pages
 				/*
 				array(

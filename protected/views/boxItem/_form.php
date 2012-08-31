@@ -2,11 +2,13 @@
 	$cs=Yii::app()->clientScript;
 	$cs->registerCssFile(Yii::app()->request->baseUrl . '/css/redmond/jquery-ui.css');
 	$cs->registerCssFile(Yii::app()->request->baseUrl . '/css/ui.spinner.css');
+	$cs->registerCssFile(Yii::app()->request->baseUrl . '/css/chosen.css');
 	
 	$cs->registerCoreScript('jquery.ui');
 	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/ui.touch-punch.min.js', CClientScript::POS_END);
 	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/ui.datepicker.min.js', CClientScript::POS_END);
 	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/ui.spinner.min.js', CClientScript::POS_END);
+	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/chosen.jquery.min.js', CClientScript::POS_END);
 	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/boxitem/_form.js',CClientScript::POS_END);
 ?>
 <div id="fillBoxForm" class="form">
@@ -30,6 +32,7 @@
 
 	<div id="inventory" class="row">
 		<h2>Inventory</h2>
+		
 		<?php $this->widget('zii.widgets.grid.CGridView', array(
 			'id'=>'grower-item-grid',
 			'dataProvider'=>$GrowerItems->search(),
@@ -70,9 +73,14 @@
 		'enableAjaxValidation'=>false,
 		'action'=>$this->createUrl('boxItem/create',array('week'=>Yii::app()->request->getQuery('week'))),
 		)); ?>
+		
 		<div id="current-boxes">
 		<?php echo CHtml::hiddenField('curUrl', $this->createUrl('boxItem/create',array('week'=>Yii::app()->request->getQuery('week')))); ?>
 		<?php if($SelectedWeek): ?>
+			<div class="row">
+				<?php echo CHtml::dropDownList('new_grower',null,CHtml::listData(Grower::model()->findAll(array('order'=>'grower_name ASC')),'grower_id','grower_name'),array('class'=>'chosen')); ?>
+				<?php echo CHtml::hiddenField('selected_week_id',$SelectedWeek->week_id); ?>
+			</div>
 			<table>
 				<thead>
 					<tr>
@@ -261,6 +269,7 @@
 					
 				</tfoot>
 			</table>
+			<p><?php echo CHtml::link('Generate packing list',array('week/generatePackingList','week'=>$SelectedWeek->week_id)) ?></p>
 		<?php endif; ?>
 		</div>
 		<?php echo CHtml::submitButton('Update Boxes'); ?>

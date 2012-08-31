@@ -200,7 +200,7 @@ class CustomerBoxController extends Controller
 	{
 		$model=new CustomerBox();
 		$Customer=Customer::model()->findByPk(Yii::app()->user->customer_id);
-
+		
 		$deadlineDays=Yii::app()->params['orderDeadlineDays'];
 		
 		if(isset($_GET['all']))
@@ -303,6 +303,7 @@ class CustomerBoxController extends Controller
 			foreach($_POST['CustWeeks'] as $key=>$locationId)
 			{
 				$CustWeek=CustomerWeek::model()->findByPk($key);
+				
 				$CustWeek->location_id=$locationId;
 				$CustWeek->save();
 				

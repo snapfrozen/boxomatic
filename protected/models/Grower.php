@@ -77,7 +77,8 @@ class Grower extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'growerItem' => array(self::HAS_MANY, 'GrowerItem', 'grower_id'),
+			'GrowerItems' => array(self::HAS_MANY, 'GrowerItem', 'grower_id'),
+			'BoxItems' => array(self::HAS_MANY , 'BoxItem', 'box_item_id'),
 		);
 	}
 
