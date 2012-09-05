@@ -4,6 +4,10 @@ $loading.hide();
 
 function loadSpinners()
 {
+	$('select.chosen').chosen();
+	$('select#new_grower').change(function(){
+		reloadBoxes(curUrl,{week: $('input#selected_week_id').val(), grower:$(this).val()});
+	})
 	$('input.number').spinner();
 	$('input.currency, input.decimal').spinner({
 		places:2,

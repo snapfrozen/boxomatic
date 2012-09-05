@@ -18,7 +18,7 @@ class SnapEncrypt extends CApplicationComponent
 	 */
 	public function encrypt($value)
 	{
-		return md5($this->salt . $value);
+		return md5($value);
 	}
 }
 ?>
