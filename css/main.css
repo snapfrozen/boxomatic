@@ -4,7 +4,9 @@ body
 	padding: 0;
 	color: #555;
 	font: normal 10pt Arial,Helvetica,sans-serif;
-	background: #EFEFEF;
+	/* background: #EFEFEF; */
+	background-image:url('../images/layout/bg-darkwood.jpg');
+	background-repeat:repeat-x;
 }
 
 #page
