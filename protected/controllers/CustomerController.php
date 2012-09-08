@@ -44,27 +44,6 @@ class CustomerController extends Controller
 			),
 		);
 	}
-	
-	public function actionRegister()
-	{
-	    //$this->render('register', array('model' =>$model));
-	    
-	    $model=new Customer;
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
-		if(isset($_POST['Customer']))
-		{
-			$model->attributes=$_POST['Customer'];
-			if($model->save())
-				$this->redirect(array('view','id'=>$model->customer_id));
-		}
-
-		$this->render('register',array(
-			'model'=>$model,
-		));
-	}
 
 	/**
 	 * Displays a particular model.
