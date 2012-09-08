@@ -27,7 +27,7 @@ class GrowerController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view'),
+				'actions'=>array('index','view','GeoCode'),
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -172,5 +172,61 @@ class GrowerController extends Controller
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
 		}
+	}
+	
+	public function actionGeoCode() 
+	{		
+		define("MAPS_HOST", "maps.google.com");
+		//define("KEY", "AIzaSyAU7aJq2EcQYJV7BsjZg1lkhR2dYBTZxfU");
+		define("KEY", "AIzaSyDtX7h4kdxUSrWpqVz3uRYP2-gxDMXa6hM");
+		
+		$delay = 0;
+		$base_url = "http://" . MAPS_HOST . "/maps/geo?output=xml" . "&key=" . KEY;
+		
+		$Growers=Grower::model()->findAll();
+		
+		foreach($Growers as $grower)
+		{ 
+			$id = $grower->grower_id;
+			$address = $grower->grower_address . ' ' . $grower->grower_address2 . ', ' . $grower->grower_suburb . ', ' . $grower->grower_state . ', ' . $grower->grower_postcode;
+			$address = trim($address, ' ,');
+		
+			if(!empty($address))
+			{
+				$request_url = $base_url . "&q=" . urlencode($address . ', Australia');
+				$xml = simplexml_load_file($request_url) or die("url not loading");
+				$status = $xml->Response->Status->code;
+				
+				if (strcmp($status, "200") == 0) 
+				{
+					// Successful geocode
+					$geocode_pending = false;
+					$coordinates = $xml->Response->Placemark->Point->coordinates;
+					$coordinatesSplit = split(",", $coordinates);
+					// Format: Longitude, Latitude, Altitude
+					$lat = $coordinatesSplit[1];
+					$lng = $coordinatesSplit[0];
+					
+					$grower->lattitude = $lat;
+					$grower->longitude = $lng;
+					$grower->save();
+		
+				} 
+				else if (strcmp($status, "620") == 0) 
+				{
+					// sent geocodes too fast
+					$delay += 100000;
+				} 
+				else 
+				{
+					// failure to geocode
+					$geocode_pending = false;
+					echo "Address " . $address . ", Australia failed to geocoded. ";
+					echo "Received status " . $status . "\n";
+				}
+				usleep($delay);
+			}
+		}
+
 	}
 }
