@@ -66,6 +66,26 @@ class SiteController extends Controller
 		}
 		$this->render('contact',array('model'=>$model));
 	}
+	
+	/**
+	 * Displays the register page
+	 */
+	public function actionRegister()
+	{
+		$model=new RegistrationForm;
+		if(isset($_POST['RegistrationForm']))
+		{
+			$model->attributes=$_POST['RegistrationForm'];
+			if($model->validate())
+			{
+//				$headers="From: {$model->email}\r\nReply-To: {$model->email}";
+//				mail(Yii::app()->params['adminEmail'],$model->subject,$model->body,$headers);
+//				Yii::app()->user->setFlash('register','Thank you for contacting us. We will respond to you as soon as possible.');
+//				$this->refresh();
+			}
+		}
+		$this->render('register',array('model'=>$model));
+	}
 
 	/**
 	 * Displays the login page
