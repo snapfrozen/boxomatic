@@ -26,6 +26,7 @@
 class User extends SnapActiveRecord
 {
 	public $password_repeat;
+	public $verifyCode;
 	
 	/**
 	 * Returns the static model of the specified AR class.
@@ -52,7 +53,7 @@ class User extends SnapActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('user_email, password','required'),
+			array('user_email, password, first_name, last_name','required'),
 			array('customer_id, grower_id, update_user_id, create_user_id', 'numerical', 'integerOnly'=>true),
 			array('user_email, password', 'length', 'max'=>255),
 			array('user_email', 'unique'),
@@ -64,6 +65,8 @@ class User extends SnapActiveRecord
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('user_name, user_phone, user_mobile, user_address, user_address2, user_email, user_suburb, user_state, user_postcode, last_login_time, update_time, update_user_id, create_time, create_user_id', 'safe', 'on'=>'search'),
+			// verifyCode needs to be entered correctly
+			array('verifyCode', 'captcha', 'allowEmpty'=>!CCaptcha::checkRequirements()),
 		);
 	}
 
@@ -172,6 +175,9 @@ class User extends SnapActiveRecord
 	*/
 	public function defaultScope()
 	{
+		
+		/*
+		//This messes up the unique validation :(
 		if(!Yii::app()->user->checkAccess('admin')) 
 		{
 			return array(
@@ -182,6 +188,8 @@ class User extends SnapActiveRecord
 		{
 			return parent::defaultScope();
 		}
+		 */
+		return parent::defaultScope();
 	}
 	
 }

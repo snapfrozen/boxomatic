@@ -72,16 +72,42 @@ class SiteController extends Controller
 	 */
 	public function actionRegister()
 	{
-		$model=new RegistrationForm;
-		if(isset($_POST['RegistrationForm']))
+		$model=new User;
+		if(isset($_POST['User']))
 		{
-			$model->attributes=$_POST['RegistrationForm'];
-			if($model->validate())
+			$model->attributes=$_POST['User'];
+			
+			if($model->save())
 			{
-//				$headers="From: {$model->email}\r\nReply-To: {$model->email}";
-//				mail(Yii::app()->params['adminEmail'],$model->subject,$model->body,$headers);
-//				Yii::app()->user->setFlash('register','Thank you for contacting us. We will respond to you as soon as possible.');
-//				$this->refresh();
+				$Customer=new Customer();
+				$Customer->attributes=$_POST['Customer'];
+				$Customer->save();
+				
+				$model->customer_id = $Customer->customer_id;
+				$model->update(array('customer_id'));
+				
+				$Auth = Yii::app()->authManager;
+				$Auth->assign('customer',$model->id);
+				
+				//Send email
+				$message = new YiiMailMessage('Welcome to FoodBox');
+				$message->view = 'welcome';
+				$message->setBody(array('User'=>$model), 'text/html');
+				$message->addTo($model->user_email);
+				$message->from = Yii::app()->params['adminEmail'];
+				
+				if(!@Yii::app()->mail->send($message))
+				{
+					$mailError=true;
+				}
+				
+				$identity=new UserIdentity($model->user_email, $_POST['User']['password']);
+				$identity->authenticate();
+
+				Yii::app()->user->login($identity);
+				User::model()->updateByPk($identity->id, array('last_login_time'=>new CDbExpression('NOW()')));
+				
+				$this->redirect(array('customer/welcome'));
 			}
 		}
 		$this->render('register',array('model'=>$model));

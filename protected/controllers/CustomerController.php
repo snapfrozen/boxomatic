@@ -32,7 +32,7 @@ class CustomerController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('update'),
+				'actions'=>array('update','welcome'),
 				'roles'=>array('customer'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -132,6 +132,16 @@ class CustomerController extends Controller
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
 		));
+	}
+	
+		
+	/**
+	 * Welcome message.
+	 */
+	public function actionWelcome()
+	{
+		$User=User::model()->findByPk(Yii::app()->user->id);
+		$this->render('welcome',array('User'=>$User));
 	}
 
 	/**
