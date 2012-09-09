@@ -140,6 +140,7 @@ return array(
 	// using Yii::app()->params['paramName']
 	'params'=>array(
 		// this is used in contact page
+		'googleMapKey'=>'AIzaSyAU7aJq2EcQYJV7BsjZg1lkhR2dYBTZxfU',
 		'adminEmail'=>'francis.beresford@gmail.com',
 		'months'=>array(
 			1=>'January',

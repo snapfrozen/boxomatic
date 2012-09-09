@@ -76,6 +76,7 @@ caption {background:#eee;}
 .last {margin-right:0;padding-right:0;}
 .top {margin-top:0;padding-top:0;}
 .bottom {margin-bottom:0;padding-bottom:0;}
+.hidden {display:none;}
 
 /* grid.css */
 .container {width:950px;margin:0 auto;}
@@ -500,4 +501,15 @@ tfoot td {
 tfoot td.total {
 	font-weight:bold;
 	text-align:right;
+}
+
+/* Grower Map */
+
+.grower-map #map {
+	width:500px;
+	height:500px;
+}
+.infoWindow {
+	min-height:150px;
+	width:300px;
 }

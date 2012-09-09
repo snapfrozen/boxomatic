@@ -16,8 +16,11 @@
 
 	<title><?php echo CHtml::encode($this->pageTitle); ?></title>
 </head>
-
-<body>
+<?php
+	$controller = Yii::app()->controller->id; //current controller
+	$action = Yii::app()->controller->getAction()->getId(); //current action
+?>
+<body class="<?php echo $controller . '-' . $action; ?>">
 
 <div class="container" id="page">
 
@@ -38,7 +41,6 @@
 				
 				//array('label'=>'Profile', 'url'=>array('/user/view','id'=>Yii::app()->user->id), 'visible'=>!Yii::app()->user->isGuest),
 				
-
 				//Customer menu
 				array('label'=>'Orders', 'url'=>array('customerBox/order'), 'visible' => Yii::app()->user->customer_id),
 //				array('label'=>'Make a payment', 'url'=>array('customerPayment/create'), 'visible' => Yii::app()->user->customer_id),
@@ -47,12 +49,12 @@
 				//Grower menu
 				array('label'=>'Items', 'url'=>array('growerItem/admin'), 'visible' => Yii::app()->user->grower_id),
 				
-				
 				//Admin menu
 				array('label'=>'Boxes', 'url'=>array('boxItem/create'), 'visible' => Yii::app()->user->checkAccess('admin')),
 				array('label'=>'Payments', 'url'=>array('customerPayment/enterPayments'), 'visible' => Yii::app()->user->checkAccess('admin')),
 				array('label'=>'Customers', 'url'=>array('user/admin'), 'visible' => Yii::app()->user->checkAccess('admin')),
 				array('label'=>'Growers', 'url'=>array('grower/admin'), 'visible' => Yii::app()->user->checkAccess('admin')),
+				array('label'=>'Grower Map', 'url'=>array('grower/map'), 'visible' => Yii::app()->user->checkAccess('admin')),
 				array('label'=>'Locations', 'url'=>array('location/admin'), 'visible' => Yii::app()->user->checkAccess('admin')),
 
 				array('label'=>'Register', 'url'=>array('site/register'), 'visible'=>Yii::app()->user->isGuest),
@@ -80,9 +82,6 @@
 
 </div><!-- page -->
 <?php
-	$controller = Yii::app()->controller->id; //current controller
-	$action = Yii::app()->controller->getAction()->getId(); //current action
-
 	$jsFile = 'js/' . strtolower($controller) . '/' . strtolower($action) . '.js'; // filename to load
 	if( is_file($jsFile) ) { 
 		Yii::app()->clientScript->registerCoreScript('jquery');

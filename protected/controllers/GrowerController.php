@@ -31,7 +31,7 @@ class GrowerController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update'),
+				'actions'=>array('create','update','map'),
 				'roles'=>array('grower'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -130,6 +130,35 @@ class GrowerController extends Controller
 		$dataProvider=new CActiveDataProvider('Grower');
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
+		));
+	}
+	
+	/**
+	 * Shows the grower map
+	 */
+	public function actionMap()
+	{
+		$model=new Grower('search');
+		$model->unsetAttributes();  // clear any default values
+		if(isset($_GET['Grower']))
+			$model->attributes=$_GET['Grower'];
+
+		$criteria=new CDbCriteria();
+		$criteria->select='grower_id,grower_name,lattitude,longitude';
+		$Growers=$model->with('GrowerItems')->findAll($criteria);
+		
+		//Build grower array and grower items in a format suitable for Mustache js
+		$growerArray=SnapUtil::makeArray($Growers);
+		foreach($Growers as $Grower) {
+			$growerItems=SnapUtil::makeArray($Grower->GrowerItems);
+			foreach($growerItems as $gi) {
+				$growerArray[$Grower->grower_id]['GrowerItems'][]=$gi;
+			}
+		}
+
+		$this->render('map',array(
+			'model'=>$model,
+			'Growers'=>$growerArray,
 		));
 	}
 
