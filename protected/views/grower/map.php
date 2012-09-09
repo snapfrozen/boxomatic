@@ -16,7 +16,13 @@ $cs->registerScriptFile( Yii::app()->request->baseUrl . '/js/mustache.js' );
 <div id="map"></div>
 <div id="infoWindowTemplate" class="hidden">
 	<div class="infoWindow">
-		<h2><a href="<?php echo $this->createUrl('grower/view'); ?>&id={{grower_id}}">{{grower_name}}</a></h2>
+		<h3><a href="<?php echo $this->createUrl('grower/view'); ?>&id={{grower_id}}">{{grower_name}}</a></h3>
+		<p>
+			{{#grower_address}}{{grower_address}}<br />{{/grower_address}}
+			{{#grower_address2}}{{grower_address2}}<br />{{/grower_address2}}
+			{{#grower_suburb}}{{grower_suburb}}<br />{{/grower_suburb}}
+			{{grower_state}} {{grower_postcode}}
+		</p>
 		<h3>Items available</h3>
 		<ul>
 		{{#GrowerItems}}

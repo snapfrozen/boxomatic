@@ -109,7 +109,7 @@ class Grower extends CActiveRecord
 			'grower_produce' => 'Produce',
 			'grower_notes' => 'Notes',
 			'grower_payment_details' => 'Payment Details',
-			'grower_item_search' => 'Search for produce',
+			'grower_item_search' => 'Produce',
 		);
 	}
 
