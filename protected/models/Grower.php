@@ -30,6 +30,7 @@
  */
 class Grower extends CActiveRecord
 {
+	public $grower_item_search;
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
@@ -65,7 +66,7 @@ class Grower extends CActiveRecord
 			array('grower_produce, grower_notes, grower_payment_details', 'length', 'max'=>500),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('grower_id, grower_name, grower_mobile, grower_phone, grower_address, grower_address2, grower_suburb, grower_state, grower_postcode, grower_distance_kms, grower_bank_account_name, grower_bank_bsb, grower_bank_acc, grower_email, grower_website, grower_certification_status, grower_order_days, grower_produce, grower_notes, grower_payment_details', 'safe', 'on'=>'search'),
+			array('grower_item_search, grower_id, grower_name, grower_mobile, grower_phone, grower_address, grower_address2, grower_suburb, grower_state, grower_postcode, grower_distance_kms, grower_bank_account_name, grower_bank_bsb, grower_bank_acc, grower_email, grower_website, grower_certification_status, grower_order_days, grower_produce, grower_notes, grower_payment_details', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -108,6 +109,7 @@ class Grower extends CActiveRecord
 			'grower_produce' => 'Produce',
 			'grower_notes' => 'Notes',
 			'grower_payment_details' => 'Payment Details',
+			'grower_item_search' => 'Search for produce',
 		);
 	}
 
@@ -122,6 +124,15 @@ class Grower extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
+		if(!empty($this->grower_item_search)) {
+			$criteria->with=array('GrowerItems');
+			$searchItems=explode(',',$this->grower_item_search);
+			
+			foreach($searchItems as $searchItem) {
+				$criteria->addCondition('item_name LIKE "%' . $searchItem . '%"','OR');
+			}
+		}
+	
 		$criteria->compare('grower_id',$this->grower_id);
 		$criteria->compare('grower_name',$this->grower_name,true);
 		$criteria->compare('grower_mobile',$this->grower_mobile,true);
@@ -145,6 +156,7 @@ class Grower extends CActiveRecord
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+			'pagination'=>false,
 		));
 	}
 }
