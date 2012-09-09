@@ -122,10 +122,10 @@ return array(
 					'class'=>'CFileLogRoute',
 					'levels'=>'error, warning',
 				),
-				array(
-					'class'=>'CWebLogRoute',
-					'categories'=>'system.db.CDbCommand',
-				),
+//				array(
+//					'class'=>'CWebLogRoute',
+//					'categories'=>'system.db.CDbCommand',
+//				),
 				// uncomment the following to show log messages on web pages
 				/*
 				array(

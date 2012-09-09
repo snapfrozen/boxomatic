@@ -153,31 +153,15 @@ class WeekController extends Controller
 	 */
 	public function actionGeneratePackingList($week)
 	{
-		/*
-		$Boxes=Box::model()->with(array(
-			'CustomerBoxes',
-			'BoxItems'=>array(
-				'select'=>'item_name,item_unit',
-				'with'=>array(
-					'Grower'=>array(
-						'select'=>'grower_name'
-					),
-				)
-			),
-		))->findAll(array(
-			'select'=>'size_id, SUM(item_quantity) as total, GROUP_CONCAT(DISTINCT t.box_id) AS box_ids',
-			'condition'=>'week_id='.$week.' AND customer_box_id is not null',
-			'group'=>'grower_name,item_name',
-			'order'=>'grower_name',
-		));*/
-		
 		$sql = '
-
 		SELECT 
 			SUM(item_quantity) as total, 
-			GROUP_CONCAT(DISTINCT t.box_id) AS box_ids,
-
-			`BoxItems`.`item_name`, 
+			
+			GROUP_CONCAT(DISTINCT t.box_id ORDER BY t.box_id DESC) AS box_ids,
+			GROUP_CONCAT(DISTINCT `box_item_id` ORDER BY `BoxItems`.box_id DESC) as box_item_ids,
+			
+			`BoxItems`.`box_item_id`,
+			`BoxItems`.`item_name`,
 			`BoxItems`.`item_unit`,
 			`Grower`.`grower_name`
 			
@@ -203,9 +187,6 @@ class WeekController extends Controller
 		$command=$connection->createCommand($sql);
 		$dataReader=$command->query();
 		$items=$dataReader->readAll();
-//		$this->render('../site/index',array(
-//			
-//		));
 		
 		$phpExcelPath = Yii::getPathOfAlias('application.external.PHPExcel');
 		
@@ -216,31 +197,58 @@ class WeekController extends Controller
 		$objPHPExcel = new PHPExcel();
 		$objPHPExcel->setActiveSheetIndex(0);
 		
-		$row=1;
+		
+		$objPHPExcel->getActiveSheet()->SetCellValue('A1', 'Grower');
+		$objPHPExcel->getActiveSheet()->SetCellValue('B1', 'Item');
+		$objPHPExcel->getActiveSheet()->SetCellValue('C1', 'Total Quantity');
+		$objPHPExcel->getActiveSheet()->SetCellValue('D1', 'Unit');
+		
+		$alpha='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$boxIds=explode(',',$items[0]['box_ids']);
+		
+		$pos=4;
+		foreach($boxIds as $n=>$boxId)
+		{
+			//A bit hack.. but it works!
+			spl_autoload_register(array('YiiBase','autoload'));
+			$Box=Box::model()->with('BoxSize')->findByPk($boxId);
+			spl_autoload_unregister(array('YiiBase','autoload'));  
+
+			$objPHPExcel->getActiveSheet()->SetCellValue($alpha[$pos].'1', $Box->BoxSize->box_size_name);
+			$pos++;
+		}
+		$objPHPExcel->getActiveSheet()->getStyle("A1:".$alpha[$pos].'1')->applyFromArray(array("font" => array( "bold" => true)));
+		
+		$row=2;
 		foreach($items as $item)
 		{
-//			echo $item['item_name'] . ', ' . $item['item_unit'] . ', ' . $item['grower_name'] . '<br />';
 			$objPHPExcel->getActiveSheet()->SetCellValue('A'.$row, $item['grower_name']);
 			$objPHPExcel->getActiveSheet()->SetCellValue('B'.$row, $item['item_name']);
-			$objPHPExcel->getActiveSheet()->SetCellValue('C'.$row, $item['item_unit']);
-			$objPHPExcel->getActiveSheet()->SetCellValue('D'.$row, $item['total']);
-
-			$boxIds = explode(',',$item['boxIds']);
-			foreach($boxIds as $boxId)
+			$objPHPExcel->getActiveSheet()->SetCellValue('C'.$row, $item['total']);
+			$objPHPExcel->getActiveSheet()->SetCellValue('D'.$row, $item['item_unit']);
+			
+			$boxIds = explode(',',$item['box_ids']);
+			$boxItemIds = explode(',',$item['box_item_ids']);
+			$pos=4;
+			foreach($boxIds as $n=>$boxId)
 			{
+				//A bit hack.. but it works!
+				spl_autoload_register(array('YiiBase','autoload'));
+				$BoxItem=BoxItem::model()->findByAttributes(array('box_id'=>$boxId, 'box_item_id'=>$boxItemIds[$n]));
+				spl_autoload_unregister(array('YiiBase','autoload'));  
 				
+				$objPHPExcel->getActiveSheet()->SetCellValue($alpha[$pos].$row, $BoxItem ? $BoxItem->item_quantity : 0);
+				$pos++;
 			}
 			
 			$row++;
 		}
 		
-//		exit;
+		$objPHPExcel->getActiveSheet()->getColumnDimension("A")->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension("B")->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension("C")->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension("D")->setAutoSize(true);
 		
-		$objPHPExcel->getActiveSheet()->SetCellValue('A1', 'Hello');
-		$objPHPExcel->getActiveSheet()->SetCellValue('B2', 'world!');
-		$objPHPExcel->getActiveSheet()->SetCellValue('C1', 'Hello');
-		$objPHPExcel->getActiveSheet()->SetCellValue('D2', 'world!');
-
 		// Rename sheet
 		$objPHPExcel->getActiveSheet()->setTitle('Packing List');
 		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
