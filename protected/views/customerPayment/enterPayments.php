@@ -8,7 +8,7 @@
 	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/chosen.jquery.min.js', CClientScript::POS_END);
 ?>
 
-<h1>Customer Payment</h1>
+<h1>Enter Customer Payment</h1>
 
 <div class="form">
 
@@ -44,11 +44,52 @@
 		<?php echo $form->textField($model,'payment_value',array('size'=>7,'maxlength'=>7)); ?>
 		<?php echo $form->error($model,'payment_value'); ?>
 	</div>
+	
+	<div class="row">
+		<?php echo $form->labelEx($model,'payment_note'); ?>
+		<?php echo $form->textArea($model,'payment_note',array('rows'=>5, 'cols'=>30,'maxlength'=>1000)); ?>
+		<?php echo $form->error($model,'payment_note'); ?>
+	</div>
+
 
 	<div class="row buttons">
 		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
 	</div>
 
 <?php $this->endWidget(); ?>
+
+<?php
+Yii::app()->clientScript->registerScript('search', "
+$('.search-button').click(function(){
+	$('.search-form').toggle();
+	return false;
+});
+$('.search-form form').submit(function(){
+	$.fn.yiiGridView.update('customer-payment-grid', {
+		data: $(this).serialize()
+	});
+	return false;
+});
+");
+?>
+
+<h1>Search Customer Payments</h1>
+
+<?php $this->widget('zii.widgets.grid.CGridView', array(
+	'id'=>'customer-payment-grid',
+	'dataProvider'=>$search_model->search(),
+	'filter'=>$search_model,
+	'columns'=>array(
+		'payment_type',
+		'payment_value',
+		'payment_date',
+		'payment_note',
+		'Customer.User.user_name',
+		array(
+			'class'=>'CButtonColumn',
+		),
+	),
+)); ?>
+
 
 </div><!-- form -->

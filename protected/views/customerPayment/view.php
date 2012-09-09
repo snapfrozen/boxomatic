@@ -18,5 +18,6 @@ $this->menu=array(
 		'payment_type',
 		'payment_value',
 		'payment_date',
+		'payment_note',
 	),
 )); ?>
