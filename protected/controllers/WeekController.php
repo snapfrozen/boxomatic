@@ -153,6 +153,7 @@ class WeekController extends Controller
 	 */
 	public function actionGeneratePackingList($week)
 	{
+		/*
 		$Boxes=Box::model()->with(array(
 			'CustomerBoxes',
 			'BoxItems'=>array(
@@ -164,48 +165,91 @@ class WeekController extends Controller
 				)
 			),
 		))->findAll(array(
-			'select'=>'size_id, SUM(item_quantity) as total_quantity, GROUP_CONCAT(t.box_id) AS box_ids',
+			'select'=>'size_id, SUM(item_quantity) as total, GROUP_CONCAT(DISTINCT t.box_id) AS box_ids',
 			'condition'=>'week_id='.$week.' AND customer_box_id is not null',
 			'group'=>'grower_name,item_name',
 			'order'=>'grower_name',
-		));
+		));*/
 		
-		$this->render('../site/index',array(
+		$sql = '
+
+		SELECT 
+			SUM(item_quantity) as total, 
+			GROUP_CONCAT(DISTINCT t.box_id) AS box_ids,
+
+			`BoxItems`.`item_name`, 
+			`BoxItems`.`item_unit`,
+			`Grower`.`grower_name`
 			
-		));
+		FROM `boxes` `t`  
+
+		LEFT OUTER JOIN `customer_boxes` `CustomerBoxes` 
+			ON (`CustomerBoxes`.`box_id`=`t`.`box_id`)
+		LEFT OUTER JOIN `box_items` `BoxItems` 
+			ON (`BoxItems`.`box_id`=`t`.`box_id`)  
+		LEFT OUTER JOIN `growers` `Grower` 
+			ON (`BoxItems`.`grower_id`=`Grower`.`grower_id`)  
+
+		WHERE (
+			week_id=' . $week . ' 
+			AND customer_box_id is not null
+		) 
+
+		GROUP BY grower_name,item_name 
+		ORDER BY grower_name;
+		';
 		
-//		$phpExcelPath = Yii::getPathOfAlias('application.external.PHPExcel');
-//		
-//		//disable Yii's Autoload because it messes with PHPExcel's autoloader
-//		spl_autoload_unregister(array('YiiBase','autoload'));  
-//		include($phpExcelPath . DIRECTORY_SEPARATOR . 'PHPExcel.php');
-//		
-//		$objPHPExcel = new PHPExcel();
-//		
-//		$objPHPExcel->setActiveSheetIndex(0);
-//		
-//		$row=0;
-//		foreach($Boxes as $Box)
-//		{
-//			echo $Box->size_id;
-//			$objPHPExcel->getActiveSheet()->SetCellValue('A'.$row, $Box->size_id);
-//			$row++;
-//		}
-//		
-//		$objPHPExcel->getActiveSheet()->SetCellValue('A1', 'Hello');
-//		$objPHPExcel->getActiveSheet()->SetCellValue('B2', 'world!');
-//		$objPHPExcel->getActiveSheet()->SetCellValue('C1', 'Hello');
-//		$objPHPExcel->getActiveSheet()->SetCellValue('D2', 'world!');
-//
-//		// Rename sheet
-//		$objPHPExcel->getActiveSheet()->setTitle('Simple');
-//		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-//		
-//		header('Content-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-//		header('Content-Disposition: attachment; filename="packing-list"');
-//		$objWriter->save('php://output');
-//
+		$connection=Yii::app()->db;
+		$command=$connection->createCommand($sql);
+		$dataReader=$command->query();
+		$items=$dataReader->readAll();
+//		$this->render('../site/index',array(
+//			
+//		));
+		
+		$phpExcelPath = Yii::getPathOfAlias('application.external.PHPExcel');
+		
+		//disable Yii's Autoload because it messes with PHPExcel's autoloader
+		spl_autoload_unregister(array('YiiBase','autoload'));  
+		include($phpExcelPath . DIRECTORY_SEPARATOR . 'PHPExcel.php');
+		
+		$objPHPExcel = new PHPExcel();
+		$objPHPExcel->setActiveSheetIndex(0);
+		
+		$row=1;
+		foreach($items as $item)
+		{
+//			echo $item['item_name'] . ', ' . $item['item_unit'] . ', ' . $item['grower_name'] . '<br />';
+			$objPHPExcel->getActiveSheet()->SetCellValue('A'.$row, $item['grower_name']);
+			$objPHPExcel->getActiveSheet()->SetCellValue('B'.$row, $item['item_name']);
+			$objPHPExcel->getActiveSheet()->SetCellValue('C'.$row, $item['item_unit']);
+			$objPHPExcel->getActiveSheet()->SetCellValue('D'.$row, $item['total']);
+
+			$boxIds = explode(',',$item['boxIds']);
+			foreach($boxIds as $boxId)
+			{
+				
+			}
+			
+			$row++;
+		}
+		
 //		exit;
+		
+		$objPHPExcel->getActiveSheet()->SetCellValue('A1', 'Hello');
+		$objPHPExcel->getActiveSheet()->SetCellValue('B2', 'world!');
+		$objPHPExcel->getActiveSheet()->SetCellValue('C1', 'Hello');
+		$objPHPExcel->getActiveSheet()->SetCellValue('D2', 'world!');
+
+		// Rename sheet
+		$objPHPExcel->getActiveSheet()->setTitle('Packing List');
+		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+		
+		header('Content-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		header('Content-Disposition: attachment; filename="packing-list"');
+		$objWriter->save('php://output');
+
+		exit;
 	}
 
 	/**

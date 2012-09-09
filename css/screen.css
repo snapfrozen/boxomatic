@@ -506,7 +506,7 @@ tfoot td.total {
 /* Grower Map */
 
 .grower-map #map {
-	width:500px;
+	display:block;
 	height:500px;
 }
 .infoWindow {

@@ -156,6 +156,7 @@ class GrowerController extends Controller
 			}
 		}
 
+		$this->layout='//layouts/column1';
 		$this->render('map',array(
 			'model'=>$model,
 			'Growers'=>$growerArray,

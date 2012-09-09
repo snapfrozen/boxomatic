@@ -6,7 +6,7 @@ body
 	font: normal 10pt Arial,Helvetica,sans-serif;
 	/* background: #EFEFEF; */
 	background-image:url('../images/layout/bg-darkwood.jpg');
-	background-repeat:repeat-x;
+	background-repeat:repeat;
 }
 
 #page
