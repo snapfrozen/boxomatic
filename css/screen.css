@@ -60,7 +60,7 @@ dl dt {font-weight:bold;}
 dd {margin-left:1.5em;}
 table {margin-bottom:1.4em;width:100%;}
 th {font-weight:bold;}
-thead th {background:#eee;}
+thead th {background:#000 url(bg.gif) repeat-x left top; color:#fff}
 th, td, caption {padding:4px 10px 4px 5px;}
 tfoot {font-style:italic;}
 caption {background:#eee;}
@@ -274,6 +274,17 @@ h2 span {
 }
 #content .grid-view table.items tr:hover {
 	background:#ffebd4;
+}
+#content ul.yiiPager .selected a {
+	background:#DA7C0C;
+}
+#content ul.yiiPager a:link, 
+#content ul.yiiPager a:visited {
+	border:1px solid #b86400;
+	color:#b86400;
+}
+#content ul.yiiPager .selected a {
+	color:#fff;
 }
 
 /* All Orders Page */
