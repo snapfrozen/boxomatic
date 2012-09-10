@@ -113,10 +113,14 @@ class CustomerPayment extends CActiveRecord
 		$criteria->compare('payment_date',$this->payment_date,true);
 		$criteria->compare('customer_id',$this->customer_id);
 		
-		$criteria->order='payment_id DESC';
+		
+		//$criteria->order='payment_id DESC';
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+			'sort'=>array(
+				'defaultOrder'=>'payment_id DESC'
+			)
 		));
 	}
 	

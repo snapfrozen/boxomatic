@@ -41,23 +41,13 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 		'first_name',
 		'last_name',
 		'user_email',
+		array(
+			'name'=>'Customer.balance',
+			'value'=>'$data->Customer ? Yii::app()->snapFormat->currency($data->Customer->balance) : ""',
+		),
 		'last_login_time',
 		array( 'name'=>'customer_id', 'value'=>'empty($data->customer_id) ? "No" : "Yes"'),
 		array( 'name'=>'grower_id', 'value'=>'empty($data->grower_id) ? "No" : "Yes"'),
-		/*
-		'user_phone',
-		'user_mobile',
-		'user_address',
-		'user_address2',
-		'user_suburb',
-		'user_state',
-		'user_postcode',
-		'last_login_time',
-		'update_time',
-		'update_user_id',
-		'create_time',
-		'create_user_id',
-		*/
 		array(
 			'class'=>'CButtonColumn',
 			'template'=>'{view}{update}{delete}{login}',

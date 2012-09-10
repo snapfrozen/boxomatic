@@ -23,7 +23,7 @@
 	
 	<div class="row">
 		<?php echo $form->labelEx($model,'customer_id'); ?>
-		<?php echo $form->dropDownList($model,'customer_id',CHtml::listData(Customer::model()->with('User')->findAll(array('order'=>'first_name, last_name')),'customer_id','User.full_name'),array('class'=>'chosen')); ?>
+		<?php echo $form->dropDownList($model,'customer_id',CHtml::listData(Customer::model()->with('User')->findAll(array('order'=>'first_name, last_name')),'customer_id','User.full_name_and_balance'),array('class'=>'chosen')); ?>
 		<?php echo $form->error($model,'customer_id'); ?>
 	</div>
 

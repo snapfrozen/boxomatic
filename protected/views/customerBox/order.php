@@ -168,7 +168,7 @@
 			</div>
 		</div>
 	</div>
-	<!--
+	
 	<div class="section form">
 		<h2>Recurring Order</h2>
 		<?php $form=$this->beginWidget('CActiveForm', array(
@@ -191,15 +191,29 @@
 				<th>Total</th>
 			</thead>
 			<tbody>
-			<?php foreach($BoxSizes as $BoxSize): ?>
-			<td>
-				<?php echo CHtml::textField('Recurring[bs_' . $BoxSize->box_size_id . ']','0',array('class'=>'number','min'=>0)); ?>
-				<?php echo $form->hiddenField($BoxSize,'box_size_price', array('id'=>'bs_value_' . $BoxSize->box_size_id)); ?>	
-			</td>
-			<?php endforeach; ?>
-			<td class="recBoxes"></td>
-			<td class="recDelivery"></td>
-			<td class="recTotal"></td>
+				<td class="button"><span class="btnAdvanced selected" title="Buy more than one box">Advanced</span></td>
+				<td>
+					<div class="advanced show">
+					<?php foreach($BoxSizes as $BoxSize): ?>
+						<?php echo CHtml::textField('Recurring[bs_' . $BoxSize->box_size_id . ']','0',array('class'=>'number','min'=>0)); ?>
+						<?php echo $form->hiddenField($BoxSize,'box_size_price', array('id'=>'bs_value_' . $BoxSize->box_size_id)); ?>	
+						<div>
+							<span class="units"><?php echo $BoxSize->box_size_name[0]; ?></span>
+						</div>
+					<?php endforeach; ?>
+					</div>
+					<div class="simple">
+						<div class="slider"></div>
+						<div class="sliderLabels"></div>
+					</div>
+				</td>
+				<?php foreach($BoxSizes as $BoxSize): ?>
+				
+				<?php endforeach; ?>
+				<td class="recBoxes"></td>
+				<td class="recDelivery"></td>
+				<td class="recTotal"></td>
+			</tbody>
 		</table>
 		
 		<div class="row buttons">
@@ -209,5 +223,5 @@
 		
 		<?php $this->endWidget(); ?>
 	</div>
-	-->
+	
 </div>

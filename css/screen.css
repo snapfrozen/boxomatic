@@ -354,6 +354,8 @@ th.sizes {
 	margin-top:1px;
 }
 
+#reccuring-customer-order-form .advanced,
+#reccuring-customer-order-form .simple,
 #allOrders .advanced,
 #allOrders .simple {
 	display:none;
