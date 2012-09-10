@@ -77,8 +77,9 @@
 	<div class="clear"></div>
 
 	<div id="footer">
-		Copyright &copy; <?php echo date('Y'); ?> Snapfrozen Pty Ltd.<br/>
-		All Rights Reserved.<br/>
+		<div id="site-generator">
+			Developed by <a href="http://www.snapfrozen.com.au/">Snapfrozen</a>.
+		</div>
 	</div><!-- footer -->
 
 </div><!-- page -->

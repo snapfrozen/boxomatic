@@ -1,6 +1,6 @@
 <?php
 	$cs=Yii::app()->clientScript;
-	$cs->registerCssFile(Yii::app()->request->baseUrl . '/css/redmond/jquery-ui.css');
+	$cs->registerCssFile(Yii::app()->request->baseUrl . '/css/ui-lightness/jquery-ui.css');
 	$cs->registerCssFile(Yii::app()->request->baseUrl . '/css/chosen.css');
 	
 	$cs->registerCoreScript('jquery.ui');

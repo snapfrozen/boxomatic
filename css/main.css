@@ -11,17 +11,17 @@ body
 
 #page
 {
-	margin-top: 5px;
+	margin-top: 20px;
 	margin-bottom: 5px;
 	background: white;
-	border: 1px solid #C9E0ED;
 }
 
 #header
 {
 	margin: 0;
 	padding: 0;
-	border-top: 3px solid #C9E0ED;
+	background-image:url('../images/layout/website-banner.gif');
+	height:200px;
 }
 
 #content
@@ -40,13 +40,14 @@ body
 	margin: 10px 20px;
 	font-size: 0.8em;
 	text-align: center;
-	border-top: 1px solid #C9E0ED;
+	border-top: 1px solid #ccc;
 }
 
 #logo
 {
 	padding: 10px 20px;
 	font-size: 200%;
+	text-indent:-90000px;
 }
 
 #mainmenu
@@ -56,7 +57,7 @@ body
 
 #mainmenu ul
 {
-	padding:6px 20px 5px 20px;
+	padding:10px 20px 10px 20px;
 	margin:0px;
 }
 
@@ -71,16 +72,20 @@ body
 	color:#ffffff;
 	background-color:transparent;
 	font-size:12px;
-	font-weight:bold;
 	text-decoration:none;
-	padding:5px 8px;
+	padding:11px 8px;
 }
 
 #mainmenu ul li a:hover, #mainmenu ul li.active a
 {
-	color: #6399cd;
+	color: #000;
 	background-color:#EFF4FA;
 	text-decoration:none;
+}
+
+#mainmenu ul li.active a
+{
+	font-weight:bold;
 }
 
 #mainmenu ul ul 

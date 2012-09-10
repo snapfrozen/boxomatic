@@ -40,8 +40,8 @@ p {margin:0 0 1.5em;}
 p .left {margin:1.5em 1.5em 1.5em 0;padding:0;}
 .right {float:right !important;}
 p .right {margin:1.5em 0 1.5em 1.5em;padding:0;}
-a:focus, a:hover {color:#09f;}
-#allOrders span.ui-selectmenu-status, a {color:#06c;text-decoration:underline;}
+a:focus, a:hover {text-decoration:none}
+#allOrders span.ui-selectmenu-status, a {color:#DA7C0C;text-decoration:underline;}
 blockquote {margin:1.5em;color:#666;font-style:italic;}
 strong, dfn {font-weight:bold;}
 em, dfn {font-style:italic;}
@@ -60,7 +60,7 @@ dl dt {font-weight:bold;}
 dd {margin-left:1.5em;}
 table {margin-bottom:1.4em;width:100%;}
 th {font-weight:bold;}
-thead th {background:#c3d9ff;}
+thead th {background:#eee;}
 th, td, caption {padding:4px 10px 4px 5px;}
 tfoot {font-style:italic;}
 caption {background:#eee;}
@@ -264,6 +264,16 @@ h2 span {
 	background:transparent url('../images/layout/ajax-loader.gif') no-repeat top left;
 	float:left;
 	display:none;
+}
+
+#content .grid-view table.items th {
+	background:#000 url(bg.gif) repeat-x left top;
+}
+#content .grid-view table.items tr.odd {
+	background:#eee;
+}
+#content .grid-view table.items tr:hover {
+	background:#ffebd4;
 }
 
 /* All Orders Page */
@@ -476,7 +486,9 @@ table tr.group td {
 	margin:0 20px 20px 0;
 	width:240px;
 }
-
+.ui-datepicker th {
+	background:transparent;
+}
 #customerList,
 #inventory {
 	padding-left:260px;
