@@ -44,7 +44,7 @@
 		</thead>
 		<tbody>
 			<?php 
-			$runningBalance=$Customer->totalPayments - $Customer->fulfilled_order_total; //variable to track how many weeks the current balance will last
+			$runningBalance=$Customer->balance; //variable to track how many weeks the current balance will last
 
 			foreach($Weeks as $Week): 
 				
@@ -52,7 +52,7 @@
 				$disabled='';
 				$classes='';
 				
-				if(strtotime($Week->week_delivery_date) < $deadline && !isset(Yii::app()->user->shadow_id)) {
+				if(strtotime($Week->week_delivery_date) < $deadline && !Yii::app()->user->shadow_id) {
 					$disabled='disabled';
 					$classes.=' pastDeadline';
 				} else {
@@ -145,30 +145,30 @@
 			<span class="value number"><?php echo Yii::app()->snapFormat->currency($BoxSize->box_size_price); ?></span>
 		</div>
 		<?php endforeach; ?>
-		<div class="row">
+<!--		<div class="row">
 			<span class="label">Delivery to: <?php echo CHtml::link($Customer->Location->location_name,array('user/update','id'=>Yii::app()->user->id)) ?></span>
 			<span class="value number"><?php echo Yii::app()->snapFormat->currency($Customer->Location->location_delivery_value); ?></span>
-		</div>
+		</div>-->
 	</div>
 	
 	<div class="section">
 		<h2>Orders and Payments</h2>
 		<div class="info">
-			<div class="row">
+<!--			<div class="row">
 				<span class="label">Total Orders</span>
 				<span class="value number"><?php echo Yii::app()->snapFormat->currency($Customer->fulfilled_order_total); ?></span>
 			</div>
 			<div class="row">
 				<span class="label">Total Payments</span>
 				<span class="value number"><?php echo Yii::app()->snapFormat->currency($Customer->totalPayments); ?></span>
-			</div>
-			<div class="row total">
+			</div>-->
+			<div class="row xtotal">
 				<span class="label">Credit	</span>
 				<span class="value number"><?php echo Yii::app()->snapFormat->currency($Customer->balance); ?></span>
 			</div>
 		</div>
 	</div>
-	
+	<!--
 	<div class="section form">
 		<h2>Recurring Order</h2>
 		<?php $form=$this->beginWidget('CActiveForm', array(
@@ -209,4 +209,5 @@
 		
 		<?php $this->endWidget(); ?>
 	</div>
+	-->
 </div>
