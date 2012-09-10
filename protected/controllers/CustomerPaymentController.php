@@ -160,9 +160,15 @@ class CustomerPaymentController extends Controller
 			if($model->save())
 				$this->redirect(array('view','id'=>$model->payment_id));
 		}
+		
+		$search_model=new CustomerPayment('search');
+		$search_model->unsetAttributes();  // clear any default values
+		if(isset($_GET['CustomerPayment']))
+			$search_model->attributes=$_GET['CustomerPayment'];
+
 
 		$this->render('enterPayments',array(
-			'model'=>$model,
+			'model'=>$model, 'search_model'=>$search_model
 		));
 	}
 	

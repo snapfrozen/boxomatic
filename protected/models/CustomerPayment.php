@@ -42,9 +42,10 @@ class CustomerPayment extends CActiveRecord
 			array('payment_value', 'length', 'max'=>7),
 			array('payment_type', 'length', 'max'=>45),
 			array('payment_date', 'safe'),
+			array('payment_note', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('payment_id, payment_value, payment_type, payment_date, customer_id', 'safe', 'on'=>'search'),
+			array('payment_note, payment_id, payment_value, payment_type, payment_date, customer_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -70,6 +71,7 @@ class CustomerPayment extends CActiveRecord
 			'payment_value' => 'Payment Value',
 			'payment_type' => 'Payment Type',
 			'payment_date' => 'Payment Date',
+			'payment_note' => 'Payment Note',
 			'customer_id' => 'Customer',
 		);
 	}
@@ -87,6 +89,7 @@ class CustomerPayment extends CActiveRecord
 
 		$criteria->compare('payment_id',$this->payment_id);
 		$criteria->compare('payment_value',$this->payment_value,true);
+	    $criteria->compare('payment_note',$this->payment_note,true);
 		$criteria->compare('payment_type',$this->payment_type,true);
 		$criteria->compare('payment_date',$this->payment_date,true);
 		$criteria->compare('customer_id',$this->customer_id);
