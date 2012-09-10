@@ -23,12 +23,15 @@ $cs->registerScriptFile( Yii::app()->request->baseUrl . '/js/mustache.js' );
 			{{#grower_suburb}}{{grower_suburb}}<br />{{/grower_suburb}}
 			{{grower_state}} {{grower_postcode}}
 		</p>
+		
+		{{#has_items}}
 		<h3>Items available</h3>
 		<ul>
-		{{#GrowerItems}}
+			{{#GrowerItems}}
 			<li>{{item_name}}</li>
-		{{/GrowerItems}}
+			{{/GrowerItems}}
 		</ul>
+		{{/has_items}}
 	</div>
 </div>
 <?php echo CHtml::hiddenField('growerSearchUrl', $this->createUrl('grower/search')); ?>

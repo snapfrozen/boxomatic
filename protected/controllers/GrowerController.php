@@ -156,6 +156,7 @@ class GrowerController extends Controller
 			foreach($growerItems as $gi) {
 				$growerArray[$Grower->grower_id]['GrowerItems'][]=$gi;
 			}
+			$growerArray[$Grower->grower_id]['has_items']=!empty($growerArray[$Grower->grower_id]['GrowerItems']) ? true : false;
 		}
 
 		$this->layout='//layouts/column1';
@@ -184,6 +185,7 @@ class GrowerController extends Controller
 			foreach($growerItems as $gi) {
 				$growerArray[$Grower->grower_id]['GrowerItems'][]=$gi;
 			}
+			$growerArray[$Grower->grower_id]['has_items']=!empty($growerArray[$Grower->grower_id]['GrowerItems']) ? true : false;
 		}
 		
 		echo json_encode($growerArray);
