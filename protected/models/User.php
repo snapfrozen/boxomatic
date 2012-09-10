@@ -196,6 +196,11 @@ class User extends SnapActiveRecord
 	{
 		return $this->first_name . ' ' . $this->last_name;
 	}
+	
+	public function getBfb_id()
+	{
+		return 'BFB' . $this->id;
+	}
 
 	/**
 	* Only allow admins to access all user information

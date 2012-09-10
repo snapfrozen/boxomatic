@@ -287,6 +287,14 @@ class BoxItemController extends Controller
 				$Payment->payment_date=new CDbExpression('NOW()');
 				$Payment->customer_id=$CustBox->customer_id;
 				$Payment->staff_id=Yii::app()->user->id;
+				
+				$note='1 x ' . $Box->BoxSize->box_size_name . ' Box @ ' . Yii::app()->snapFormat->currency($Box->box_price);
+				
+				$tmpDel=(float)$CustBox->delivery_cost;
+				if(!empty($tmpDel))
+					$note.=' + ' . Yii::app()->snapFormat->currency($tmpDel) . ' Delivery';
+				
+				$Payment->payment_note=$note;
 				$Payment->save();
 				
 				$CustBox->status=CustomerBox::STATUS_APPROVED;
@@ -321,6 +329,14 @@ class BoxItemController extends Controller
 			$Payment->payment_date=new CDbExpression('NOW()');
 			$Payment->customer_id=$CustBox->customer_id;
 			$Payment->staff_id=Yii::app()->user->id;
+			
+			$note='1 x ' . $CustBox->Box->BoxSize->box_size_name . ' Box @ ' . Yii::app()->snapFormat->currency($CustBox->Box->box_price);
+			
+			$tmpDel=(float)$CustBox->delivery_cost;
+			if(!empty($tmpDel))
+				$note.=' + ' . Yii::app()->snapFormat->currency($tmpDel) . ' delivery';
+				
+			$Payment->payment_note=$note;
 			$Payment->save();
 
 			$CustBox->status=CustomerBox::STATUS_APPROVED;

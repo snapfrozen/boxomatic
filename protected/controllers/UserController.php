@@ -178,7 +178,7 @@ class UserController extends Controller
 	 */
 	public function actionLoginAs($id)
 	{
-		if(isset(Yii::app()->user->shadow_id) || Yii::app()->user->checkAccess('admin'))
+		if(Yii::app()->user->shadow_id || Yii::app()->user->checkAccess('admin'))
 		{
 			$User=User::model()->resetScope()->findByPk((int)$id);
 			$identity=new UserIdentity($User->user_email,'');
@@ -191,7 +191,7 @@ class UserController extends Controller
 			throw new CHttpException(404,'The requested page does not exist.');
 		}
 		
-		if(isset(Yii::app()->user->shadow_id))
+		if(Yii::app()->user->shadow_id)
 			$this->redirect(array('customerBox/order'));
 		else
 			$this->redirect(array('user/admin'));

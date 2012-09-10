@@ -49,13 +49,13 @@ class UserIdentity extends CUserIdentity
 	 */
 	public function loginAs($id, $curId)
 	{	
-		if(!isset(Yii::app()->user->shadow_id)) {
+		if(!Yii::app()->user->shadow_id) {
 			$shadow=User::model()->resetScope()->findByPk($curId);
 			$this->setState('shadow_id', $curId);
 			$this->setState('shadow_name', $shadow->user_email);
 		} else {
-			$this->setState('shadow_id', null);
-			$this->setState('shadow_name', null);
+			$this->setState('shadow_id', false);
+			$this->setState('shadow_name', false);
 		}
 
 		$user=User::model()->resetScope()->findByPk($id);

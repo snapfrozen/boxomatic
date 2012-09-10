@@ -12,6 +12,11 @@
  */
 class CustomerPayment extends CActiveRecord
 {
+	public $customer_first_name;
+	public $customer_last_name;
+	public $customer_box_price;
+	public $customer_user_id;
+	
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
@@ -45,7 +50,7 @@ class CustomerPayment extends CActiveRecord
 			array('payment_note', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('payment_note, payment_id, payment_value, payment_type, payment_date, customer_id', 'safe', 'on'=>'search'),
+			array('customer_first_name, customer_last_name, payment_note, payment_id, payment_value, payment_type, payment_date, customer_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -73,6 +78,8 @@ class CustomerPayment extends CActiveRecord
 			'payment_date' => 'Payment Date',
 			'payment_note' => 'Payment Note',
 			'customer_id' => 'Customer',
+			'customer_first_name' => 'First Name',
+			'customer_last_name' => 'Last Name',
 		);
 	}
 
@@ -86,6 +93,15 @@ class CustomerPayment extends CActiveRecord
 		// should not be searched.
 
 		$criteria=new CDbCriteria;
+		
+		$criteria->together=true;
+		$criteria->with=array('Customer.User');
+		if($this->customer_first_name) {
+			$criteria->compare('User.first_name',$this->customer_first_name,true);
+		}
+		if($this->customer_last_name) {
+			$criteria->compare('User.last_name',$this->customer_last_name,true);
+		}
 
 		$criteria->compare('payment_id',$this->payment_id);
 		$criteria->compare('payment_value',$this->payment_value,true);
@@ -93,6 +109,8 @@ class CustomerPayment extends CActiveRecord
 		$criteria->compare('payment_type',$this->payment_type,true);
 		$criteria->compare('payment_date',$this->payment_date,true);
 		$criteria->compare('customer_id',$this->customer_id);
+		
+		$criteria->order='payment_id DESC';
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

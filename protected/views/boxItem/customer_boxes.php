@@ -30,10 +30,15 @@
 	</div>
 </div>
 <div id="customerList" class="row">
-	<p><?php
-		echo CHtml::link('Process Customers', array('boxItem/processCustomers','week'=>$SelectedWeek ? $SelectedWeek->week_id : -1), array('confirm'=>'Are you sure?'));
-		echo ' ' . CHtml::link('Pack Boxes', array('boxItem/create','week'=>$SelectedWeek ? $SelectedWeek->week_id : -1));
-	?> &nbsp;</p>
+	<?php 
+	
+	if($SelectedWeek):
+		if(strtotime($SelectedWeek->deadline) < time()):
+			echo CHtml::link('Process Customers', array('boxItem/processCustomers','week'=>$SelectedWeek->week_id), array('id'=>'process'));
+		endif;
+		
+		echo ' ' . CHtml::link('Pack Boxes', array('boxItem/create','week'=>$SelectedWeek->week_id));
+	endif; ?>
 	
 	<?php
 	$this->widget('zii.widgets.grid.CGridView', array(
@@ -41,7 +46,10 @@
 		'dataProvider'=> $SelectedWeek ? $CustomerBoxes->boxSearch($SelectedWeek->week_id) : $CustomerBoxes->boxSearch(-1),
 		'filter'=>$CustomerBoxes,
 		'columns'=>array(
-			'customer_id',
+			array(
+				'name'=>'customer_user_id',
+				'value'=>'$data->Customer->User->bfb_id'
+			),
 			array(
 				'name'=>'customer_first_name',
 				'value'=>'$data->Customer->User->first_name'
@@ -51,13 +59,13 @@
 				'value'=>'$data->Customer->User->last_name'
 			),
 			array(
+				'name'=>'Customer.balance',
+				'value'=>'Yii::app()->snapFormat->currency($data->Customer->balance)',
+			),
+			array(
 				'name'=>'customer_box_price',
 				'value'=>'Yii::app()->snapFormat->currency($data->Box->box_price + $data->delivery_cost)',
 				'filter'=>CHtml::listData(BoxSize::model()->findAll(),'box_size_price','box_size_name')
-			),
-			array(
-				'name'=>'Customer.balance',
-				'value'=>'Yii::app()->snapFormat->currency($data->Customer->balance)',
 			),
 			array(
 				'name'=>'status',

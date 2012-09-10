@@ -20,6 +20,8 @@ function reloadCustomers(url,data)
 	});
 }
 
+$('body').on('click','#process',function(){return confirm('Are you sure?');});
+
 $('.week-picker').datepicker({
 	showOtherMonths: true,
 	selectOtherMonths: true,

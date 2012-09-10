@@ -25,6 +25,7 @@ class CustomerBox extends CActiveRecord
 	public $customer_first_name;
 	public $customer_last_name;
 	public $customer_box_price;
+	public $customer_user_id;
 	
 	/**
 	 * Returns the static model of the specified AR class.
@@ -57,7 +58,7 @@ class CustomerBox extends CActiveRecord
 			array('status, customer_id, box_id, quantity', 'numerical', 'integerOnly'=>true, 'min'=>0),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('customer_box_price, customer_first_name, customer_last_name, status, customer_box_id, customer_id, box_id, quantity', 'safe', 'on'=>'search'),
+			array('customer_user_id, customer_box_price, customer_first_name, customer_last_name, status, customer_box_id, customer_id, box_id, quantity', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -89,6 +90,7 @@ class CustomerBox extends CActiveRecord
 			'customer_first_name' => 'First Name',
 			'customer_last_name' => 'Last Name',
 			'customer_box_price' => 'Box Price',
+			'customer_user_id' => 'User ID',
 		);
 	}
 
@@ -138,6 +140,9 @@ class CustomerBox extends CActiveRecord
 			}
 			if($this->customer_box_price) {
 				$criteria->compare('Box.box_price',$this->customer_box_price,true);
+			}
+			if($this->customer_user_id) {
+				$criteria->compare('User.id',$this->customer_user_id,true);
 			}
 		}
 		

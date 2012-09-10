@@ -50,8 +50,8 @@
 				array('label'=>'Items', 'url'=>array('growerItem/admin'), 'visible' => Yii::app()->user->grower_id),
 				
 				//Admin menu
+				array('label'=>'Customer Orders', 'url'=>array('boxItem/customerBoxes'), 'visible' => Yii::app()->user->checkAccess('admin')),
 				array('label'=>'Boxes', 'url'=>array('boxItem/create'), 'visible' => Yii::app()->user->checkAccess('admin')),
-				array('label'=>'Customer Boxes', 'url'=>array('boxItem/customerBoxes'), 'visible' => Yii::app()->user->checkAccess('admin')),
 				array('label'=>'Payments', 'url'=>array('customerPayment/enterPayments'), 'visible' => Yii::app()->user->checkAccess('admin')),
 				array('label'=>'Customers', 'url'=>array('user/admin'), 'visible' => Yii::app()->user->checkAccess('admin')),
 				array('label'=>'Growers', 'url'=>array('grower/admin'), 'visible' => Yii::app()->user->checkAccess('admin')),
