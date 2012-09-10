@@ -6,7 +6,11 @@
 	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/ui.touch-punch.min.js', CClientScript::POS_END);
 	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/ui.datepicker.min.js', CClientScript::POS_END);
 ?>
-
+<?php
+    foreach(Yii::app()->user->getFlashes() as $key => $message) {
+        echo '<div class="flash-' . $key . '">' . $message . "</div>\n";
+    }
+?>
 <h1>Customer Boxes</h1>
 
 <div class="calendar">
@@ -48,15 +52,30 @@
 			),
 			array(
 				'name'=>'customer_box_price',
-				'value'=>'$data->Box->box_price',
-				'filter'=>CHtml::listData(BoxSize::model()->findAll(),'box_size_price','box_size_price')
+				'value'=>'Yii::app()->snapFormat->currency($data->Box->box_price + $data->delivery_cost)',
+				'filter'=>CHtml::listData(BoxSize::model()->findAll(),'box_size_price','box_size_name')
 			),
-			'Customer.balance',
+			array(
+				'name'=>'Customer.balance',
+				'value'=>'Yii::app()->snapFormat->currency($data->Customer->balance)',
+			),
 			array(
 				'name'=>'status',
 				'value'=>'$data->status_text',
 				'filter'=>CustomerBox::model()->statusOptions,
-			)
+			),
+			array(
+			'class'=>'CButtonColumn',
+				'header'=>'Actions',
+				'template'=>'{process}',
+				'buttons'=>array(
+					'process' => array
+					(
+						'url'=>'array("boxItem/processCustBox","custBox"=>$data->customer_box_id)',
+						'visible'=>'$data->status==CustomerBox::STATUS_DECLINED'
+					),
+				),
+			),
 		),
 	)); ?>
 	

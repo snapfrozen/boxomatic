@@ -140,6 +140,7 @@ class CustomerBox extends CActiveRecord
 				$criteria->compare('Box.box_price',$this->customer_box_price,true);
 			}
 		}
+		
 		$criteria->compare('status',$this->status);
 		$criteria->compare('customer_box_id',$this->customer_box_id);
 		$criteria->compare('customer_id',$this->customer_id);

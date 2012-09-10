@@ -31,7 +31,7 @@ class BoxItemController extends Controller
 				'roles'=>array('customer'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete','create','update','customerBoxes','processCustomers'),
+				'actions'=>array('admin','delete','create','update','customerBoxes','processCustomers','processCustBox'),
 				'roles'=>array('admin'),
 			),
 			array('deny',  // deny all users
@@ -279,10 +279,10 @@ class BoxItemController extends Controller
 		{
 			$Customer=$CustBox->Customer;
 			$Box=$CustBox->Box;
-			if($Customer->balance >= $Box->box_price)
+			if($Customer->balance >= $Box->box_price+$CustBox->delivery_cost)
 			{
 				$Payment=new CustomerPayment();
-				$Payment->payment_value=-1*$Box->box_price; //make price a negative value for payment table
+				$Payment->payment_value= -1*($Box->box_price+$CustBox->delivery_cost); //make price a negative value for payment table
 				$Payment->payment_type='DEBIT';
 				$Payment->payment_date=new CDbExpression('NOW()');
 				$Payment->customer_id=$CustBox->customer_id;
@@ -304,6 +304,35 @@ class BoxItemController extends Controller
 		}
 		
 		$this->redirect(array('customerBoxes','week'=>$week));
+	}
+	
+	/**
+	 * 
+	 */
+	public function actionProcessCustBox($custBox)
+	{
+		$CustBox=CustomerBox::model()->findByPk($custBox);
+		$Customer=$CustBox->Customer;
+		if($Customer->balance >= $CustBox->Box->box_price+$CustBox->delivery_cost)
+		{
+			$Payment=new CustomerPayment();
+			$Payment->payment_value= -1*($CustBox->Box->box_price+$CustBox->delivery_cost); //make price a negative value for payment table
+			$Payment->payment_type='DEBIT';
+			$Payment->payment_date=new CDbExpression('NOW()');
+			$Payment->customer_id=$CustBox->customer_id;
+			$Payment->staff_id=Yii::app()->user->id;
+			$Payment->save();
+
+			$CustBox->status=CustomerBox::STATUS_APPROVED;
+			$CustBox->save();
+			
+			Yii::app()->user->setFlash('success', "User included in this week's delivery.");
+		}
+		else
+		{
+			Yii::app()->user->setFlash('error', "Insufficient funds!");
+		}
+		$this->redirect(array('customerBoxes','week'=>$CustBox->Box->week_id));
 	}
 
 	/**
