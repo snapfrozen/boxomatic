@@ -8,7 +8,7 @@ $this->menu=array(
 );
 ?>
 
-<h1><?php echo $model->User->user_name; ?></h1>
+<h1><?php echo $model->User->full_name; ?></h1>
 
 <?php $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,

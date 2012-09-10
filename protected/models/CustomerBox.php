@@ -15,8 +15,16 @@
  */
 class CustomerBox extends CActiveRecord
 {
+	const STATUS_NOT_PROCESSED=0;
+	const STATUS_APPROVED=1;
+	const STATUS_DECLINED=2;
+	//const STATUS_COLLECTED=3;
+	
 	public $week_total=null;		//holds an aggregate total for the week;
 	public $fulfilled_total=null;	//holds an aggregate total for all orders before the deadline
+	public $customer_first_name;
+	public $customer_last_name;
+	public $customer_box_price;
 	
 	/**
 	 * Returns the static model of the specified AR class.
@@ -46,10 +54,10 @@ class CustomerBox extends CActiveRecord
 		return array(
 			array('customer_id, quantity', 'required'),
 			array('box_id', 'required', 'message'=>'Please select a box'),
-			array('customer_id, box_id, quantity', 'numerical', 'integerOnly'=>true, 'min'=>0),
+			array('status, customer_id, box_id, quantity', 'numerical', 'integerOnly'=>true, 'min'=>0),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('customer_box_id, customer_id, box_id, quantity', 'safe', 'on'=>'search'),
+			array('customer_box_price, customer_first_name, customer_last_name, status, customer_box_id, customer_id, box_id, quantity', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -77,6 +85,10 @@ class CustomerBox extends CActiveRecord
 			'customer_id' => 'Customer',
 			'box_id' => 'Box',
 			'quantity' => 'Quantity',
+			'status' => 'Status',
+			'customer_first_name' => 'First Name',
+			'customer_last_name' => 'Last Name',
+			'customer_box_price' => 'Box Price',
 		);
 	}
 
@@ -98,6 +110,45 @@ class CustomerBox extends CActiveRecord
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+		));
+	}
+	
+	/**
+	 * Retrieves a list of models based on the current search/filter conditions.
+	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
+	 */
+	public function boxSearch($week=null)
+	{
+		$criteria=new CDbCriteria;
+		
+		if($week) 
+		{
+			$criteria->together=true;
+			$criteria->with=array(
+				'Box'=>array(
+					'condition'=>'week_id='.$week,
+				),
+				'Customer.User'
+			);
+			if($this->customer_first_name) {
+				$criteria->compare('User.first_name',$this->customer_first_name,true);
+			}
+			if($this->customer_last_name) {
+				$criteria->compare('User.last_name',$this->customer_last_name,true);
+			}
+			if($this->customer_box_price) {
+				$criteria->compare('Box.box_price',$this->customer_box_price,true);
+			}
+		}
+		$criteria->compare('status',$this->status);
+		$criteria->compare('customer_box_id',$this->customer_box_id);
+		$criteria->compare('customer_id',$this->customer_id);
+		$criteria->compare('box_id',$this->box_id);
+		$criteria->compare('quantity',$this->quantity);
+		
+		return new CActiveDataProvider(get_class($this), array(
+			'criteria'=>$criteria,
+//			'pagination'=>false,
 		));
 	}
 	
@@ -174,6 +225,28 @@ class CustomerBox extends CActiveRecord
 		$criteria->order='RAND()';
 		$box=self::model()->find($criteria);
 		return $box;
+	}
+	
+	/**
+	* @return array issue type names indexed by type IDs
+	*/
+	public function getStatusOptions()
+	{
+		return array(
+			self::STATUS_NOT_PROCESSED=>'Not Processed',
+			self::STATUS_APPROVED=>'Approved',
+			self::STATUS_DECLINED=>'Declined',
+			//self::STATUS_COLLECTED=>'Collected',
+		);
+	}
+	
+	/**
+	* @return string the status text display for the current issue
+	*/
+	public function getStatus_text()
+	{
+		$statusOptions=$this->statusOptions;
+		return isset($statusOptions[$this->status]) ? $statusOptions[$this->status] : "unknown status ({$this->status})";
 	}
 	
 }

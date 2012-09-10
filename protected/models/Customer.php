@@ -103,7 +103,7 @@ class Customer extends CActiveRecord
 	
 	public function getBalance()
 	{
-		return $this->totalPayments - $this->fulfilled_order_total;
+		return $this->totalPayments;
 	}
 	
 	public function totalByWeek($weekId)

@@ -16,8 +16,8 @@ $this->widget('zii.widgets.grid.CGridView', array(
 	'columns'=>array(
 		array(
 			'class'=>'CLinkColumn',
-			'header'=>User::model()->getAttributeLabel('user_name'),
-			'labelExpression'=>'$data->Customer->User->user_name',
+			'header'=>User::model()->getAttributeLabel('first_name'),
+			'labelExpression'=>'$data->Customer->User->first_name',
 			'urlExpression'=>'Yii::app()->createUrl("user/view",array("id"=>$data->Customer->User->id))',
 			'visible'=>Yii::app()->user->checkAccess("admin"),
 		),

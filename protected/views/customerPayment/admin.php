@@ -28,7 +28,8 @@ $('.search-form form').submit(function(){
 		'payment_type',
 		'payment_value',
 		'payment_date',
-		'Customer.User.user_name',
+		'Customer.User.first_name',
+		'Customer.User.last_name',
 		array(
 			'class'=>'CButtonColumn',
 		),

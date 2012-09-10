@@ -23,7 +23,7 @@
 	
 	<div class="row">
 		<?php echo $form->labelEx($model,'customer_id'); ?>
-		<?php echo $form->dropDownList($model,'customer_id',CHtml::listData(Customer::model()->with('User')->findAll(),'customer_id','User.user_name'),array('class'=>'chosen')); ?>
+		<?php echo $form->dropDownList($model,'customer_id',CHtml::listData(Customer::model()->with('User')->findAll(),'customer_id','User.full_name'),array('class'=>'chosen')); ?>
 		<?php echo $form->error($model,'customer_id'); ?>
 	</div>
 
@@ -84,7 +84,8 @@ $('.search-form form').submit(function(){
 		'payment_value',
 		'payment_date',
 		'payment_note',
-		'Customer.User.user_name',
+		'Customer.User.first_name',
+		'Customer.User.last_name',
 		array(
 			'class'=>'CButtonColumn',
 		),

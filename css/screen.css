@@ -263,6 +263,7 @@ h2 span {
 	height:24px;
 	background:transparent url('../images/layout/ajax-loader.gif') no-repeat top left;
 	float:left;
+	display:none;
 }
 
 /* All Orders Page */
@@ -468,11 +469,13 @@ table tr.group td {
 	background:#ffffbb;
 }
 
-#fillBoxForm .calendar {
+.calendar {
 	float:left;
 	margin:0 20px 20px 0;
+	width:240px;
 }
 
+#customerList,
 #inventory {
 	padding-left:260px;
 }

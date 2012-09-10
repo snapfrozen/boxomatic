@@ -31,7 +31,7 @@ class BoxItemController extends Controller
 				'roles'=>array('customer'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete','create','update'),
+				'actions'=>array('admin','delete','create','update','customerBoxes','processCustomers'),
 				'roles'=>array('admin'),
 			),
 			array('deny',  // deny all users
@@ -237,6 +237,73 @@ class BoxItemController extends Controller
 			'SelectedWeek'=>$SelectedWeek,
 			'selectedItemId'=>$selectedItemId,
 		));
+	}
+	
+	/**
+	 * 
+	 */
+	public function actionCustomerBoxes($week=null)
+	{
+		$Weeks=Week::model()->findAll();
+
+		$SelectedWeek=null;
+		if($week) {
+			$SelectedWeek=Week::model()->findByPk($week);
+		}
+		
+		$CustomerBoxes=new CustomerBox('search');
+		
+//		$model=new BoxItem('search');
+		$CustomerBoxes->unsetAttributes();  // clear any default values
+		if(isset($_GET['CustomerBox']))
+			$CustomerBoxes->attributes=$_GET['CustomerBox'];
+		
+		$this->render('customer_boxes',array(
+			'SelectedWeek'=>$SelectedWeek,
+			'Weeks'=>$Weeks,
+			'CustomerBoxes'=>$CustomerBoxes,
+		));
+	}
+	
+	/**
+	 * 
+	 */
+	public function actionProcessCustomers($week)
+	{
+		$CustomerBoxes=CustomerBox::model()->with('Box')->findAll(array(
+			'condition'=>'Box.week_id = ' . $week . ' AND status = ' . CustomerBox::STATUS_NOT_PROCESSED,
+			'order'=>'box_price',//Attempt to process most expensive boxes first
+		));
+		
+		foreach($CustomerBoxes as $CustBox)
+		{
+			$Customer=$CustBox->Customer;
+			$Box=$CustBox->Box;
+			if($Customer->balance >= $Box->box_price)
+			{
+				$Payment=new CustomerPayment();
+				$Payment->payment_value=-1*$Box->box_price; //make price a negative value for payment table
+				$Payment->payment_type='DEBIT';
+				$Payment->payment_date=new CDbExpression('NOW()');
+				$Payment->customer_id=$CustBox->customer_id;
+				$Payment->staff_id=Yii::app()->user->id;
+				$Payment->save();
+				
+				$CustBox->status=CustomerBox::STATUS_APPROVED;
+				$CustBox->save();
+				
+				//TODO:Send approval email
+			}
+			else
+			{
+				$CustBox->status=CustomerBox::STATUS_DECLINED;
+				$CustBox->save();
+				
+				//TODO:Send declined email
+			}
+		}
+		
+		$this->redirect(array('customerBoxes','week'=>$week));
 	}
 
 	/**

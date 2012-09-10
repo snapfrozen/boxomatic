@@ -177,6 +177,7 @@ class WeekController extends Controller
 		WHERE (
 			week_id=' . $week . ' 
 			AND customer_box_id is not null
+			AND status='.CustomerBox::STATUS_APPROVED.'
 		) 
 
 		GROUP BY grower_name,item_name 
@@ -284,7 +285,9 @@ class WeekController extends Controller
 					'User',
 					'Location'
 			)))
-		)->findAll(array('condition'=>'week_id='.$week));
+		)->findAll(array(
+			'condition'=>'week_id='.$week.' AND status='.CustomerBox::STATUS_APPROVED
+		));
 
 		$phpExcelPath = Yii::getPathOfAlias('application.external.PHPExcel');
 		
@@ -307,7 +310,7 @@ class WeekController extends Controller
 		foreach($CustBoxes as $CustBox)
 		{
 			$sheet->SetCellValue('A'.$row, $CustBox->Box->BoxSize->box_size_name);
-			$sheet->SetCellValue('B'.$row, $CustBox->Customer->User->user_name);
+			$sheet->SetCellValue('B'.$row, $CustBox->Customer->User->full_name);
 			$sheet->SetCellValue('C'.$row, $CustBox->Customer->Location->location_name);
 			$sheet->SetCellValue('D'.$row, $CustBox->Customer->User->full_address);
 			$row++;

@@ -14,7 +14,7 @@ $this->menu=array(
 	'data'=>$model,
 	'attributes'=>array(
 		'payment_id',
-		'Customer.User.user_name',
+		'Customer.User.full_name',
 		'payment_type',
 		'payment_value',
 		'payment_date',

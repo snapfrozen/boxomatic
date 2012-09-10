@@ -8,7 +8,7 @@ $this->menu=array(
 );
 ?>
 
-<h1><?php echo $model->user_name; ?></h1>
+<h1><?php echo $model->full_name; ?></h1>
 
 <?php $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,
@@ -19,7 +19,7 @@ $this->menu=array(
 			'type'=>'raw',
 			'value'=>CHtml::mailto($model->user_email,$model->user_email)
 		),	
-		'user_name',
+		'full_name',
 		'user_phone',
 		'user_mobile',
 		'user_address',

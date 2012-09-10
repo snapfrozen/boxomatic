@@ -57,6 +57,7 @@ class Week extends CActiveRecord
 			'MergedBoxes' => array(self::HAS_MANY, 'Box', 'week_id',
 				'select'=>'*, MIN(MergedBoxes.box_id) as box_id, GROUP_CONCAT(MergedBoxes.box_id) as box_ids',
 				'with'=>array('BoxSize'),
+//				'condition'=>'status='.CustomerBox::STATUS_APPROVED,
 				'order'=>'box_size_name DESC',
 				'group'=>'MergedBoxes.week_id, MergedBoxes.size_id'
 			),

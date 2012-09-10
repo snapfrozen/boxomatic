@@ -20,8 +20,8 @@
 	<?php echo CHtml::encode($data->password); ?>
 	<br />
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('user_name')); ?>:</b>
-	<?php echo CHtml::encode($data->user_name); ?>
+	<b><?php echo CHtml::encode($data->getAttributeLabel('full_name')); ?>:</b>
+	<?php echo CHtml::encode($data->full_name); ?>
 	<br />
 
 	<b><?php echo CHtml::encode($data->getAttributeLabel('user_phone')); ?>:</b>

@@ -98,4 +98,22 @@ class CustomerPayment extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+	
+	/**
+	* Only allow admins to access all user information
+	*/
+	public function defaultScope()
+	{
+		//This messes up the unique validation :(
+		if(!Yii::app()->user->checkAccess('admin')) 
+		{
+			return array(
+				'condition' => "customer_id = '" . Yii::app()->user->customer_id . "'",
+			);
+		}
+		else
+		{
+			return parent::defaultScope();
+		}
+	}
 }

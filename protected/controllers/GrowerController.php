@@ -147,7 +147,7 @@ class GrowerController extends Controller
 		$criteria->select='grower_id,grower_name,lattitude,longitude';
 		
 //		$Growers=$model->findAll($criteria);
-		$Growers=$model->search()->getData();
+		$Growers=$model->search(false)->getData();
 		
 		//Build grower array and grower items in a format suitable for Mustache js
 		$growerArray=SnapUtil::makeArray($Growers);
@@ -176,7 +176,7 @@ class GrowerController extends Controller
 		$criteria=new CDbCriteria();
 		$criteria->select='grower_id,grower_name,lattitude,longitude';
 
-		$Growers=$model->search()->getData();
+		$Growers=$model->search(false)->getData();
 		
 		//Build grower array and grower items in a format suitable for Mustache js
 		$growerArray=SnapUtil::makeArray($Growers);
