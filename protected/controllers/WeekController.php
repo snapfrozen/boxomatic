@@ -35,7 +35,7 @@ class WeekController extends Controller
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete','generatePackingList'),
+				'actions'=>array('admin','delete','generatePackingList','generateCustomerList'),
 				'roles'=>array('admin'),
 			),
 			array('deny',  // deny all users
@@ -190,13 +190,17 @@ class WeekController extends Controller
 		
 		$phpExcelPath = Yii::getPathOfAlias('application.external.PHPExcel');
 		
+		$WeekBoxes=Box::model()->with('BoxSize')->findAll(array(
+			'condition'=>'week_id = '.$week,
+			'order'=>'box_size_name DESC'
+		));
+		
 		//disable Yii's Autoload because it messes with PHPExcel's autoloader
 		spl_autoload_unregister(array('YiiBase','autoload'));  
 		include($phpExcelPath . DIRECTORY_SEPARATOR . 'PHPExcel.php');
 		
 		$objPHPExcel = new PHPExcel();
 		$objPHPExcel->setActiveSheetIndex(0);
-		
 		
 		$objPHPExcel->getActiveSheet()->SetCellValue('A1', 'Grower');
 		$objPHPExcel->getActiveSheet()->SetCellValue('B1', 'Item');
@@ -207,16 +211,15 @@ class WeekController extends Controller
 		$boxIds=explode(',',$items[0]['box_ids']);
 		
 		$pos=4;
-		foreach($boxIds as $n=>$boxId)
+		spl_autoload_register(array('YiiBase','autoload'));
+		foreach($WeekBoxes as $n=>$Box)
 		{
-			//A bit hack.. but it works!
-			spl_autoload_register(array('YiiBase','autoload'));
-			$Box=Box::model()->with('BoxSize')->findByPk($boxId);
-			spl_autoload_unregister(array('YiiBase','autoload'));  
-
-			$objPHPExcel->getActiveSheet()->SetCellValue($alpha[$pos].'1', $Box->BoxSize->box_size_name);
+			$custCount=$Box->customerCount;
+			$objPHPExcel->getActiveSheet()->SetCellValue($alpha[$pos].'1', $Box->BoxSize->box_size_name . ' (' . $custCount . ')');
+			$objPHPExcel->getActiveSheet()->getColumnDimension($alpha[$pos])->setAutoSize(true);
 			$pos++;
 		}
+		spl_autoload_unregister(array('YiiBase','autoload'));  
 		$objPHPExcel->getActiveSheet()->getStyle("A1:".$alpha[$pos].'1')->applyFromArray(array("font" => array( "bold" => true)));
 		
 		$row=2;
@@ -230,20 +233,25 @@ class WeekController extends Controller
 			$boxIds = explode(',',$item['box_ids']);
 			$boxItemIds = explode(',',$item['box_item_ids']);
 			$pos=4;
-			foreach($boxIds as $n=>$boxId)
+			spl_autoload_register(array('YiiBase','autoload'));
+			
+			foreach($WeekBoxes as $Box)
 			{
-				//A bit hack.. but it works!
-				spl_autoload_register(array('YiiBase','autoload'));
-				$BoxItem=BoxItem::model()->findByAttributes(array('box_id'=>$boxId, 'box_item_id'=>$boxItemIds[$n]));
-				spl_autoload_unregister(array('YiiBase','autoload'));  
+				$BoxItem=null;
+				$biPos=false;
+				$biPos=array_search($Box->box_id, $boxIds);
 				
-				$objPHPExcel->getActiveSheet()->SetCellValue($alpha[$pos].$row, $BoxItem ? $BoxItem->item_quantity : 0);
+				if($biPos !== false)
+					$BoxItem=BoxItem::model()->findByAttributes(array('box_id'=>$Box->box_id, 'box_item_id'=>$boxItemIds[$biPos]));
+				$quantity=($BoxItem && !empty($BoxItem->item_quantity)) ? $BoxItem->item_quantity : '0';
+				$objPHPExcel->getActiveSheet()->SetCellValue($alpha[$pos].$row, $quantity);
 				$pos++;
 			}
+			spl_autoload_unregister(array('YiiBase','autoload'));  
 			
 			$row++;
 		}
-		
+
 		$objPHPExcel->getActiveSheet()->getColumnDimension("A")->setAutoSize(true);
 		$objPHPExcel->getActiveSheet()->getColumnDimension("B")->setAutoSize(true);
 		$objPHPExcel->getActiveSheet()->getColumnDimension("C")->setAutoSize(true);
@@ -254,7 +262,69 @@ class WeekController extends Controller
 		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
 		
 		header('Content-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-		header('Content-Disposition: attachment; filename="packing-list"');
+		header('Content-Disposition: attachment; filename="packing-list-' . date('Ymd') . '"');
+		$objWriter->save('php://output');
+
+		exit;
+	}
+	
+	
+	/**
+	 * Generate a packing list spreadsheet for a given week 
+	 */
+	public function actionGenerateCustomerList($week)
+	{
+		$CustBoxes=CustomerBox::model()->with(array(
+			'Box'=>array(
+				'with'=>array(
+					'BoxSize'
+			))), array(
+			'Customer'=>array(
+				'with'=>array(
+					'User',
+					'Location'
+			)))
+		)->findAll(array('condition'=>'week_id='.$week));
+
+		$phpExcelPath = Yii::getPathOfAlias('application.external.PHPExcel');
+		
+		//disable Yii's Autoload because it messes with PHPExcel's autoloader
+		spl_autoload_unregister(array('YiiBase','autoload'));  
+		include($phpExcelPath . DIRECTORY_SEPARATOR . 'PHPExcel.php');
+		
+		$objPHPExcel = new PHPExcel();
+		$objPHPExcel->setActiveSheetIndex(0);
+		
+		$objPHPExcel->getActiveSheet()->SetCellValue('A1', 'Box Size');
+		$objPHPExcel->getActiveSheet()->SetCellValue('B1', 'Customer name');
+		$objPHPExcel->getActiveSheet()->SetCellValue('C1', 'Delivery Location');
+		$objPHPExcel->getActiveSheet()->SetCellValue('D1', 'Address');
+
+		$row=2;
+		
+		$sheet=$objPHPExcel->getActiveSheet();
+		spl_autoload_register(array('YiiBase','autoload'));  
+		foreach($CustBoxes as $CustBox)
+		{
+			$sheet->SetCellValue('A'.$row, $CustBox->Box->BoxSize->box_size_name);
+			$sheet->SetCellValue('B'.$row, $CustBox->Customer->User->user_name);
+			$sheet->SetCellValue('C'.$row, $CustBox->Customer->Location->location_name);
+			$sheet->SetCellValue('D'.$row, $CustBox->Customer->User->full_address);
+			$row++;
+		}
+		spl_autoload_unregister(array('YiiBase','autoload'));  
+		$objPHPExcel->getActiveSheet()->getStyle("A1:D1")->applyFromArray(array("font" => array( "bold" => true)));
+		
+		$objPHPExcel->getActiveSheet()->getColumnDimension("A")->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension("B")->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension("C")->setAutoSize(true);
+		
+		// Rename sheet
+		$objPHPExcel->getActiveSheet()->setTitle('Customer List');
+		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+		
+		header('Content-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		header('Content-Disposition: attachment; filename="customer-list-' . date('Ymd') . '"');
 		$objWriter->save('php://output');
 
 		exit;

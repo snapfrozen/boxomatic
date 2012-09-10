@@ -1,6 +1,7 @@
 <div class="wide form">
 
 <?php $form=$this->beginWidget('CActiveForm', array(
+	'id'=>'grower-search',
 	'action'=>Yii::app()->createUrl($this->route),
 	'method'=>'get',
 )); ?>
@@ -11,6 +12,11 @@
 	</div>
 	
 	<div class="row">
+		<?php echo $form->label($model,'grower_item_search'); ?>
+		<?php echo $form->textField($model,'grower_item_search'); ?>
+	</div>
+	
+<!--	<div class="row">
 		<?php echo $form->label($model,'grower_suburb'); ?>
 		<?php echo $form->textField($model,'grower_suburb'); ?>
 	</div>
@@ -23,7 +29,7 @@
 	<div class="row">
 		<?php echo $form->label($model,'grower_produce'); ?>
 		<?php echo $form->textField($model,'grower_produce'); ?>
-	</div>
+	</div>-->
 
 	<div class="row buttons">
 		<?php echo CHtml::submitButton('Search'); ?>

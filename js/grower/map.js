@@ -35,6 +35,23 @@ jQuery(document).ready(function() {
 	searchMap.setMapTypeId('bw_map');
 
 	addMarkers();
+	
+	
+	$('form#grower-search').find('input[name="r"]').remove();
+	$('form#grower-search').submit(function(){
+		var postUrl=$('input#growerSearchUrl').val();
+		$.ajax({
+			url:postUrl,
+			type:'GET',
+			data:$(this).serialize(),
+			dataType:'json',
+			success:function(data) {
+				growers=data;
+				addMarkers();
+			}
+		})
+		return false;
+	});
 });
 
 function addMarkers()
@@ -42,7 +59,12 @@ function addMarkers()
 	var infowindow = new google.maps.InfoWindow();
 	var template = $('div#infoWindowTemplate').html();
 	
-	jQuery.each(growers,function(key, item) {
+	$(searchMarkers).each(function(key, marker){
+		marker.setMap(null);
+	});
+	searchMarkers = [];
+
+	jQuery.each(growers, function(key, item) {
 		
 		var pos = new google.maps.LatLng(parseFloat(item.lattitude), parseFloat(item.longitude))
 		var icon = new google.maps.MarkerImage("images/icons/map/carrot.png", null, null, new google.maps.Point(35,35));

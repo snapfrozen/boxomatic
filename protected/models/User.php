@@ -169,6 +169,22 @@ class User extends SnapActiveRecord
 		return false;
 	}
 	
+	public function getFull_address()
+	{
+		$addr=array();
+		if(!empty($this->user_address))
+			$addr[]=$this->user_address;
+		if(!empty($this->user_address2))
+			$addr[]=$this->user_address2;
+		if(!empty($this->user_suburb))
+			$addr[]=$this->user_suburb;
+		if(!empty($this->user_state))
+			$addr[]=$this->user_state;
+		if(!empty($this->user_postcode))
+			$addr[]=$this->user_postcode;
+			
+		return implode(', ', $addr);
+	}
 
 	/**
 	* Only allow admins to access all user information
