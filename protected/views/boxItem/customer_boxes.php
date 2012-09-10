@@ -48,7 +48,7 @@
 		'columns'=>array(
 			array(
 				'name'=>'customer_user_id',
-				'value'=>'$data->Customer->User->bfb_id'
+				'value'=>'$data->Customer->User->id'
 			),
 			array(
 				'name'=>'customer_first_name',

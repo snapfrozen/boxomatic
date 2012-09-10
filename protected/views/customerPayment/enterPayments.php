@@ -81,6 +81,10 @@ $('.search-form form').submit(function(){
 	'filter'=>$search_model,
 	'columns'=>array(
 		array(
+			'name'=>'customer_user_id',
+			'value'=>'$data->Customer->User->id'
+		),
+		array(
 			'name'=>'customer_first_name',
 			'value'=>'$data->Customer->User->first_name'
 		),

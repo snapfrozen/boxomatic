@@ -14,7 +14,6 @@ class CustomerPayment extends CActiveRecord
 {
 	public $customer_first_name;
 	public $customer_last_name;
-	public $customer_box_price;
 	public $customer_user_id;
 	
 	/**
@@ -50,7 +49,7 @@ class CustomerPayment extends CActiveRecord
 			array('payment_note', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('customer_first_name, customer_last_name, payment_note, payment_id, payment_value, payment_type, payment_date, customer_id', 'safe', 'on'=>'search'),
+			array('customer_user_id, customer_first_name, customer_last_name, payment_note, payment_id, payment_value, payment_type, payment_date, customer_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -80,6 +79,7 @@ class CustomerPayment extends CActiveRecord
 			'customer_id' => 'Customer',
 			'customer_first_name' => 'First Name',
 			'customer_last_name' => 'Last Name',
+			'customer_user_id' => 'User ID',
 		);
 	}
 
@@ -101,6 +101,9 @@ class CustomerPayment extends CActiveRecord
 		}
 		if($this->customer_last_name) {
 			$criteria->compare('User.last_name',$this->customer_last_name,true);
+		}
+		if($this->customer_user_id) {
+			$criteria->compare('User.last_name',$this->customer_user_id,true);
 		}
 
 		$criteria->compare('payment_id',$this->payment_id);
