@@ -61,7 +61,8 @@ class CustomerPayment extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'Customer'=>array(self::BELONGS_TO,'Customer','customer_id')
+			'Customer'=>array(self::BELONGS_TO,'Customer','customer_id'),
+			'Staff'=>array(self::BELONGS_TO,'User','staff_id'),
 		);
 	}
 

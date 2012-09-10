@@ -157,6 +157,7 @@ class CustomerPaymentController extends Controller
 		if(isset($_POST['CustomerPayment']))
 		{
 			$model->attributes=$_POST['CustomerPayment'];
+			$model->staff_id=Yii::app()->user->id;
 			if($model->save())
 				$this->redirect(array('view','id'=>$model->payment_id));
 		}

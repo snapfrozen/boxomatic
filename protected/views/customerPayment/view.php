@@ -19,5 +19,9 @@ $this->menu=array(
 		'payment_value',
 		'payment_date',
 		'payment_note',
+		array(
+			'name'=>'Staff.full_name',
+			'label'=>'Entered By'
+		)
 	),
 )); ?>
