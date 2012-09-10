@@ -44,7 +44,11 @@
 				array(
 					'name'=>'grower_search',
 					'type'=>'raw',
-					'value'=>'CHtml::link($data->Grower->grower_name,array_merge(array("boxItem/create","item"=>$data->item_id,"week"=>Yii::app()->request->getQuery("week"))))',
+					'value'=>'
+						Yii::app()->request->getQuery("week") ?
+							CHtml::link($data->Grower->grower_name,array_merge(array("boxItem/create","item"=>$data->item_id,"week"=>Yii::app()->request->getQuery("week"))))
+						:
+							$data->Grower->grower_name',
 					'cssClassExpression'=>'"grower-".$data->Grower->grower_id',
 					//'filter'=>$GrowerItems
 				),
