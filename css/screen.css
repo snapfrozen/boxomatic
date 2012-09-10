@@ -499,6 +499,7 @@ table tr.group td {
 }
 .ui-datepicker th {
 	background:transparent;
+	color:#111;
 }
 #customerList,
 #inventory {
