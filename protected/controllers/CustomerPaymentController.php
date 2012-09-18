@@ -75,7 +75,8 @@ class CustomerPaymentController extends Controller
 			    $message = new YiiMailMessage('Payment receipt');
 				$message->view = 'customer_payment_receipt';
 				$message->setBody(array('Customer'=>$Customer, 'CustomerPayment' => $model), 'text/html');
-				$message->addTo($Customer->User->user_email);
+				//$message->addTo($Customer->User->user_email);
+				$message->addTo('donovan@snapfrozen.com.au');
 				$message->from = Yii::app()->params['adminEmail'];
 				
 				if(!@Yii::app()->mail->send($message))
@@ -179,7 +180,8 @@ class CustomerPaymentController extends Controller
 			    $message = new YiiMailMessage('Payment receipt');
 				$message->view = 'customer_payment_receipt';
 				$message->setBody(array('Customer'=>$Customer, 'CustomerPayment' => $model), 'text/html');
-				$message->addTo($Customer->User->user_email);
+				//$message->addTo($Customer->User->user_email);
+				$message->addTo('donovan@snapfrozen.com.au');
 				$message->from = Yii::app()->params['adminEmail'];
 				
 				if(!@Yii::app()->mail->send($message))
