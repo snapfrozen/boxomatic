@@ -205,9 +205,9 @@ class User extends SnapActiveRecord
 	public function getFull_name_and_balance()
 	{
 		if($this->Customer)
-			return $this->full_name . ' (' . Yii::app()->snapFormat->currency($this->Customer->balance) . ')';
+			return $this->id . ': ' .$this->full_name . ' (' . Yii::app()->snapFormat->currency($this->Customer->balance) . ')';
 		else
-			return $this->full_name;
+			return $this->id . ': ' .$this->full_name;
 	}
 
 	/**
