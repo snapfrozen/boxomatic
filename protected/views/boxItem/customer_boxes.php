@@ -75,13 +75,20 @@
 			array(
 			'class'=>'CButtonColumn',
 				'header'=>'Actions',
-				'template'=>'{process}',
+				'template'=>'{process}{cancel}',
 				'buttons'=>array(
-					'process' => array
+					'process'=>array
 					(
 						'url'=>'array("boxItem/processCustBox","custBox"=>$data->customer_box_id)',
-						'visible'=>'$data->status==CustomerBox::STATUS_DECLINED'
+						'visible'=>'$data->status==CustomerBox::STATUS_DECLINED',
 					),
+					'cancel'=>array
+					(
+						'url'=>'array("boxItem/refund","custBox"=>$data->customer_box_id)',
+						'visible'=>'$data->status==CustomerBox::STATUS_APPROVED',
+						'label'=>'Cancel & Refund',
+						'options'=>array('confirm'=>'Are you sure you want to refund this box?'),
+					)
 				),
 			),
 		),

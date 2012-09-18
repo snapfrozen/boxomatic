@@ -31,7 +31,7 @@ class BoxItemController extends Controller
 				'roles'=>array('customer'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete','create','update','customerBoxes','processCustomers','processCustBox'),
+				'actions'=>array('admin','delete','create','update','customerBoxes','processCustomers','processCustBox','refund'),
 				'roles'=>array('admin'),
 			),
 			array('deny',  // deny all users
@@ -348,6 +348,42 @@ class BoxItemController extends Controller
 		{
 			Yii::app()->user->setFlash('error', "Insufficient funds!");
 		}
+		$this->redirect(array('customerBoxes','week'=>$CustBox->Box->week_id));
+	}
+	
+	/**
+	 * 
+	 */
+	public function actionRefund($custBox)
+	{
+		$CustBox=CustomerBox::model()->findByPk($custBox);
+		
+		if($CustBox)
+		{
+			$Payment=new CustomerPayment();
+			$Payment->payment_value= 1*($CustBox->Box->box_price+$CustBox->delivery_cost); //make price a negative value for payment table
+			$Payment->payment_type='CREDIT';
+			$Payment->payment_date=new CDbExpression('NOW()');
+			$Payment->customer_id=$CustBox->customer_id;
+			$Payment->staff_id=Yii::app()->user->id;
+
+			$note='REFUND FOR: 1 x ' . $CustBox->Box->BoxSize->box_size_name . ' Box @ ' . Yii::app()->snapFormat->currency($CustBox->Box->box_price);
+
+			$tmpDel=(float)$CustBox->delivery_cost;
+			if(!empty($tmpDel))
+				$note.=' + ' . Yii::app()->snapFormat->currency($tmpDel) . ' delivery';
+
+			$Payment->payment_note=$note;
+			$Payment->save();
+			$CustBox->delete();
+
+			Yii::app()->user->setFlash('success', "Customer box has been excluded for delivery and refunded.");
+		}
+		else
+		{
+			Yii::app()->user->setFlash('success', "Could not find the given Customer Box");
+		}
+
 		$this->redirect(array('customerBoxes','week'=>$CustBox->Box->week_id));
 	}
 
