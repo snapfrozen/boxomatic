@@ -246,10 +246,10 @@ class UserController extends Controller
 			{
 				$User=$model->User;
 				$User->password_retrieval_key = $User->generatePassword(50,4);
-				$User->updated = new CDbExpression('NOW()');
+				$User->update_time = new CDbExpression('NOW()');
 				$User->update();
 				
-				$message = new YiiMailMessage('SolarPlus password renewal');
+				$message = new YiiMailMessage('FoodBox password renewal');
 				$message->view = 'forgottenPassword';
 
 				$url=$this->createAbsoluteUrl('user/passwordReset',array('p'=>$User->password_retrieval_key));
@@ -257,7 +257,7 @@ class UserController extends Controller
 				//userModel is passed to the view
 				$message->setBody(array('User'=>$User,'url'=>$url), 'text/html');
 
-				$message->addTo($User->email);
+				$message->addTo($User->user_email);
 				$message->from = Yii::app()->params['adminEmail'];
 				
 				if(!@Yii::app()->mail->send($message))
@@ -276,7 +276,7 @@ class UserController extends Controller
 	 */
 	public function actionPasswordReset($p)
 	{
-		$model=User::model()->findByAttributes( array('password_retrieval_key'=>$p), 'updated > date_sub(NOW(), interval 1 hour)' );
+		$model=User::model()->findByAttributes( array('password_retrieval_key'=>$p), 'update_time > date_sub(NOW(), interval 1 hour)' );
 		$updateComplete=false;
 		
 		if(isset($_POST['User']))

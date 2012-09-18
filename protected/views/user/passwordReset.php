@@ -37,7 +37,7 @@
 		<?php $this->endWidget(); ?>
 		
 		<?php else: ?>
-		<p>Password has been updated, please <?php echo CHtml::link('login', array('core/login')) ?> to continue to SolarPlus.</p>
+		<p>Password has been updated, please <?php echo CHtml::link('login', array('site/login')) ?> to continue to FoodBox.</p>
 		<?php endif; ?>
 	</div><!-- form -->
 

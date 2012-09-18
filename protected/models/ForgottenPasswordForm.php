@@ -37,9 +37,7 @@ class ForgottenPasswordForm extends CFormModel
 	
 	public function userExists($attribute)
 	{
-		$User=User::model()->findByAttributes( array('username'=>$this->$attribute) );
-		if(!$User)
-			$User=User::model()->findByAttributes( array('email'=>$this->$attribute) );
+		$User=User::model()->findByAttributes( array('user_email'=>$this->$attribute) );
 		
 		$this->User=$User;
 		

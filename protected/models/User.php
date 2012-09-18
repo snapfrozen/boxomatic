@@ -68,7 +68,7 @@ class User extends SnapActiveRecord
 			// Please remove those attributes that should not be searched.
 			array('first_name, last_name, full_name, user_phone, user_mobile, user_address, user_address2, user_email, user_suburb, user_state, user_postcode, last_login_time, update_time, update_user_id, create_time, create_user_id', 'safe', 'on'=>'search'),
 			// verifyCode needs to be entered correctly
-			array('verifyCode', 'captcha', 'allowEmpty'=>!CCaptcha::checkRequirements()),
+			array('verifyCode', 'captcha', 'allowEmpty'=>!CCaptcha::checkRequirements(),'on'=>'insert'),
 		);
 	}
 
@@ -231,5 +231,43 @@ class User extends SnapActiveRecord
 		 */
 		return parent::defaultScope();
 	}
+
+     /**
+     * random password generation method
+     *
+     * @return string generated password
+     * @param string length of password
+     * @param int strength of password
+     */
+	public function generatePassword($length=9, $strength=0) 
+	{
+		$vowels = 'aeuy';
+		$consonants = 'bdghjmnpqrstvz';
+		if ($strength & 1) {
+			$consonants .= 'BDGHJLMNPQRSTVWXZ';
+		}
+		if ($strength & 2) {
+			$vowels .= "AEUY";
+		}
+		if ($strength & 4) {
+			$consonants .= '23456789';
+		}
+		if ($strength & 8) {
+			$consonants .= '@#$%';
+		}
+	 
+		$password = '';
+		$alt = time() % 2;
+		for ($i = 0; $i < $length; $i++) {
+			if ($alt == 1) {
+				$password .= $consonants[(rand() % strlen($consonants))];
+				$alt = 0;
+			} else {
+				$password .= $vowels[(rand() % strlen($vowels))];
+				$alt = 1;
+			}
+		}
+		return $password;
+     }
 	
 }
