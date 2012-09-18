@@ -2,11 +2,11 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Your order has been declined.</title>
+<title>Your order has been approved.</title>
 </head>
 <body style="margin:0;">
 	<p>Hi <?php echo $Customer->User->first_name ?>,</p>
-	<h2>Your order has been declined.</h2>
+	<h2>Your order has been approved.</h2>
 	<p>Your Bellofoodbox ID is: <strong><?php echo $Customer->User->bfb_id; ?></strong>. 
 </body>
 </html>
