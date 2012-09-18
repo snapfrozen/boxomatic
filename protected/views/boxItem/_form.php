@@ -275,6 +275,7 @@
 			</table>
 			<p><?php echo CHtml::link('Generate packing list',array('week/generatePackingList','week'=>$SelectedWeek->week_id)) ?></p>
 			<p><?php echo CHtml::link('Generate customer list',array('week/generateCustomerList','week'=>$SelectedWeek->week_id)) ?></p>
+			<p><?php echo CHtml::link('Generate order list',array('week/generateOrderList','week'=>$SelectedWeek->week_id)) ?></p>
 		<?php endif; ?>
 		</div>
 		<?php echo CHtml::submitButton('Update Boxes'); ?>
