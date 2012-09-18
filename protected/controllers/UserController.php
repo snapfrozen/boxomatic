@@ -86,7 +86,7 @@ class UserController extends Controller
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
-
+		
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
@@ -282,6 +282,7 @@ class UserController extends Controller
 		if(isset($_POST['User']))
 		{
 			$model->attributes=$_POST['User'];
+			$model->password=Yii::app()->snap->encrypt($_POST['User']['password']);
 			if($model->validate()) 
 			{
 				//clear our key so it can't be used again.

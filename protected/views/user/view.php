@@ -10,6 +10,8 @@ $this->menu=array(
 
 <h1><?php echo $model->full_name; ?></h1>
 
+<p><?php echo CHtml::link('Update',array('user/update','id'=>$model->id)) ?></p>
+
 <?php $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,
 	'attributes'=>array(
@@ -42,28 +44,6 @@ $this->menu=array(
 		'customer_notes',
 	),
 )); ?>
-
-
-<div class="half">
-
-	<h2>Orders and Payments</h2>
-
-	<div class="info">
-		<div class="row">
-			<span class="label">Total Orders</span>
-			<span class="value number"><?php echo $model->Customer->totalOrders ?></span>
-		</div>
-		<div class="row">
-			<span class="label">Total Payments</span>
-			<span class="value number"><?php echo $model->Customer->totalPayments ?></span>
-		</div>
-		<div class="row total">
-			<span class="label">Balance</span>
-			<span class="value number"><?php echo $model->Customer->balance ?></span>
-		</div>
-	</div>
-
-</div>
 
 <?php endif; //Customer ?>
 

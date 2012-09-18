@@ -76,6 +76,8 @@ class SiteController extends Controller
 		if(isset($_POST['User']))
 		{
 			$model->attributes=$_POST['User'];
+			$model->password=Yii::app()->snap->encrypt($_POST['User']['password']);
+			$model->password_repeat=Yii::app()->snap->encrypt($_POST['User']['password_repeat']);
 			
 			if($model->save())
 			{
