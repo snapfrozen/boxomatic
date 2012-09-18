@@ -69,7 +69,21 @@ class CustomerPaymentController extends Controller
 			$model->payment_date=new CDbExpression('NOW()');
 			
 			if($model->save())
+			{
+			    $Customer=$model->Customer;
+			    //email payment receipt			    
+			    $message = new YiiMailMessage('Payment receipt');
+				$message->view = 'customer_payment_receipt';
+				$message->setBody(array('Customer'=>$Customer, 'CustomerPayment' => $model), 'text/html');
+				$message->addTo($Customer->User->user_email);
+				$message->from = Yii::app()->params['adminEmail'];
+				
+				if(!@Yii::app()->mail->send($message))
+				{
+					$mailError=true;
+				}
 				$this->redirect(array('view','id'=>$model->payment_id));
+			}
 		}
 
 		$this->render('create',array(
@@ -159,7 +173,22 @@ class CustomerPaymentController extends Controller
 			$model->attributes=$_POST['CustomerPayment'];
 			$model->staff_id=Yii::app()->user->id;
 			if($model->save())
+			{
+			    $Customer=$model->Customer;
+			    //email payment receipt			    
+			    $message = new YiiMailMessage('Payment receipt');
+				$message->view = 'customer_payment_receipt';
+				$message->setBody(array('Customer'=>$Customer, 'CustomerPayment' => $model), 'text/html');
+				$message->addTo($Customer->User->user_email);
+				$message->from = Yii::app()->params['adminEmail'];
+				
+				if(!@Yii::app()->mail->send($message))
+				{
+					$mailError=true;
+				}
+
 				$this->redirect(array('view','id'=>$model->payment_id));
+		    }
 		}
 		
 		$search_model=new CustomerPayment('search');
