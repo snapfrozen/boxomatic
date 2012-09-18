@@ -300,14 +300,37 @@ class BoxItemController extends Controller
 				$CustBox->status=CustomerBox::STATUS_APPROVED;
 				$CustBox->save();
 				
-				//TODO:Send approval email
+			    //Box approved email
+			    $week_delivery_date = $Box->Week->week_delivery_date;
+			    $message = new YiiMailMessage('Your order for '.$week_delivery_date.' has been approved');
+				$message->view = 'customer_box_approved';
+				$message->setBody(array('Customer'=>$Customer, 'CustomerBox' => $CustBox), 'text/html');
+				$message->addTo($Customer->User->user_email);
+				$message->from = Yii::app()->params['adminEmail'];
+				
+				if(!@Yii::app()->mail->send($message))
+				{
+					$mailError=true;
+				}
 			}
 			else
 			{
 				$CustBox->status=CustomerBox::STATUS_DECLINED;
 				$CustBox->save();
 				
-				//TODO:Send declined email
+				//Box declined email
+			    $week_delivery_date = $Box->Week->week_delivery_date;
+			    $message = new YiiMailMessage('Your order for '.$week_delivery_date.' has been declined');
+				$message->view = 'customer_box_declined';
+				$message->setBody(array('Customer'=>$Customer, 'CustomerBox' => $CustBox), 'text/html');
+				$message->addTo($Customer->User->user_email);
+				$message->from = Yii::app()->params['adminEmail'];
+				
+				if(!@Yii::app()->mail->send($message))
+				{
+					$mailError=true;
+				}
+				
 			}
 		}
 		
@@ -341,6 +364,19 @@ class BoxItemController extends Controller
 
 			$CustBox->status=CustomerBox::STATUS_APPROVED;
 			$CustBox->save();
+			
+			//Box approved email
+		    $week_delivery_date = $CustBox->Box->Week->week_delivery_date;
+		    $message = new YiiMailMessage('Your order for '.$week_delivery_date.' has been approved');
+			$message->view = 'customer_box_approved';
+			$message->setBody(array('Customer'=>$Customer, 'CustomerBox' => $CustBox), 'text/html');
+			$message->addTo($Customer->User->user_email);
+			$message->from = Yii::app()->params['adminEmail'];
+			
+			if(!@Yii::app()->mail->send($message))
+			{
+				$mailError=true;
+			}
 			
 			Yii::app()->user->setFlash('success', "User included in this week's delivery.");
 		}
