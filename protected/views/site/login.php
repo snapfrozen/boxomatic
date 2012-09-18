@@ -34,6 +34,8 @@ $this->pageTitle=Yii::app()->name . ' - Login';
 		<?php echo $form->label($model,'rememberMe'); ?>
 		<?php echo $form->error($model,'rememberMe'); ?>
 	</div>
+	
+	<p><?php echo CHtml::link('forgotten password?',array('user/forgottenPassword')); ?></p>
 
 	<div class="row buttons">
 		<?php echo CHtml::submitButton('Login'); ?>

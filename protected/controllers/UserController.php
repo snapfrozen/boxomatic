@@ -27,7 +27,7 @@ class UserController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index'),
+				'actions'=>array('index','passwordReset','forgottenPassword'),
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -221,5 +221,80 @@ class UserController extends Controller
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
 		}
+	}
+	
+	/**
+	 * Displays the forgotten password page
+	 */
+	public function actionForgottenPassword()
+	{
+		if( !Yii::app()->user->isGuest ) {
+			$this->redirect(Yii::app()->homeUrl);
+		}		
+		
+		$model=new ForgottenPasswordForm;
+		$User=null;
+		$mailError=false;
+		
+		// collect user input data
+		if(isset($_POST['ForgottenPasswordForm']))
+		{
+			$model->attributes = $_POST['ForgottenPasswordForm'];
+			
+			// validate user input and redirect to the previous page if valid
+			if($model->validate())
+			{
+				$User=$model->User;
+				$User->password_retrieval_key = $User->generatePassword(50,4);
+				$User->updated = new CDbExpression('NOW()');
+				$User->update();
+				
+				$message = new YiiMailMessage('SolarPlus password renewal');
+				$message->view = 'forgottenPassword';
+
+				$url=$this->createAbsoluteUrl('user/passwordReset',array('p'=>$User->password_retrieval_key));
+				
+				//userModel is passed to the view
+				$message->setBody(array('User'=>$User,'url'=>$url), 'text/html');
+
+				$message->addTo($User->email);
+				$message->from = Yii::app()->params['adminEmail'];
+				
+				if(!@Yii::app()->mail->send($message))
+				{
+					$mailError=true;
+				}
+			}
+		}
+		
+		// display the login form
+		$this->render('forgottenPassword',array('model' => $model,'User'=>$User,'mailError'=>$mailError));
+	}
+	
+	/**
+	 * Password reset form that the user is directed to in a password retrieval email
+	 */
+	public function actionPasswordReset($p)
+	{
+		$model=User::model()->findByAttributes( array('password_retrieval_key'=>$p), 'updated > date_sub(NOW(), interval 1 hour)' );
+		$updateComplete=false;
+		
+		if(isset($_POST['User']))
+		{
+			$model->attributes=$_POST['User'];
+			if($model->validate()) 
+			{
+				//clear our key so it can't be used again.
+				$model->password_retrieval_key = '';
+				$model->update();
+				
+				$updateComplete=true;
+			} 
+		}
+		
+		$this->render('passwordReset',array(
+			'model'=>$model,
+			'updateComplete'=>$updateComplete,
+		));
 	}
 }
