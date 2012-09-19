@@ -250,7 +250,6 @@ class CustomerBoxController extends Controller
 						));
 						if(!$CustWeek)
 						{
-							var_dump('no cust week');
 							$CustWeek=new CustomerWeek;
 							$CustWeek->week_id=$CustBox->Box->week_id;
 							$CustWeek->customer_id=$Customer->customer_id;
