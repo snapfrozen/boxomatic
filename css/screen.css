@@ -41,7 +41,7 @@ p .left {margin:1.5em 1.5em 1.5em 0;padding:0;}
 .right {float:right !important;}
 p .right {margin:1.5em 0 1.5em 1.5em;padding:0;}
 a:focus, a:hover {text-decoration:none}
-#allOrders span.ui-selectmenu-status, a {color:#DA7C0C;text-decoration:underline;}
+.allOrders span.ui-selectmenu-status, a {color:#DA7C0C;text-decoration:underline;}
 blockquote {margin:1.5em;color:#666;font-style:italic;}
 strong, dfn {font-weight:bold;}
 em, dfn {font-style:italic;}
@@ -292,6 +292,11 @@ h2 span {
 }
 
 /* All Orders Page */
+
+.half .padding {
+	padding-left:20px;
+}
+
 th.sizes {
 	text-align:center;
 	min-width:160px;
@@ -300,40 +305,39 @@ th.sizes {
 	color:#a00;
 }
 
-#allOrders td.button {
+.allOrders td.button {
 	padding:8px 0 0 8px;
 	vertical-align:top;
 }
 
-#reccuring-customer-order-form table,
-#allOrders table {
-	width:auto;
+.allOrders table {
+	width:100%;
 }
-	#allOrders .enoughCredit {
+	.allOrders .enoughCredit {
 		background:#eeffee;
 	}
-	#allOrders .insufficientCredit {
+	.allOrders .insufficientCredit {
 		background:#ffeeee;
 	}
-	#allOrders .pastDeadline {
+	.allOrders .pastDeadline {
 		background:#eee;
 	}
-	#allOrders .date {
+	.allOrders .date {
 		color:#888;
 	}
-		#allOrders .date strong {
+		.allOrders .date strong {
 			float:left;
 		}
-		#allOrders tr.show td.advanced,
-		#allOrders tr.selector.show td,
-		#allOrders td {
+		.allOrders tr.show td.advanced,
+		.allOrders tr.selector.show td,
+		.allOrders td {
 			padding:8px;
 		}
-		#allOrders td.bottom,
-		#allOrders .bottom td {
+		.allOrders td.bottom,
+		.allOrders .bottom td {
 			border-bottom:1px solid #ccc;
 		}
-#allOrders .deliverySelect {
+.allOrders .deliverySelect {
 	border:1px solid transparent;
 	color:#888;
 	background:transparent;
@@ -344,7 +348,7 @@ th.sizes {
 	body .ui-widget {
 		font-size:1em;
 	}
-	#allOrders .ui-selectmenu {
+	.allOrders .ui-selectmenu {
 		font-size:1em;
 		margin:0;
 		float:right;
@@ -357,63 +361,61 @@ th.sizes {
 			z-index:100 !important;
 			font-size:1em;
 		}
-		#allOrders .ui-selectmenu-status {
+		.allOrders .ui-selectmenu-status {
 			padding-top:0;
 			padding-bottom:0;
 			color:#888;
 			line-height:inherit;
 			white-space:nowrap;
 		}
-		#allOrders .ui-selectmenu-icon {
+		.allOrders .ui-selectmenu-icon {
 			top:0;
 			right:0;
 			margin-top:0;
 			display:none;
 		}
-		#allOrders .ui-selectmenu:hover .ui-selectmenu-icon {
+		.allOrders .ui-selectmenu:hover .ui-selectmenu-icon {
 			display:block;
 		}
 
-#allOrders .advanced {
+.allOrders .advanced {
 	float:right;
 	margin-top:1px;
 }
 
-#reccuring-customer-order-form .advanced,
-#reccuring-customer-order-form .simple,
-#allOrders .advanced,
-#allOrders .simple {
+.allOrders .advanced,
+.allOrders .simple {
 	display:none;
 }
-#allOrders div.advanced.show,
-#allOrders div.simple.show {
+.allOrders div.advanced.show,
+.allOrders div.simple.show {
 	display:block;
 }
-	#allOrders div.advanced div {
+	.allOrders div.advanced div {
 		float:left;
 		margin-right:10px;
 	}
-	#allOrders div.advanced div:last-child {
+	.allOrders div.advanced div:last-child {
 		margin:0;
 	}
-		#allOrders div.advanced div span.units {
+		.allOrders div.advanced div span.units {
 			display:block;
 			font-size:10px;
 			padding-left:12px;
 		}
 		
-#allOrders .price {
+.allOrders .price {
 	padding-top:10px;
 	vertical-align:top;
 }		
 		
-#allOrders .slider {
+.allOrders .slider {
 	margin:4px 0px 0 10px;
 	height:12px;
 }
 
-#allOrders .sliderLabels {display:block; margin:0 5px 4px 15px; position:relative; display:block; height:15px;}
-	#allOrders .sliderLabels span {
+.allOrders .sliderLabels {display:block; margin:0 5px 4px 15px; position:relative; display:block; height:15px;}
+	.allOrders .sliderLabels span {
 		position:absolute; 
 		background:transparent url('../images/layout/slider_tick.gif') no-repeat scroll 50% -2px;
 		width:15px; 

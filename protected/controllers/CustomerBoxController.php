@@ -215,11 +215,15 @@ class CustomerBoxController extends Controller
 		
 		if(isset($_POST['btn_recurring'])) //recurring order button pressed
 		{
+			$monthsAdvance=(int)$_POST['months_advance'];
+			$locationId=(int)$_POST['Customer']['location_id'];
+			
 			foreach($_POST['Recurring'] as $key=>$quantity)
 			{
 				$boxSizeId=str_replace('bs_','',$key);
 				$Boxes=Box::model()->with('Week')->findAll("
 					date_sub(week_delivery_date, interval $deadlineDays day) > NOW() AND
+					date_sub(week_delivery_date, interval $monthsAdvance month) < date_sub(NOW(), interval -1 week) AND 
 					size_id=$boxSizeId");
 				
 				foreach($Boxes as $Box)
@@ -235,6 +239,24 @@ class CustomerBoxController extends Controller
 						$CustBox->quantity=$quantity;
 						$CustBox->delivery_cost=$Customer->Location->location_delivery_value;
 						$CustBox->save();
+					}
+					
+					if($CustBox)
+					{
+						//update location
+						$CustWeek=CustomerWeek::model()->findByAttributes(array(
+							'customer_id'=>$Customer->customer_id,
+							'week_id'=>$CustBox->Box->week_id
+						));
+						if(!$CustWeek)
+						{
+							var_dump('no cust week');
+							$CustWeek=new CustomerWeek;
+							$CustWeek->week_id=$CustBox->Box->week_id;
+							$CustWeek->customer_id=$Customer->customer_id;
+						}
+						$CustWeek->location_id=$locationId;
+						$CustWeek->save();
 					}
 				}
 			}

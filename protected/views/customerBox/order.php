@@ -12,7 +12,7 @@
 <script type="text/javascript">
 	var locCosts = <?php echo json_encode(CHtml::listData(Location::model()->findAll(),'location_id','location_delivery_value')) ?>;
 </script>
-<div id="allOrders" class="half">
+<div class="half allOrders">
 	<p>Time now: <?php echo date('d-m-y H:i:s') ?></p>
 	<h1>Orders</h1>
 	<?php $form=$this->beginWidget('CActiveForm', array(
@@ -135,9 +135,10 @@
 	<?php $this->endWidget(); ?>
 </div>
 
-<div class="info half">
-	
-	<div class="section">
+<div class="half">
+<div class="padding">
+		
+	<div class="section info">
 		<h2>Box prices</h2>
 		<?php foreach($BoxSizes as $BoxSize): ?>
 		<div class="row">
@@ -152,7 +153,6 @@
 	</div>
 	
 	<div class="section">
-		<h2>Orders and Payments</h2>
 		<div class="info">
 <!--			<div class="row">
 				<span class="label">Total Orders</span>
@@ -169,8 +169,8 @@
 		</div>
 	</div>
 	
-	<div class="section form">
-		<h2>Recurring Order</h2>
+	<div class="section form allOrders">
+		<h2>Order in advance</h2>
 		<?php $form=$this->beginWidget('CActiveForm', array(
 		'id'=>'reccuring-customer-order-form',
 		'enableAjaxValidation'=>false,
@@ -183,38 +183,52 @@
 		
 		<table>
 			<thead>
-				<?php foreach($BoxSizes as $BoxSize): ?>
-				<th><?php echo $BoxSize->box_size_name; ?></th>
-				<?php endforeach; ?>
+				<th></th>
+				<th class="sizes">Sizes</th>
 				<th>Boxes</th>
 				<th>Delivery</th>
 				<th>Total</th>
 			</thead>
 			<tbody>
-				<td class="button"><span class="btnAdvanced selected" title="Buy more than one box">Advanced</span></td>
-				<td>
-					<div class="advanced show">
-					<?php foreach($BoxSizes as $BoxSize): ?>
-						<?php echo CHtml::textField('Recurring[bs_' . $BoxSize->box_size_id . ']','0',array('class'=>'number','min'=>0)); ?>
-						<?php echo $form->hiddenField($BoxSize,'box_size_price', array('id'=>'bs_value_' . $BoxSize->box_size_id)); ?>	
-						<div>
-							<span class="units"><?php echo $BoxSize->box_size_name[0]; ?></span>
+				<tr class="date <?php echo $classes ?>">
+					<td colspan="5">
+						<?php 
+							echo CHtml::hiddenField('delivery_price_', $Customer->Location->location_delivery_value);
+							echo $form->dropDownList($Customer,'location_id',CHtml::listData(Location::model()->findAll(),'location_id','location_and_delivery'),array('class'=>'deliverySelect')); 
+						?>
+						<!-- <strong>Order by: </strong><?php echo Yii::app()->snapFormat->dayOfYear($Week->deadline) ?> -->
+					</td>
+				</tr>
+				<tr>
+					<td class="button"><span class="btnAdvanced selected" title="Buy more than one box">Advanced</span></td>
+					<td>
+						<div class="advanced show">
+						<?php foreach($BoxSizes as $BoxSize): ?>
+							<div>
+								<?php echo CHtml::textField('Recurring[bs_' . $BoxSize->box_size_id . ']','0',array('class'=>'number','min'=>0)); ?>
+								<?php echo $form->hiddenField($BoxSize,'box_size_price', array('id'=>'bs_value_' . $BoxSize->box_size_id)); ?>	
+								<span class="units"><?php echo $BoxSize->box_size_name[0]; ?></span>
+							</div>
+						<?php endforeach; ?>
 						</div>
+						<div class="simple">
+							<div class="slider"></div>
+							<div class="sliderLabels"></div>
+						</div>
+					</td>
+					<?php foreach($BoxSizes as $BoxSize): ?>
+
 					<?php endforeach; ?>
-					</div>
-					<div class="simple">
-						<div class="slider"></div>
-						<div class="sliderLabels"></div>
-					</div>
-				</td>
-				<?php foreach($BoxSizes as $BoxSize): ?>
-				
-				<?php endforeach; ?>
-				<td class="recBoxes"></td>
-				<td class="recDelivery"></td>
-				<td class="recTotal"></td>
+					<td class="boxes"></td>
+					<td class="delivery"></td>
+					<td class="total"></td>
+				</tr>
 			</tbody>
 		</table>
+		<div class="row">
+			<?php echo CHtml::label('Order in advance for', 'months_advance');  ?>
+			<?php echo CHtml::dropDownList('months_advance',1,array(1=>'1 Month',3=>'3 Months',6=>'6 Months'));  ?>
+		</div>
 		
 		<div class="row buttons">
 			<?php echo CHtml::submitButton('Set recurring order', array('name'=>'btn_recurring')); ?>
@@ -223,5 +237,6 @@
 		
 		<?php $this->endWidget(); ?>
 	</div>
-	
+
+</div>
 </div>

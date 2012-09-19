@@ -9,7 +9,7 @@ var $recurringInputs = $('form#reccuring-customer-order-form input[type="text"]'
 var deliveryCost = parseFloat($('input#Location_location_delivery_value').val());
 
 $('select.deliverySelect').change(function(){
-	$elem = $(this);
+	var $elem = $(this);
 	var $tr = $elem.parents('tr:eq(0)');
 	$tr.next().find('.advanced input.number').trigger('change');
 });
@@ -57,7 +57,8 @@ $('span.btnAdvanced').click(function(){
 	
 	if($elem.hasClass('selected')) {
 		
-		if(window.confirm('This will reset your order for the week, are you sure?')) {
+		if($elem.parents('#reccuring-customer-order-form').length!=0 || window.confirm('This will reset your order for the week, are you sure?')) {
+			
 			$elem.removeClass('selected');
 			$elem
 				.parents('td:eq(0)')
