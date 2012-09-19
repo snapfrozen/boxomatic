@@ -94,10 +94,10 @@ body
 	position:absolute;
 	display:none;
 	width:130px;
-	top:20px;
+	top:25px;
 	padding:5px;
 	left:0;
-	background:#298dcd;
+	background:#000;
 	z-index:1000;
 }
 
