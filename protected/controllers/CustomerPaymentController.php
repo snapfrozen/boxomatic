@@ -77,6 +77,7 @@ class CustomerPaymentController extends Controller
 				$message->setBody(array('Customer'=>$Customer, 'CustomerPayment' => $model), 'text/html');
 				//$message->addTo($Customer->User->user_email);
 				$message->addTo('donovan@snapfrozen.com.au');
+				$message->addTo('leigh@bellofoodbox.org.au');
 				$message->from = Yii::app()->params['adminEmail'];
 				
 				if(!@Yii::app()->mail->send($message))

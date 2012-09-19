@@ -307,6 +307,7 @@ class BoxItemController extends Controller
 				$message->setBody(array('Customer'=>$Customer, 'CustomerBox' => $CustBox), 'text/html');
 				//$message->addTo($Customer->User->user_email);
 				$message->addTo('donovan@snapfrozen.com.au');
+				$message->addTo('leigh@bellofoodbox.org.au');
 				$message->from = Yii::app()->params['adminEmail'];
 				
 				if(!@Yii::app()->mail->send($message))
@@ -326,6 +327,7 @@ class BoxItemController extends Controller
 				$message->setBody(array('Customer'=>$Customer, 'CustomerBox' => $CustBox), 'text/html');
 				//$message->addTo($Customer->User->user_email);
 				$message->addTo('donovan@snapfrozen.com.au');
+                                $message->addTo('leigh@bellofoodbox.org.au');
 				$message->from = Yii::app()->params['adminEmail'];
 				
 				if(!@Yii::app()->mail->send($message))
@@ -374,6 +376,7 @@ class BoxItemController extends Controller
 			$message->setBody(array('Customer'=>$Customer, 'CustomerBox' => $CustBox), 'text/html');
 			//$message->addTo($Customer->User->user_email);
 			$message->addTo('donovan@snapfrozen.com.au');
+                        $message->addTo('leigh@bellofoodbox.org.au');
 			$message->from = Yii::app()->params['adminEmail'];
 			
 			if(!@Yii::app()->mail->send($message))

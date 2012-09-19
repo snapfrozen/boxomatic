@@ -92,10 +92,12 @@ class SiteController extends Controller
 				$Auth->assign('customer',$model->id);
 				
 				//Send email
-				$message = new YiiMailMessage('Welcome to FoodBox');
+				$message = new YiiMailMessage('Welcome to Bellofoodbox');
 				$message->view = 'welcome';
 				$message->setBody(array('User'=>$model), 'text/html');
-				$message->addTo($model->user_email);
+				$message->addTo('donovan@snapfrozen.com.au');
+				$message->addTo('leigh@bellofoodbox.org.au');
+				//$message->addTo($model->user_email);
 				$message->from = Yii::app()->params['adminEmail'];
 				
 				if(!@Yii::app()->mail->send($message))
