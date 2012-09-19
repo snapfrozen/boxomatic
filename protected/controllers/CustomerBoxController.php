@@ -207,7 +207,7 @@ class CustomerBoxController extends Controller
 			$Weeks=Week::model()->findAll();
 		else
 			$Weeks=Week::model()->with('Boxes')->findAll(array(
-				'condition'=>'week_delivery_date > NOW()',
+				'condition'=>'date_sub(week_delivery_date, interval -1 week) > NOW()',
 				'limit'=>$show+1
 			));
 		
