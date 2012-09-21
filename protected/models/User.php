@@ -132,7 +132,6 @@ class User extends SnapActiveRecord
 		$criteria->compare('password',$this->password,true);
 		$criteria->compare('first_name',$this->first_name,true);
 		$criteria->compare('last_name',$this->last_name,true);
-		$criteria->compare('full_name',$this->last_name,true);
 		$criteria->compare('user_phone',$this->user_phone,true);
 		$criteria->compare('user_mobile',$this->user_mobile,true);
 		$criteria->compare('user_address',$this->user_address,true);
@@ -150,6 +149,9 @@ class User extends SnapActiveRecord
 
 		return new CActiveDataProvider(get_class($this), array(
 			'criteria'=>$criteria,
+			'pagination'=>array(
+				'pageSize'=>50,
+			)
 		));
 	}
 	

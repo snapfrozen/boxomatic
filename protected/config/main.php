@@ -177,7 +177,7 @@ return array(
 			'CASH'=>'Cash',
 			'PAYPAL'=>'PayPal',
 		),
-		'orderDeadlineDays'=>7, //orders must be placed within 7 days of delivery 
+		'orderDeadlineDays'=>6, //orders must be placed within 7 days of delivery 
 		'deliveryDayOfWeek'=>3, //0 (for Sunday) through 6 (for Saturday)
 		'autoCreateWeeks'=>24   //Amount of weeks to auto create boxes for in advance
 	),
