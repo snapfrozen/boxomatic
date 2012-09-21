@@ -49,7 +49,7 @@
 				//Admin menu
 				array('label'=>'Boxes', 'url'=>array('boxItem/create'), 'visible' => Yii::app()->user->checkAccess('admin')),
 				array('label'=>'Payments', 'url'=>array('customerPayment/enterPayments'), 'visible' => Yii::app()->user->checkAccess('admin')),
-				array('label'=>'Customers', 'url'=>array('user/admin'), 'visible' => Yii::app()->user->checkAccess('admin'),
+				array('label'=>'Customers', 'url'=>array('user/customers'), 'visible' => Yii::app()->user->checkAccess('admin'),
 					'items'=>array(
 						array('label'=>'Customer Orders', 'url'=>array('boxItem/customerBoxes'), 'visible' => Yii::app()->user->checkAccess('admin')),
 					)
@@ -61,7 +61,7 @@
 					)
 				),
 				array('label'=>'Locations', 'url'=>array('location/admin'), 'visible' => Yii::app()->user->checkAccess('admin')),
-
+				array('label'=>'Admin Users', 'url'=>array('user/admin'), 'visible' => Yii::app()->user->checkAccess('admin')),
 				array('label'=>'Register', 'url'=>array('site/register'), 'visible'=>Yii::app()->user->isGuest),
 				array('label'=>'Login', 'url'=>array('site/login'), 'visible'=>Yii::app()->user->isGuest),
 				array('label'=>'Logout ('.Yii::app()->user->name.')', 'url'=>array('site/logout'), 'visible'=>!Yii::app()->user->isGuest)

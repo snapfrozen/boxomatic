@@ -29,6 +29,7 @@ class User extends SnapActiveRecord
 	public $password_repeat;
 	public $verifyCode;
 	public $total_boxes;
+	public $searchAdmin=false;
 	
 	/**
 	 * Returns the static model of the specified AR class.
@@ -147,6 +148,9 @@ class User extends SnapActiveRecord
 		$criteria->compare('update_time',$this->update_time,true);
 		$criteria->compare('update_user_id',$this->update_user_id);
 
+		if($this->searchAdmin)
+			$criteria->condition='customer_id is null AND grower_id is null';
+		
 		return new CActiveDataProvider(get_class($this), array(
 			'criteria'=>$criteria,
 			'pagination'=>array(

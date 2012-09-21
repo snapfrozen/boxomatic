@@ -26,6 +26,20 @@
 		<?php echo $form->textField($model,'last_name',array('size'=>45,'maxlength'=>45)); ?>
 		<?php echo $form->error($model,'last_name'); ?>
 	</div>
+	
+	<?php if($model->isNewRecord): ?>
+	<div class="row">
+		<?php echo $form->labelEx($model,'password'); ?>
+		<?php echo $form->passwordField($model,'password',array('size'=>60,'maxlength'=>255)); ?>
+		<?php echo $form->error($model,'password'); ?>
+	</div>
+
+	<div class="row">
+		<?php echo $form->labelEx($model,'password_repeat'); ?>
+		<?php echo $form->passwordField($model,'password_repeat',array('size'=>60,'maxlength'=>255)); ?>
+		<?php echo $form->error($model,'password_repeat'); ?>
+	</div>
+	<?php endif ?>
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'user_phone'); ?>
@@ -158,7 +172,7 @@
 		<?php echo CHtml::dropDownList('role','customer',CHtml::listData(Yii::app()->authManager->getRoles(),'name','name')) ?>
 	</div>
 	
-	<?php if(CCaptcha::checkRequirements()): ?>
+	<?php if(CCaptcha::checkRequirements() && $model->isNewRecord): ?>
 	<div class="row">
 		<?php echo $form->labelEx($model,'verifyCode'); ?>
 		<div>

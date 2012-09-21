@@ -9,6 +9,20 @@ class UserController extends Controller
 	public $layout='//layouts/column1';
 
 	/**
+	 * Declares class-based actions.
+	 */
+	public function actions()
+	{
+		return array(
+			// captcha action renders the CAPTCHA image displayed on the contact page
+			'captcha'=>array(
+				'class'=>'CCaptchaAction',
+				'backColor'=>0xFFFFFF,
+			),
+		);
+	}
+	
+	/**
 	 * @return array action filters
 	 */
 	public function filters()
@@ -27,7 +41,7 @@ class UserController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','passwordReset','forgottenPassword'),
+				'actions'=>array('index','passwordReset','forgottenPassword','captcha'),
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -35,7 +49,7 @@ class UserController extends Controller
 				'roles'=>array('customer'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete','create'),
+				'actions'=>array('admin','delete','create','customers'),
 				'roles'=>array('admin'),
 			),
 			array('deny',  // deny all users
@@ -69,7 +83,8 @@ class UserController extends Controller
 		if(isset($_POST['User']))
 		{
 			$model->attributes=$_POST['User'];
-			
+			if(isset($_POST['User']['password']))
+				$model->password=Yii::app()->snap->encrypt($_POST['User']['password']);
 			if($model->save()) {
 				Yii::app()->authManager->assign($_POST['role'],$model->id);
 				$this->redirect(array('view','id'=>$model->id));
@@ -118,6 +133,8 @@ class UserController extends Controller
 		if(isset($_POST['User']))
 		{
 			$model->attributes=$_POST['User'];
+			if(isset($_POST['User']['password']))
+				$model->password=Yii::app()->snap->encrypt($_POST['User']['password']);
 			if(!$model->update())
 				$allSaved=false;
 			
@@ -165,6 +182,22 @@ class UserController extends Controller
 	 * Manages all models.
 	 */
 	public function actionAdmin()
+	{
+		$model=new User('search');
+		$model->unsetAttributes();  // clear any default values
+		$model->searchAdmin=true;
+		if(isset($_GET['User']))
+			$model->attributes=$_GET['User'];
+
+		$this->render('admin',array(
+			'model'=>$model,
+		));
+	}
+	
+	/**
+	 * Manages all models.
+	 */
+	public function actionCustomers()
 	{
 		$model=new User('search');
 		$model->unsetAttributes();  // clear any default values
