@@ -10,3 +10,4 @@
 	<p>Your Bellofoodbox ID is: <strong><?php echo $Customer->User->bfb_id; ?></strong>. 
 </body>
 </html>
+

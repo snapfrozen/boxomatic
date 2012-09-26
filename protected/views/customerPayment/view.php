@@ -11,6 +11,8 @@ $this->menu=array(
 
 <h1>Payment made <?php echo $model->payment_date; ?></h1>
 
+<p><?php echo CHtml::link('Login as Customer',array('user/loginAs', 'id'=>$model->Customer->User->id)) ?>
+
 <?php $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,
 	'attributes'=>array(
