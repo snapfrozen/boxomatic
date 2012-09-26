@@ -3,6 +3,7 @@ $this->menu=array(
 	array('label'=>'List CustomerPayment', 'url'=>array('index')),
 	array('label'=>'Create CustomerPayment', 'url'=>array('create')),
 	array('label'=>'Update CustomerPayment', 'url'=>array('update', 'id'=>$model->payment_id)),
+	array('label'=>'Login as Customer', 'url'=>array('user/LoginAs', 'id'=>$model->Customer->User->id)),
 	array('label'=>'Delete CustomerPayment', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->payment_id),'confirm'=>'Are you sure you want to delete this item?')),
 	array('label'=>'Manage CustomerPayment', 'url'=>array('admin')),
 );
