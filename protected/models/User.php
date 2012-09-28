@@ -162,13 +162,11 @@ class User extends SnapActiveRecord
 	/**
 	 * Encrypt password before saving
 	 */
-	/*
-	public function beforeSave()
+	public function afterValidate()
 	{
 		$this->password = Yii::app()->snap->encrypt($this->password);
 		return parent::beforeSave();
 	}
-	 */
 	
 	/**
 	 * @return boolean whether the role was set or not
