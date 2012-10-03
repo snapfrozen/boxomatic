@@ -79,14 +79,16 @@ class UserController extends Controller
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
-
+		
 		if(isset($_POST['User']))
 		{
 			$model->attributes=$_POST['User'];
 			if(isset($_POST['User']['password']))
-				$model->password=Yii::app()->snap->encrypt($_POST['User']['password']);
+				$model->password=$_POST['User']['password'];
 			if($model->save()) {
-				Yii::app()->authManager->assign($_POST['role'],$model->id);
+				if(isset($_POST['role'])) {
+					$model->setRole($_POST['role']);
+				}
 				$this->redirect(array('view','id'=>$model->id));
 			}
 		}
@@ -134,7 +136,7 @@ class UserController extends Controller
 		{
 			$model->attributes=$_POST['User'];
 			if(isset($_POST['User']['password']))
-				$model->password=Yii::app()->snap->encrypt($_POST['User']['password']);
+				$model->password=$_POST['User']['password'];
 			if(!$model->update())
 				$allSaved=false;
 			
@@ -318,7 +320,7 @@ class UserController extends Controller
 		if(isset($_POST['User']))
 		{
 			$model->attributes=$_POST['User'];
-			$model->password=Yii::app()->snap->encrypt($_POST['User']['password']);
+			$model->password=$_POST['User']['password'];
 			if($model->validate()) 
 			{
 				//clear our key so it can't be used again.
