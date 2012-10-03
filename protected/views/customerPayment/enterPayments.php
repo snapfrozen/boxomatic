@@ -98,6 +98,7 @@ $('.search-form form').submit(function(){
 		'payment_note',
 		array(
 			'class'=>'CButtonColumn',
+			'template'=>'{view}'
 		),
 	),
 )); ?>

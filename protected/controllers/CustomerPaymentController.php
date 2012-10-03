@@ -31,7 +31,7 @@ class CustomerPaymentController extends Controller
 				'roles'=>array('customer'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete','update','enterPayments'),
+				'actions'=>array('admin','enterPayments'),
 				'roles'=>array('admin'),
 			),
 			array('deny',  // deny all users

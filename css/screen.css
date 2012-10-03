@@ -520,12 +520,6 @@ table tr.group td {
 	white-space:nowrap;
 }
 
-#box-item-form .growerName {
-	width:100%;
-}
-#box-item-form thead th {
-	vertical-align:bottom;
-}
 
 tfoot tr:first-child td {
 	border-top:3px double #ccc;
@@ -537,6 +531,16 @@ tfoot td.total {
 	font-weight:bold;
 	text-align:right;
 }
+#box-item-form {
+	position:relative;
+}
+	#box-item-form .growerName {
+		width:100%;
+	}
+	#box-item-form thead th {
+		vertical-align:bottom;
+	}
+
 
 /* Grower Map */
 
