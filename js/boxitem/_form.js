@@ -2,8 +2,6 @@ var $loading=$('span.loading');
 $loading.css({display:'inline-block'});
 $loading.hide();
 
-$('div.sticky').stickyScroll({ container: '#current-boxes' });
-
 function loadSpinners()
 {
 	$('select.chosen').chosen();
@@ -15,6 +13,7 @@ function loadSpinners()
 		places:2,
 		step:.05
 	});
+	$('div.sticky').stickyScroll({ container: '#current-boxes' });
 }
 loadSpinners();
 
