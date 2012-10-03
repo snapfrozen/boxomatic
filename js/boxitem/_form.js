@@ -36,7 +36,7 @@ function reloadBoxes(url,data)
 	});
 }
 
-$('div#inventory, form#box-item-form tbody').on('click', 'table td:not(.button-column) a', function(){
+$('div#inventory, form#box-item-form').on('click', 'table td:not(.button-column) a', function(){
 	var $a = $(this);
 	reloadBoxes($a.attr('href'),{});
 	return false;

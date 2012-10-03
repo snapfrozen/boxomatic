@@ -285,6 +285,24 @@ EOD
 					</tr>
 					<tr>
 						<td class="total" colspan="2">
+							Box Markup:
+						</td>
+						<?php 
+						$totalRetal=0;
+						foreach($WeekBoxes as $WeekBoxMerged): 
+							$weekBoxIds=explode(',',$WeekBoxMerged->box_ids);
+						
+							foreach($weekBoxIds as $weekBoxId): 
+								$WeekBox=Box::model()->findByPk($weekBoxId);
+							?>
+							<td class="value">%<?php echo $WeekBox->BoxSize->box_size_markup ?></td>
+							<?php endforeach; ?>
+						<?php endforeach; ?>
+						<td class="value"><strong><?php echo Yii::app()->snapFormat->currency(BoxItem::weekTarget($SelectedWeek->week_id)) ?></strong></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td class="total" colspan="2">
 							Box Retail:
 						</td>
 						<?php 
