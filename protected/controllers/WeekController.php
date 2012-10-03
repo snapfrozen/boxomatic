@@ -439,8 +439,9 @@ class WeekController extends Controller
 		
 		$objPHPExcel->getActiveSheet()->SetCellValue('A1', 'Box Size');
 		$objPHPExcel->getActiveSheet()->SetCellValue('B1', 'Customer name');
-		$objPHPExcel->getActiveSheet()->SetCellValue('C1', 'Delivery Location');
-		$objPHPExcel->getActiveSheet()->SetCellValue('D1', 'Address');
+		$objPHPExcel->getActiveSheet()->SetCellValue('C1', 'Telephone');
+		$objPHPExcel->getActiveSheet()->SetCellValue('D1', 'Delivery Location');
+		$objPHPExcel->getActiveSheet()->SetCellValue('E1', 'Address');
 
 		$row=2;
 		
@@ -450,16 +451,19 @@ class WeekController extends Controller
 		{
 			$sheet->SetCellValue('A'.$row, $CustBox->Box->BoxSize->box_size_name);
 			$sheet->SetCellValue('B'.$row, $CustBox->Customer->User->full_name);
-			$sheet->SetCellValue('C'.$row, $CustBox->Customer->Location->location_name);
-			$sheet->SetCellValue('D'.$row, $CustBox->Customer->User->full_address);
+			$sheet->SetCellValue('C'.$row, $CustBox->Customer->User->user_phone);
+			$sheet->SetCellValue('D'.$row, $CustBox->Customer->Location->location_name);
+			$sheet->SetCellValue('E'.$row, $CustBox->Customer->User->full_address);
 			$row++;
 		}
 		spl_autoload_unregister(array('YiiBase','autoload'));  
-		$objPHPExcel->getActiveSheet()->getStyle("A1:D1")->applyFromArray(array("font" => array( "bold" => true)));
+		$objPHPExcel->getActiveSheet()->getStyle("A1:E1")->applyFromArray(array("font" => array( "bold" => true)));
 		
 		$objPHPExcel->getActiveSheet()->getColumnDimension("A")->setAutoSize(true);
 		$objPHPExcel->getActiveSheet()->getColumnDimension("B")->setAutoSize(true);
 		$objPHPExcel->getActiveSheet()->getColumnDimension("C")->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension("D")->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension("E")->setAutoSize(true);
 		
 		// Rename sheet
 		$objPHPExcel->getActiveSheet()->setTitle('Customer List');
