@@ -30,6 +30,9 @@
  */
 class Grower extends CActiveRecord
 {
+	const STATUS_DELETED=0;
+	const STATUS_ACTIVE=1;
+	
 	public $grower_item_search;
 	/**
 	 * Returns the static model of the specified AR class.
@@ -154,6 +157,8 @@ class Grower extends CActiveRecord
 		$criteria->compare('grower_notes',$this->grower_notes,true);
 		$criteria->compare('grower_payment_details',$this->grower_payment_details,true);
 
+		$criteria->addCondition('status='.self::STATUS_ACTIVE);
+		
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 			'pagination'=> $paginate ? array('pageSize'=>10) : $paginate,

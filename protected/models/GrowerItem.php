@@ -145,6 +145,7 @@ class GrowerItem extends CActiveRecord
 		}
 
 		$criteria->order='Grower.grower_name';
+		$criteria->addCondition('Grower.status='.Grower::STATUS_ACTIVE);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
