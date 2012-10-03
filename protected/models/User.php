@@ -61,8 +61,8 @@ class User extends SnapActiveRecord
 			array('user_email, password', 'length', 'max'=>255),
 			array('user_email', 'unique'),
 			array('user_email', 'email'),
-			array('password', 'compare'),
-			array('password_repeat', 'safe'),
+			//array('password', 'compare'),
+			//array('password_repeat', 'safe'),
 			array('first_name, last_name, user_phone, user_mobile, user_suburb, user_state, user_postcode', 'length', 'max'=>45),
 			array('user_address, user_address2, user_email', 'length', 'max'=>150),
 			// The following rule is used by search().
@@ -166,6 +166,7 @@ class User extends SnapActiveRecord
 	public function beforeSave()
 	{
 		$this->password = Yii::app()->snap->encrypt($this->password);
+                $this->password_repeat = Yii::app()->snap->encrypt($this->password_repeat);
 		return parent::beforeSave();
 	}
 	 */
