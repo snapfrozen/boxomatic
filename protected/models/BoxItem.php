@@ -108,6 +108,16 @@ class BoxItem extends CActiveRecord
 		return Yii::app()->params['itemUnits'][$this->item_unit];
 	}
 	
+	public function getWholesale_price()
+	{
+		return $this->item_value * $this->item_quantity;
+	}
+	
+	public function getRetail_price()
+	{
+		return $this->wholesale_price + $this->wholesale_price * ($this->Box->BoxSize->box_size_markup/100);
+	}
+	
 	/**
 	 * 
 	 */
