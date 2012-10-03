@@ -63,6 +63,18 @@
 					'value'=>'Yii::app()->snapFormat->getMonthName($data->item_available_from) . " to " . Yii::app()->snapFormat->getMonthName($data->item_available_to)',
 					'filter'=>Yii::app()->params["months"],
 				),
+				array(
+					'class'=>'CButtonColumn',
+					'template'=>'{update}{delete}',
+					'buttons'=>array(
+						'update'=>array(
+							'url'=>'array("growerItem/update","id"=>$data->item_id)',
+						),
+						'delete'=>array(
+							'url'=>'array("growerItem/delete","id"=>$data->item_id)',
+						)
+					)
+				)
 			),
 		)); ?>
 		

@@ -56,7 +56,7 @@
 				),
 				array('label'=>'Growers', 'url'=>array('grower/admin'), 'visible' => Yii::app()->user->checkAccess('admin'),
 					'items'=>array(
-						array('label'=>'Items', 'url'=>array('growerItem/admin'), 'visible' => Yii::app()->user->checkAccess('grower')),
+						array('label'=>'Inventory', 'url'=>array('growerItem/admin'), 'visible' => Yii::app()->user->checkAccess('grower')),
 						array('label'=>'Grower Map', 'url'=>array('grower/map'), 'visible' => Yii::app()->user->checkAccess('admin')),
 					)
 				),

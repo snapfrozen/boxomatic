@@ -1,7 +1,6 @@
 <?php
 $this->menu=array(
-	array('label'=>'List GrowerItem', 'url'=>array('index')),
-	array('label'=>'Create GrowerItem', 'url'=>array('create')),
+	array('label'=>'Create Inventory', 'url'=>array('create')),
 );
 
 Yii::app()->clientScript->registerScript('search', "
@@ -18,7 +17,7 @@ $('.search-form form').submit(function(){
 ");
 ?>
 
-<h1>Manage Grower Items</h1>
+<h1>Manage Inventory</h1>
 
 <p>
 You may optionally enter a comparison operator (<b>&lt;</b>, <b>&lt;=</b>, <b>&gt;</b>, <b>&gt;=</b>, <b>&lt;&gt;</b>

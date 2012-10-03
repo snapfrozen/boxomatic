@@ -121,7 +121,9 @@ class Grower extends CActiveRecord
 	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
 	 */
 	public function search($paginate=true)
-	{
+	{	
+		$pageSize=isset($_GET['pageSize'])?$_GET['pageSize']:10;
+		Yii::app()->user->setState('pageSize',$pageSize);
 		// Warning: Please modify the following code to remove attributes that
 		// should not be searched.
 
@@ -161,7 +163,7 @@ class Grower extends CActiveRecord
 		
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
-			'pagination'=> $paginate ? array('pageSize'=>10) : $paginate,
+			'pagination'=> $paginate ? array('pageSize'=>$pageSize) : $paginate,
 		));
 	}
 }
