@@ -90,6 +90,8 @@ class CustomerPayment extends CActiveRecord
 	 */
 	public function search()
 	{
+		$pageSize=isset($_GET['pageSize'])?$_GET['pageSize']:10;
+		Yii::app()->user->setState('pageSize',$pageSize);
 		// Warning: Please modify the following code to remove attributes that
 		// should not be searched.
 
@@ -121,7 +123,10 @@ class CustomerPayment extends CActiveRecord
 			'criteria'=>$criteria,
 			'sort'=>array(
 				'defaultOrder'=>'payment_id DESC'
-			)
+			),
+			'pagination'=>array(
+				'pageSize'=>$pageSize,
+			),
 		));
 	}
 	

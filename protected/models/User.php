@@ -121,8 +121,8 @@ class User extends SnapActiveRecord
 	 */
 	public function search()
 	{
-		// Warning: Please modify the following code to remove attributes that
-		// should not be searched.
+		$pageSize=isset($_GET['pageSize'])?$_GET['pageSize']:10;
+		Yii::app()->user->setState('pageSize',$pageSize);
 
 		$criteria=new CDbCriteria;
 
@@ -154,8 +154,8 @@ class User extends SnapActiveRecord
 		return new CActiveDataProvider(get_class($this), array(
 			'criteria'=>$criteria,
 			'pagination'=>array(
-				'pageSize'=>50,
-			)
+				'pageSize'=>$pageSize,
+			),
 		));
 	}
 	

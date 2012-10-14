@@ -6,6 +6,13 @@
 	$cs->registerCoreScript('jquery.ui');
 	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/ui.datepicker.min.js', CClientScript::POS_END);
 	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/chosen.jquery.min.js', CClientScript::POS_END);
+	
+Yii::app()->clientScript->registerScript('initPageSize',<<<EOD
+$('.change-pageSize').live('change', function() {
+	$.fn.yiiGridView.update('customer-payment-grid',{ data:{ pageSize: $(this).val() }})
+});
+EOD
+,CClientScript::POS_READY);
 ?>
 
 <h1>Enter Customer Payment</h1>
@@ -74,11 +81,19 @@ $('.search-form form').submit(function(){
 ?>
 
 <h1>Search Customer Payments</h1>
-
+<?php $dataProvider=$search_model->search(); ?>
+<?php $pageSize=Yii::app()->user->getState('pageSize',10); ?>
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'customer-payment-grid',
-	'dataProvider'=>$search_model->search(),
+	'dataProvider'=>$dataProvider,
 	'filter'=>$search_model,
+	'summaryText'=>'Displaying {start}-{end} of {count} result(s). ' .
+	CHtml::dropDownList(
+		'pageSize',
+		$pageSize,
+		array(5=>5,10=>10,20=>20,50=>50,100=>100),
+		array('class'=>'change-pageSize')) .
+	' rows per page',
 	'columns'=>array(
 		array(
 			'name'=>'customer_user_id',

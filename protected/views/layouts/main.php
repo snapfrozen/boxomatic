@@ -47,7 +47,11 @@
 				array('label'=>'Payments', 'url'=>array('customerPayment/index'), 'visible' => Yii::app()->user->customer_id),
 
 				//Admin menu
-				array('label'=>'Boxes', 'url'=>array('boxItem/create'), 'visible' => Yii::app()->user->checkAccess('admin')),
+				array('label'=>'Boxes', 'url'=>array('boxItem/create'), 'visible' => Yii::app()->user->checkAccess('admin'),
+					'items'=>array(
+						array('label'=>'Box Sizes', 'url'=>array('boxSize/admin'), 'visible' => Yii::app()->user->checkAccess('admin')),
+					)
+				),
 				array('label'=>'Payments', 'url'=>array('customerPayment/enterPayments'), 'visible' => Yii::app()->user->checkAccess('admin')),
 				array('label'=>'Customers', 'url'=>array('user/customers'), 'visible' => Yii::app()->user->checkAccess('admin'),
 					'items'=>array(
