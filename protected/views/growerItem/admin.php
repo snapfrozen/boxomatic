@@ -15,6 +15,13 @@ $('.search-form form').submit(function(){
 	return false;
 });
 ");
+
+Yii::app()->clientScript->registerScript('initPageSize',<<<EOD
+	$('.change-pageSize').live('change', function() {
+		$.fn.yiiGridView.update('grower-item-grid',{ data:{ pageSize: $(this).val() }})
+	});
+EOD
+,CClientScript::POS_READY);
 ?>
 
 <h1>Manage Inventory</h1>
@@ -30,11 +37,19 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 	'model'=>$model,
 )); ?>
 </div><!-- search-form -->
-
+<?php $dataProvider=$model->search(); ?>
+<?php $pageSize=Yii::app()->user->getState('pageSize',10); ?>
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'grower-item-grid',
-	'dataProvider'=>$model->search(),
+	'dataProvider'=>$dataProvider,
 	'filter'=>$model,
+	'summaryText'=>'Displaying {start}-{end} of {count} result(s). ' .
+	CHtml::dropDownList(
+		'pageSize',
+		$pageSize,
+		array(5=>5,10=>10,20=>20,50=>50,100=>100),
+		array('class'=>'change-pageSize')) .
+	' rows per page',
 	'columns'=>array(
         array( 
 			'name'=>'grower_search', 
