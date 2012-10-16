@@ -235,35 +235,33 @@ class CustomerBoxController extends Controller
 				
 				foreach($Boxes as $Box)
 				{
-					$CustBox=CustomerBox::model()->findByAttributes(array('customer_id'=>$Customer->customer_id,'box_id'=>$Box->box_id));
+					$CustBoxes=CustomerBox::model()->findAllByAttributes(array('customer_id'=>$Customer->customer_id,'box_id'=>$Box->box_id));
 					
-					//Only create a records if an entry doesn't already exist
-					if(!$CustBox && $quantity)
-					{
-						$CustBox=new CustomerBox;
-						$CustBox->customer_id=$Customer->customer_id;
-						$CustBox->box_id=$Box->box_id;
-						$CustBox->quantity=$quantity;
-						$CustBox->delivery_cost=$Customer->Location->location_delivery_value;
-						$CustBox->save();
-					}
+					$curQuantity=count($CustBoxes);
+					$diff=$quantity-$curQuantity;
 					
-					if($CustBox)
+					if($diff > 0)
 					{
-						//update location
-						$CustWeek=CustomerWeek::model()->findByAttributes(array(
-							'customer_id'=>$Customer->customer_id,
-							'week_id'=>$CustBox->Box->week_id
-						));
-						if(!$CustWeek)
+						//Create extra customer box rows
+						for($i=0; $i<$diff; $i++)
 						{
-							$CustWeek=new CustomerWeek;
-							$CustWeek->week_id=$CustBox->Box->week_id;
-							$CustWeek->customer_id=$Customer->customer_id;
+							$CustBox=new CustomerBox;
+							$CustBox->customer_id=$Customer->customer_id;
+							$CustBox->box_id=$Box->box_id;
+							$CustBox->quantity=1;
+							$CustBox->delivery_cost=$Customer->Location->location_delivery_value;
+							$CustBox->save();
 						}
-						$CustWeek->location_id=$locationId;
-						$CustWeek->customer_location_id=$custLocationId;
-						$CustWeek->save();
+					}
+
+					if($diff < 0)
+					{
+						//Remove any boxes the customer no longer wants;
+						$diff=abs($diff);		
+						for($i=0; $i<$diff; $i++)
+						{
+							$CustBoxes[$i]->delete();
+						}
 					}
 				}
 			}

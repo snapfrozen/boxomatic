@@ -55,8 +55,8 @@
 			)); ?>
 
 			<p>
-				All future orders and will be set to your preference below. Set to 0 for no recurring order.
-				Any entry already added will not be affected. Press the "Clear all orders" button to start over.
+				This will reset your orders for the selected amount of time to the setting chosen here.
+				Press the "Clear all orders" button to start over.
 			</p>
 
 			<table>
