@@ -41,3 +41,5 @@ ALTER TABLE `customers` ADD COLUMN `customer_location_id` INT NULL  AFTER `custo
   ON UPDATE NO ACTION
 , ADD INDEX `fk_customer_custLocation` (`customer_location_id` ASC) 
 , ADD INDEX `fk_customer_location` (`location_id` ASC) ;
+
+ALTER TABLE `customer_locations` ADD COLUMN `status` SMALLINT NULL DEFAULT 1 AFTER `phone`;

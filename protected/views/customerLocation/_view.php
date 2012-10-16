@@ -6,7 +6,7 @@
 <div class="view">
 	
 	<?php echo CHtml::link('Update', array('customerLocation/update', 'id'=>$data->customer_location_id),array('class'=>'update')); ?>
-<!--	<?php echo CHtml::link('Delete', array('customerLocation/delete', 'id'=>$data->customer_location_id),array('class'=>'update','confirm'=>'Are you sure you want to delete this address?')); ?> -->
+	<?php echo CHtml::link('Delete', array('customerLocation/delete', 'id'=>$data->customer_location_id),array('class'=>'update','confirm'=>'Are you sure you want to delete this address?')); ?>
 	
 	<p><b><?php echo $data->Location->location_name; ?></b></p>
 

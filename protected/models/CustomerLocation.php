@@ -20,6 +20,9 @@
  */
 class CustomerLocation extends CActiveRecord
 {
+	const STATUS_DELETED=0;
+	const STATUS_ACTIVE=1;
+	
 	public $delivery_label='Delivery Locations';
 	/**
 	 * Returns the static model of the specified AR class.
@@ -47,7 +50,7 @@ class CustomerLocation extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('customer_location_id, customer_id, location_id', 'numerical', 'integerOnly'=>true),
+			array('status, customer_location_id, customer_id, location_id', 'numerical', 'integerOnly'=>true),
 			array('address, address2', 'length', 'max'=>150),
 			array('suburb, state, postcode, phone', 'length', 'max'=>45),
 			array('address, suburb, state, postcode, location_id', 'required'),
@@ -108,15 +111,25 @@ class CustomerLocation extends CActiveRecord
 		$criteria->compare('state',$this->state,true);
 		$criteria->compare('postcode',$this->postcode,true);
 		$criteria->compare('phone',$this->phone,true);
+		
+		$criteria->addCondition('status='.self::STATUS_ACTIVE);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
 	}
 	
+	public function defaultScope()
+	{
+		return array(
+			'condition'=>'status='.self::STATUS_ACTIVE,
+		);
+	}
+	
 	public function getLocation_key() {
 		return $this->customer_location_id.'-'.$this->location_id;
 	}
+	
 	public function getFull_location() {
 		return $this->address.' - '.$this->Location->location_name;
 	}

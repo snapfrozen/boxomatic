@@ -15,7 +15,6 @@ class CustomerLocationController extends Controller
 	{
 		return array(
 			'accessControl', // perform access control for CRUD operations
-			'postOnly + delete', // we only allow deletion via POST request
 		);
 	}
 
@@ -35,9 +34,9 @@ class CustomerLocationController extends Controller
 				'actions'=>array('create','update'),
 				'users'=>array('@'),
 			),
-			array('allow', // allow admin user to perform 'admin' and 'delete' actions
+			array('allow',
 				'actions'=>array('admin','delete'),
-				'users'=>array('admin'),
+				'roles'=>array('admin','customer'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -111,11 +110,14 @@ class CustomerLocationController extends Controller
 	 */
 	public function actionDelete($id)
 	{
-		$this->loadModel($id)->delete();
+		$model=$this->loadModel($id);
+		$custId=$model->Customer->User->id;
+		$model->status=0;
+		$model->save();
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax']))
-			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
+			$this->redirect(array('user/update','id'=>$custId));
 	}
 
 	/**
