@@ -13,6 +13,8 @@
  */
 class Location extends CActiveRecord
 {
+	public $pickup_label='Pick Up';
+	
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
@@ -95,5 +97,15 @@ class Location extends CActiveRecord
 	public function getLocation_and_delivery()
 	{
 		return $this->location_name . ' (' . $this->location_delivery_value . ')';
+	}
+	
+	public function getDeliveryList()
+	{
+		return CHtml::listData($this->findAll('is_pickup=0'),'location_id','location_name');
+	}
+	
+	public function getPickupList()
+	{
+		return CHtml::listData($this->findAll('is_pickup=1'),'location_id','location_name','pickup_label');
 	}
 }

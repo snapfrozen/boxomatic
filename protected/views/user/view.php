@@ -35,12 +35,16 @@ $this->menu=array(
 
 <?php if($model->Customer): ?>
 
-<h2>Delivery details</h2>
+<h2>Default delivery location</h2>
 <?php $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model->Customer,
 	'attributes'=>array(
 		'Location.location_name',
 		'Location.location_delivery_value',
+		array(
+			'name'=>'CustomerLocation.address',
+			'visible'=>isset($model->Customer->CustomerLocation),
+		),
 		'customer_notes',
 	),
 )); ?>

@@ -216,7 +216,14 @@ class CustomerBoxController extends Controller
 		if(isset($_POST['btn_recurring'])) //recurring order button pressed
 		{
 			$monthsAdvance=(int)$_POST['months_advance'];
-			$locationId=(int)$_POST['Customer']['location_id'];
+			$locationId=$_POST['Customer']['delivery_location_key'];
+			$custLocationId=new CDbExpression('NULL');
+			if(strpos($locationId,'-'))
+			{ //has a customer location
+				$parts=explode('-',$locationId);
+				$locationId=$parts[1];
+				$custLocationId=$parts[0];
+			}
 			
 			foreach($_POST['Recurring'] as $key=>$quantity)
 			{
@@ -255,6 +262,7 @@ class CustomerBoxController extends Controller
 							$CustWeek->customer_id=$Customer->customer_id;
 						}
 						$CustWeek->location_id=$locationId;
+						$CustWeek->customer_location_id=$custLocationId;
 						$CustWeek->save();
 					}
 				}
@@ -325,7 +333,16 @@ class CustomerBoxController extends Controller
 			{
 				$CustWeek=CustomerWeek::model()->findByPk($key);
 				
+				$custLocationId=new CDbExpression('NULL');
+				if(strpos($locationId,'-'))
+				{ //has a customer location
+					$parts=explode('-',$locationId);
+					$locationId=$parts[1];
+					$custLocationId=$parts[0];
+				}
+				
 				$CustWeek->location_id=$locationId;
+				$CustWeek->customer_location_id=$custLocationId;
 				$CustWeek->save();
 				
 				$CustBoxesWeek=CustomerBox::model()->with('Box')->findAll(

@@ -177,7 +177,7 @@ class WeekController extends Controller
 		WHERE (
 			week_id=' . $week . ' 
 			AND customer_box_id is not null
-			AND status='.CustomerBox::STATUS_APPROVED.'
+			AND CustomerBoxes.status='.CustomerBox::STATUS_APPROVED.'
 		) 
 
 		GROUP BY grower_name,item_name 
@@ -306,7 +306,7 @@ class WeekController extends Controller
 		WHERE (
 			week_id=' . $week . ' 
 			AND customer_box_id is not null
-			AND status='.CustomerBox::STATUS_APPROVED.'
+			AND CustomerBoxes.status='.CustomerBox::STATUS_APPROVED.'
 		) 
 
 		GROUP BY grower_name,item_name 
@@ -452,8 +452,8 @@ class WeekController extends Controller
 			$sheet->SetCellValue('A'.$row, $CustBox->Box->BoxSize->box_size_name);
 			$sheet->SetCellValue('B'.$row, $CustBox->Customer->User->full_name);
 			$sheet->SetCellValue('C'.$row, $CustBox->Customer->User->user_phone);
-			$sheet->SetCellValue('D'.$row, $CustBox->Customer->Location->location_name);
-			$sheet->SetCellValue('E'.$row, $CustBox->Customer->User->full_address);
+			$sheet->SetCellValue('D'.$row, $CustBox->Customer->Location ? $CustBox->Customer->Location->location_name : "NOT SET!");
+			$sheet->SetCellValue('E'.$row, $CustBox->Customer->CustomerLocation ? $CustBox->Customer->CustomerLocation->full_address : "");
 			$row++;
 		}
 		spl_autoload_unregister(array('YiiBase','autoload'));  

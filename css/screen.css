@@ -293,9 +293,10 @@ h2 span {
 
 /* All Orders Page */
 
-.half .padding {
-	padding-left:20px;
+.customerBox-order .tabs {
+	width:55%;
 }
+.customerBox-order .ui-widget-content {background:#fff}
 
 th.sizes {
 	text-align:center;
@@ -349,12 +350,12 @@ th.sizes {
 		font-size:1em;
 	}
 	.allOrders .ui-selectmenu {
-		font-size:1em;
+		font-size:1em !important;
 		margin:0;
 		float:right;
-		background:none;
-		border:none;
-		font-weight:normal;
+		background:none !important;
+		border:none !important;
+		font-weight:normal !important;
 		height:auto;
 	}
 		.ui-selectmenu-open {
@@ -577,3 +578,7 @@ tfoot td.total {
 	#grower-search .buttons {
 		padding-left:0;
 	}
+	
+/* Customer Locations */
+
+div.view .update {float:right; margin-left:10px;}

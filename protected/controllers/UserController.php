@@ -92,9 +92,16 @@ class UserController extends Controller
 				$this->redirect(array('view','id'=>$model->id));
 			}
 		}
+		
+		$custLocDataProvider=null;
+		if($model->Customer)
+		{
+			$custLocDataProvider=new CActiveDataProvider('CustomerLocation');
+		}
 
 		$this->render('create',array(
 			'model'=>$model,
+			'custLocDataProvider'=>$custLocDataProvider
 		));
 	}
 
@@ -114,10 +121,23 @@ class UserController extends Controller
 		if(isset($_POST['Customer']))
 		{
 			$Customer=$model->Customer;
+			$locationId=$_POST['Customer']['delivery_location_key'];
+			$custLocationId=new CDbExpression('NULL');
+			if(strpos($locationId,'-'))
+			{ //has a customer location
+				$parts=explode('-',$locationId);
+				$locationId=$parts[1];
+				$custLocationId=$parts[0];
+			}
+
+			$Customer->location_id=$locationId;
+			$Customer->customer_location_id=$custLocationId;
+			$Customer->save();
 			$Customer->attributes=$_POST['Customer'];
 			if(!$Customer->update())
 				$allSaved=false;
 				
+			$Customer->updateOrderDeliveryLocations();
 		}
 		
 		if(isset($_POST['Grower']))
@@ -143,9 +163,16 @@ class UserController extends Controller
 			if($allSaved)
 				$this->redirect(array('view','id'=>$model->id));
 		}
+		
+		$custLocDataProvider=null;
+		if($model->Customer)
+		{
+			$custLocDataProvider=new CActiveDataProvider('CustomerLocation');
+		}
 
 		$this->render('update',array(
 			'model'=>$model,
+			'custLocDataProvider'=>$custLocDataProvider
 		));
 	}
 
