@@ -43,6 +43,7 @@ class Location extends CActiveRecord
 		return array(
 			array('location_name', 'length', 'max'=>45),
 			array('location_delivery_value', 'length', 'max'=>7),
+			array('is_pickup', 'boolean'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('location_id, location_name, location_delivery_value', 'safe', 'on'=>'search'),

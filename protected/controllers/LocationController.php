@@ -6,7 +6,7 @@ class LocationController extends Controller
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
 	 * using two-column layout. See 'protected/views/layouts/column2.php'.
 	 */
-	public $layout='//layouts/column2';
+	public $layout='//layouts/column1';
 
 	/**
 	 * @return array action filters
@@ -59,7 +59,7 @@ class LocationController extends Controller
 		{
 			$model->attributes=$_POST['Location'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->location_id));
+				$this->redirect(array('admin'));
 		}
 
 		$this->render('create',array(
@@ -83,7 +83,7 @@ class LocationController extends Controller
 		{
 			$model->attributes=$_POST['Location'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->location_id));
+				$this->redirect(array('admin'));
 		}
 
 		$this->render('update',array(
