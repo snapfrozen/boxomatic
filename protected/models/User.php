@@ -27,6 +27,7 @@
 class User extends SnapActiveRecord
 {
 	public $password_repeat;
+	public $password_current;
 	public $verifyCode;
 	public $total_boxes;
 	public $searchAdmin=false;
@@ -96,6 +97,8 @@ class User extends SnapActiveRecord
 			'customer_id' => 'Customer',
 			'grower_id' => 'Grower',
 			'password' => 'Password',
+			'password_repeat' => 'Repeat Password',
+			'password_current' => 'Current Password',
 			'first_name' => 'First Name',
 			'last_name' => 'Last Name',
 			'full_name' => 'Full Name',
@@ -165,21 +168,38 @@ class User extends SnapActiveRecord
 	public function afterValidate()
 	{
 		$this->password = Yii::app()->snap->encrypt($this->password);
-                $this->password_repeat = Yii::app()->snap->encrypt($this->password_repeat);
+        $this->password_repeat = Yii::app()->snap->encrypt($this->password_repeat);
 		return parent::beforeSave();
 	}
 	
 	/**
+	 * Foodbox only allows assignment of a single role
 	 * @return boolean whether the role was set or not
 	 */
 	public function setRole($role)
 	{
-		if(!Yii::app()->authManager->checkAccess($role, $this->id))
+		if(!Yii::app()->authManager->isAssigned($role, $this->id))
 		{
+			Yii::app()->authManager->revoke($this->getRole(), $this->id);
 			Yii::app()->authManager->assign($role, $this->id);
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * Foodbox only allows assignment of a single role
+	 * @return boolean 
+	 */
+	public function getRole()
+	{
+		$roles=Yii::app()->authManager->getRoles($this->id);
+		if(!empty($roles)) {
+			$keys=array_keys($roles);
+			return array_pop($keys);
+		} else {
+			return false;
+		}	
 	}
 	
 	public function getFull_address()

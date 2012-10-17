@@ -165,7 +165,7 @@
 		<?php if(Yii::app()->user->checkAccess('admin')): ?>
 		<div class="row">
 			<?php echo CHtml::label('Role','role') ?>
-			<?php echo CHtml::dropDownList('role','customer',CHtml::listData(Yii::app()->authManager->getRoles(),'name','name')) ?>
+			<?php echo CHtml::dropDownList('role',$model->getRole(),CHtml::listData(Yii::app()->authManager->getRoles(),'name','name')) ?>
 		</div>
 		<?php endif; ?>
 
