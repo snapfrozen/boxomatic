@@ -143,6 +143,7 @@ class SiteController extends Controller
 		$this->render('login',array('model'=>$model));
 	}
 	
+	/*
 	public function actionGenerateLocations()
 	{
 		
@@ -189,6 +190,7 @@ class SiteController extends Controller
 
 		exit;
 	}
+	 */
 
 	/**
 	 * Logs out the current user and redirect to homepage.
