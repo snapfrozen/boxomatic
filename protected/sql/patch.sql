@@ -28,7 +28,9 @@ ALTER TABLE `customers` DROP FOREIGN KEY `location_id`;
 ALTER TABLE `customers` DROP COLUMN `location_id` , DROP INDEX `location_id`;
 ALTER TABLE `customer_weeks` ADD COLUMN `customer_location_id` INT NULL  AFTER `location_id`;
 
-ALTER TABLE `customers` ADD COLUMN `customer_location_id` INT NULL  AFTER `customer_notes` , ADD COLUMN `location_id` INT NULL  AFTER `customer_location_id` , 
+ALTER TABLE `customers` 
+    ADD COLUMN `customer_location_id` INT NULL  AFTER `customer_notes` , 
+    ADD COLUMN `location_id` INT NULL  AFTER `customer_location_id` , 
   ADD CONSTRAINT `fk_customer_custLocation`
   FOREIGN KEY (`customer_location_id` )
   REFERENCES `customer_locations` (`customer_location_id` )
