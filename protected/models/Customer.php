@@ -200,4 +200,16 @@ class Customer extends CActiveRecord
 			$CustWeek->save();
 		}
 	}
+	
+	public function getDelivery_location()
+	{
+		if($this->CustomerLocation)
+		{
+			return $this->Location->location_name . ': ' . $this->CustomerLocation->full_address;
+		}
+		else
+		{
+			return $this->Location->location_name;
+		}
+	}
 }

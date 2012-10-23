@@ -72,6 +72,8 @@ class CustomerBox extends CActiveRecord
 		return array(
 			'Customer' => array(self::BELONGS_TO, 'Customer', 'customer_id'),
 			'Box' => array(self::BELONGS_TO, 'Box', 'box_id'),
+			'CustomerLocation' => array(self::BELONGS_TO, 'CustomerLocation', 'customer_location_id'),
+			'Location' => array(self::BELONGS_TO, 'Location', 'location_id'),
 		);
 	}
 
@@ -254,4 +256,15 @@ class CustomerBox extends CActiveRecord
 		return isset($statusOptions[$this->status]) ? $statusOptions[$this->status] : "unknown status ({$this->status})";
 	}
 	
+	public function getDelivery_location()
+	{
+		if($this->CustomerLocation)
+		{
+			return $this->Location->location_name . ': ' . $this->CustomerLocation->full_address;
+		}
+		else
+		{
+			return $this->Location->location_name;
+		}
+	}
 }
