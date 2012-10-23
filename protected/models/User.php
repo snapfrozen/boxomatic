@@ -27,6 +27,7 @@
 class User extends SnapActiveRecord
 {
 	public $password_repeat;
+	public $password_current;
 	public $verifyCode;
 	public $total_boxes;
 	public $searchAdmin=false;
@@ -61,8 +62,8 @@ class User extends SnapActiveRecord
 			array('user_email, password', 'length', 'max'=>255),
 			array('user_email', 'unique'),
 			array('user_email', 'email'),
-			array('password', 'compare'),
-			array('password_repeat', 'safe'),
+			//array('password', 'compare'),
+			//array('password_repeat', 'safe'),
 			array('first_name, last_name, user_phone, user_mobile, user_suburb, user_state, user_postcode', 'length', 'max'=>45),
 			array('user_address, user_address2, user_email', 'length', 'max'=>150),
 			// The following rule is used by search().
@@ -96,6 +97,8 @@ class User extends SnapActiveRecord
 			'customer_id' => 'Customer',
 			'grower_id' => 'Grower',
 			'password' => 'Password',
+			'password_repeat' => 'Repeat Password',
+			'password_current' => 'Current Password',
 			'first_name' => 'First Name',
 			'last_name' => 'Last Name',
 			'full_name' => 'Full Name',
@@ -121,8 +124,8 @@ class User extends SnapActiveRecord
 	 */
 	public function search()
 	{
-		// Warning: Please modify the following code to remove attributes that
-		// should not be searched.
+		$pageSize=isset($_GET['pageSize'])?$_GET['pageSize']:10;
+		Yii::app()->user->setState('pageSize',$pageSize);
 
 		$criteria=new CDbCriteria;
 
@@ -154,33 +157,49 @@ class User extends SnapActiveRecord
 		return new CActiveDataProvider(get_class($this), array(
 			'criteria'=>$criteria,
 			'pagination'=>array(
-				'pageSize'=>50,
-			)
+				'pageSize'=>$pageSize,
+			),
 		));
 	}
 	
 	/**
 	 * Encrypt password before saving
 	 */
-	/*
-	public function beforeSave()
+	public function afterValidate()
 	{
 		$this->password = Yii::app()->snap->encrypt($this->password);
+        $this->password_repeat = Yii::app()->snap->encrypt($this->password_repeat);
 		return parent::beforeSave();
 	}
-	 */
 	
 	/**
+	 * Foodbox only allows assignment of a single role
 	 * @return boolean whether the role was set or not
 	 */
 	public function setRole($role)
 	{
-		if(!Yii::app()->authManager->checkAccess($role, $this->id))
+		if(!Yii::app()->authManager->isAssigned($role, $this->id))
 		{
+			Yii::app()->authManager->revoke($this->getRole(), $this->id);
 			Yii::app()->authManager->assign($role, $this->id);
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * Foodbox only allows assignment of a single role
+	 * @return boolean 
+	 */
+	public function getRole()
+	{
+		$roles=Yii::app()->authManager->getRoles($this->id);
+		if(!empty($roles)) {
+			$keys=array_keys($roles);
+			return array_pop($keys);
+		} else {
+			return false;
+		}	
 	}
 	
 	public function getFull_address()

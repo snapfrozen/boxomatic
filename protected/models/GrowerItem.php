@@ -122,6 +122,8 @@ class GrowerItem extends CActiveRecord
 	 */
 	public function search()
 	{
+		$pageSize=isset($_GET['pageSize'])?$_GET['pageSize']:10;
+		Yii::app()->user->setState('pageSize',$pageSize);
 		// Warning: Please modify the following code to remove attributes that
 		// should not be searched.
 
@@ -145,11 +147,12 @@ class GrowerItem extends CActiveRecord
 		}
 
 		$criteria->order='Grower.grower_name';
+		$criteria->addCondition('Grower.status='.Grower::STATUS_ACTIVE);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 			'pagination'=>array(
-				'pageSize'=>6,
+				'pageSize'=>$pageSize,
 			),
 		));
 	}

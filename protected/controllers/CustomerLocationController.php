@@ -1,6 +1,6 @@
 <?php
 
-class BoxSizeController extends Controller
+class CustomerLocationController extends Controller
 {
 	/**
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
@@ -26,9 +26,17 @@ class BoxSizeController extends Controller
 	public function accessRules()
 	{
 		return array(
-			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('index','view','create','update','admin','delete',),
-				'roles'=>array('admin'),
+			array('allow',  // allow all users to perform 'index' and 'view' actions
+				'actions'=>array('index','view'),
+				'users'=>array('*'),
+			),
+			array('allow', // allow authenticated user to perform 'create' and 'update' actions
+				'actions'=>array('create','update'),
+				'users'=>array('@'),
+			),
+			array('allow',
+				'actions'=>array('admin','delete'),
+				'roles'=>array('admin','customer'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -51,18 +59,19 @@ class BoxSizeController extends Controller
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
-	public function actionCreate()
+	public function actionCreate($custId)
 	{
-		$model=new BoxSize;
+		$model=new CustomerLocation;
+		$model->customer_id=$custId;
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['BoxSize']))
+		if(isset($_POST['CustomerLocation']))
 		{
-			$model->attributes=$_POST['BoxSize'];
+			$model->attributes=$_POST['CustomerLocation'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->box_sizes));
+				$this->redirect(array('user/update','id'=>$model->Customer->User->id));
 		}
 
 		$this->render('create',array(
@@ -82,11 +91,11 @@ class BoxSizeController extends Controller
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['BoxSize']))
+		if(isset($_POST['CustomerLocation']))
 		{
-			$model->attributes=$_POST['BoxSize'];
+			$model->attributes=$_POST['CustomerLocation'];
 			if($model->save())
-				$this->redirect(array('admin'));
+				$this->redirect(array('user/update','id'=>$model->Customer->User->id));
 		}
 
 		$this->render('update',array(
@@ -101,17 +110,14 @@ class BoxSizeController extends Controller
 	 */
 	public function actionDelete($id)
 	{
-		if(Yii::app()->request->isPostRequest)
-		{
-			// we only allow deletion via POST request
-			$this->loadModel($id)->delete();
+		$model=$this->loadModel($id);
+		$custId=$model->Customer->User->id;
+		$model->status=0;
+		$model->save();
 
-			// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
-			if(!isset($_GET['ajax']))
-				$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
-		}
-		else
-			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
+		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
+		if(!isset($_GET['ajax']))
+			$this->redirect(array('user/update','id'=>$custId));
 	}
 
 	/**
@@ -119,7 +125,7 @@ class BoxSizeController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$dataProvider=new CActiveDataProvider('BoxSize');
+		$dataProvider=new CActiveDataProvider('CustomerLocation');
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
 		));
@@ -130,10 +136,10 @@ class BoxSizeController extends Controller
 	 */
 	public function actionAdmin()
 	{
-		$model=new BoxSize('search');
+		$model=new CustomerLocation('search');
 		$model->unsetAttributes();  // clear any default values
-		if(isset($_GET['BoxSize']))
-			$model->attributes=$_GET['BoxSize'];
+		if(isset($_GET['CustomerLocation']))
+			$model->attributes=$_GET['CustomerLocation'];
 
 		$this->render('admin',array(
 			'model'=>$model,
@@ -147,7 +153,7 @@ class BoxSizeController extends Controller
 	 */
 	public function loadModel($id)
 	{
-		$model=BoxSize::model()->findByPk((int) $id);
+		$model=CustomerLocation::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
@@ -159,7 +165,7 @@ class BoxSizeController extends Controller
 	 */
 	protected function performAjaxValidation($model)
 	{
-		if(isset($_POST['ajax']) && $_POST['ajax']==='box-size-form')
+		if(isset($_POST['ajax']) && $_POST['ajax']==='customer-location-form')
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();

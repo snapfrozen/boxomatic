@@ -30,6 +30,9 @@
  */
 class Grower extends CActiveRecord
 {
+	const STATUS_DELETED=0;
+	const STATUS_ACTIVE=1;
+	
 	public $grower_item_search;
 	/**
 	 * Returns the static model of the specified AR class.
@@ -118,7 +121,9 @@ class Grower extends CActiveRecord
 	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
 	 */
 	public function search($paginate=true)
-	{
+	{	
+		$pageSize=isset($_GET['pageSize'])?$_GET['pageSize']:10;
+		Yii::app()->user->setState('pageSize',$pageSize);
 		// Warning: Please modify the following code to remove attributes that
 		// should not be searched.
 
@@ -154,9 +159,11 @@ class Grower extends CActiveRecord
 		$criteria->compare('grower_notes',$this->grower_notes,true);
 		$criteria->compare('grower_payment_details',$this->grower_payment_details,true);
 
+		$criteria->addCondition('status='.self::STATUS_ACTIVE);
+		
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
-			'pagination'=> $paginate ? array('pageSize'=>10) : $paginate,
+			'pagination'=> $paginate ? array('pageSize'=>$pageSize) : $paginate,
 		));
 	}
 }

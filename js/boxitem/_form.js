@@ -13,6 +13,7 @@ function loadSpinners()
 		places:2,
 		step:.05
 	});
+	$('div.sticky').stickyScroll({ container: '#current-boxes' });
 }
 loadSpinners();
 
@@ -35,7 +36,7 @@ function reloadBoxes(url,data)
 	});
 }
 
-$('div#inventory, form#box-item-form tbody').on('click', 'table a', function(){
+$('div#inventory, form#box-item-form').on('click', 'table td:not(.button-column) a', function(){
 	var $a = $(this);
 	reloadBoxes($a.attr('href'),{});
 	return false;
@@ -45,17 +46,14 @@ $('form#box-item-form').on('change', 'input, select', function(){
 	$(this).parent('td').addClass('dirty');
 });
 
-$('form#box-item-form').on('blur', 'input, select', function(){
-	
-	if(!$(this).parent('td').hasClass('dirty'))
-		return;
-	
+$('form#box-item-form').on('submit', function() {
+
 	$loading.show();
 	var ajaxUpdate = ['current-boxes','grower-item-grid'];
 	$.ajax({
 		type: 'POST',
 		url: $('input#curUrl').val(),
-		data: $(this).parents('tr:eq(0)').find('input, select').serialize(), //only post data from the row that was changed
+		data: $(this).find('input, select').serialize(), //only post data from the row that was changed
 		success: function(data,status) {
 			$.each(ajaxUpdate, function(i,v) {
 				var id='#'+v;
@@ -66,6 +64,7 @@ $('form#box-item-form').on('blur', 'input, select', function(){
 		}
 	});
 	
+	return false;
 });
 
 $('.week-picker').datepicker({

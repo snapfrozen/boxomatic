@@ -11,11 +11,6 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->label($model,'location_id'); ?>
-		<?php echo $form->textField($model,'location_id'); ?>
-	</div>
-
-	<div class="row">
 		<?php echo $form->label($model,'customer_notes'); ?>
 		<?php echo $form->textField($model,'customer_notes',array('size'=>45,'maxlength'=>45)); ?>
 	</div>

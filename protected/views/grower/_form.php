@@ -9,6 +9,13 @@
 
 	<?php echo $form->errorSummary($model); ?>
 
+	
+	<div class="row">
+		<?php echo $form->labelEx($model,'grower_name'); ?>
+		<?php echo $form->textField($model,'grower_name',array('size'=>60,'maxlength'=>100)); ?>
+		<?php echo $form->error($model,'grower_name'); ?>
+	</div>
+	
 	<div class="row">
 		<?php echo $form->labelEx($model,'grower_website'); ?>
 		<?php echo $form->textField($model,'grower_website',array('size'=>60,'maxlength'=>100)); ?>

@@ -10,12 +10,6 @@
 	<?php echo $form->errorSummary($model); ?>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'location_id'); ?>
-		<?php echo $form->textField($model,'location_id'); ?>
-		<?php echo $form->error($model,'location_id'); ?>
-	</div>
-
-	<div class="row">
 		<?php echo $form->labelEx($model,'customer_notes'); ?>
 		<?php echo $form->textField($model,'customer_notes',array('size'=>45,'maxlength'=>45)); ?>
 		<?php echo $form->error($model,'customer_notes'); ?>

@@ -142,6 +142,55 @@ class SiteController extends Controller
 		// display the login form
 		$this->render('login',array('model'=>$model));
 	}
+	
+	/*
+	public function actionGenerateLocations()
+	{
+		
+		$connection=Yii::app()->db; 
+		$sql="SELECT * FROM customers_tmp";
+		$dataReader=$connection->createCommand($sql)->query();
+		foreach($dataReader as $row)
+		{
+			$loc=$row['location_id'];
+			$cust=$row['customer_id'];
+			$upSql="UPDATE customers SET location_id=$loc WHERE customer_id=$cust;";
+			$connection->createCommand($upSql)->execute();
+		}
+		
+		$Customers=Customer::model()->with(array('Location','User'))->findAll('Location.is_pickup=0');
+		
+		foreach($Customers as $Customer) 
+		{
+			if($Customer->User)
+			{
+				$User=$Customer->User;
+				$CustLoc=new CustomerLocation;
+				$CustLoc->customer_id=$Customer->customer_id;
+				$CustLoc->location_id=$Customer->location_id;
+				$CustLoc->address=$User->user_address;
+				$CustLoc->address2=$User->user_address2;
+				$CustLoc->suburb=$User->user_suburb;
+				$CustLoc->state=$User->user_state;
+				$CustLoc->postcode=$User->user_postcode;
+				$CustLoc->phone=$User->user_phone;
+				$CustLoc->status=1;
+				if(!$CustLoc->save(false))
+					print_r($CustLoc->getErrors());
+				
+				$Customer->customer_location_id=$CustLoc->customer_location_id;
+				if(!$Customer->save(false))
+					print_r($Customer->getErrors());
+				
+				echo '<p>Customer:' . $Customer->customer_id . '</p>';
+			}
+			else
+				echo '<p>No User for Customer:' . $Customer->customer_id . '</p>';
+		}
+
+		exit;
+	}
+	 */
 
 	/**
 	 * Logs out the current user and redirect to homepage.

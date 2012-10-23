@@ -39,11 +39,11 @@ class Customer extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('location_id', 'numerical', 'integerOnly'=>true),
 			array('customer_notes', 'length', 'max'=>500),
+			array('location_id, customer_location_id', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('customer_id, location_id, customer_notes', 'safe', 'on'=>'search'),
+			array('customer_id, customer_notes', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -59,6 +59,8 @@ class Customer extends CActiveRecord
 			'CustomerBoxes' => array(self::HAS_MANY, 'CustomerBox', 'customer_id'),
 			'Boxes' => array(self::MANY_MANY, 'Box', 'customer_boxes(customer_id,box_id)'),
 			'Location' => array(self::BELONGS_TO, 'Location', 'location_id'),
+			'CustomerLocations' => array(self::HAS_MANY, 'CustomerLocation', 'customer_id'),
+			'CustomerLocation' => array(self::BELONGS_TO, 'CustomerLocation', 'customer_location_id'),
 			'totalOrders'=>array(
                 self::STAT, 'Box', 'customer_boxes(customer_id, box_id)', 
 				'select' => 'SUM((box_price * quantity) + (delivery_cost * quantity))',
@@ -76,8 +78,8 @@ class Customer extends CActiveRecord
 	{
 		return array(
 			'customer_id' => 'Customer',
-			'location_id' => 'Delivery Location',
 			'customer_notes' => 'Customer Notes',
+			'delivery_location_key' => 'Default Delivery Location'
 		);
 	}
 
@@ -93,7 +95,6 @@ class Customer extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('customer_id',$this->customer_id);
-		$criteria->compare('location_id',$this->location_id);
 		$criteria->compare('customer_notes',$this->customer_notes,true);
 
 		return new CActiveDataProvider(get_class($this), array(
@@ -160,5 +161,43 @@ class Customer extends CActiveRecord
 		
 		$result = CustomerBox::model()->with('Box')->find($criteria);		
 		return $result ? $result->fulfilled_total : 0;
+	}
+	
+	public function getDeliveryLocations()
+	{
+		//$this->DeliveryLocations;
+		$pickupLocations=Location::model()->getPickupList();
+		$custLocations=CHtml::listData($this->CustomerLocations,'location_key','full_location','delivery_label');
+		return array_merge($custLocations,$pickupLocations);
+	}
+	
+	public function getDelivery_location_key() {
+		if($this->customer_location_id)
+			return $this->customer_location_id.'-'.$this->location_id;
+		else {
+			return $this->location_id;
+		}
+	}
+	
+	public function updateOrderDeliveryLocations()
+	{
+		//Make sure we have a fresh Customer object with now CDbExpressions set for attributes
+		$Customer=self::model()->findByPk($this->customer_id);
+		
+		$deadlineDays=Yii::app()->params['orderDeadlineDays'];
+		$CustWeeks=CustomerWeek::model()->with('Week')->findAllByAttributes(array(
+			'customer_id'=>$Customer->customer_id,
+		),"date_sub(Week.week_delivery_date, interval $deadlineDays day) > NOW()");
+		
+		foreach($CustWeeks as $CustWeek)
+		{
+			$CustWeek->location_id=$Customer->location_id;
+			if(empty($Customer->customer_location_id)) {
+				$CustWeek->customer_location_id=new CDbExpression('NULL');
+			} else
+				$CustWeek->customer_location_id=$CustWeek->customer_location_id;
+			
+			$CustWeek->save();
+		}
 	}
 }

@@ -125,6 +125,7 @@ return array(
 //				array(
 //					'class'=>'CWebLogRoute',
 //					'categories'=>'system.db.CDbCommand',
+//					//'showInFireBug'=>true,
 //				),
 				// uncomment the following to show log messages on web pages
 				/*

@@ -7,7 +7,7 @@
  * @property integer $customer_week_id
  * @property integer $week_id
  * @property integer $customer_id
- * @property integer $location_id
+ * @property integer $customer_location_id
  *
  * The followings are the available model relations:
  * @property Weeks $week
@@ -43,10 +43,11 @@ class CustomerWeek extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('week_id, customer_id, location_id', 'required'),
-			array('week_id, customer_id, location_id', 'numerical', 'integerOnly'=>true),
+			array('week_id, customer_id', 'numerical', 'integerOnly'=>true),
+			array('customer_location_id', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('customer_week_id, week_id, customer_id, location_id', 'safe', 'on'=>'search'),
+			array('customer_week_id, week_id, customer_id, customer_location_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -60,6 +61,7 @@ class CustomerWeek extends CActiveRecord
 		return array(
 			'Week' => array(self::BELONGS_TO, 'Week', 'week_id'),
 			'Customer' => array(self::BELONGS_TO, 'Customer', 'customer_id'),
+			'CustomerLocation' => array(self::BELONGS_TO, 'CustomerLocation', 'customer_location_id'),
 			'Location' => array(self::BELONGS_TO, 'Location', 'location_id'),
 		);
 	}
@@ -73,7 +75,7 @@ class CustomerWeek extends CActiveRecord
 			'customer_week_id' => 'Customer Week',
 			'week_id' => 'Week',
 			'customer_id' => 'Customer',
-			'location_id' => 'Location',
+			'customer_location_id' => 'Customer Location',
 		);
 	}
 
@@ -91,7 +93,7 @@ class CustomerWeek extends CActiveRecord
 		$criteria->compare('customer_week_id',$this->customer_week_id);
 		$criteria->compare('week_id',$this->week_id);
 		$criteria->compare('customer_id',$this->customer_id);
-		$criteria->compare('location_id',$this->location_id);
+		$criteria->compare('customer_location_id',$this->customer_location_id);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -112,5 +114,14 @@ class CustomerWeek extends CActiveRecord
 			return false;
 		else 
 			return true;
+	}
+	
+	public function getLocation_key() 
+	{
+		if($this->customer_location_id)
+			return $this->customer_location_id.'-'.$this->location_id;
+		else {
+			return $this->location_id;
+		}
 	}
 }

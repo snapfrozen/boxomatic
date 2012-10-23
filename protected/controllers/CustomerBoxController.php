@@ -216,7 +216,14 @@ class CustomerBoxController extends Controller
 		if(isset($_POST['btn_recurring'])) //recurring order button pressed
 		{
 			$monthsAdvance=(int)$_POST['months_advance'];
-			$locationId=(int)$_POST['Customer']['location_id'];
+			$locationId=$_POST['Customer']['delivery_location_key'];
+			$custLocationId=new CDbExpression('NULL');
+			if(strpos($locationId,'-'))
+			{ //has a customer location
+				$parts=explode('-',$locationId);
+				$locationId=$parts[1];
+				$custLocationId=$parts[0];
+			}
 			
 			foreach($_POST['Recurring'] as $key=>$quantity)
 			{
@@ -228,34 +235,33 @@ class CustomerBoxController extends Controller
 				
 				foreach($Boxes as $Box)
 				{
-					$CustBox=CustomerBox::model()->findByAttributes(array('customer_id'=>$Customer->customer_id,'box_id'=>$Box->box_id));
+					$CustBoxes=CustomerBox::model()->findAllByAttributes(array('customer_id'=>$Customer->customer_id,'box_id'=>$Box->box_id));
 					
-					//Only create a records if an entry doesn't already exist
-					if(!$CustBox && $quantity)
-					{
-						$CustBox=new CustomerBox;
-						$CustBox->customer_id=$Customer->customer_id;
-						$CustBox->box_id=$Box->box_id;
-						$CustBox->quantity=$quantity;
-						$CustBox->delivery_cost=$Customer->Location->location_delivery_value;
-						$CustBox->save();
-					}
+					$curQuantity=count($CustBoxes);
+					$diff=$quantity-$curQuantity;
 					
-					if($CustBox)
+					if($diff > 0)
 					{
-						//update location
-						$CustWeek=CustomerWeek::model()->findByAttributes(array(
-							'customer_id'=>$Customer->customer_id,
-							'week_id'=>$CustBox->Box->week_id
-						));
-						if(!$CustWeek)
+						//Create extra customer box rows
+						for($i=0; $i<$diff; $i++)
 						{
-							$CustWeek=new CustomerWeek;
-							$CustWeek->week_id=$CustBox->Box->week_id;
-							$CustWeek->customer_id=$Customer->customer_id;
+							$CustBox=new CustomerBox;
+							$CustBox->customer_id=$Customer->customer_id;
+							$CustBox->box_id=$Box->box_id;
+							$CustBox->quantity=1;
+							$CustBox->delivery_cost=$Customer->Location->location_delivery_value;
+							$CustBox->save();
 						}
-						$CustWeek->location_id=$locationId;
-						$CustWeek->save();
+					}
+
+					if($diff < 0)
+					{
+						//Remove any boxes the customer no longer wants;
+						$diff=abs($diff);		
+						for($i=0; $i<$diff; $i++)
+						{
+							$CustBoxes[$i]->delete();
+						}
 					}
 				}
 			}
@@ -325,7 +331,16 @@ class CustomerBoxController extends Controller
 			{
 				$CustWeek=CustomerWeek::model()->findByPk($key);
 				
+				$custLocationId=new CDbExpression('NULL');
+				if(strpos($locationId,'-'))
+				{ //has a customer location
+					$parts=explode('-',$locationId);
+					$locationId=$parts[1];
+					$custLocationId=$parts[0];
+				}
+				
 				$CustWeek->location_id=$locationId;
+				$CustWeek->customer_location_id=$custLocationId;
 				$CustWeek->save();
 				
 				$CustBoxesWeek=CustomerBox::model()->with('Box')->findAll(

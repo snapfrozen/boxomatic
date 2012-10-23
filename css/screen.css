@@ -293,9 +293,10 @@ h2 span {
 
 /* All Orders Page */
 
-.half .padding {
-	padding-left:20px;
+.customerBox-order .tabs {
+	width:55%;
 }
+.customerBox-order .ui-widget-content {background:#fff}
 
 th.sizes {
 	text-align:center;
@@ -349,12 +350,12 @@ th.sizes {
 		font-size:1em;
 	}
 	.allOrders .ui-selectmenu {
-		font-size:1em;
+		font-size:1em !important;
 		margin:0;
 		float:right;
-		background:none;
-		border:none;
-		font-weight:normal;
+		background:none !important;
+		border:none !important;
+		font-weight:normal !important;
 		height:auto;
 	}
 		.ui-selectmenu-open {
@@ -481,6 +482,7 @@ table th div {
 		table th div a:hover {
 			text-decoration:underline;
 		}
+
 		
 #grower-item-grid_c3 {
 	width:25%;
@@ -520,12 +522,6 @@ table tr.group td {
 	white-space:nowrap;
 }
 
-#box-item-form .growerName {
-	width:100%;
-}
-#box-item-form thead th {
-	vertical-align:bottom;
-}
 
 tfoot tr:first-child td {
 	border-top:3px double #ccc;
@@ -537,6 +533,16 @@ tfoot td.total {
 	font-weight:bold;
 	text-align:right;
 }
+#box-item-form {
+	position:relative;
+}
+	#box-item-form .growerName {
+		width:100%;
+	}
+	#box-item-form thead th {
+		vertical-align:bottom;
+	}
+
 
 /* Grower Map */
 
@@ -572,3 +578,7 @@ tfoot td.total {
 	#grower-search .buttons {
 		padding-left:0;
 	}
+	
+/* Customer Locations */
+
+div.view .update {float:right; margin-left:10px;}

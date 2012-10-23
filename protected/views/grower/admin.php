@@ -31,11 +31,19 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 	'model'=>$model,
 )); ?>
 </div><!-- search-form -->
-
+<?php $dataProvider=$model->search(); ?>
+<?php $pageSize=Yii::app()->user->getState('pageSize',10); ?>
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'grower-grid',
-	'dataProvider'=>$model->search(),
+	'dataProvider'=>$dataProvider,
 	'filter'=>$model,
+	'summaryText'=>'Displaying {start}-{end} of {count} result(s). ' .
+		CHtml::dropDownList(
+			'pageSize',
+			$pageSize,
+			array(5=>5,10=>10,20=>20,50=>50,100=>100),
+			array('class'=>'change-pageSize')) .
+		' rows per page',
 	'columns'=>array(
 		'grower_id',
 		'grower_name',
@@ -43,24 +51,14 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 		'grower_phone',
 		'grower_address',
 		'grower_address2',
-		/*
-		'grower_suburb',
-		'grower_state',
-		'grower_postcode',
-		'grower_distance_kms',
-		'grower_bank_account_name',
-		'grower_bank_bsb',
-		'grower_bank_acc',
-		'grower_email',
-		'grower_website',
-		'grower_certification_status',
-		'grower_order_days',
-		'grower_produce',
-		'grower_notes',
-		'grower_payment_details',
-		*/
 		array(
 			'class'=>'CButtonColumn',
 		),
 	),
 )); ?>
+<?php Yii::app()->clientScript->registerScript('initPageSize',<<<EOD
+    $('.change-pageSize').live('change', function() {
+        $.fn.yiiGridView.update('grower-grid',{ data:{ pageSize: $(this).val() }})
+    });
+EOD
+,CClientScript::POS_READY); ?>

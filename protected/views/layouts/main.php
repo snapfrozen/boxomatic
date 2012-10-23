@@ -47,7 +47,11 @@
 				array('label'=>'Payments', 'url'=>array('customerPayment/index'), 'visible' => Yii::app()->user->customer_id),
 
 				//Admin menu
-				array('label'=>'Boxes', 'url'=>array('boxItem/create'), 'visible' => Yii::app()->user->checkAccess('admin')),
+				array('label'=>'Boxes', 'url'=>array('boxItem/create'), 'visible' => Yii::app()->user->checkAccess('admin'),
+					'items'=>array(
+						array('label'=>'Box Sizes', 'url'=>array('boxSize/admin'), 'visible' => Yii::app()->user->checkAccess('admin')),
+					)
+				),
 				array('label'=>'Payments', 'url'=>array('customerPayment/enterPayments'), 'visible' => Yii::app()->user->checkAccess('admin')),
 				array('label'=>'Customers', 'url'=>array('user/customers'), 'visible' => Yii::app()->user->checkAccess('admin'),
 					'items'=>array(
@@ -56,7 +60,7 @@
 				),
 				array('label'=>'Growers', 'url'=>array('grower/admin'), 'visible' => Yii::app()->user->checkAccess('admin'),
 					'items'=>array(
-						array('label'=>'Items', 'url'=>array('growerItem/admin'), 'visible' => Yii::app()->user->checkAccess('grower')),
+						array('label'=>'Inventory', 'url'=>array('growerItem/admin'), 'visible' => Yii::app()->user->checkAccess('grower')),
 						array('label'=>'Grower Map', 'url'=>array('grower/map'), 'visible' => Yii::app()->user->checkAccess('admin')),
 					)
 				),
@@ -75,7 +79,12 @@
 			'links'=>$this->breadcrumbs,
 		)); ?><!-- breadcrumbs -->
 	<?php endif?>
-
+	
+	<?php
+    foreach(Yii::app()->user->getFlashes() as $key => $message) {
+        echo '<div class="flash-' . $key . '">' . $message . "</div>\n";
+    }
+	?>
 	<?php echo $content; ?>
 
 	<div class="clear"></div>

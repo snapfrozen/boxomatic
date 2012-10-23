@@ -9,7 +9,15 @@
 	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/ui.datepicker.min.js', CClientScript::POS_END);
 	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/ui.spinner.min.js', CClientScript::POS_END);
 	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/chosen.jquery.min.js', CClientScript::POS_END);
+	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/jquery.stickyscroll.js', CClientScript::POS_END);
 	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/boxitem/_form.js',CClientScript::POS_END);
+	
+Yii::app()->clientScript->registerScript('initPageSize',<<<EOD
+	$('.change-pageSize').live('change', function() {
+		$.fn.yiiGridView.update('grower-item-grid',{ data:{ pageSize: $(this).val() }})
+	});
+EOD
+,CClientScript::POS_READY);
 ?>
 <div id="fillBoxForm" class="form">
 	
@@ -32,11 +40,19 @@
 
 	<div id="inventory" class="row">
 		<h2>Inventory</h2>
-		
+		<?php $dataProvider=$GrowerItems->search(); ?>
+		<?php $pageSize=Yii::app()->user->getState('pageSize',10); ?>
 		<?php $this->widget('zii.widgets.grid.CGridView', array(
 			'id'=>'grower-item-grid',
-			'dataProvider'=>$GrowerItems->search(),
+			'dataProvider'=>$dataProvider,
 			'filter'=>$GrowerItems,
+			'summaryText'=>'Displaying {start}-{end} of {count} result(s). ' .
+			CHtml::dropDownList(
+				'pageSize',
+				$pageSize,
+				array(5=>5,10=>10,20=>20,50=>50,100=>100),
+				array('class'=>'change-pageSize')) .
+			' rows per page',
 			'rowCssClassExpression'=>'$data->item_id==Yii::app()->request->getQuery("item") ? "active" : null',
 			'selectableRows'=>0,
 			//'selectionChanged'=>'changeBoxItem',
@@ -62,6 +78,18 @@
 					'value'=>'Yii::app()->snapFormat->getMonthName($data->item_available_from) . " to " . Yii::app()->snapFormat->getMonthName($data->item_available_to)',
 					'filter'=>Yii::app()->params["months"],
 				),
+				array(
+					'class'=>'CButtonColumn',
+					'template'=>'{update}{delete}',
+					'buttons'=>array(
+						'update'=>array(
+							'url'=>'array("growerItem/update","id"=>$data->item_id)',
+						),
+						'delete'=>array(
+							'url'=>'array("growerItem/delete","id"=>$data->item_id)',
+						)
+					)
+				)
 			),
 		)); ?>
 		
@@ -79,11 +107,15 @@
 		)); ?>
 		
 		<div id="current-boxes">
-		<?php echo CHtml::hiddenField('curUrl', $this->createUrl('boxItem/create',array('week'=>Yii::app()->request->getQuery('week')))); ?>
-		<?php if($SelectedWeek): ?>
+			
+			<?php echo CHtml::hiddenField('curUrl', $this->createUrl('boxItem/create',array('week'=>Yii::app()->request->getQuery('week')))); ?>
+			<?php if($SelectedWeek): ?>
 			<div class="row">
 				<?php echo CHtml::dropDownList('new_grower',null,CHtml::listData(Grower::model()->findAll(array('order'=>'grower_name ASC')),'grower_id','grower_name'),array('class'=>'chosen')); ?>
 				<?php echo CHtml::hiddenField('selected_week_id',$SelectedWeek->week_id); ?>
+				<div class="sticky" style="float:right">
+					<?php echo CHtml::submitButton('Update Boxes'); ?>
+				</div>
 			</div>
 			<table>
 				<thead>
@@ -189,7 +221,8 @@
 								?>
 								<td><?php 
 									if($BoxItem): 
-										echo CHtml::textField('bc['.$key.'][BoxItem]['.$key2.'][item_quantity]', $BoxItem->item_quantity, array('class'=>'decimal','min'=>0));
+										echo CHtml::textField('bc['.$key.'][BoxItem]['.$key2.'][item_quantity]', $BoxItem->item_quantity, array(
+											'class'=>'decimal','min'=>0,'title'=>'Retail: '. Yii::app()->snapFormat->currency($BoxItem->retail_price) .'  Wholesale: '. Yii::app()->snapFormat->currency($BoxItem->wholesale_price) ));
 										echo CHtml::hiddenField('bc['.$key.'][BoxItem]['.$key2.'][box_item_id]', $BoxItem->box_item_id);
 										echo CHtml::hiddenField('bc['.$key.'][BoxItem]['.$key2.'][box_id]', $Box->box_id);
 									else:
@@ -252,6 +285,24 @@
 					</tr>
 					<tr>
 						<td class="total" colspan="2">
+							Box Markup:
+						</td>
+						<?php 
+						$totalRetal=0;
+						foreach($WeekBoxes as $WeekBoxMerged): 
+							$weekBoxIds=explode(',',$WeekBoxMerged->box_ids);
+						
+							foreach($weekBoxIds as $weekBoxId): 
+								$WeekBox=Box::model()->findByPk($weekBoxId);
+							?>
+							<td class="value">%<?php echo $WeekBox->BoxSize->box_size_markup ?></td>
+							<?php endforeach; ?>
+						<?php endforeach; ?>
+						<td class="value"><strong><?php echo Yii::app()->snapFormat->currency(BoxItem::weekTarget($SelectedWeek->week_id)) ?></strong></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td class="total" colspan="2">
 							Box Retail:
 						</td>
 						<?php 
@@ -278,7 +329,7 @@
 			<p><?php echo CHtml::link('Generate order list',array('week/generateOrderList','week'=>$SelectedWeek->week_id)) ?></p>
 		<?php endif; ?>
 		</div>
-		<?php echo CHtml::submitButton('Update Boxes'); ?>
+		
 		<?php $this->endWidget(); ?>
 	</div>
 

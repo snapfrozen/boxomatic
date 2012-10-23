@@ -8,6 +8,8 @@ var $recurringForm = $('form#reccuring-customer-order-form');
 var $recurringInputs = $('form#reccuring-customer-order-form input[type="text"]');
 var deliveryCost = parseFloat($('input#Location_location_delivery_value').val());
 
+$('div.tabs').tabs();
+
 $('select.deliverySelect').change(function(){
 	var $elem = $(this);
 	var $tr = $elem.parents('tr:eq(0)');
@@ -36,7 +38,13 @@ $('div.advanced input.number').change(function(){
 	var $inputs = $tr.find('div.advanced input.number');
 	var boxTotal=0;
 	var deliveryTotal=0;
-	var deliveryCost=locCosts[$tr.prev().find('select.deliverySelect').val()];
+	var locationId=$tr.prev().find('select.deliverySelect').val();
+	if(locationId.indexOf('-') != -1)
+	{
+		var parts=locationId.split('-');
+		locationId=parts[1];
+	}
+	var deliveryCost=locCosts[locationId];
 	
 	$tr.addClass('dirty');
 	

@@ -45,7 +45,7 @@ class UserController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('update','view','loginAs'),
+				'actions'=>array('update','view','loginAs','changePassword'),
 				'roles'=>array('customer'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -79,20 +79,29 @@ class UserController extends Controller
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
-
+		
 		if(isset($_POST['User']))
 		{
 			$model->attributes=$_POST['User'];
 			if(isset($_POST['User']['password']))
-				$model->password=Yii::app()->snap->encrypt($_POST['User']['password']);
+				$model->password=$_POST['User']['password'];
 			if($model->save()) {
-				Yii::app()->authManager->assign($_POST['role'],$model->id);
+				if(isset($_POST['role'])) {
+					$model->setRole($_POST['role']);
+				}
 				$this->redirect(array('view','id'=>$model->id));
 			}
+		}
+		
+		$custLocDataProvider=null;
+		if($model->Customer)
+		{
+			$custLocDataProvider=new CActiveDataProvider('CustomerLocation');
 		}
 
 		$this->render('create',array(
 			'model'=>$model,
+			'custLocDataProvider'=>$custLocDataProvider
 		));
 	}
 
@@ -112,10 +121,23 @@ class UserController extends Controller
 		if(isset($_POST['Customer']))
 		{
 			$Customer=$model->Customer;
+			$locationId=$_POST['Customer']['delivery_location_key'];
+			$custLocationId=new CDbExpression('NULL');
+			if(strpos($locationId,'-'))
+			{ //has a customer location
+				$parts=explode('-',$locationId);
+				$locationId=$parts[1];
+				$custLocationId=$parts[0];
+			}
+
+			$Customer->location_id=$locationId;
+			$Customer->customer_location_id=$custLocationId;
+			$Customer->save();
 			$Customer->attributes=$_POST['Customer'];
 			if(!$Customer->update())
 				$allSaved=false;
 				
+			$Customer->updateOrderDeliveryLocations();
 		}
 		
 		if(isset($_POST['Grower']))
@@ -133,16 +155,49 @@ class UserController extends Controller
 		if(isset($_POST['User']))
 		{
 			$model->attributes=$_POST['User'];
-			if(isset($_POST['User']['password']))
-				$model->password=Yii::app()->snap->encrypt($_POST['User']['password']);
+			$model->validate();
 			if(!$model->update())
 				$allSaved=false;
 			
 			if($allSaved)
 				$this->redirect(array('view','id'=>$model->id));
 		}
-
+		
+		$custLocDataProvider=null;
+		if($model->Customer)
+		{
+			$custLocDataProvider=new CActiveDataProvider('CustomerLocation',array(
+				'criteria'=>array(
+					'condition'=>'customer_id='.$model->customer_id
+				)
+			));
+		}
+		
 		$this->render('update',array(
+			'model'=>$model,
+			'custLocDataProvider'=>$custLocDataProvider
+		));
+	}
+	
+	/**
+	 * Change password page
+	 * @param integer $id the ID of the model to be updated
+	 */
+	public function actionChangePassword($id)
+	{
+		$model=$this->loadModel($id);
+		if(isset($_POST['User']))
+		{
+			$model->attributes=$_POST['User'];
+			if($model->validate()) 
+			{
+				$model->update();
+				Yii::app()->user->setFlash('success', "Password updated.");
+				$this->redirect(array('view','id'=>$model->id));
+			}
+			
+		}
+		$this->render('changePassword',array(
 			'model'=>$model,
 		));
 	}
@@ -318,7 +373,7 @@ class UserController extends Controller
 		if(isset($_POST['User']))
 		{
 			$model->attributes=$_POST['User'];
-			$model->password=Yii::app()->snap->encrypt($_POST['User']['password']);
+			$model->password=$_POST['User']['password'];
 			if($model->validate()) 
 			{
 				//clear our key so it can't be used again.
