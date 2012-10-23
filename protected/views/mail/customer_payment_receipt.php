@@ -12,9 +12,9 @@
 <h3>Bellofoodbox payment details</h3>
 
 <p>Name: <?php echo $Customer->User->first_name ?> <?php echo $Customer->User->last_name ?><br />
-Date: <?php echo $Payment->payment_date ?><br />
-Amount: <?php echo $Payment->payment_value ?><br />
-Method: <?php echo $Payment->payment_type ?></p>
+Date: <?php echo $CustomerPayment->payment_date ?><br />
+Amount: <?php echo $CustomerPayment->payment_value ?><br />
+Method: <?php echo $CustomerPayment->payment_type ?></p>
 
 <p><strong>Your current balance is $<?php echo $Customer->balance ?></strong></p>
 
@@ -27,7 +27,7 @@ in a separate email detailing pick up location and date.</p>
 <p>You can check your account status, add credit and view previous 
 orders at: 
 
-<a href="http://www.bellofoodbox.org.au/">www.Bellofoodbox.org.au/</a></p>
+<a href="http://www.bellofoodbox.org.au">www.Bellofoodbox.org.au/</a></p>
 
 <p>You are welcome to top up your account 
 credit by making additional payments at anytime. 
@@ -40,7 +40,7 @@ Your Bellofoodbox ID is: <strong><?php echo $Customer->User->bfb_id; ?></strong>
 <p>
 --<br />
 Kind regards,<br />
-Box-o-matic Box Processing System</p>
+Box-o-Matic, Box Processing System</p>
 
 <p>Bellofoodbox is a community initiative promoting the local 
 economy, encouraging sustainable agricultural practices
@@ -50,8 +50,7 @@ is accessible to Bellingen, Dorrigo, Urunga, and Coffs Harbour areas.</p>
 
 <p>Thank you for your generous support and being part of this wonderful project.</p>
 
-<p>Email: <a href="mailto:info@bellofoodbox.org.au">info@bellofoodbox.org.au</a><br />
-Phone: 0400 146 085</p>
+<p>Email: <a href="mailto:info@bellofoodbox.org.au">info@bellofoodbox.org.au</a></p>
 
 </body>
 </html>

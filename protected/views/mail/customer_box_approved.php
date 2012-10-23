@@ -7,22 +7,20 @@
 <body style="margin:0;">
 <p>Hi <?php echo $Customer->User->first_name ?>,</p>
 
-<p><strong>Your Bellofoodbox order for <?php $CustomerBox->Box->Week->week_delivery_date ?>, has been APPROVED. 
+<p><strong>Your Bellofoodbox order for <?php echo $CustomerBox->Box->Week->week_delivery_date ?>, has been APPROVED. 
 And our growers are now busy harvesting all the fresh 
 yummy produce to fill your Bellofoodbox.</strong></p>
 
-<p>Your pickup/delivery location is <?php $CustomerBox->delivery_location ?>.</p>
+<p>Your pickup/delivery location is <?php echo $CustomerBox->delivery_location ?>.</p>
 
-<p>Your Bellofoodbox account has been debited $<?php $CustomerBox->customer_box_price ?></p>
+<p>Your Bellofoodbox account has been debited $<?php echo $CustomerBox->customer_box_price ?></p>
 
 <p>Your current balance is $<?php echo $Customer->balance ?></p>
 
 <h3>Managing your Bellofoodbox account</h3>
 
 <p>You can check your account status, add credit and view previous 
-orders at: 
-
-<a href="http://www.bellofoodbox.org.au/">www.Bellofoodbox.org.au/</a></p>
+orders at: <a href="http://www.bellofoodbox.org.au/">www.Bellofoodbox.org.au</a></p>
 
 <p>You are welcome to top up your account 
 credit by making additional payments at anytime. 
@@ -45,7 +43,7 @@ of friends to car pool pick up :)</p>
 <p>
 --<br />
 Kind regards,<br />
-Box-o-matic Box Processing System</p>
+Box-o-Matic, Box Processing System</p>
 
 <p>Bellofoodbox is a community initiative promoting the local 
 economy, encouraging sustainable agricultural practices
@@ -55,8 +53,7 @@ is accessible to Bellingen, Dorrigo, Urunga, and Coffs Harbour areas.</p>
 
 <p>Thank you for your generous support and being part of this wonderful project.</p>
 
-<p>Email: <a href="mailto:info@bellofoodbox.org.au">info@bellofoodbox.org.au</a><br />
-Phone: 0400 146 085</p>
+<p>Email: <a href="mailto:info@bellofoodbox.org.au">info@bellofoodbox.org.au</a></p>
 
 </body>
 </html>

@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Welcome to Bello FoodBox</title>
+<title>Welcome to Bellofoodbox</title>
 </head>
 <body style="margin:0;">
 	<p>Hello <?php echo $User->first_name ?>,</p>
@@ -35,11 +35,8 @@
 	an email stating that your order has been Declined 
 	due to insufficient credit.</p>
 
-
 	<p>You can check your account status and previous 
-	orders using your Bellofoodbox ID online at 
-	<a href="http://www.bellofoodbox.org.au/order">www.bellofoodbox.org.au/order</a></p>
-
+	orders at <a href="http://www.bellofoodbox.org.au/order">www.bellofoodbox.org.au</a></p>
 
 	<p>If you would like more information about 
 	Bellofoodbox, please contact us;</p>

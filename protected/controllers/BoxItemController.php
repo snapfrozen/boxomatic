@@ -304,7 +304,7 @@ class BoxItemController extends Controller
 			    $week_delivery_date = $Box->Week->week_delivery_date;
 			    $message = new YiiMailMessage('Your order for '.$week_delivery_date.' has been approved');
 				$message->view = 'customer_box_approved';
-				$message->setBody(array('Customer'=>$Customer, 'CustomerBox' => $CustBox), 'text/html');
+				$message->setBody(array('Customer'=>$Customer, 'CustomerBox' =>$CustBox), 'text/html');
 				//$message->addTo($Customer->User->user_email);
 				$message->addTo('donovan@snapfrozen.com.au');
 				$message->addTo('leigh@bellofoodbox.org.au');

@@ -8,10 +8,10 @@
 <p>Hi <?php echo $Customer->User->first_name ?>,</p>
 
 <p>Unfortunately your Bellofoodbox order for 
-pick up on <?php $CustomerBox->Box->Week->week_delivery_date ?> has been DECLINED, as you 
+pick up on <?php echo $CustomerBox->Box->Week->week_delivery_date ?> has been DECLINED, as you 
 have insufficient credit.</p>
 
-<p>Please contact us immediately on if you feel this is an error.</p>
+<p>Please contact us immediately if you feel this is an error.</p>
 
 <h3>Topping up your account</h3>
 
@@ -19,23 +19,20 @@ have insufficient credit.</p>
 ensure you receive a delicious Bellofoodbox, 
 full of beautiful fresh, local produce <strong>next week</strong>.</p>
 
-<p>You can top up your balance directly using PayPal at:
-<a href="http://www.bellofoodbox.org.au/">www.Bellofoodbox.org.au</a></p>
+<ul>
+  <li><strong>Online:</strong> You can top up your balance directly using PayPal at <a href="http://www.bellofoodbox.org.au/">www.Bellofoodbox.org.au</a></li>
+  <li><strong>Direct Deposit:</strong> BSB 704328, Acc 221552 (for BCU customers 221552S1)<br />
+  When depositing money via bank transfer, please use your Bellofoodbox ID as your reference.<br />
+  Your Bellofoodbox ID is: <strong><?php echo $Customer->User->bfb_id; ?></strong>.</li>
+  <li><strong>Cash:</strong> At the Kombu order box anytime, or in person on Wednesday's only during box pick up between 3.30pm - 6.30pm).</p>
+</ul>
 
-<p>We also accept Direct Deposits and Cash.</p>
- 
-<p>When depositing money via bank transfer, please use your Bellofoodbox ID as your reference.<br />
-Your Bellofoodbox ID is: <strong><?php echo $Customer->User->bfb_id; ?></strong>.
- 
-<p>(Payments by Cash are available anytime 
-at local Shop Front Order Boxes or in person 
-on Wednesday's Only during box pick up between 
-3.30pm - 6.30pm).</p>
+<p><strong>BCU Customers:</strong> If you are making a transfer from your BCU account to ours you will need to enter your ID number in the 'Your Reference' field, above the 'Amount' field.  This reference will be displayed on your statement AND our statement.</p>
 
 <p>
 --<br />
 Kind regards,<br />
-Box-o-matic Box Processing System</p>
+Box-o-matic, Box Processing System</p>
 
 <p>Bellofoodbox is a community initiative promoting the local 
 economy, encouraging sustainable agricultural practices
@@ -45,8 +42,7 @@ is accessible to Bellingen, Dorrigo, Urunga, and Coffs Harbour areas.</p>
 
 <p>Thank you for your generous support and being part of this wonderful project.</p>
 
-<p>Email: <a href="mailto:info@bellofoodbox.org.au">info@bellofoodbox.org.au</a><br />
-Phone: 0400 146 085</p>
+<p>Email: <a href="mailto:info@bellofoodbox.org.au">info@bellofoodbox.org.au</a></p>
 </body>
 </html>
 
