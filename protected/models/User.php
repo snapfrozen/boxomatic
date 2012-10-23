@@ -309,19 +309,19 @@ class User extends SnapActiveRecord
 		$message->setBody(array('User'=>$this,'newPassword'=>$newPassword), 'text/html');
 		
 		//REMOVE THIS
-		$C = new Controller('Site');
-		$C->renderPartial('../mail/welcome',array('User'=>$this,'newPassword'=>$newPassword));
-		echo '<br /><br />---------------------------------------<br /><br />';
+		//$C = new Controller('Site');
+		//$C->renderPartial('../mail/welcome',array('User'=>$this,'newPassword'=>$newPassword));
+		//echo '<br /><br />---------------------------------------<br /><br />';
 
 		//$message->addTo('donovan@snapfrozen.com.au');
 		//$message->addTo('leigh@bellofoodbox.org.au');
-		//$message->addTo($model->user_email);
+		$message->addTo($model->user_email);
 		$message->from = Yii::app()->params['adminEmail'];
 
-		//if(!@Yii::app()->mail->send($message))
-		//{
-		//	return false;
-		//}
+		if(!@Yii::app()->mail->send($message))
+		{
+			return false;
+		}
 		
 		return true;
 	 }
