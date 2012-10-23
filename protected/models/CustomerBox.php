@@ -72,8 +72,6 @@ class CustomerBox extends CActiveRecord
 		return array(
 			'Customer' => array(self::BELONGS_TO, 'Customer', 'customer_id'),
 			'Box' => array(self::BELONGS_TO, 'Box', 'box_id'),
-			'CustomerLocation' => array(self::BELONGS_TO, 'CustomerLocation', 'customer_location_id'),
-			'Location' => array(self::BELONGS_TO, 'Location', 'location_id'),
 		);
 	}
 
@@ -258,13 +256,10 @@ class CustomerBox extends CActiveRecord
 	
 	public function getDelivery_location()
 	{
-		if($this->CustomerLocation)
-		{
-			return $this->Location->location_name . ': ' . $this->CustomerLocation->full_address;
-		}
-		else
-		{
-			return $this->Location->location_name;
-		}
+		$CustWeek=CustomerWeek::model()->findByAttributes(array(
+			'customer_id'=>$this->customer_id,
+			'week_id'=>$this->Box->week_id
+		));
+		return $CustWeek->delivery_location;
 	}
 }

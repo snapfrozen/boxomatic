@@ -76,8 +76,9 @@ class SiteController extends Controller
 		if(isset($_POST['User']))
 		{
 			$model->attributes=$_POST['User'];
-			$model->password=Yii::app()->snap->encrypt($_POST['User']['password']);
-			$model->password_repeat=Yii::app()->snap->encrypt($_POST['User']['password_repeat']);
+			//Password is encrypted afterValidate
+			//$model->password=Yii::app()->snap->encrypt($_POST['User']['password']);
+			//$model->password_repeat=Yii::app()->snap->encrypt($_POST['User']['password_repeat']);
 			
 			if($model->save())
 			{
@@ -94,7 +95,7 @@ class SiteController extends Controller
 				//Send email
 				$message = new YiiMailMessage('Welcome to Bellofoodbox');
 				$message->view = 'welcome';
-				$message->setBody(array('User'=>$model), 'text/html');
+				$message->setBody(array('User'=>$model,'newPassword'=>$_POST['User']['password']), 'text/html');
 				$message->addTo('donovan@snapfrozen.com.au');
 				$message->addTo('leigh@bellofoodbox.org.au');
 				//$message->addTo($model->user_email);
@@ -114,6 +115,8 @@ class SiteController extends Controller
 				$this->redirect(array('customer/welcome'));
 			}
 		}
+		$model->password='';
+		$model->password_repeat='';
 		$this->render('register',array('model'=>$model));
 	}
 
@@ -143,10 +146,19 @@ class SiteController extends Controller
 		$this->render('login',array('model'=>$model));
 	}
 	
-	/*
 	public function actionGenerateLocations()
 	{
 		
+		$CustWeeks=CustomerWeek::model()->findAll();
+		foreach($CustWeeks as $CustWeek)
+		{
+			$CustWeek->location_id=$CustWeek->Customer->location_id;
+			$CustWeek->customer_location_id=$CustWeek->Customer->customer_location_id;
+			$CustWeek->save();
+		}
+		
+		//$Customers=Customer::model()->with(array('Location','User'))->findAll('Location.is_pickup=0');
+		/*
 		$connection=Yii::app()->db; 
 		$sql="SELECT * FROM customers_tmp";
 		$dataReader=$connection->createCommand($sql)->query();
@@ -187,10 +199,40 @@ class SiteController extends Controller
 			else
 				echo '<p>No User for Customer:' . $Customer->customer_id . '</p>';
 		}
-
+		*/
 		exit;
 	}
-	 */
+	
+	public function actionSendWelcomeEmails()
+	{
+		$Users=User::model()->findAll('customer_id is not null');
+
+		foreach($Users as $User)
+		{
+			$newPassword=$User->generatePassword(8,3);
+
+			$User->password=$newPassword;
+			$User->save();
+			
+			$message=new YiiMailMessage('Welcome to Bellofoodbox');
+			$message->view = 'welcome';
+			$message->setBody(array('User'=>$User,'newPassword'=>$newPassword), 'text/html');
+			
+			$this->renderPartial('../mail/welcome',array('User'=>$User,'newPassword'=>$newPassword));
+			echo '<br /><br />---------------------------------------<br /><br />';
+			
+			//$message->addTo('donovan@snapfrozen.com.au');
+			//$message->addTo('leigh@bellofoodbox.org.au');
+			//$message->addTo($model->user_email);
+			$message->from = Yii::app()->params['adminEmail'];
+
+			//if(!@Yii::app()->mail->send($message))
+			//{
+			//	$mailError=true;
+			//}
+		}
+		
+	}
 
 	/**
 	 * Logs out the current user and redirect to homepage.

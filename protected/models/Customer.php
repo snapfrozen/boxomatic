@@ -79,7 +79,9 @@ class Customer extends CActiveRecord
 		return array(
 			'customer_id' => 'Customer',
 			'customer_notes' => 'Customer Notes',
-			'delivery_location_key' => 'Default Delivery Location'
+			'delivery_location_key' => 'Default Delivery Location',
+			'location_id'=>'Location',
+			'customer_location_id'=>'Delivery Location',
 		);
 	}
 

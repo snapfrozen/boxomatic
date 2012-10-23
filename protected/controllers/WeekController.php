@@ -441,7 +441,7 @@ class WeekController extends Controller
 		$objPHPExcel->getActiveSheet()->SetCellValue('B1', 'Customer name');
 		$objPHPExcel->getActiveSheet()->SetCellValue('C1', 'Telephone');
 		$objPHPExcel->getActiveSheet()->SetCellValue('D1', 'Delivery Location');
-		$objPHPExcel->getActiveSheet()->SetCellValue('E1', 'Address');
+		//$objPHPExcel->getActiveSheet()->SetCellValue('E1', 'Address');
 
 		$row=2;
 		
@@ -452,8 +452,8 @@ class WeekController extends Controller
 			$sheet->SetCellValue('A'.$row, $CustBox->Box->BoxSize->box_size_name);
 			$sheet->SetCellValue('B'.$row, $CustBox->Customer->User->full_name);
 			$sheet->SetCellValue('C'.$row, $CustBox->Customer->User->user_phone);
-			$sheet->SetCellValue('D'.$row, $CustBox->Customer->Location ? $CustBox->Customer->Location->location_name : "NOT SET!");
-			$sheet->SetCellValue('E'.$row, $CustBox->Customer->CustomerLocation ? $CustBox->Customer->CustomerLocation->full_address : "");
+			$sheet->SetCellValue('D'.$row, $CustBox->delivery_location);
+			//$sheet->SetCellValue('E'.$row, $CustBox->Customer->CustomerLocation ? $CustBox->Customer->CustomerLocation->full_address : "");
 			$row++;
 		}
 		spl_autoload_unregister(array('YiiBase','autoload'));  
