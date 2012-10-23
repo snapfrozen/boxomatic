@@ -102,11 +102,21 @@
 					</tr>
 				</tbody>
 			</table>
-			<div class="row">
+			<div class="row left">
 				<?php echo CHtml::label('Order in advance for', 'months_advance');  ?>
 				<?php echo CHtml::dropDownList('months_advance',1,array(1=>'1 Month',3=>'3 Months',6=>'6 Months'));  ?>
 			</div>
+			<div class="row left">
+				<?php echo CHtml::label('Starting from', 'starting_from');  ?>
+				<?php echo CHtml::dropDownList('starting_from',1,Week::getFutureWeeks());  ?>
+			</div>
+			<div class="row left">
+				<?php echo CHtml::label('Every', 'every');  ?>
+				<?php echo CHtml::dropDownList('every',1,array('week'=>'week','fortnight'=>'fortnight'));  ?>
+			</div>
 
+			<div class="clear"></div>
+			
 			<div class="row buttons">
 				<?php echo CHtml::submitButton('Set recurring order', array('name'=>'btn_recurring')); ?>
 				<?php echo CHtml::submitButton('Clear all orders', array('name'=>'btn_clear_orders')); ?>

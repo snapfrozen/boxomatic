@@ -135,6 +135,13 @@ class Week extends CActiveRecord
 		return $week;
 	}
 	
+	public static function getFutureWeeks()
+	{
+		$deadlineDays=Yii::app()->params['orderDeadlineDays'];
+		$Weeks=Week::model()->findAll("date_sub(week_delivery_date, interval $deadlineDays day) > NOW()");
+		return CHtml::listData($Weeks,'week_delivery_date','formatted_week_delivery_date');
+	}
+	
 	/**
 	 * Get the deadline for this week
 	 */
@@ -143,5 +150,10 @@ class Week extends CActiveRecord
 		$deadlineDays=Yii::app()->params['orderDeadlineDays'];
 		$deliveryDate=strtotime($this->week_delivery_date);
 		return date('d-m-Y', strtotime('-' . $deadlineDays . ' days', $deliveryDate));
+	}
+	
+	public function getFormatted_week_delivery_date()
+	{
+		return Yii::app()->snapFormat->dayOfYear($this->week_delivery_date);
 	}
 }

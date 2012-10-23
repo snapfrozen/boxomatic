@@ -148,7 +148,8 @@ class SiteController extends Controller
 	
 	public function actionGenerateLocations()
 	{
-		
+	
+		/*
 		$CustWeeks=CustomerWeek::model()->findAll();
 		foreach($CustWeeks as $CustWeek)
 		{
@@ -156,6 +157,7 @@ class SiteController extends Controller
 			$CustWeek->customer_location_id=$CustWeek->Customer->customer_location_id;
 			$CustWeek->save();
 		}
+		*/
 		
 		//$Customers=Customer::model()->with(array('Location','User'))->findAll('Location.is_pickup=0');
 		/*

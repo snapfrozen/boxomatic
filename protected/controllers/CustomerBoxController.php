@@ -216,6 +216,9 @@ class CustomerBoxController extends Controller
 		if(isset($_POST['btn_recurring'])) //recurring order button pressed
 		{
 			$monthsAdvance=(int)$_POST['months_advance'];
+			$startingFrom=$_POST['starting_from'];
+			$every=$_POST['every'];
+			
 			$locationId=$_POST['Customer']['delivery_location_key'];
 			$custLocationId=new CDbExpression('NULL');
 			if(strpos($locationId,'-'))
@@ -225,16 +228,23 @@ class CustomerBoxController extends Controller
 				$custLocationId=$parts[0];
 			}
 			
+			
 			foreach($_POST['Recurring'] as $key=>$quantity)
 			{
 				$boxSizeId=str_replace('bs_','',$key);
 				$Boxes=Box::model()->with('Week')->findAll("
+					week_delivery_date >= '$startingFrom' AND
+					week_delivery_date <=  date_add('$startingFrom', interval $monthsAdvance month) AND
 					date_sub(week_delivery_date, interval $deadlineDays day) > NOW() AND
-					date_sub(week_delivery_date, interval $monthsAdvance month) < date_sub(NOW(), interval -1 week) AND 
 					size_id=$boxSizeId");
 				
+				$n=0;
 				foreach($Boxes as $Box)
 				{
+					$n++;
+					if($n%2==0 && $every=='fortnight') {
+						continue;
+					}
 					$CustBoxes=CustomerBox::model()->findAllByAttributes(array('customer_id'=>$Customer->customer_id,'box_id'=>$Box->box_id));
 					
 					$curQuantity=count($CustBoxes);

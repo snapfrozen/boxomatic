@@ -269,7 +269,9 @@ h2 span {
 	float:left;
 	display:none;
 }
-
+.row.left {
+	padding-right:10px;
+}
 #content .grid-view table.items th {
 	background:#000 url(bg.gif) repeat-x left top;
 }
