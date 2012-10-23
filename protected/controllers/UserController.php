@@ -49,7 +49,7 @@ class UserController extends Controller
 				'roles'=>array('customer'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete','create','customers'),
+				'actions'=>array('admin','delete','create','customers','resetPassword'),
 				'roles'=>array('admin'),
 			),
 			array('deny',  // deny all users
@@ -259,7 +259,7 @@ class UserController extends Controller
 		if(isset($_GET['User']))
 			$model->attributes=$_GET['User'];
 
-		$this->render('admin',array(
+		$this->render('customers',array(
 			'model'=>$model,
 		));
 	}
@@ -286,6 +286,20 @@ class UserController extends Controller
 			$this->redirect(array('customerBox/order'));
 		else
 			$this->redirect(array('user/admin'));
+	}
+	
+	/**
+	 *  Login as a different user
+	 */
+	public function actionResetPassword($id)
+	{
+		$User=User::model()->findByPk($id);
+		if($User->resetPasswordAndSendWelcomeEmail())
+			Yii::app()->user->setFlash('success', "Password changed and email sent");
+		else
+			Yii::app()->user->setFlash('error', "Password changed but no email sent");
+
+		$this->redirect(array('user/customers'));
 	}
 
 	/**

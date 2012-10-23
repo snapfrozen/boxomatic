@@ -68,6 +68,7 @@ EOD
 				'login' => array
 				(
 					'url'=> 'array("user/loginAs","id"=>$data->id)',
+					'options'=>array('class'=>'text'),
 				),
 			),
 		),

@@ -211,27 +211,7 @@ class SiteController extends Controller
 
 		foreach($Users as $User)
 		{
-			$newPassword=$User->generatePassword(8,3);
-
-			$User->password=$newPassword;
-			$User->save();
-			
-			$message=new YiiMailMessage('Welcome to Bellofoodbox');
-			$message->view = 'welcome';
-			$message->setBody(array('User'=>$User,'newPassword'=>$newPassword), 'text/html');
-			
-			$this->renderPartial('../mail/welcome',array('User'=>$User,'newPassword'=>$newPassword));
-			echo '<br /><br />---------------------------------------<br /><br />';
-			
-			//$message->addTo('donovan@snapfrozen.com.au');
-			//$message->addTo('leigh@bellofoodbox.org.au');
-			//$message->addTo($model->user_email);
-			$message->from = Yii::app()->params['adminEmail'];
-
-			//if(!@Yii::app()->mail->send($message))
-			//{
-			//	$mailError=true;
-			//}
+			$User->resetPasswordAndSendWelcomeEmail();
 		}
 		
 	}

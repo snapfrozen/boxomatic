@@ -16,16 +16,18 @@ $('.search-form form').submit(function(){
 	return false;
 });
 ");
+
+Yii::app()->clientScript->registerScript('initPageSize',<<<EOD
+	$('.change-pageSize').live('change', function() {
+		$.fn.yiiGridView.update('user-grid',{ data:{ pageSize: $(this).val() }})
+	});
+EOD
+,CClientScript::POS_READY);
 ?>
 
-<h1>Manage Users</h1>
+<h1>Manage Customers</h1>
 
-<p>asdfsadf <?php echo CHtml::link('Create user',array('user/create')) ?></p>
-
-<p>
-You may optionally enter a comparison operator (<b>&lt;</b>, <b>&lt;=</b>, <b>&gt;</b>, <b>&gt;=</b>, <b>&lt;&gt;</b>
-or <b>=</b>) at the beginning of each of your search values to specify how the comparison should be done.
-</p>
+<p><?php echo CHtml::link('Create user',array('user/create')) ?></p>
 
 <?php echo CHtml::link('Advanced Search','#',array('class'=>'search-button')); ?>
 <div class="search-form" style="display:none">
@@ -34,9 +36,18 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 )); ?>
 </div><!-- search-form -->
 
+<?php $dataProvider=$model->search(); ?>
+<?php $pageSize=Yii::app()->user->getState('pageSize',10); ?>
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'user-grid',
-	'dataProvider'=>$model->search(),
+	'dataProvider'=>$dataProvider,
+	'summaryText'=>'Displaying {start}-{end} of {count} result(s). ' .
+	CHtml::dropDownList(
+		'pageSize',
+		$pageSize,
+		array(5=>5,10=>10,20=>20,50=>50,100=>100),
+		array('class'=>'change-pageSize')) .
+	' rows per page',
 	'filter'=>$model,
 	'columns'=>array(
 		'id',
@@ -52,11 +63,17 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 		array( 'name'=>'grower_id', 'value'=>'empty($data->grower_id) ? "No" : "Yes"'),
 		array(
 			'class'=>'CButtonColumn',
-			'template'=>'{view}{update}{delete}{login}',
+			'template'=>'{view}{update}{delete}{login}{reset_password}',
 			'buttons'=>array(
 				'login' => array
 				(
 					'url'=> 'array("user/loginAs","id"=>$data->id)',
+					'options'=>array('class'=>'text'),
+				),
+				'reset_password' => array
+				(
+					'url'=> 'array("user/resetPassword","id"=>$data->id)',
+					'options'=>array('confirm'=>'Are you sure you want to reset this user\'s password and send them a welcome email?','class'=>'text'),
 				),
 			),
 		),

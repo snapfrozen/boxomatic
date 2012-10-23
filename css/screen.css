@@ -253,6 +253,10 @@ hr.space {background:#fff;color:#fff;visibility:hidden;}
 	margin-bottom:1em;
 }
 
+.button-column .text {
+	display:block;
+}
+
 .section {
 	margin-bottom:2em;
 }
