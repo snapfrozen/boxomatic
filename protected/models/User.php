@@ -301,8 +301,8 @@ class User extends SnapActiveRecord
 	 {
 		$newPassword=$this->generatePassword(8,3);
 
-		$this->password=$newPassword;
-		$this->save();
+		$this->password=Yii::app()->snap->encrypt($newPassword);
+		var_dump($this->save(false));
 
 		$message=new YiiMailMessage('Welcome to Bellofoodbox');
 		$message->view = 'welcome';
@@ -315,24 +315,24 @@ class User extends SnapActiveRecord
 		//$C->renderPartial('../mail/welcome',array('User'=>$this,'newPassword'=>$newPassword));
 		//echo '<br /><br />---------------------------------------<br /><br />';
 		
-		$validator=new CEmailValidator();
-		
-		if($validator->validateValue($email)) 
-		{
-			
-			//$message->addTo('donovan@snapfrozen.com.au');
-			//$message->addTo('leigh@bellofoodbox.org.au');
-			$message->from = Yii::app()->params['adminEmail'];
-			$message->addTo($email);
-			if(!@Yii::app()->mail->send($message))
-			{
-				return false;
-			}
-		}
-		else
-		{
-			echo '<p>Email not sent for user '.$this->id.': "'.$this->user_email.'"</p>';
-		}
+//		$validator=new CEmailValidator();
+//		
+//		if($validator->validateValue($email)) 
+//		{
+//			
+//			//$message->addTo('donovan@snapfrozen.com.au');
+//			//$message->addTo('leigh@bellofoodbox.org.au');
+//			$message->from = Yii::app()->params['adminEmail'];
+//			$message->addTo($email);
+//			if(!@Yii::app()->mail->send($message))
+//			{
+//				return false;
+//			}
+//		}
+//		else
+//		{
+//			echo '<p>Email not sent for user '.$this->id.': "'.$this->user_email.'"</p>';
+//		}
 		
 
 		return true;
