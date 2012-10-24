@@ -312,17 +312,28 @@ class User extends SnapActiveRecord
 		//$C = new Controller('Site');
 		//$C->renderPartial('../mail/welcome',array('User'=>$this,'newPassword'=>$newPassword));
 		//echo '<br /><br />---------------------------------------<br /><br />';
-
+		
+		$email=trim($this->user_email);
 		//$message->addTo('donovan@snapfrozen.com.au');
 		//$message->addTo('leigh@bellofoodbox.org.au');
-		$message->addTo($this->user_email);
+		$message->addTo($email);
 		$message->from = Yii::app()->params['adminEmail'];
 
-		if(!@Yii::app()->mail->send($message))
+		$validator=new CEmailValidator();
+		
+		if($validator->validateValue($email)) 
 		{
-			return false;
+			if(!@Yii::app()->mail->send($message))
+			{
+				return false;
+			}
+		}
+		else
+		{
+			echo '<p>Email not sent for user '.$this->id.': "'.$this->user_email.'"</p>';
 		}
 		
+
 		return true;
 	 }
 	
