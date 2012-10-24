@@ -13,9 +13,9 @@ yummy produce to fill your Bellofoodbox.</strong></p>
 
 <p>Your pickup/delivery location is <?php echo $CustomerBox->delivery_location ?>.</p>
 
-<p>Your Bellofoodbox account has been debited $<?php echo $CustomerBox->customer_box_price ?></p>
+<p>Your Bellofoodbox account has been debited <?php echo Yii::app()->snapFormat->currency($CustomerBox->Box->box_price+$CustomerBox->delivery_cost) ?></p>
 
-<p>Your current balance is $<?php echo $Customer->balance ?></p>
+<p>Your current balance is <?php echo Yii::app()->snapFormat->currency($Customer->balance-$CustomerBox->Box->box_price+$CustomerBox->delivery_cost) ?></p>
 
 <h3>Managing your Bellofoodbox account</h3>
 

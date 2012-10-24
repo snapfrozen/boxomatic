@@ -97,15 +97,15 @@ $('.search-form form').submit(function(){
 	'columns'=>array(
 		array(
 			'name'=>'customer_user_id',
-			'value'=>'$data->Customer->User->id'
+			'value'=>'$data->Customer && $data->Customer->User ? $data->Customer->User->id : ""'
 		),
 		array(
 			'name'=>'customer_first_name',
-			'value'=>'$data->Customer->User->first_name'
+			'value'=>'$data->Customer && $data->Customer->User ? $data->Customer->User->first_name : ""'
 		),
 		array(
 			'name'=>'customer_last_name',
-			'value'=>'$data->Customer->User->last_name'
+			'value'=>'$data->Customer && $data->Customer->User ? $data->Customer->User->last_name : ""'
 		),
 		'payment_type',
 		'payment_value',

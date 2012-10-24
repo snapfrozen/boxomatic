@@ -84,7 +84,7 @@
 			<?php echo $form->error($model,'user_postcode'); ?>
 		</div>
 
-		<?php if($model->Customer): $Customer=$model->Customer; ?>
+		<?php if($model->Customer && Yii::app()->user->checkAccess('admin')): $Customer=$model->Customer; ?>
 
 		<h2>Customer Details</h2>
 
