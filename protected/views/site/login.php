@@ -4,7 +4,9 @@ $this->pageTitle=Yii::app()->name . ' - Login';
 
 <h1>Login</h1>
 
-<p>Please fill out the following form with your login credentials:</p>
+<p>If you are an existing Bellofoodbox customer, your new login details were emailed to you at around 4pm on Thursday the 24th of October. If you did not receive this email, please email us at: <a href="info@bellofoodbox.org.au">info@bellofoodbox.org.au</a></p>
+
+<p>Please fill out the following form with your login information:</p>
 
 <div class="form">
 <?php $form=$this->beginWidget('CActiveForm', array(

@@ -23,7 +23,7 @@ Your Bellofoodbox ID is: <strong><?php echo $User->bfb_id; ?></strong>.
 	<p>Each time you make a payment, we will send an email
 	confirming receipt of payment into our account.</p>
 
-	<p>For each you week you have an order placed, you will receive an
+	<p>For each week you have an order placed, you will receive an
 	email from us confirming your order, date and location
 	of pick up, if you have sufficient credit in your Bellofoodbox account.</p>
 	
