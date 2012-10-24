@@ -96,9 +96,8 @@ class SiteController extends Controller
 				$message = new YiiMailMessage('Welcome to Bellofoodbox');
 				$message->view = 'welcome';
 				$message->setBody(array('User'=>$model,'newPassword'=>$_POST['User']['password']), 'text/html');
-				$message->addTo('donovan@snapfrozen.com.au');
-				$message->addTo('leigh@bellofoodbox.org.au');
-				//$message->addTo($model->user_email);
+				$message->addTo('info@bellofoodbox.org.au');
+				$message->addTo($model->user_email);
 				$message->from = Yii::app()->params['adminEmail'];
 				
 				if(!@Yii::app()->mail->send($message))

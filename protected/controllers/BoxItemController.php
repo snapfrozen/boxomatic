@@ -305,9 +305,8 @@ class BoxItemController extends Controller
 			    $message = new YiiMailMessage('Your order for '.$week_delivery_date.' has been approved');
 				$message->view = 'customer_box_approved';
 				$message->setBody(array('Customer'=>$Customer, 'CustomerBox' =>$CustBox), 'text/html');
-				//$message->addTo($Customer->User->user_email);
-				$message->addTo('donovan@snapfrozen.com.au');
-				$message->addTo('leigh@bellofoodbox.org.au');
+				$message->addTo($Customer->User->user_email);
+				$message->addTo('info@bellofoodbox.org.au');
 				$message->from = Yii::app()->params['adminEmail'];
 				
 				if(!@Yii::app()->mail->send($message))
@@ -325,16 +324,14 @@ class BoxItemController extends Controller
 			    $message = new YiiMailMessage('Your order for '.$week_delivery_date.' has been declined');
 				$message->view = 'customer_box_declined';
 				$message->setBody(array('Customer'=>$Customer, 'CustomerBox' => $CustBox), 'text/html');
-				//$message->addTo($Customer->User->user_email);
-				$message->addTo('donovan@snapfrozen.com.au');
-                                $message->addTo('leigh@bellofoodbox.org.au');
+				$message->addTo($Customer->User->user_email);
+				$message->addTo('info@bellofoodbox.org.au');
 				$message->from = Yii::app()->params['adminEmail'];
 				
 				if(!@Yii::app()->mail->send($message))
 				{
 					$mailError=true;
 				}
-				
 			}
 		}
 		
@@ -374,9 +371,9 @@ class BoxItemController extends Controller
 		    $message = new YiiMailMessage('Your order for '.$week_delivery_date.' has been approved');
 			$message->view = 'customer_box_approved';
 			$message->setBody(array('Customer'=>$Customer, 'CustomerBox' => $CustBox), 'text/html');
-			//$message->addTo($Customer->User->user_email);
-			$message->addTo('donovan@snapfrozen.com.au');
-                        $message->addTo('leigh@bellofoodbox.org.au');
+			$message->addTo($Customer->User->user_email);
+			$message->addTo('info@bellofoodbox.org.au');
+
 			$message->from = Yii::app()->params['adminEmail'];
 			
 			if(!@Yii::app()->mail->send($message))
