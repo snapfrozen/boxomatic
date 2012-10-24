@@ -17,8 +17,8 @@
 
 <div class="tabs">
 	<ul>
-		<li><a href="#order-in-advance">Order in advance</a></li>
 		<li><a href="#orders">Orders</a></li>
+		<li><a href="#order-in-advance">Order in advance</a></li>
 	</ul>
 	<div id="order-in-advance">		
 	<!--	<div class="section info">
