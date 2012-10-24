@@ -204,6 +204,7 @@ class SiteController extends Controller
 		exit;
 	}
 	
+	/*
 	public function actionSendWelcomeEmails()
 	{
 		$Users=User::model()->findAll('customer_id is not null');
@@ -214,6 +215,7 @@ class SiteController extends Controller
 		}
 		
 	}
+	 */
 
 	/**
 	 * Logs out the current user and redirect to homepage.
