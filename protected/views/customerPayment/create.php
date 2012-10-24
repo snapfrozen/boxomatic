@@ -5,7 +5,7 @@
 <ul>
   <li><strong>Direct Deposit:</strong> BSB 704328, Acc 221552 (for BCU customers 221552S1)<br />
   When depositing money via bank transfer, please use your Bellofoodbox ID as your reference.<br />
-  Your Bellofoodbox ID is: <strong><?php echo $Customer->User->bfb_id; ?></strong>.</li>
+  Your Bellofoodbox ID is: <strong><?php echo $Customer->User->bfb_id; ?></strong>.<br /><br /></li>
   <li><strong>Cash:</strong> At the Kombu order box anytime, or in person on Wednesday's only during box pick up between 3.30pm - 6.30pm).</p>
 </ul>
 
