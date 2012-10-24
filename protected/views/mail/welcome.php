@@ -12,13 +12,13 @@
 	fresh, local seasonal produce.</p>
 
 	<p>Your login details are:</p>
-	<p>Username:<b><?php echo $User->user_email ?></b><br />
-	Password:<b><?php echo $newPassword ?></b></p>
+	<p>Username: <b><?php echo $User->user_email ?></b><br />
+	Password: <b><?php echo $newPassword ?></b></p>
 	
 	<p>You can order boxes and check your account status at <a href="http://www.bellofoodbox.org.au/order/">www.bellofoodbox.org.au/order</a></p>
 
 <p>When depositing money via bank transfer, please use your Bellofoodbox ID as your reference.<br />
-Your Bellofoodbox ID is: <strong><?php echo $Customer->User->bfb_id; ?></strong>.
+Your Bellofoodbox ID is: <strong><?php echo $User->bfb_id; ?></strong>.
 
 	<p>Each time you make a payment, we will send an email
 	confirming receipt of payment into our account.</p>
