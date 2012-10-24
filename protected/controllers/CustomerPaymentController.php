@@ -215,9 +215,6 @@ class CustomerPaymentController extends Controller
 	
 	public function actionPaypalSuccess()
 	{
-		print_r($_POST);
-		print_r($_GET);
-		exit;
 		$this->render('paypalSuccess');
 	}
 	
