@@ -308,6 +308,8 @@ class User extends SnapActiveRecord
 		$message->view = 'welcome';
 		$message->setBody(array('User'=>$this,'newPassword'=>$newPassword), 'text/html');
 		
+		$email=trim($this->user_email);
+		
 		//REMOVE THIS
 		//$C = new Controller('Site');
 		//$C->renderPartial('../mail/welcome',array('User'=>$this,'newPassword'=>$newPassword));
@@ -317,7 +319,7 @@ class User extends SnapActiveRecord
 		
 		if($validator->validateValue($email)) 
 		{
-			$email=trim($this->user_email);
+			
 			//$message->addTo('donovan@snapfrozen.com.au');
 			//$message->addTo('leigh@bellofoodbox.org.au');
 			$message->from = Yii::app()->params['adminEmail'];
