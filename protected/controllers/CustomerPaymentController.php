@@ -27,7 +27,7 @@ class CustomerPaymentController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create'),
+				'actions'=>array('index','view','create','paypalFailure'),
 				'roles'=>array('customer'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -88,8 +88,11 @@ class CustomerPaymentController extends Controller
 			}
 		}
 
+		$User=User::model()->findByPk(Yii::app()->user->id);
 		$this->render('create',array(
 			'model'=>$model,
+			'User'=>$User,
+			'Customer'=>$User->Customer,
 		));
 	}
 
@@ -203,6 +206,11 @@ class CustomerPaymentController extends Controller
 		$this->render('enterPayments',array(
 			'model'=>$model, 'search_model'=>$search_model
 		));
+	}
+	
+	public function actionPaypalFailure()
+	{
+		$this->render('paypalFailure');
 	}
 	
 	/**

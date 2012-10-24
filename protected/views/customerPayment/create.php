@@ -1,10 +1,3 @@
-<?php
-$this->menu=array(
-	array('label'=>'List CustomerPayment', 'url'=>array('index')),
-	array('label'=>'Manage CustomerPayment', 'url'=>array('admin')),
-);
-?>
-
 <h1>Add Credit</h1>
 <form name= "order" action="https://www.paypal.com/cgi-bin/webscr" method="post">
 <input type="hidden" name="cmd" value="_ext-enter" />
@@ -19,14 +12,14 @@ $this->menu=array(
 <!-- <input type="hidden" name="shipping" value="5.00">
 <input type="hidden" name="shipping2" value="5.00"> -->
 
-<input type="hidden" name="email" value="">
-<input type="hidden" name="first_name" value="">
-<input type="hidden" name="last_name" value="">
-<input type="hidden" name="address1" value ="">
-<input type="hidden" name="address2" value ="">
+<input type="hidden" name="email" value="<?php echo $User->user_email ?>">
+<input type="hidden" name="first_name" value="<?php echo $User->first_name ?>">
+<input type="hidden" name="last_name" value="<?php echo $User->last_name ?>">
+<input type="hidden" name="address1" value ="<?php echo $User->user_address ?>">
+<input type="hidden" name="address2" value ="<?php echo $User->user_address2 ?>">
 <input type="hidden" name="city" value="">
-<input type="hidden" name="state" value="">
-<input type="hidden" name="zip" value="">
+<input type="hidden" name="state" value="<?php echo $User->user_state ?>">
+<input type="hidden" name="zip" value="<?php echo $User->user_postcode ?>">
 
 <input type="submit" name="submit" value="Add credit" />
 

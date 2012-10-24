@@ -1,11 +1,4 @@
-<?php
-$this->menu=array(
-	array('label'=>'Create CustomerPayment', 'url'=>array('create')),
-	array('label'=>'Manage CustomerPayment', 'url'=>array('admin')),
-);
-?>
-
-<h1>Customer Payments</h1>
+<h1>All Transactions</h1>
 
 <?php $this->widget('zii.widgets.CListView', array(
 	'dataProvider'=>$dataProvider,
