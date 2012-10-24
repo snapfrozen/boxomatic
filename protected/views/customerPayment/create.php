@@ -20,6 +20,7 @@
 <input type="hidden" name="city" value="">
 <input type="hidden" name="state" value="<?php echo $User->user_state ?>">
 <input type="hidden" name="zip" value="<?php echo $User->user_postcode ?>">
+<input type="hidden" name="custom" value="<?php echo $User->id ?>">
 
 <input type="submit" name="submit" value="Add credit" />
 

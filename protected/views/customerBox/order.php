@@ -254,9 +254,7 @@
 				<span>Credit:</span>
 				<span><?php echo Yii::app()->snapFormat->currency($Customer->balance); ?></span>
 			</p>
-			<p>
-				<p><?php echo CHtml::link('Make a payment',array('customerPayment/create')) ?></p>
-			</p>
+			<p><?php echo CHtml::link('Add credit',array('customerPayment/create')) ?></p>
 		</div>
 	</div>
 	
