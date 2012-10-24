@@ -38,7 +38,12 @@ $('div.advanced input.number').change(function(){
 	var $inputs = $tr.find('div.advanced input.number');
 	var boxTotal=0;
 	var deliveryTotal=0;
-	var locationId=$tr.prev().find('select.deliverySelect').val();
+	var locationId=null
+	if($tr.parents('div#order-in-advance').length >= 1)
+		locationId=$tr.parents('div#order-in-advance').find('select.deliverySelect').val();
+	else
+		locationId=$tr.prev().find('select.deliverySelect').val();
+	
 	if(locationId.indexOf('-') != -1)
 	{
 		var parts=locationId.split('-');

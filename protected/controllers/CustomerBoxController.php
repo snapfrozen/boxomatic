@@ -227,8 +227,7 @@ class CustomerBoxController extends Controller
 				$locationId=$parts[1];
 				$custLocationId=$parts[0];
 			}
-			
-			
+
 			foreach($_POST['Recurring'] as $key=>$quantity)
 			{
 				$boxSizeId=str_replace('bs_','',$key);
@@ -241,37 +240,44 @@ class CustomerBoxController extends Controller
 				$n=0;
 				foreach($Boxes as $Box)
 				{
+					$CustBoxes=CustomerBox::model()->findAllByAttributes(array('customer_id'=>$Customer->customer_id,'box_id'=>$Box->box_id));
+					foreach($CustBoxes as $CustBox)
+					{
+						$CustBox->delete();
+					}
+
 					$n++;
 					if($n%2==0 && $every=='fortnight') {
 						continue;
 					}
-					$CustBoxes=CustomerBox::model()->findAllByAttributes(array('customer_id'=>$Customer->customer_id,'box_id'=>$Box->box_id));
 					
-					$curQuantity=count($CustBoxes);
-					$diff=$quantity-$curQuantity;
 					
-					if($diff > 0)
-					{
-						//Create extra customer box rows
-						for($i=0; $i<$diff; $i++)
-						{
-							$CustBox=new CustomerBox;
-							$CustBox->customer_id=$Customer->customer_id;
-							$CustBox->box_id=$Box->box_id;
-							$CustBox->quantity=1;
-							$CustBox->delivery_cost=$Customer->Location->location_delivery_value;
-							$CustBox->save();
-						}
-					}
+//					$curQuantity=count($CustBoxes);
+//					$diff=$quantity-$curQuantity;
 
-					if($diff < 0)
+					//Create extra customer box rows
+					for($i=0; $i<$quantity; $i++)
 					{
-						//Remove any boxes the customer no longer wants;
-						$diff=abs($diff);		
-						for($i=0; $i<$diff; $i++)
+						$CustBox=new CustomerBox;
+						$CustBox->customer_id=$Customer->customer_id;
+						$CustBox->box_id=$Box->box_id;
+						$CustBox->quantity=1;
+						$CustBox->delivery_cost=$Customer->Location->location_delivery_value;
+						$CustBox->save();
+
+						$CustWeek=CustomerWeek::model()->findByAttributes(array(
+							'customer_id'=>$Customer->customer_id,
+							'week_id'=>$CustBox->Box->week_id,
+						));
+						if(!$CustWeek) 
 						{
-							$CustBoxes[$i]->delete();
+							$CustWeek=new CustomerWeek();
+							$CustWeek->customer_id=$Customer->customer_id;
+							$CustWeek->week_id=$CustBox->Box->week_id;
 						}
+						$CustWeek->location_id=$locationId;
+						$CustWeek->customer_location_id=$custLocationId;
+						$CustWeek->save();
 					}
 				}
 			}

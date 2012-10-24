@@ -31,23 +31,6 @@
 			<?php endforeach; ?>
 		</div>-->
 
-		<div class="section">
-			<div class="info">
-	<!--			<div class="row">
-					<span class="label">Total Orders</span>
-					<span class="value number"><?php echo Yii::app()->snapFormat->currency($Customer->fulfilled_order_total); ?></span>
-				</div>
-				<div class="row">
-					<span class="label">Total Payments</span>
-					<span class="value number"><?php echo Yii::app()->snapFormat->currency($Customer->totalPayments); ?></span>
-				</div>-->
-				<div class="row xtotal">
-					<span>Credit:</span>
-					<span><?php echo Yii::app()->snapFormat->currency($Customer->balance); ?></span>
-				</div>
-			</div>
-		</div>
-
 		<div class="section form allOrders">
 			<?php $form=$this->beginWidget('CActiveForm', array(
 			'id'=>'reccuring-customer-order-form',
@@ -59,6 +42,13 @@
 				Press the "Clear all orders" button to start over.
 			</p>
 
+			<div class="row">
+				<?php 
+					echo CHtml::label('Deliver to', 'delivery_price_');
+					echo $form->dropDownList($Customer,'delivery_location_key',$Customer->getDeliveryLocations(),array('class'=>'deliverySelect')); 
+				?>
+				<?php echo CHtml::link('Add new delivery location',array('customerLocation/create','custId'=>$Customer->customer_id,'order'=>1))?>
+			</div>
 			<table>
 				<thead>
 					<th></th>
@@ -68,12 +58,10 @@
 					<th>Total</th>
 				</thead>
 				<tbody>
-					<tr class="date">
+					<tr>
 						<td colspan="5">
-							<?php 
-								echo CHtml::hiddenField('delivery_price_', $Customer->Location->location_delivery_value);
-								echo $form->dropDownList($Customer,'delivery_location_key',$Customer->getDeliveryLocations(),array('class'=>'deliverySelect')); 
-							?>
+							Use the slider below to select which box size you would like to order, or click the cog to order multiple boxes.
+							<?php echo CHtml::hiddenField('delivery_price_', $Customer->Location->location_delivery_value); ?>
 						</td>
 					</tr>
 					<tr>
@@ -118,7 +106,7 @@
 			<div class="clear"></div>
 			
 			<div class="row buttons">
-				<?php echo CHtml::submitButton('Set recurring order', array('name'=>'btn_recurring')); ?>
+				<?php echo CHtml::submitButton('Set recurring order', array('name'=>'btn_recurring','class'=>'bigButton')); ?>
 				<?php echo CHtml::submitButton('Clear all orders', array('name'=>'btn_clear_orders')); ?>
 			</div>
 
@@ -249,3 +237,40 @@
 	</div>
 	
 </div><!-- .tabs -->
+
+<div id="recentTransactions">
+	<h2>Recent Transactions</h2>
+	<div class="section">
+		<div class="info">
+<!--			<div class="row">
+				<span class="label">Total Orders</span>
+				<span class="value number"><?php echo Yii::app()->snapFormat->currency($Customer->fulfilled_order_total); ?></span>
+			</div>
+			<div class="row">
+				<span class="label">Total Payments</span>
+				<span class="value number"><?php echo Yii::app()->snapFormat->currency($Customer->totalPayments); ?></span>
+			</div>-->
+			<p>
+				<span>Credit:</span>
+				<span><?php echo Yii::app()->snapFormat->currency($Customer->balance); ?></span>
+			</p>
+			<p>
+				<p><?php echo CHtml::link('Make a payment',array('customerPayment/create')) ?></p>
+			</p>
+		</div>
+	</div>
+	
+<?php $this->widget('zii.widgets.CListView', array(
+	'dataProvider'=>new CActiveDataProvider('CustomerPayment',array(
+		'criteria'=>array(
+			'condition'=>'customer_id='.$Customer->customer_id,
+			'order'=>'payment_date DESC',
+			'limit'=>5,
+		),
+		'pagination'=>false,
+	)),
+	'itemView'=>'../customerPayment/_view',
+	'summaryText'=>false,
+)); ?>
+	
+</div>

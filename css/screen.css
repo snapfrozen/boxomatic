@@ -41,7 +41,7 @@ p .left {margin:1.5em 1.5em 1.5em 0;padding:0;}
 .right {float:right !important;}
 p .right {margin:1.5em 0 1.5em 1.5em;padding:0;}
 a:focus, a:hover {text-decoration:none}
-.allOrders span.ui-selectmenu-status, a {color:#DA7C0C;text-decoration:underline;}
+#orders.allOrders span.ui-selectmenu-status, a {color:#DA7C0C;text-decoration:underline;}
 blockquote {margin:1.5em;color:#666;font-style:italic;}
 strong, dfn {font-weight:bold;}
 em, dfn {font-style:italic;}
@@ -252,9 +252,12 @@ hr.space {background:#fff;color:#fff;visibility:hidden;}
 .buttons {
 	margin-bottom:1em;
 }
-
 .button-column .text {
 	display:block;
+}
+
+#content input.bigButton {
+	font-size:1.3em;
 }
 
 .section {
@@ -300,7 +303,13 @@ h2 span {
 /* All Orders Page */
 
 .customerBox-order .tabs {
-	width:55%;
+	width:505px;
+	float:left;
+	margin-right:20px;
+}
+#recentTransactions {
+	float:left;
+	width:375px;
 }
 .customerBox-order .ui-widget-content {background:#fff}
 
@@ -355,7 +364,7 @@ th.sizes {
 	body .ui-widget {
 		font-size:1em;
 	}
-	.allOrders .ui-selectmenu {
+	#orders .ui-selectmenu {
 		font-size:1em !important;
 		margin:0;
 		float:right;
@@ -364,24 +373,28 @@ th.sizes {
 		font-weight:normal !important;
 		height:auto;
 	}
+	#order-in-advance .allOrders .ui-selectmenu {
+		margin-bottom:1em;
+		height:27px;
+	}
 		.ui-selectmenu-open {
 			z-index:100 !important;
 			font-size:1em;
 		}
-		.allOrders .ui-selectmenu-status {
+		#orders.allOrders .ui-selectmenu-status {
 			padding-top:0;
 			padding-bottom:0;
 			color:#888;
 			line-height:inherit;
 			white-space:nowrap;
 		}
-		.allOrders .ui-selectmenu-icon {
+		#orders.allOrders .ui-selectmenu-icon {
 			top:0;
 			right:0;
 			margin-top:0;
 			display:none;
 		}
-		.allOrders .ui-selectmenu:hover .ui-selectmenu-icon {
+		#orders.allOrders .ui-selectmenu:hover .ui-selectmenu-icon {
 			display:block;
 		}
 

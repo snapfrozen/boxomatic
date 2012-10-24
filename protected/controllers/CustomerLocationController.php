@@ -70,8 +70,13 @@ class CustomerLocationController extends Controller
 		if(isset($_POST['CustomerLocation']))
 		{
 			$model->attributes=$_POST['CustomerLocation'];
-			if($model->save())
-				$this->redirect(array('user/update','id'=>$model->Customer->User->id));
+			
+			if($model->save()) {
+				if(isset($_GET['order']) && $_GET['order']=='1')
+					$this->redirect(array('customerBox/order'));
+				else
+					$this->redirect(array('user/update','id'=>$model->Customer->User->id));
+			}
 		}
 
 		$this->render('create',array(

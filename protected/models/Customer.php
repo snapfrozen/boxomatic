@@ -68,6 +68,7 @@ class Customer extends CActiveRecord
 			'totalPayments'=>array(
                 self::STAT, 'CustomerPayment', 'customer_id', 'select' => 'SUM(payment_value)'
             ),
+			'Payments'=>array(self::HAS_MANY, 'CustomerPayment', 'customer_id'),
 		);
 	}
 
