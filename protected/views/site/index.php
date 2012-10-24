@@ -1,5 +1,7 @@
 <?php $this->pageTitle=Yii::app()->name; ?>
 
+<p><a href="http://www.bellofoodbox.org.au">Take me back to the Bellofoodbox website</a></p>
+
 <h1>Welcome to <i><?php echo CHtml::encode(Yii::app()->name); ?></i></h1>
 
 <?php if(Yii::app()->user->isGuest): ?>
@@ -29,7 +31,7 @@
 
 <p><a href="index.php?r=customerPayment/create">Click here to add credit</a></p>
 
-<h2>Manage your profile</h2>
+<h2>Manage Your Profile</h2>
 
 Your profile allows you to manage your contact details and your delivery locations</a></p>
 
