@@ -9,18 +9,19 @@
 <input type="hidden" name="quantity" value="1" />
 <label for="amount">Amount: <input type="text" name="amount" value="" />
 
-<!-- <input type="hidden" name="shipping" value="5.00">
-<input type="hidden" name="shipping2" value="5.00"> -->
+<!-- <input type="hidden" name="shipping" value="5.00" />
+<input type="hidden" name="shipping2" value="5.00" /> -->
 
-<input type="hidden" name="email" value="<?php echo $User->user_email ?>">
-<input type="hidden" name="first_name" value="<?php echo $User->first_name ?>">
-<input type="hidden" name="last_name" value="<?php echo $User->last_name ?>">
-<input type="hidden" name="address1" value ="<?php echo $User->user_address ?>">
-<input type="hidden" name="address2" value ="<?php echo $User->user_address2 ?>">
-<input type="hidden" name="city" value="">
-<input type="hidden" name="state" value="<?php echo $User->user_state ?>">
-<input type="hidden" name="zip" value="<?php echo $User->user_postcode ?>">
-<input type="hidden" name="custom" value="<?php echo $User->id ?>">
+<input type="hidden" name="email" value="<?php echo $User->user_email ?>" />
+<input type="hidden" name="first_name" value="<?php echo $User->first_name ?>" />
+<input type="hidden" name="last_name" value="<?php echo $User->last_name ?>" />
+<input type="hidden" name="address1" value ="<?php echo $User->user_address ?>" />
+<input type="hidden" name="address2" value ="<?php echo $User->user_address2 ?>" />
+<input type="hidden" name="city" value="" />
+<input type="hidden" name="state" value="<?php echo $User->user_state ?>" />
+<input type="hidden" name="zip" value="<?php echo $User->user_postcode ?>" />
+<input type="hidden" name="custom" value="<?php echo $User->id ?>" />
+<input type="hidden" name="currency_code" value="AUD" />
 
 <input type="submit" name="submit" value="Add credit" />
 
