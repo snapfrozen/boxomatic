@@ -27,7 +27,7 @@ class CustomerPaymentController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','paypalFailure'),
+				'actions'=>array('index','view','create','paypalFailure','paypalSuccess'),
 				'roles'=>array('customer'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -211,6 +211,14 @@ class CustomerPaymentController extends Controller
 	public function actionPaypalFailure()
 	{
 		$this->render('paypalFailure');
+	}
+	
+	public function actionPaypalSuccess()
+	{
+		print_r($_POST);
+		print_r($_GET);
+		exit;
+		$this->render('paypalSuccess');
 	}
 	
 	/**
