@@ -77,7 +77,7 @@ class CustomerPaymentController extends Controller
 				$message->setBody(array('Customer'=>$Customer, 'CustomerPayment' => $model), 'text/html');
 				$message->addTo($Customer->User->user_email);
 				$message->addTo('info@bellofoodbox.org.au');
-				$message->from = Yii::app()->params['adminEmail'];
+				$message->setFrom(array(Yii::app()->params['adminEmail'] => Yii::app()->params['adminEmailFromName']));
 				
 				if(!@Yii::app()->mail->send($message))
 				{
@@ -185,7 +185,7 @@ class CustomerPaymentController extends Controller
 				$message->setBody(array('Customer'=>$Customer, 'CustomerPayment' => $model), 'text/html');
 				$message->addTo($Customer->User->user_email);
 				$message->addTo('info@bellofoodbox.org.au');
-				$message->from = Yii::app()->params['adminEmail'];
+				$message->setFrom(array(Yii::app()->params['adminEmail'] => Yii::app()->params['adminEmailFromName']));
 				
 				if(!@Yii::app()->mail->send($message))
 				{

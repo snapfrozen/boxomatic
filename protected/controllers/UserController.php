@@ -363,7 +363,7 @@ class UserController extends Controller
 				$message->setBody(array('User'=>$User,'url'=>$url), 'text/html');
 
 				$message->addTo($User->user_email);
-				$message->from = Yii::app()->params['adminEmail'];
+				$message->setFrom(array(Yii::app()->params['adminEmail'] => Yii::app()->params['adminEmailFromName']));
 				
 				if(!@Yii::app()->mail->send($message))
 				{

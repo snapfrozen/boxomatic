@@ -143,6 +143,7 @@ return array(
 		// this is used in contact page
 		'googleMapKey'=>'AIzaSyAU7aJq2EcQYJV7BsjZg1lkhR2dYBTZxfU',
 		'adminEmail'=>'info@bellofoodbox.org.au',
+		'adminEmailFromName'=>'Bellofoodbox',
 		'months'=>array(
 			1=>'January',
 			2=>'February',
