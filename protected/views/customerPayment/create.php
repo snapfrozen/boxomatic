@@ -1,18 +1,9 @@
 <h1>Add Credit</h1>
 
-<p>Paypal payments coming soon.</p>
+<!--<form name= "order" action="https://www.paypal.com/cgi-bin/webscr" method="post">-->
+<!--<form name="order" action="<?php echo $_SERVER['REQUEST_URI'] ?>" method="post" />-->
+<form name="order" action="<?php echo $this->createUrl('payPal/PPDefault/ipn') ?>" method="post" />
 
-<ul>
-  <li><strong>Direct Deposit:</strong> BSB 704328, Acc 221552 (for BCU customers 221552S1)<br />
-  When depositing money via bank transfer, please use your Bellofoodbox ID as your reference.<br />
-  Your Bellofoodbox ID is: <strong><?php echo $Customer->User->bfb_id; ?></strong>.<br /><br /></li>
-  <li><strong>Cash:</strong> At the Kombu order box anytime, or in person on Wednesday's only during box pick up between 3.30pm - 6.30pm).</p>
-</ul>
-
-<p><strong>BCU Customers:</strong> If you are making a transfer from your BCU account to ours you will need to enter your ID number in the 'Your Reference' field, above the 'Amount' field.  This reference will be displayed on your statement AND our statement.</p>
-
-<!--
-<form name= "order" action="https://www.paypal.com/cgi-bin/webscr" method="post">
 <input type="hidden" name="cmd" value="_ext-enter" />
 <input type="hidden" name="redirect_cmd" value="_xclick" />
 <input type="hidden" name="return" value = "http://app.foodbox.org.au/index.php?r=customerPayment/paypalSuccess" />
@@ -34,7 +25,17 @@
 <input type="hidden" name="currency_code" value="AUD" />
 <input type="submit" name="submit" value="Add credit" />
 </form>
--->
+<p>&nbsp;</p>
+
+<ul>
+  <li><strong>Direct Deposit:</strong> BSB 704328, Acc 221552 (for BCU customers 221552S1)<br />
+  When depositing money via bank transfer, please use your Bellofoodbox ID as your reference.<br />
+  Your Bellofoodbox ID is: <strong><?php echo $Customer->User->bfb_id; ?></strong>.<br /><br /></li>
+  <li><strong>Cash:</strong> At the Kombu order box anytime, or in person on Wednesday's only during box pick up between 3.30pm - 6.30pm).</p>
+</ul>
+
+<p><strong>BCU Customers:</strong> If you are making a transfer from your BCU account to ours you will need to enter your ID number in the 'Your Reference' field, above the 'Amount' field.  This reference will be displayed on your statement AND our statement.</p>
+
 
 <!-- <input type="hidden" name="shipping" value="5.00" />
 <input type="hidden" name="shipping2" value="5.00" /> -->

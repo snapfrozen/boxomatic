@@ -31,6 +31,23 @@ return array(
 		 	// If removed, Gii defaults to localhost only. Edit carefully to taste.
 			'ipFilters'=>array('127.0.0.1','::1'),
 		),		
+		
+		'payPal'=>array(
+			'env'=>'sandbox',
+			'account'=>array(
+				'username'=>'secretary_api1.northbankgarden.org.au',
+				'password'=>'8NGRF6NB9CZVGQ9M',
+				'signature'=>'AwKwAkKIBoRAzkQ2x1TE9DeYT9CxAA8nOeOXh3L0c9484nuuJ0Hd04uI',
+				'email'=>'secretary@paypal.com.au',
+				'identityToken'=>'YRkbQplC3JQjTdf_PaLnza2k2T5tZhQTGwtObQsenjQDxN07M5qLKKGNNu3u',
+			),
+			'components'=>array(
+				'buttonManager'=>array(
+					//'class'=>'payPal.components.PPDbButtonManager'
+					'class'=>'payPal.components.PPPhpButtonManager',
+				),
+			),
+        ),
        
         'registration' => array(),
         'profile' => array(

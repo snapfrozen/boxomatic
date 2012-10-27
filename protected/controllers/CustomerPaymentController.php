@@ -61,7 +61,77 @@ class CustomerPaymentController extends Controller
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
+		
+		if(isset($_POST['amount']))
+		{
+			$ipn = new PPIpnAction($this,"ipn");
 
+			echo 'yes';exit;
+			/*
+			* Process payment
+			*
+			* See PPPhpTransaction for validation details, important values:
+			* - PPPhpTransaction::currency = Valid currency (default: USD)
+			* - PPPhpTransaction::amount = Minumum payment amount (default: 5.00)
+			*
+			* I recommend using an active record for storage / validation.
+			*/ 
+			$ipn->onRequest = function($event) {
+				// Check if this is a transaction
+				if (!isset($event->details["txn_id"])) {
+					$event->msg = "Missing txn_id";
+					Yii::log($event->msg,"warning","payPal.controllers.DefaultController");
+					$event->sender->onFailure($event);
+					return;
+				}
+
+				// Put payment details into a transaction model
+				$transaction = new PPPhpTransaction;
+				$transaction->paymentStatus = $event->details["payment_status"];
+				$transaction->mcCurrency = $event->details["mc_currency"];
+				$transaction->mcGross = $event->details["mc_gross"];
+				$transaction->receiverEmail = $event->details["receiver_email"];
+				$transaction->txnId = $event->details["txn_id"];
+
+				// Failed to process payment: Log and invoke failure event
+				if (!$transaction->save()) {
+					$event->msg = "Could not process payment";
+					Yii::log("{$event->msg}\nTransaction ID: {$event->details["txn_id"]}", "error",
+							"payPal.controllers.DefaultController");
+					$event->sender->onFailure($event);
+				}
+
+				// Successfully processed payment: Log and invoke success event
+				else if ($transaction->save()) {
+					$event->msg = "Successfully processed payment";
+					Yii::log("{$event->msg}\nTransaction ID: {$event->details["txn_id"]}", "info",
+							"payPal.controllers.DefaultController");
+					$event->sender->onSuccess($event);
+				}
+			};
+
+			// Ignoring failures
+			$ipn->onFailure = function($event) {
+				echo 'failure';exit;
+				// Could e.g. send a notification mail on certain events
+			};
+
+			// Send confirmation mail to customer
+			$ipn->onSuccess = function($event) {
+				echo 'success';exit;
+//				$to = $event->details["payer_email"];
+//				$from = $event->details["receiver_email"];
+//				$subject = "Payment received";
+//				$body = "Your payment has been processed.\n" .
+//					"Receiver: $from\n" .
+//					"Amount: {$event->details["mc_gross"]} {$event->details["mc_amount"]}\n";
+//				$headers="From: $from\r\nReply-To: $from";
+//				mail($to,$subject,$body,$headers);
+			};
+
+			$ipn->run();
+		}
+		
 		if(isset($_POST['CustomerPayment']))
 		{
 			$model->attributes=$_POST['CustomerPayment'];
@@ -171,7 +241,7 @@ class CustomerPaymentController extends Controller
 	public function actionEnterPayments()
 	{	
 		$model=new CustomerPayment;
-
+		
 		if(isset($_POST['CustomerPayment']))
 		{
 			$model->attributes=$_POST['CustomerPayment'];
