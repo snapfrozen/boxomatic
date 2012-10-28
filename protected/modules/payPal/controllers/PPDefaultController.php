@@ -92,47 +92,71 @@ class PPDefaultController extends Controller
 				$event->sender->onFailure($event);
 				return;
 			}
+			
+			Yii::log("Begin Paypal Transaction", "error", "payPal.controllers.DefaultController");
 
 			// Put payment details into a transaction model
-			$transaction = new PPPhpTransaction;
-			$transaction->paymentStatus = $event->details["payment_status"];
-			$transaction->mcCurrency = $event->details["mc_currency"];
-			$transaction->mcGross = $event->details["mc_gross"];
-			$transaction->receiverEmail = $event->details["receiver_email"];
-			$transaction->txnId = $event->details["txn_id"];
+//			$transaction = new PPPhpTransaction;
+//			$transaction->paymentStatus = $event->details["payment_status"];
+//			$transaction->mcCurrency = $event->details["mc_currency"];
+//			$transaction->mcGross = $event->details["mc_gross"];
+//			$transaction->receiverEmail = $event->details["receiver_email"];
+//			$transaction->txnId = $event->details["txn_id"];
 			
-			// Failed to process payment: Log and invoke failure event
-			if (!$transaction->save()) {
+			
+			// Put payment details into a transaction model
+			$transaction = new CustomerPayment;
+			$transaction->scenario = 'PaypalIPN';
+			$transaction->paypal_payment_status = $event->details["payment_status"];
+			$transaction->paypal_mc_currency = $event->details["mc_currency"];
+			$transaction->paypal_mc_gross = $event->details["mc_gross"];
+			$transaction->paypal_receiver_email = $event->details["receiver_email"];
+			$transaction->paypal_txn_id = $event->details["txn_id"];
+			$transaction->payment_value = $event->details["mc_gross"];
+			$transaction->payment_type = 'PAYPAL';
+			$transaction->payment_date = new CDbExpression('NOW()');
+			$transaction->customer_id = (int) $event->details["custom"];
+			$transaction->payment_note = 'PayPal Payment of: '.$event->details["mc_gross"];
+			
+			// Successfully processed payment: Log and invoke success event
+			if ($transaction->save()) {
+				$event->msg = "Successfully processed payment";
+				Yii::log("{$event->msg}\nTransaction ID: {$event->details["txn_id"]}", "error",
+						"payPal.controllers.DefaultController");
+				$event->sender->onSuccess($event);
+			} 
+			else
+			{
 				$event->msg = "Could not process payment";
 				Yii::log("{$event->msg}\nTransaction ID: {$event->details["txn_id"]}", "error",
 						"payPal.controllers.DefaultController");
+				$errorStr = print_r($transaction->getErrors(), true);
+				Yii::log($errorStr, "error", "payPal.controllers.DefaultController");
 				$event->sender->onFailure($event);
-			}
-
-			// Successfully processed payment: Log and invoke success event
-			else if ($transaction->save()) {
-				$event->msg = "Successfully processed payment";
-				Yii::log("{$event->msg}\nTransaction ID: {$event->details["txn_id"]}", "info",
-						"payPal.controllers.DefaultController");
-				$event->sender->onSuccess($event);
 			}
 		};
 
 		// Ignoring failures
 		$ipn->onFailure = function($event) {
 			// Could e.g. send a notification mail on certain events
+			$respstr = print_r($event->details,true);
+			Yii::log("IPN Failure" . $respstr, "error", "payPal.controllers.ipn.PPIpnAction");
 		};
 
 		// Send confirmation mail to customer
 		$ipn->onSuccess = function($event) {
-			$to = $event->details["payer_email"];
-			$from = $event->details["receiver_email"];
-			$subject = "Payment received";
-			$body = "Your payment has been processed.\n" .
-				"Receiver: $from\n" .
-				"Amount: {$event->details["mc_gross"]} {$event->details["mc_amount"]}\n";
-			$headers="From: $from\r\nReply-To: $from";
-			mail($to,$subject,$body,$headers);
+			Yii::log("IPN Success", "error", "payPal.controllers.ipn.PPIpnAction");
+//			$to = $event->details["payer_email"];
+//			$from = $event->details["receiver_email"];
+//			$subject = "Payment received";
+//			$body = "Your payment has been processed.\n" .
+//				"Receiver: $from\n" .
+//				"Amount: {$event->details["mc_gross"]} {$event->details["mc_amount"]}\n";
+//			$headers="From: $from\r\nReply-To: $from";
+			
+			$respstr = print_r($event->details,true);
+			Yii::log("Success:".$respstr, "error", "payPal.controllers.ipn.PPIpnAction");
+			//mail($to,$subject,$body,$headers);
 		};
 		
 		$ipn->run();

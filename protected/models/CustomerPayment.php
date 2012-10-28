@@ -15,6 +15,7 @@ class CustomerPayment extends CActiveRecord
 	public $customer_first_name;
 	public $customer_last_name;
 	public $customer_user_id;
+	static public $currency = "AUD";
 	
 	/**
 	 * Returns the static model of the specified AR class.
@@ -47,10 +48,33 @@ class CustomerPayment extends CActiveRecord
 			array('payment_type', 'length', 'max'=>45),
 			array('payment_date', 'safe'),
 			array('payment_note', 'safe'),
+			
+			// Only process completed payments
+			array('paypal_payment_status', 'compare', 'compareValue'=>'Completed', 'on'=>'PaypalIPN'),
+			// Do not process duplicates
+			array('paypal_txn_id','unique', 'on'=>'PaypalIPN'),
+			// Only process payments sent to configured account
+			array('paypal_receiver_email', 'compare', 'compareValue'=>Yii::app()->getModule('payPal')->account->email, 'on'=>'PaypalIPN'),
+			// Check currency
+			array('paypal_mc_currency', 'compare', 'compareValue'=>self::$currency, 'on'=>'PaypalIPN'),
+			// Check payment
+			array('paypal_mc_gross', 'paymentValidator', 'amount', 'on'=>'PaypalIPN'),
+			
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('customer_user_id, customer_first_name, customer_last_name, payment_note, payment_id, payment_value, payment_type, payment_date, customer_id', 'safe', 'on'=>'search'),
 		);
+	}
+	
+	/**
+	 * Validate payment.
+	 * 
+	 * @param string $attribute mc_gross from PayPal
+	 * @param array $params
+	 */
+	public function paymentValidator($attribute, $params) {
+		if ($attribute < 0)
+			$this->addError($attribute, "Payment must be more than 0");
 	}
 
 	/**

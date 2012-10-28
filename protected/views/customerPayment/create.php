@@ -1,8 +1,6 @@
 <h1>Add Credit</h1>
 
-<!--<form name= "order" action="https://www.paypal.com/cgi-bin/webscr" method="post">-->
-<!--<form name="order" action="<?php echo $_SERVER['REQUEST_URI'] ?>" method="post" />-->
-<form name="order" action="<?php echo $this->createUrl('payPal/PPDefault/ipn') ?>" method="post" />
+<form name= "order" action="https://www.paypal.com/cgi-bin/webscr" method="post">
 
 <input type="hidden" name="cmd" value="_ext-enter" />
 <input type="hidden" name="redirect_cmd" value="_xclick" />
@@ -21,7 +19,7 @@
 <input type="hidden" name="city" value="" />
 <input type="hidden" name="state" value="<?php echo $User->user_state ?>" />
 <input type="hidden" name="zip" value="<?php echo $User->user_postcode ?>" />
-<input type="hidden" name="custom" value="<?php echo $User->id ?>" />
+<input type="hidden" name="custom" value="<?php echo $User->Customer->customer_id ?>" />
 <input type="hidden" name="currency_code" value="AUD" />
 <input type="submit" name="submit" value="Add credit" />
 </form>

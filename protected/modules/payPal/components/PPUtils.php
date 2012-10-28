@@ -141,6 +141,7 @@ class PPUtils
 		curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
 		curl_setopt($ch,CURLOPT_POST,true);
 		curl_setopt($ch,CURLOPT_POSTFIELDS,$postVars);
+		curl_setopt($ch, CURLOPT_CAINFO, dirname(__FILE__) . '/../cert/cacert.pem');
 		$httpResponse = curl_exec($ch);
 
 		//turning off the server and peer verification(TrustManager Concept).

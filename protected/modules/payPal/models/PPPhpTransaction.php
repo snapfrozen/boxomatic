@@ -123,8 +123,14 @@ class PPPhpTransaction extends CModel {
 	 * @return true on success, false on failure
 	 */
 	public function save() {
-		if (!$this->validate())
+		
+		Yii::log("SAVING TRANSACTION", "error", "payPal.controllers.ipn.PPIpnAction");
+		if (!$this->validate()) {
+			$logstr = print_r($this->getErrors(), true);
+			Yii::log("ERRORS:".$logstr, "error", "payPal.controllers.ipn.PPIpnAction");
 			return false;
+		}
+
 		self::addTransaction($this);
 		$fn = Yii::app()->modulePath."/payPal/data/transactions.php";
 		$content = "<?php\nreturn array(\n";
@@ -134,6 +140,7 @@ class PPPhpTransaction extends CModel {
 		$fp = fopen($fn, 'w');
 		fwrite($fp, $content);
 		fclose($fp);
+		
 		return true;
 	}
 

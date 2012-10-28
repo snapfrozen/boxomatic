@@ -101,6 +101,8 @@ class PPIpnAction extends CAction {
 		/** If IPN request fails it is logged and a failure event is raised **/
 		// 2010-10-28: TESTED OK
 		if ($response["status"] == false) {
+			$respstr = print_r($response,true);
+			Yii::log($respstr, "error", "payPal.controllers.ipn.PPIpnAction");
 			$event->msg = "HTTP POST request to PayPal failed";
 			Yii::log("{$event->msg}\nRequest:\n$postVars", "error", "payPal.controllers.ipn.PPIpnAction");
 			$this->onFailure($event);
