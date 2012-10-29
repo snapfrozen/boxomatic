@@ -7,7 +7,7 @@
 <input type="hidden" name="redirect_cmd" value="_xclick" />
 <input type="hidden" name="return" value = "http://app.foodbox.org.au/index.php?r=customerPayment/paypalSuccess" />
 <input type="hidden" name="cancel_return" value = "http://app.foodbox.org.au/index.php?r=customerPayment/paypalFailure" />
-<input type="hidden" name="business" value="donovan@snapfrozen.com.au" />
+<input type="hidden" name="business" value="secretary@northbankgarden.org.au" />
 <input type="hidden" name="item_name" value="Box-o-Matic 'Bellofoodbox' Credit" />
 <input type="hidden" name="quantity" value="1" />
 <label for="amount">Amount: <input type="text" name="amount" value="" />
