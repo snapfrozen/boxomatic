@@ -1,7 +1,8 @@
 <h1>Add Credit</h1>
 
-<form name= "order" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+<h2>With PayPal</h2>
 
+<form name= "order" action="https://www.paypal.com/cgi-bin/webscr" method="post">
 <input type="hidden" name="cmd" value="_ext-enter" />
 <input type="hidden" name="redirect_cmd" value="_xclick" />
 <input type="hidden" name="return" value = "http://app.foodbox.org.au/index.php?r=customerPayment/paypalSuccess" />
@@ -25,6 +26,8 @@
 </form>
 <p>&nbsp;</p>
 
+<h2>Other Methods</h2>
+
 <ul>
   <li><strong>Direct Deposit:</strong> BSB 704328, Acc 221552 (for BCU customers 221552S1)<br />
   When depositing money via bank transfer, please use your Bellofoodbox ID as your reference.<br />
@@ -34,10 +37,7 @@
 
 <p><strong>BCU Customers:</strong> If you are making a transfer from your BCU account to ours you will need to enter your ID number in the 'Your Reference' field, above the 'Amount' field.  This reference will be displayed on your statement AND our statement.</p>
 
-
 <!-- <input type="hidden" name="shipping" value="5.00" />
 <input type="hidden" name="shipping2" value="5.00" /> -->
 
-<?php // echo $this->renderPartial('_form', array('model'=>$model)); 
-	
-?>
+<?php // echo $this->renderPartial('_form', array('model'=>$model));  ?>
