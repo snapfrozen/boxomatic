@@ -325,7 +325,7 @@ class User extends SnapActiveRecord
 		{
 			//$message->addTo('donovan@snapfrozen.com.au');
 			//$message->addTo('leigh@bellofoodbox.org.au');
-			$message->from = Yii::app()->params['adminEmail'];
+			$message->setFrom(array(Yii::app()->params['adminEmail'] => Yii::app()->params['adminEmailFromName']));
 			$message->addTo($email);
 			if(!@Yii::app()->mail->send($message))
 			{
