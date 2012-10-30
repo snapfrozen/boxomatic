@@ -56,6 +56,7 @@ class CustomerBox extends CActiveRecord
 			array('customer_id, quantity', 'required'),
 			array('box_id', 'required', 'message'=>'Please select a box'),
 			array('status, customer_id, box_id, quantity', 'numerical', 'integerOnly'=>true, 'min'=>0),
+			array('delivery_cost','numerical'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('customer_user_id, customer_box_price, customer_first_name, customer_last_name, status, customer_box_id, customer_id, box_id, quantity', 'safe', 'on'=>'search'),
@@ -120,6 +121,9 @@ class CustomerBox extends CActiveRecord
 	 */
 	public function boxSearch($week=null)
 	{
+		$pageSize=isset($_GET['pageSize'])?$_GET['pageSize']:10;
+		Yii::app()->user->setState('pageSize',$pageSize);
+		
 		$criteria=new CDbCriteria;
 		
 		if($week) 
@@ -153,6 +157,9 @@ class CustomerBox extends CActiveRecord
 		
 		return new CActiveDataProvider(get_class($this), array(
 			'criteria'=>$criteria,
+			'pagination'=>array(
+				'pageSize'=>$pageSize,
+			),
 //			'pagination'=>false,
 		));
 	}

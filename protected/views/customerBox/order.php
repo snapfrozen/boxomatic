@@ -218,10 +218,13 @@
 						<?php echo Yii::app()->snapFormat->currency($Customer->totalBoxesByWeek($Week->week_id)) ?>
 					</td>
 					<td class="bottom price delivery">
-					<?php echo Yii::app()->snapFormat->currency($Customer->totalDeliveryByWeek($Week->week_id)); ?>
+						<?php echo Yii::app()->snapFormat->currency($Customer->totalDeliveryByWeek($Week->week_id)); ?>
 					</td>
 					<td class="bottom price total">
 						<strong><?php echo Yii::app()->snapFormat->currency($Customer->totalByWeek($Week->week_id)) ?></strong>
+						<?php if(Yii::app()->user->shadow_id): ?>
+						<br /><?php echo CHtml::link('update',array('week/updateCustomerBoxes','week_id'=>$Week->week_id,'cust_id'=>$Customer->customer_id)); ?>
+						<?php endif; ?>
 					</td>
 				</tr>
 				<?php endforeach; ?>

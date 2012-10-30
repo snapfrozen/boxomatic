@@ -6,7 +6,7 @@ class WeekController extends Controller
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
 	 * using two-column layout. See 'protected/views/layouts/column2.php'.
 	 */
-	public $layout='//layouts/column2';
+	public $layout='//layouts/column1';
 
 	/**
 	 * @return array action filters
@@ -31,7 +31,7 @@ class WeekController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update'),
+				'actions'=>array('create','update','updateCustomerBoxes','custBoxUpdate'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -146,6 +146,35 @@ class WeekController extends Controller
 		$this->render('admin',array(
 			'model'=>$model,
 		));
+	}
+	
+	public function actionUpdateCustomerBoxes($week_id, $cust_id)
+	{
+		$CustBoxes=new CActiveDataProvider('CustomerBox',array(
+			'criteria'=>array(
+				'with'=>'Box',
+				'condition'=>"Box.week_id=$week_id AND customer_id=$cust_id",
+			)
+		));
+
+		$this->render('update_customer_boxes',array(
+			'CustBoxes'=>$CustBoxes,
+		));
+	}
+	
+	public function actionCustBoxUpdate($id)
+	{
+		if(Yii::app()->request->isAjaxRequest && Yii::app()->user->shadow_id) 
+		{
+			$model=CustomerBox::model()->findByPk($id);
+			if(isset($_POST['CustomerBox']))
+			{
+				$model->attributes=$_POST['CustomerBox'];
+				echo CEditableGridView::validate($model);
+				$model->save();
+			}
+			Yii::app()->end();
+		}
 	}
 	
 	/**

@@ -1,0 +1,29 @@
+.editable-grid-view input[type="text"] {border:1px solid #ccc;width:100%;}
+.editable-grid-view .egv-dropdown select {border:1px solid #ccc;width:100%;}
+.editable-grid-view .error input {border-color:#CC0000; background:#FFEEEE;} 
+.editable-grid-view .validating input {border-color:#ffb400} 
+.editable-grid-view  td > div {position:relative}
+.editable-grid-view  td > div .message {display:none; text-align:left;}
+.editable-grid-view  td > div:hover .message {
+	min-width:150px;
+	position:absolute;
+	top:2em;
+	left:0;
+	padding:5px;
+	z-index:1;
+	border:1px solid #ccc;
+	background:#fff;
+}
+.editable-grid-view  td > div.error:hover .error.message {
+	display:block !important;
+	border:1px solid #CC0000;
+	background:#FFEEEE;
+	color:#CC0000;
+}
+.editable-grid-view  td > div:hover .message.info {
+	display:block !important;
+}
+
+.editable-grid-view .egv-dropdown {white-space:nowrap}
+.editable-grid-view .quick-create {text-align:right}
+.editable-grid-view .quick-create label {margin-right:1em;font-weight:bold;}

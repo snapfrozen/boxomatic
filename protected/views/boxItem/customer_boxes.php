@@ -5,6 +5,13 @@
 	$cs->registerCoreScript('jquery.ui');
 	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/ui.touch-punch.min.js', CClientScript::POS_END);
 	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/ui.datepicker.min.js', CClientScript::POS_END);
+	
+Yii::app()->clientScript->registerScript('initPageSize',<<<EOD
+	$('.change-pageSize').live('change', function() {
+		$.fn.yiiGridView.update('customer-list-grid',{ data:{ pageSize: $(this).val() }})
+	});
+EOD
+,CClientScript::POS_READY);
 ?>
 <h1>Customer Boxes</h1>
 
@@ -35,11 +42,20 @@
 		echo ' ' . CHtml::link('Pack Boxes', array('boxItem/create','week'=>$SelectedWeek->week_id));
 	endif; ?>
 	
+	<?php $dataProvider=$SelectedWeek ? $CustomerBoxes->boxSearch($SelectedWeek->week_id) : $CustomerBoxes->boxSearch(-1); ?>
+	<?php $pageSize=Yii::app()->user->getState('pageSize',10); ?>
 	<?php
 	$this->widget('zii.widgets.grid.CGridView', array(
 		'id'=>'customer-list-grid',
-		'dataProvider'=> $SelectedWeek ? $CustomerBoxes->boxSearch($SelectedWeek->week_id) : $CustomerBoxes->boxSearch(-1),
+		'dataProvider'=> $dataProvider,
 		'filter'=>$CustomerBoxes,
+		'summaryText'=>'Displaying {start}-{end} of {count} result(s). ' .
+		CHtml::dropDownList(
+			'pageSize',
+			$pageSize,
+			array(5=>5,10=>10,20=>20,50=>50,100=>100),
+			array('class'=>'change-pageSize')) .
+		' rows per page',
 		'columns'=>array(
 			array(
 				'name'=>'customer_user_id',
