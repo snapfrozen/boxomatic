@@ -62,7 +62,7 @@ class User extends SnapActiveRecord
 			array('user_email, password', 'length', 'max'=>255),
 			array('user_email', 'unique'),
 			array('user_email', 'email'),
-			array('password', 'compare'),
+			array('password', 'compare','on'=>'changePassword'),
 			array('password_repeat', 'safe'),
 			array('first_name, last_name, user_phone, user_mobile, user_suburb, user_state, user_postcode', 'length', 'max'=>45),
 			array('user_address, user_address2, user_email', 'length', 'max'=>150),
@@ -167,8 +167,11 @@ class User extends SnapActiveRecord
 	 */
 	public function afterValidate()
 	{
-		$this->password = Yii::app()->snap->encrypt($this->password);
-        $this->password_repeat = Yii::app()->snap->encrypt($this->password_repeat);
+		if($this->scenario == 'changePassword')
+		{
+			$this->password = Yii::app()->snap->encrypt($this->password);
+			$this->password_repeat = Yii::app()->snap->encrypt($this->password_repeat);
+		}
 		return parent::beforeSave();
 	}
 	
@@ -299,10 +302,11 @@ class User extends SnapActiveRecord
 	 
 	 public function resetPasswordAndSendWelcomeEmail()
 	 {
+		$this->scenario='changePassword';
 		$newPassword=$this->generatePassword(8,3);
 
 		$this->password=Yii::app()->snap->encrypt($newPassword);
-		var_dump($this->save(false));
+		$this->save(false);
 
 		$message=new YiiMailMessage('Welcome to Bellofoodbox');
 		$message->view = 'welcome';
@@ -315,26 +319,24 @@ class User extends SnapActiveRecord
 		//$C->renderPartial('../mail/welcome',array('User'=>$this,'newPassword'=>$newPassword));
 		//echo '<br /><br />---------------------------------------<br /><br />';
 		
-//		$validator=new CEmailValidator();
-//		
-//		if($validator->validateValue($email)) 
-//		{
-//			
-//			//$message->addTo('donovan@snapfrozen.com.au');
-//			//$message->addTo('leigh@bellofoodbox.org.au');
-//			$message->from = Yii::app()->params['adminEmail'];
-//			$message->addTo($email);
-//			if(!@Yii::app()->mail->send($message))
-//			{
-//				return false;
-//			}
-//		}
-//		else
-//		{
-//			echo '<p>Email not sent for user '.$this->id.': "'.$this->user_email.'"</p>';
-//		}
+		$validator=new CEmailValidator();
 		
-
+		if($validator->validateValue($email)) 
+		{
+			//$message->addTo('donovan@snapfrozen.com.au');
+			//$message->addTo('leigh@bellofoodbox.org.au');
+			$message->from = Yii::app()->params['adminEmail'];
+			$message->addTo($email);
+			if(!@Yii::app()->mail->send($message))
+			{
+				return false;
+			}
+		}
+		else
+		{
+			return false;
+		}
+		
 		return true;
 	 }
 	

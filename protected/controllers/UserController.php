@@ -82,10 +82,12 @@ class UserController extends Controller
 		
 		if(isset($_POST['User']))
 		{
+			$model->scenario='changePassword';
 			$model->attributes=$_POST['User'];
 			if(isset($_POST['User']['password']))
 				$model->password=$_POST['User']['password'];
-			if($model->save()) {
+			if($model->save()) 
+			{
 				if(isset($_POST['role'])) {
 					$model->setRole($_POST['role']);
 				}
@@ -186,6 +188,7 @@ class UserController extends Controller
 	public function actionChangePassword($id)
 	{
 		$model=$this->loadModel($id);
+		$model->scenario='changePassword';
 		if(isset($_POST['User']))
 		{
 			$model->attributes=$_POST['User'];
@@ -289,7 +292,7 @@ class UserController extends Controller
 	}
 	
 	/**
-	 *  Login as a different user
+	 *  Reset password action performed by admin
 	 */
 	public function actionResetPassword($id)
 	{
@@ -344,6 +347,7 @@ class UserController extends Controller
 		// collect user input data
 		if(isset($_POST['ForgottenPasswordForm']))
 		{
+			$model->scenario='changePassword';
 			$model->attributes = $_POST['ForgottenPasswordForm'];
 			
 			// validate user input and redirect to the previous page if valid
@@ -386,6 +390,7 @@ class UserController extends Controller
 		
 		if(isset($_POST['User']))
 		{
+			$model->scenario='changePassword';
 			$model->attributes=$_POST['User'];
 			$model->password=$_POST['User']['password'];
 			if($model->validate()) 
