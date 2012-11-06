@@ -9,7 +9,7 @@
 
 <p>Unfortunately your Bellofoodbox order for 
 pick up on <?php echo $CustomerBox->Box->Week->week_delivery_date ?> has been DECLINED, as you 
-have insufficient credit.</p>
+have insufficient Bellofoodbox credit.</p>
 
 <p>Please contact us immediately if you feel this is an error.</p>
 
@@ -20,11 +20,11 @@ ensure you receive a delicious Bellofoodbox,
 full of beautiful fresh, local produce <strong>next week</strong>.</p>
 
 <ul>
-  <li><strong>Online:</strong> You can top up your balance directly using PayPal at <a href="http://www.bellofoodbox.org.au/">www.Bellofoodbox.org.au</a></li>
-  <li><strong>Direct Deposit:</strong> BSB 704328, Acc 221552 (for BCU customers 221552S1)<br />
+  <li><strong>Online:</strong> You can top up your balance directly using PayPal at <a href="http://app.foodbox.org.au/">app.foodbox.org.au</a></li>
+  <li><strong>Direct Deposit:</strong> BSB 704328, Acc 221552 (for BCU customers 221552 S20)<br />
   When depositing money via bank transfer, please use your Bellofoodbox ID as your reference.<br />
   Your Bellofoodbox ID is: <strong><?php echo $Customer->User->bfb_id; ?></strong>.</li>
-  <li><strong>Cash:</strong> At the Kombu order box anytime, or in person on Wednesday's only during box pick up between 3.30pm - 6.30pm).</p>
+  <li><strong>Cash:</strong> At the Kombu order box anytime, or in person on Wednesdays only during box pick up between 3.30pm - 6.30pm).</p>
 </ul>
 
 <p><strong>BCU Customers:</strong> If you are making a transfer from your BCU account to ours you will need to enter your ID number in the 'Your Reference' field, above the 'Amount' field.  This reference will be displayed on your statement AND our statement.</p>
