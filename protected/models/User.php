@@ -68,7 +68,7 @@ class User extends SnapActiveRecord
 			array('user_address, user_address2, user_email', 'length', 'max'=>150),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('first_name, last_name, full_name, user_phone, user_mobile, user_address, user_address2, user_email, user_suburb, user_state, user_postcode, last_login_time, update_time, update_user_id, create_time, create_user_id', 'safe', 'on'=>'search'),
+			array('id, first_name, last_name, full_name, user_phone, user_mobile, user_address, user_address2, user_email, user_suburb, user_state, user_postcode, last_login_time, update_time, update_user_id, create_time, create_user_id', 'safe', 'on'=>'search'),
 			// verifyCode needs to be entered correctly
 			array('verifyCode', 'captcha', 'allowEmpty'=>!CCaptcha::checkRequirements(),'on'=>'insert'),
 		);
