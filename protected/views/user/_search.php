@@ -69,30 +69,10 @@
 		<?php echo $form->label($model,'user_postcode'); ?>
 		<?php echo $form->textField($model,'user_postcode',array('size'=>45,'maxlength'=>45)); ?>
 	</div>
-
+	
 	<div class="row">
-		<?php echo $form->label($model,'last_login_time'); ?>
-		<?php echo $form->textField($model,'last_login_time'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->label($model,'update_time'); ?>
-		<?php echo $form->textField($model,'update_time'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->label($model,'update_user_id'); ?>
-		<?php echo $form->textField($model,'update_user_id'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->label($model,'create_time'); ?>
-		<?php echo $form->textField($model,'create_time'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->label($model,'create_user_id'); ?>
-		<?php echo $form->textField($model,'create_user_id'); ?>
+		<?php echo $form->label($model,'search_customer_notes'); ?>
+		<?php echo $form->textField($model,'search_customer_notes',array('size'=>45,'maxlength'=>45)); ?>
 	</div>
 
 	<div class="row buttons">

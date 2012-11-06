@@ -31,6 +31,7 @@ class User extends SnapActiveRecord
 	public $verifyCode;
 	public $total_boxes;
 	public $searchAdmin=false;
+	public $search_customer_notes;
 	
 	/**
 	 * Returns the static model of the specified AR class.
@@ -68,7 +69,7 @@ class User extends SnapActiveRecord
 			array('user_address, user_address2, user_email', 'length', 'max'=>150),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, first_name, last_name, full_name, user_phone, user_mobile, user_address, user_address2, user_email, user_suburb, user_state, user_postcode, last_login_time, update_time, update_user_id, create_time, create_user_id', 'safe', 'on'=>'search'),
+			array('search_customer_notes, id, first_name, last_name, full_name, user_phone, user_mobile, user_address, user_address2, user_email, user_suburb, user_state, user_postcode, last_login_time, update_time, update_user_id, create_time, create_user_id', 'safe', 'on'=>'search'),
 			// verifyCode needs to be entered correctly
 			array('verifyCode', 'captcha', 'allowEmpty'=>!CCaptcha::checkRequirements(),'on'=>'insert'),
 		);
@@ -115,6 +116,7 @@ class User extends SnapActiveRecord
 			'create_user_id' => 'Created By',
 			'update_time' => 'Last Updated',
 			'update_user_id' => 'Updated by',
+			'search_customer_notes' => 'Customer Notes',
 		);
 	}
 
@@ -128,6 +130,11 @@ class User extends SnapActiveRecord
 		Yii::app()->user->setState('pageSize',$pageSize);
 
 		$criteria=new CDbCriteria;
+		if($this->search_customer_notes)
+		{
+			$criteria->with='Customer';
+			$criteria->compare('Customer.customer_notes',$this->search_customer_notes,true);
+		}
 
 		$criteria->compare('id',$this->id);
 		$criteria->compare('customer_id',$this->customer_id);
@@ -150,9 +157,9 @@ class User extends SnapActiveRecord
 		$criteria->compare('create_user_id',$this->create_user_id);
 		$criteria->compare('update_time',$this->update_time,true);
 		$criteria->compare('update_user_id',$this->update_user_id);
-
+		
 		if($this->searchAdmin)
-			$criteria->condition='customer_id is null AND grower_id is null';
+			$criteria->addCondition('customer_id is null AND grower_id is null');
 		
 		return new CActiveDataProvider(get_class($this), array(
 			'criteria'=>$criteria,
