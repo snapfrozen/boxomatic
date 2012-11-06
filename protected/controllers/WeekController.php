@@ -467,9 +467,11 @@ class WeekController extends Controller
 		$objPHPExcel->setActiveSheetIndex(0);
 		
 		$objPHPExcel->getActiveSheet()->SetCellValue('A1', 'Box Size');
-		$objPHPExcel->getActiveSheet()->SetCellValue('B1', 'Customer name');
-		$objPHPExcel->getActiveSheet()->SetCellValue('C1', 'Telephone');
-		$objPHPExcel->getActiveSheet()->SetCellValue('D1', 'Delivery Location');
+		$objPHPExcel->getActiveSheet()->SetCellValue('B1', 'First name');
+		$objPHPExcel->getActiveSheet()->SetCellValue('C1', 'Last name');
+		$objPHPExcel->getActiveSheet()->SetCellValue('D1', 'Telephone');
+		$objPHPExcel->getActiveSheet()->SetCellValue('E1', 'Mobile');
+		$objPHPExcel->getActiveSheet()->SetCellValue('F1', 'Delivery Location');
 		//$objPHPExcel->getActiveSheet()->SetCellValue('E1', 'Address');
 
 		$row=2;
@@ -479,9 +481,11 @@ class WeekController extends Controller
 		foreach($CustBoxes as $CustBox)
 		{
 			$sheet->SetCellValue('A'.$row, $CustBox->Box->BoxSize->box_size_name);
-			$sheet->SetCellValue('B'.$row, $CustBox->Customer->User->full_name);
-			$sheet->SetCellValue('C'.$row, $CustBox->Customer->User->user_phone);
-			$sheet->SetCellValue('D'.$row, $CustBox->delivery_location);
+			$sheet->SetCellValue('B'.$row, $CustBox->Customer->User->first_name);
+			$sheet->SetCellValue('C'.$row, $CustBox->Customer->User->last_name);
+			$sheet->SetCellValue('D'.$row, $CustBox->Customer->User->user_phone);
+			$sheet->SetCellValue('E'.$row, $CustBox->Customer->User->user_mobile);
+			$sheet->SetCellValue('F'.$row, $CustBox->delivery_location);
 			//$sheet->SetCellValue('E'.$row, $CustBox->Customer->CustomerLocation ? $CustBox->Customer->CustomerLocation->full_address : "");
 			$row++;
 		}
@@ -493,6 +497,7 @@ class WeekController extends Controller
 		$objPHPExcel->getActiveSheet()->getColumnDimension("C")->setAutoSize(true);
 		$objPHPExcel->getActiveSheet()->getColumnDimension("D")->setAutoSize(true);
 		$objPHPExcel->getActiveSheet()->getColumnDimension("E")->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension("F")->setAutoSize(true);
 		
 		// Rename sheet
 		$objPHPExcel->getActiveSheet()->setTitle('Customer List');
