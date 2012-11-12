@@ -147,27 +147,41 @@ class SiteController extends Controller
 	
 	public function actionUpdateDeliveryCosts()
 	{
-		$sql=
-			'SELECT cb.customer_box_id, w.week_delivery_date, cw.week_id, cb.customer_id, b.box_price, cb.delivery_cost, l.location_delivery_value, l.is_pickup
-			FROM `customer_boxes` cb
-			INNER JOIN boxes b ON cb.box_id = b.box_id
-			INNER JOIN customer_weeks cw ON b.week_id = cw.week_id
-			INNER JOIN locations l ON cw.customer_location_id = l.location_id
-			INNER JOIN weeks w ON b.week_id = w.week_id
-			WHERE delivery_cost != location_delivery_value
-			AND week_delivery_date > NOW()';
+//		$sql=
+//			'SELECT cb.customer_box_id, w.week_delivery_date, cw.week_id, cb.customer_id, b.box_price, cb.delivery_cost, l.location_delivery_value, l.is_pickup
+//			FROM `customer_boxes` cb
+//			INNER JOIN boxes b ON cb.box_id = b.box_id
+//			INNER JOIN customer_weeks cw ON b.week_id = cw.week_id
+//			INNER JOIN locations l ON cw.customer_location_id = l.location_id
+//			INNER JOIN weeks w ON b.week_id = w.week_id
+//			WHERE delivery_cost != location_delivery_value
+//			AND week_delivery_date > NOW()';
 		
-		$connection=Yii::app()->db; 
-		$dataReader=$connection->createCommand($sql)->query();
-		foreach($dataReader as $row)
+//		$connection=Yii::app()->db; 
+//		$dataReader=$connection->createCommand($sql)->query();
+//		foreach($dataReader as $row)
+//		{
+//			$custBoxId=$row['customer_box_id'];
+//			$delivery=$row['location_delivery_value'];
+//			$upSql="UPDATE customer_box SET delivery_cost=$delivery WHERE customer_box_id=$custBoxId;";
+//			echo $upSql.'<br />';
+//			//$connection->createCommand($upSql)->execute();
+//		}
+		
+		$CustBoxes=CustomerBox::model()->with(array('Box'=>array('Week')))->findAll('Week.week_delivery_date > NOW()');
+		$n=0;
+		foreach($CustBoxes as $CustBox)
 		{
-			$custBoxId=$row['customer_box_id'];
-			$delivery=$row['location_delivery_value'];
-			$upSql="UPDATE customer_box SET delivery_cost=$delivery WHERE customer_box_id=$custBoxId;";
-			echo $upSql.'<br />';
-			//$connection->createCommand($upSql)->execute();
+			$CustWeek=CustomerWeek::model()->findByAttributes(array('customer_id'=>$CustBox->customer_id, 'week_id'=>$CustBox->Box->week_id));
+			if($CustBox->delivery_cost != $CustWeek->Location->location_delivery_value)
+			{
+				$User=$CustBox->Customer->User;
+				echo "<p>Customer $User->id: {$User->full_name} ($CustBox->delivery_cost - {$CustWeek->Location->location_delivery_value})</p>";
+				$upSql="UPDATE customer_box SET delivery_cost={$CustWeek->Location->location_delivery_value} WHERE customer_box_id=$CustBox->customer_box_id;";
+				$n++;
+			}
 		}
-		
+		echo "<p><strong>count: $n</strong></p>";
 	}
 	
 	public function actionGenerateLocations()
