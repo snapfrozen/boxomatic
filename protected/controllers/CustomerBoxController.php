@@ -227,6 +227,7 @@ class CustomerBoxController extends Controller
 				$locationId=$parts[1];
 				$custLocationId=$parts[0];
 			}
+			$Location=Location::model()->findByPk($locationId);
 
 			foreach($_POST['Recurring'] as $key=>$quantity)
 			{
@@ -262,7 +263,7 @@ class CustomerBoxController extends Controller
 						$CustBox->customer_id=$Customer->customer_id;
 						$CustBox->box_id=$Box->box_id;
 						$CustBox->quantity=1;
-						$CustBox->delivery_cost=$Customer->Location->location_delivery_value;
+						$CustBox->delivery_cost=$Location->location_delivery_value;
 						$CustBox->save();
 
 						$CustWeek=CustomerWeek::model()->findByAttributes(array(
