@@ -145,6 +145,31 @@ class SiteController extends Controller
 		$this->render('login',array('model'=>$model));
 	}
 	
+	public function actionUpdateDeliveryCosts()
+	{
+		$sql=
+			'SELECT cb.customer_box_id, w.week_delivery_date, cw.week_id, cb.customer_id, b.box_price, cb.delivery_cost, l.location_delivery_value, l.is_pickup
+			FROM `customer_boxes` cb
+			INNER JOIN boxes b ON cb.box_id = b.box_id
+			INNER JOIN customer_weeks cw ON b.week_id = cw.week_id
+			INNER JOIN locations l ON cw.customer_location_id = l.location_id
+			INNER JOIN weeks w ON b.week_id = w.week_id
+			WHERE delivery_cost != location_delivery_value
+			AND week_delivery_date > NOW()';
+		
+		$connection=Yii::app()->db; 
+		$dataReader=$connection->createCommand($sql)->query();
+		foreach($dataReader as $row)
+		{
+			$custBoxId=$row['customer_box_id'];
+			$delivery=$row['location_delivery_value'];
+			$upSql="UPDATE customer_box SET delivery_cost=$delivery WHERE customer_box_id=$custBoxId;";
+			echo $upSql.'<br />';
+			//$connection->createCommand($upSql)->execute();
+		}
+		
+	}
+	
 	public function actionGenerateLocations()
 	{
 	
