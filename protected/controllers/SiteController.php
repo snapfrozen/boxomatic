@@ -168,7 +168,7 @@ class SiteController extends Controller
 //			//$connection->createCommand($upSql)->execute();
 //		}
 		
-		$CustBoxes=CustomerBox::model()->with(array('Box'=>array('Week')))->findAll('Week.week_delivery_date > NOW()');
+		$CustBoxes=CustomerBox::model()->with(array('Box'=>array('with'=>array('Week'))))->findAll('Week.week_delivery_date > NOW()');
 		$n=0;
 		foreach($CustBoxes as $CustBox)
 		{
