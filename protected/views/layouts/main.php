@@ -66,6 +66,7 @@
 				),
 				array('label'=>'Locations', 'url'=>array('location/admin'), 'visible' => Yii::app()->user->checkAccess('admin')),
 				array('label'=>'Admin Users', 'url'=>array('user/admin'), 'visible' => Yii::app()->user->checkAccess('admin')),
+				array('label'=>'Reports', 'url'=>array('site/reports'), 'visible' => Yii::app()->user->checkAccess('admin')),
 				array('label'=>'Register', 'url'=>array('site/register'), 'visible'=>Yii::app()->user->isGuest),
 				array('label'=>'Login', 'url'=>array('site/login'), 'visible'=>Yii::app()->user->isGuest),
 				array('label'=>'Logout ('.Yii::app()->user->name.')', 'url'=>array('site/logout'), 'visible'=>!Yii::app()->user->isGuest)
