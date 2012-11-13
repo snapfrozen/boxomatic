@@ -21,6 +21,33 @@ class SiteController extends Controller
 			),
 		);
 	}
+	
+	/**
+	 * @return array action filters
+	 */
+	public function filters()
+	{
+		return array(
+			'accessControl', // perform access control for CRUD operations
+		);
+	}
+	
+	public function accessRules()
+	{
+		return array(
+			array('allow', // allow admin user to perform 'admin' and 'delete' actions
+				'actions'=>array('index','error','contact','register','login','logout'),
+				'users'=>array('*'),
+			),
+			array('allow',
+				'actions'=>array('reports'),
+				'roles'=>array('admin'),
+			),
+			array('deny',  // deny all users
+				'users'=>array('*'),
+			),
+		);
+	}
 
 	/**
 	 * This is the default 'index' action that is invoked
@@ -256,6 +283,86 @@ class SiteController extends Controller
 	}
 	 */
 
+	/**
+	 * Generate Reports
+	 */
+	public function actionReports()
+	{
+		$CustBoxes=null;
+		$xAxis=array();
+		$yAxis=array();
+		$series=array();
+		$xAxisName='';
+		$yAxisName='';
+		$r=Yii::app()->request;
+		if(isset($_POST['boxSales']))
+		{	
+			$xAxisName='Week';
+			$yAxisName='Boxes Sold';
+			$dateFrom=$r->getPost($_POST['date_from'],'2012-01-01');
+			$dateTo=$r->getPost($_POST['date_to'],'2020-01-01');
+
+			//All boxes
+			$sql=
+				"SELECT w.week_delivery_date, count(customer_box_id) as total
+				FROM customer_boxes cb
+				JOIN boxes b ON cb.box_id=b.box_id
+				JOIN weeks w ON b.week_id=w.week_id
+				WHERE 
+					cb.status=1 AND
+					w.week_delivery_date > \"$dateFrom\" AND
+					w.week_delivery_date < \"$dateTo\"
+				GROUP BY w.week_delivery_date
+				ORDER BY w.week_delivery_date ASC";
+			
+			$connection=Yii::app()->db; 
+			$dataReader=$connection->createCommand($sql)->query();
+
+			$allBoxesData=array();
+			foreach($dataReader as $row) {
+				//multiply by 1000 for milliseconds for javascript
+				$allBoxesData[]=array(strtotime($row['week_delivery_date'])*1000, (int)$row['total']);
+			}
+			$series[]=array('name'=>'All Boxes','data'=>$allBoxesData);
+			$yAxis=array('title'=>array('text'=>'Boxes Sold'), 'min'=>0);
+			
+			//Get data for each box size
+			$BoxSizes=BoxSize::model()->findAll();
+			foreach($BoxSizes as $BoxSize)
+			{
+				$sql=
+					"SELECT w.week_delivery_date, count(customer_box_id) as total
+					FROM customer_boxes cb
+					JOIN boxes b ON cb.box_id=b.box_id
+					JOIN weeks w ON b.week_id=w.week_id
+					WHERE 
+						b.size_id=$BoxSize->box_size_id AND
+						cb.status=1 AND 
+						w.week_delivery_date > \"$dateFrom\" AND
+						w.week_delivery_date < \"$dateTo\"
+					GROUP BY w.week_delivery_date
+					ORDER BY w.week_delivery_date ASC";
+
+				$dataReader=$connection->createCommand($sql)->query();
+
+				$boxesData=array();
+				foreach($dataReader as $row) {
+					//multiply by 1000 for milliseconds for javascript
+					$boxesData[]=array(strtotime($row['week_delivery_date'])*1000, (int)$row['total']);
+				}
+				$series[]=array('name'=>$BoxSize->box_size_name . ' Boxes','data'=>$boxesData);
+			}
+		}
+		
+		$this->render('reports',array(
+			'xAxis'=>$xAxis,
+			'yAxis'=>$yAxis,
+			'xAxisName'=>$xAxisName,
+			'yAxisName'=>$yAxisName,
+			'series'=>$series,
+		));
+	}
+	
 	/**
 	 * Logs out the current user and redirect to homepage.
 	 */

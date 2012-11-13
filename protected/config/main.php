@@ -20,7 +20,8 @@ return array(
 		'application.components.snap.*',
 		'application.modules.user.models.*',
 		'ext.yii-mail.YiiMailMessage',
-		'ext.CEditableGrid.*'
+		'ext.highcharts.*',
+		'ext.CEditableGrid.*',
 	),
 
 	'modules'=>array(
