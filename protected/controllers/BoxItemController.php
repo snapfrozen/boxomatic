@@ -301,17 +301,21 @@ class BoxItemController extends Controller
 				$CustBox->save();
 				
 			    //Box approved email
-			    $week_delivery_date = $Box->Week->week_delivery_date;
-			    $message = new YiiMailMessage('Your order for '.$week_delivery_date.' has been approved');
-				$message->view = 'customer_box_approved';
-				$message->setBody(array('Customer'=>$Customer, 'CustomerBox' =>$CustBox), 'text/html');
-				$message->addTo($Customer->User->user_email);
-				$message->addTo('info@bellofoodbox.org.au');
-				$message->setFrom(array(Yii::app()->params['adminEmail'] => Yii::app()->params['adminEmailFromName']));
-				
-				if(!@Yii::app()->mail->send($message))
+				$validator=new CEmailValidator();
+				if($validator->validateValue($Customer->User->user_email)) 
 				{
-					$mailError=true;
+					$week_delivery_date = $Box->Week->week_delivery_date;
+					$message = new YiiMailMessage('Your order for '.$week_delivery_date.' has been approved');
+					$message->view = 'customer_box_approved';
+					$message->setBody(array('Customer'=>$Customer, 'CustomerBox' =>$CustBox), 'text/html');
+					$message->addTo($Customer->User->user_email);
+					$message->addTo('info@bellofoodbox.org.au');
+					$message->setFrom(array(Yii::app()->params['adminEmail'] => Yii::app()->params['adminEmailFromName']));
+
+					if(!@Yii::app()->mail->send($message))
+					{
+						$mailError=true;
+					}
 				}
 			}
 			else
@@ -320,17 +324,21 @@ class BoxItemController extends Controller
 				$CustBox->save();
 				
 				//Box declined email
-			    $week_delivery_date = $Box->Week->week_delivery_date;
-			    $message = new YiiMailMessage('Your order for '.$week_delivery_date.' has been declined');
-				$message->view = 'customer_box_declined';
-				$message->setBody(array('Customer'=>$Customer, 'CustomerBox' => $CustBox), 'text/html');
-				$message->addTo($Customer->User->user_email);
-				$message->addTo('info@bellofoodbox.org.au');
-				$message->setFrom(array(Yii::app()->params['adminEmail'] => Yii::app()->params['adminEmailFromName']));
-				
-				if(!@Yii::app()->mail->send($message))
+				$validator=new CEmailValidator();
+				if($validator->validateValue($Customer->User->user_email)) 
 				{
-					$mailError=true;
+					$week_delivery_date = $Box->Week->week_delivery_date;
+					$message = new YiiMailMessage('Your order for '.$week_delivery_date.' has been declined');
+					$message->view = 'customer_box_declined';
+					$message->setBody(array('Customer'=>$Customer, 'CustomerBox' => $CustBox), 'text/html');
+					$message->addTo($Customer->User->user_email);
+					$message->addTo('info@bellofoodbox.org.au');
+					$message->setFrom(array(Yii::app()->params['adminEmail'] => Yii::app()->params['adminEmailFromName']));
+
+					if(!@Yii::app()->mail->send($message))
+					{
+						$mailError=true;
+					}
 				}
 			}
 		}
@@ -367,17 +375,21 @@ class BoxItemController extends Controller
 			$CustBox->save();
 			
 			//Box approved email
-		    $week_delivery_date = $CustBox->Box->Week->week_delivery_date;
-		    $message = new YiiMailMessage('Your order for '.$week_delivery_date.' has been approved');
-			$message->view = 'customer_box_approved';
-			$message->setBody(array('Customer'=>$Customer, 'CustomerBox' => $CustBox), 'text/html');
-			$message->addTo($Customer->User->user_email);
-			$message->addTo('info@bellofoodbox.org.au');
-			$message->setFrom(array(Yii::app()->params['adminEmail'] => Yii::app()->params['adminEmailFromName']));
-			
-			if(!@Yii::app()->mail->send($message))
+			$validator=new CEmailValidator();
+			if($validator->validateValue($Customer->User->user_email)) 
 			{
-				$mailError=true;
+				$week_delivery_date = $CustBox->Box->Week->week_delivery_date;
+				$message = new YiiMailMessage('Your order for '.$week_delivery_date.' has been approved');
+				$message->view = 'customer_box_approved';
+				$message->setBody(array('Customer'=>$Customer, 'CustomerBox' => $CustBox), 'text/html');
+				$message->addTo($Customer->User->user_email);
+				$message->addTo('info@bellofoodbox.org.au');
+				$message->setFrom(array(Yii::app()->params['adminEmail'] => Yii::app()->params['adminEmailFromName']));
+
+				if(!@Yii::app()->mail->send($message))
+				{
+					$mailError=true;
+				}
 			}
 			
 			Yii::app()->user->setFlash('success', "User included in this week's delivery.");

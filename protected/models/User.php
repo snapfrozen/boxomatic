@@ -58,12 +58,13 @@ class User extends SnapActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('user_email, password, first_name, last_name','required'),
+			array('password, first_name, last_name','required'),
+			array('user_email','required','on'=>'register'),
 			array('customer_id, grower_id, update_user_id, create_user_id', 'numerical', 'integerOnly'=>true),
 			array('user_email, password', 'length', 'max'=>255),
 			array('user_email', 'unique'),
 			array('user_email', 'email'),
-			array('password', 'compare','on'=>'changePassword'),
+			array('password', 'compare', 'on'=>'changePassword'),
 			array('password_repeat', 'safe'),
 			array('first_name, last_name, user_phone, user_mobile, user_suburb, user_state, user_postcode', 'length', 'max'=>45),
 			array('user_address, user_address2, user_email', 'length', 'max'=>150),
