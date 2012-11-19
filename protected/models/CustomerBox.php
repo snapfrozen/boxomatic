@@ -18,7 +18,7 @@ class CustomerBox extends CActiveRecord
 	const STATUS_NOT_PROCESSED=0;
 	const STATUS_APPROVED=1;
 	const STATUS_DECLINED=2;
-	//const STATUS_COLLECTED=3;
+	const STATUS_DELIVERED=3;
 	
 	public $week_total=null;		//holds an aggregate total for the week;
 	public $fulfilled_total=null;	//holds an aggregate total for all orders before the deadline
@@ -248,7 +248,7 @@ class CustomerBox extends CActiveRecord
 			self::STATUS_NOT_PROCESSED=>'Not Processed',
 			self::STATUS_APPROVED=>'Approved',
 			self::STATUS_DECLINED=>'Declined',
-			//self::STATUS_COLLECTED=>'Collected',
+			self::STATUS_DELIVERED=>'Collected/Delivered',
 		);
 	}
 	
@@ -268,5 +268,40 @@ class CustomerBox extends CActiveRecord
 			'week_id'=>$this->Box->week_id
 		));
 		return $CustWeek->delivery_location;
+	}
+	
+	public function getDelivery_address()
+	{
+		$CustWeek=CustomerWeek::model()->findByAttributes(array(
+			'customer_id'=>$this->customer_id,
+			'week_id'=>$this->Box->week_id
+		));
+		return $CustWeek->delivery_address;
+	}
+	
+	public function getQrCode()
+	{
+		$base=Yii::getPathOfAlias('webroot');
+		$urlPath='/images/customer_boxes/qr/' . $this->customer_box_id . '.png';
+		$filePath=$base.$urlPath;
+		
+		$url='http://'.Yii::app()->request->serverName;
+		$url.=Yii::app()->createUrl('customerBox/setDelivered',array('id'=>$this->customer_box_id));
+		
+		Yii::import('ext.qrcode.QRCode');
+		$code=new QRCode($url);
+		$code->create($filePath);
+		
+		return Yii::app()->request->baseUrl.$urlPath;
+	}
+	
+	public function setDelivered()
+	{
+		if($this->status!=self::STATUS_DELIVERED)
+		{
+			$this->status=self::STATUS_DELIVERED;
+			return $this->save();
+		}
+		return false;
 	}
 }

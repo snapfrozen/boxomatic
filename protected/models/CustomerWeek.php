@@ -127,13 +127,16 @@ class CustomerWeek extends CActiveRecord
 	
 	public function getDelivery_location()
 	{
-		if($this->CustomerLocation)
-		{
-			return $this->Location->location_name . ': ' . $this->CustomerLocation->full_address;
+		return $this->Location->location_name;
+	}
+	
+	public function getDelivery_address()
+	{
+		if($this->CustomerLocation) {
+			return $this->CustomerLocation->full_address;
 		}
-		else
-		{
-			return $this->Location->location_name;
+		else {
+			return "";
 		}
 	}
 }

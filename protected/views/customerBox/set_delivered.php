@@ -1,0 +1,1 @@
+<p>Box set to Collected/Delivered</p>

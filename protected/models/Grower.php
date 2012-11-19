@@ -61,7 +61,8 @@ class Grower extends CActiveRecord
 		// will receive user inputs.
 		return array(
 //			array('grower_state', 'required'),
-			array('grower_name, grower_mobile, grower_address2, grower_suburb, grower_postcode, grower_distance_kms, grower_bank_account_name, grower_bank_bsb, grower_bank_acc', 'length', 'max'=>45),
+			array('longitude, lattitude', 'numerical'),
+			array('company_name, Ordering, ABN, grower_name, grower_mobile, grower_address2, grower_suburb, grower_postcode, grower_distance_kms, grower_bank_account_name, grower_bank_bsb, grower_bank_acc', 'length', 'max'=>45),
 			array('grower_phone, grower_address, grower_website, grower_certification_status', 'length', 'max'=>150),
 			array('grower_state', 'length', 'max'=>50),
 			array('grower_email', 'length', 'max'=>100),
@@ -113,6 +114,7 @@ class Grower extends CActiveRecord
 			'grower_notes' => 'Notes',
 			'grower_payment_details' => 'Payment Details',
 			'grower_item_search' => 'Produce',
+			'lattitude' => 'Latitude',
 		);
 	}
 

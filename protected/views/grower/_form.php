@@ -12,14 +12,92 @@
 	
 	<div class="row">
 		<?php echo $form->labelEx($model,'grower_name'); ?>
-		<?php echo $form->textField($model,'grower_name',array('size'=>60,'maxlength'=>100)); ?>
+		<?php echo $form->textField($model,'grower_name'); ?>
 		<?php echo $form->error($model,'grower_name'); ?>
 	</div>
 	
 	<div class="row">
+		<?php echo $form->labelEx($model,'company_name'); ?>
+		<?php echo $form->textField($model,'company_name'); ?>
+		<?php echo $form->error($model,'company_name'); ?>
+	</div>
+	
+	<div class="row">
+		<?php echo $form->labelEx($model,'Ordering'); ?>
+		<?php echo $form->textField($model,'Ordering'); ?>
+		<?php echo $form->error($model,'Ordering'); ?>
+	</div>
+	
+	<div class="row">
+		<?php echo $form->labelEx($model,'grower_email'); ?>
+		<?php echo $form->textField($model,'grower_email'); ?>
+		<?php echo $form->error($model,'grower_email'); ?>
+	</div>
+	
+	<div class="row">
 		<?php echo $form->labelEx($model,'grower_website'); ?>
-		<?php echo $form->textField($model,'grower_website',array('size'=>60,'maxlength'=>100)); ?>
+		<?php echo $form->textField($model,'grower_website'); ?>
 		<?php echo $form->error($model,'grower_website'); ?>
+	</div>
+	
+	<div class="row">
+		<?php echo $form->labelEx($model,'grower_phone'); ?>
+		<?php echo $form->textField($model,'grower_phone'); ?>
+		<?php echo $form->error($model,'grower_phone'); ?>
+	</div>
+	
+	<div class="row">
+		<?php echo $form->labelEx($model,'grower_mobile'); ?>
+		<?php echo $form->textField($model,'grower_mobile'); ?>
+		<?php echo $form->error($model,'grower_mobile'); ?>
+	</div>
+	
+	<div class="row">
+		<?php echo $form->labelEx($model,'grower_address'); ?>
+		<?php echo $form->textField($model,'grower_address'); ?>
+		<?php echo $form->error($model,'grower_address'); ?>
+	</div>
+	
+	<div class="row">
+		<?php echo $form->labelEx($model,'grower_address2'); ?>
+		<?php echo $form->textField($model,'grower_address2'); ?>
+		<?php echo $form->error($model,'grower_address2'); ?>
+	</div>
+	
+	<div class="row">
+		<?php echo $form->labelEx($model,'grower_postcode'); ?>
+		<?php echo $form->textField($model,'grower_postcode'); ?>
+		<?php echo $form->error($model,'grower_postcode'); ?>
+	</div>
+	
+	<div class="row">
+		<?php echo $form->labelEx($model,'grower_suburb'); ?>
+		<?php echo $form->textField($model,'grower_suburb'); ?>
+		<?php echo $form->error($model,'grower_suburb'); ?>
+	</div>
+	
+	<div class="row">
+		<?php echo $form->labelEx($model,'grower_state'); ?>
+		<?php echo $form->textField($model,'grower_state'); ?>
+		<?php echo $form->error($model,'grower_state'); ?>
+	</div>
+
+	<div class="row">
+		<?php echo $form->labelEx($model,'ABN'); ?>
+		<?php echo $form->textField($model,'ABN'); ?>
+		<?php echo $form->error($model,'ABN'); ?>
+	</div>
+	
+	<div class="row">
+		<?php echo $form->labelEx($model,'grower_state'); ?>
+		<?php echo $form->textField($model,'grower_state'); ?>
+		<?php echo $form->error($model,'grower_state'); ?>
+	</div>
+	
+	<div class="row">
+		<?php echo $form->labelEx($model,'grower_state'); ?>
+		<?php echo $form->textField($model,'grower_state'); ?>
+		<?php echo $form->error($model,'grower_state'); ?>
 	</div>
 
 	<div class="row">
@@ -75,6 +153,19 @@
 		<?php echo $form->textArea($model,'grower_payment_details',array('rows'=>6, 'cols'=>50)); ?>
 		<?php echo $form->error($model,'grower_payment_details'); ?>
 	</div>
+	
+	<div class="row">
+		<?php echo $form->labelEx($model,'lattitude'); ?>
+		<?php echo $form->textArea($model,'lattitude'); ?>
+		<?php echo $form->error($model,'lattitude'); ?>
+	</div>
+	
+	<div class="row">
+		<?php echo $form->labelEx($model,'longitude'); ?>
+		<?php echo $form->textArea($model,'longitude'); ?>
+		<?php echo $form->error($model,'longitude'); ?>
+	</div>
+	
 
 	<div class="row buttons">
 		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>

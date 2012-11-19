@@ -27,6 +27,10 @@ class CustomerBoxController extends Controller
 	{
 		return array(
 			array('allow',
+				'actions'=>array('setDelivered'),
+				'users'=>array('*'),
+			),
+			array('allow',
 				'actions'=>array('index','view','create','update','admin','delete','order'),
 				'roles'=>array('customer'),
 			),
@@ -52,6 +56,22 @@ class CustomerBoxController extends Controller
 			'model'=>$model,
 			'items'=>$items
 		));
+	}
+	
+	/**
+	 * 
+	 */
+	public function actionSetDelivered($id)
+	{
+		$model=$this->loadModel($id);
+		if($model->setDelivered()) {
+			$this->render('set_delivered');
+		}
+		else 
+		{
+			Yii::app()->user->setFlash('error', "Box already collected");
+			$this->redirect(array('site/index'));
+		}
 	}
 
 	/**

@@ -35,7 +35,7 @@ class WeekController extends Controller
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete','generatePackingList','generateCustomerList','generateOrderList'),
+				'actions'=>array('admin','delete','generatePackingList','generateCustomerList','generateOrderList','generateCustomerListPdf'),
 				'roles'=>array('admin'),
 			),
 			array('deny',  // deny all users
@@ -447,14 +447,16 @@ class WeekController extends Controller
 			'Box'=>array(
 				'with'=>array(
 					'BoxSize'
-			))), array(
+			)),
 			'Customer'=>array(
 				'with'=>array(
 					'User',
-					'Location'
-			)))
+				)
+			)
+		)
 		)->findAll(array(
-			'condition'=>'week_id='.$week.' AND status='.CustomerBox::STATUS_APPROVED
+			'condition'=>'week_id='.$week.' AND status='.CustomerBox::STATUS_APPROVED,
+			'order'=>'User.first_name'
 		));
 
 		$phpExcelPath = Yii::getPathOfAlias('application.external.PHPExcel');
@@ -471,7 +473,8 @@ class WeekController extends Controller
 		$objPHPExcel->getActiveSheet()->SetCellValue('C1', 'Last name');
 		$objPHPExcel->getActiveSheet()->SetCellValue('D1', 'Telephone');
 		$objPHPExcel->getActiveSheet()->SetCellValue('E1', 'Mobile');
-		$objPHPExcel->getActiveSheet()->SetCellValue('F1', 'Delivery Location');
+		$objPHPExcel->getActiveSheet()->SetCellValue('F1', 'Location');
+		$objPHPExcel->getActiveSheet()->SetCellValue('G1', 'Address');
 		//$objPHPExcel->getActiveSheet()->SetCellValue('E1', 'Address');
 
 		$row=2;
@@ -486,11 +489,12 @@ class WeekController extends Controller
 			$sheet->SetCellValue('D'.$row, $CustBox->Customer->User->user_phone);
 			$sheet->SetCellValue('E'.$row, $CustBox->Customer->User->user_mobile);
 			$sheet->SetCellValue('F'.$row, $CustBox->delivery_location);
+			$sheet->SetCellValue('G'.$row, $CustBox->delivery_address);
 			//$sheet->SetCellValue('E'.$row, $CustBox->Customer->CustomerLocation ? $CustBox->Customer->CustomerLocation->full_address : "");
 			$row++;
 		}
 		spl_autoload_unregister(array('YiiBase','autoload'));  
-		$objPHPExcel->getActiveSheet()->getStyle("A1:E1")->applyFromArray(array("font" => array( "bold" => true)));
+		$objPHPExcel->getActiveSheet()->getStyle("A1:G1")->applyFromArray(array("font" => array( "bold" => true)));
 		
 		$objPHPExcel->getActiveSheet()->getColumnDimension("A")->setAutoSize(true);
 		$objPHPExcel->getActiveSheet()->getColumnDimension("B")->setAutoSize(true);
@@ -498,6 +502,7 @@ class WeekController extends Controller
 		$objPHPExcel->getActiveSheet()->getColumnDimension("D")->setAutoSize(true);
 		$objPHPExcel->getActiveSheet()->getColumnDimension("E")->setAutoSize(true);
 		$objPHPExcel->getActiveSheet()->getColumnDimension("F")->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension("G")->setAutoSize(true);
 		
 		// Rename sheet
 		$objPHPExcel->getActiveSheet()->setTitle('Customer List');
@@ -508,6 +513,36 @@ class WeekController extends Controller
 		$objWriter->save('php://output');
 
 		exit;
+	}
+	
+	public function actionGenerateCustomerListPdf($week)
+	{
+		$mPDF1=Yii::app()->ePdf->mpdf();
+		$mPDF1->SetTitle('Customer list');
+		
+		$CustBoxes=CustomerBox::model()->with(array(
+			'Box'=>array(
+				'with'=>array(
+					'BoxSize'
+			)),
+			'Customer'=>array(
+				'with'=>array(
+					'User',
+				)
+			)
+		)
+		)->findAll(array(
+			'condition'=>'week_id='.$week.' AND status='.CustomerBox::STATUS_APPROVED,
+			'order'=>'User.first_name'
+		));
+		
+		$stylesheet = file_get_contents(Yii::getPathOfAlias('webroot.css') . '/pdf.css');
+		$mPDF1->WriteHTML($stylesheet, 1);
+
+		//$this->renderPartial('customer_list_pdf', array('CustBoxes'=>$CustBoxes));
+		
+		$mPDF1->WriteHTML($this->renderPartial('customer_list_pdf', array('CustBoxes'=>$CustBoxes), true));
+		$mPDF1->Output();
 	}
 
 	/**
