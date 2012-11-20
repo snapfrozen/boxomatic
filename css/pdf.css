@@ -1,1 +1,7 @@
+body {font-family:arial}
 #customerList img {width:80px;height:80px;}
+#customerList .bottom {border-bottom:1px solid #ccc}
+#customerList .alignCentre {text-align:center;}
+#customerList td {}
+/*.name {width:35%}*/
+/*.phone {width:70%}*/

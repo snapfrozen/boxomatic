@@ -539,7 +539,7 @@ class WeekController extends Controller
 		$stylesheet = file_get_contents(Yii::getPathOfAlias('webroot.css') . '/pdf.css');
 		$mPDF1->WriteHTML($stylesheet, 1);
 
-		//$this->renderPartial('customer_list_pdf', array('CustBoxes'=>$CustBoxes));
+//		$this->renderPartial('customer_list_pdf', array('CustBoxes'=>$CustBoxes));
 		
 		$mPDF1->WriteHTML($this->renderPartial('customer_list_pdf', array('CustBoxes'=>$CustBoxes), true));
 		$mPDF1->Output();

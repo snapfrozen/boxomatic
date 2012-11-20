@@ -63,7 +63,7 @@ class CustomerBoxController extends Controller
 	 */
 	public function actionSetDelivered($id)
 	{
-		$model=$this->loadModel($id);
+		$model=CustomerBox::model()->resetScope()->findByPk($id);
 		if($model->setDelivered()) {
 			$this->render('set_delivered');
 		}
