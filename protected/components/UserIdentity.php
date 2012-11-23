@@ -13,7 +13,7 @@ class UserIdentity extends CUserIdentity
 	* Authenticates a user using the User data model.
 	* @return boolean whether authentication succeeds.
 	*/
-	public function authenticate()
+	public function authenticate($validatePassword=true)
 	{		
 		$user=User::model()->resetScope()->findByAttributes(array('user_email'=>$this->username));
 		if($user===null)
@@ -39,7 +39,7 @@ class UserIdentity extends CUserIdentity
 				$this->setState('grower_id', $user->grower_id); 
 				$this->errorCode=self::ERROR_NONE;
 			}
-			else if($user->password!==Yii::app()->snap->encrypt($this->password))
+			else if($validatePassword && $user->password!==Yii::app()->snap->encrypt($this->password))
 			{
 				$this->errorCode=self::ERROR_PASSWORD_INVALID;
 			} 

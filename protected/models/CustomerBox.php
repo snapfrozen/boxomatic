@@ -199,24 +199,6 @@ class CustomerBox extends CActiveRecord
 			return true;
 	}
 	
-	
-	/**
-	* Only allow admins to access all user information
-	*/
-	public function defaultScope()
-	{
-		if(!Yii::app()->user->checkAccess('admin')) 
-		{
-			return array(
-				'condition' => "customer_id = '" . Yii::app()->user->customer_id . "'",
-			);
-		}
-		else
-		{
-			return parent::defaultScope();
-		}
-	}
-	
 	public static function findCustomerBox($weekId, $sizeId, $customerId)
 	{
 		$criteria=new CDbCriteria;

@@ -14,6 +14,8 @@
  */
 class Customer extends CActiveRecord
 {
+	public $total_orders;
+	public $last_order;
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @return Customer the static model class
@@ -215,4 +217,34 @@ class Customer extends CActiveRecord
 			return $this->Location->location_name;
 		}
 	}
+	
+	/**
+	 * Find all customers that have no future orders 
+	 */
+	public function findAllWithNoOrders()
+	{
+		$criteria=new CDbCriteria();
+		$criteria->with=array(
+			'User'=>array(
+				'joinType'=>'INNER JOIN'
+			),
+			'CustomerBoxes'=>array(
+				'with'=>array(
+					'Box'=>array(
+						'with'=>array(
+							'Week'=>array()
+						)
+					)
+				),
+			),
+		);
+		$criteria->order='first_name ASC';
+		$criteria->select='*, COUNT(CustomerBoxes.customer_box_id) AS total_orders, MAX(Week.week_delivery_date) as last_order';
+		$criteria->group='t.customer_id';
+		$criteria->addCondition('Week.week_delivery_date < DATE_ADD(NOW(), INTERVAL 7 DAY)');
+		$criteria->addCondition('Week.week_delivery_date > NOW()');
+		
+		return $this->findAll($criteria);
+	}
+	
 }

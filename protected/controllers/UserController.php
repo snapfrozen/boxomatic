@@ -348,14 +348,14 @@ class UserController extends Controller
 		if(isset($_POST['ForgottenPasswordForm']))
 		{
 			$model->scenario='changePassword';
-			$model->attributes = $_POST['ForgottenPasswordForm'];
+			$model->attributes=$_POST['ForgottenPasswordForm'];
 			
 			// validate user input and redirect to the previous page if valid
 			if($model->validate())
 			{
 				$User=$model->User;
-				$User->password_retrieval_key = $User->generatePassword(50,4);
-				$User->update_time = new CDbExpression('NOW()');
+				$User->password_retrieval_key=$User->generatePassword(50,4);
+				$User->update_time=new CDbExpression('NOW()');
 				$User->update();
 				
 				$message = new YiiMailMessage('FoodBox password renewal');
@@ -377,7 +377,7 @@ class UserController extends Controller
 		}
 		
 		// display the login form
-		$this->render('forgottenPassword',array('model' => $model,'User'=>$User,'mailError'=>$mailError));
+		$this->render('forgottenPassword',array('model'=>$model,'User'=>$User,'mailError'=>$mailError));
 	}
 	
 	/**

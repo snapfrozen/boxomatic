@@ -26,7 +26,7 @@ class Controller extends CController
 	 * when trying to access these properies and they don't exist
 	 */
 	public function init() 
-	{	
+	{
 		if( !Yii::app()->user->hasState('customer_id') )
 			Yii::app()->user->setState('customer_id', false);
 		if( !Yii::app()->user->hasState('grower_id') )
@@ -35,5 +35,23 @@ class Controller extends CController
 			Yii::app()->user->setState('shadow_id', false);
 		if( !Yii::app()->user->hasState('shadow_name') )
 			Yii::app()->user->setState('shadow_name', false);
+		
+		//Test if the login key find the user and auto login.
+		$key=Yii::app()->request->getParam('key');
+		if($key)
+		{
+			$User=User::model()->findByAttributes(array('auto_login_key'=>$key),'update_time > date_sub(NOW(), interval 7 day)');
+			if($User)
+			{
+				$identity=new UserIdentity($User->user_email,'');
+				$identity->authenticate(false);
+				Yii::app()->user->login($identity);
+				
+				$User->auto_login_key='';
+				$User->save(false);
+			}
+			//exit;
+		}
+		
 	}
 }
