@@ -70,7 +70,6 @@ class CronController extends Controller
 			if($validator->validateValue(trim($Cust->User->user_email))) 
 			{
 				$User=$Cust->User;
-				echo '<p>Sent reminder email to: "'.$User->user_email.'"</p>';
 				$User->auto_login_key=$User->generatePassword(50,4);
 				$User->update_time=new CDbExpression('NOW()');
 				$User->update();
@@ -79,9 +78,9 @@ class CronController extends Controller
 				$message = new YiiMailMessage('Running out of orders');
 				$message->view = 'customer_running_out_of_orders';
 				$message->setBody(array('Customer'=>$Cust,'User'=>$User), 'text/html');
-				//$message->addTo($Cust->User->user_email);
-				//$message->addTo('info@bellofoodbox.org.au');
-				$message->addTo('francis.beresford@gmail.com');
+				$message->addTo($Cust->User->user_email);
+				$message->addBcc('info@bellofoodbox.org.au');
+				//$message->addTo('francis.beresford@gmail.com');
 				$message->setFrom(array(Yii::app()->params['adminEmail'] => Yii::app()->params['adminEmailFromName']));
 
 				if(!@Yii::app()->mail->send($message)) {
@@ -89,7 +88,6 @@ class CronController extends Controller
 				} else {
 					echo '<p>Running out of orders message sent to: ' . $Cust->User->user_email . '</p>';
 				}
-				exit;
 			}
 			else
 			{
