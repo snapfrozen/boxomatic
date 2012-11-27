@@ -7,7 +7,7 @@
 <body style="margin:0;">
 <p>Hi <?php echo $Customer->User->first_name ?>,</p>
 <p>After your current order, you currently have no future orders placed. 
-	Please <?php echo CHtml::link('click here',array('CustomerBox/order','key'=>$User->auto_login_key)); ?>  to add more orders.</p>
+	Please <a href="http://www.bellofoodbox.org.au/index.php?r=CustomerBox/order&key=<?php echo $User->auto_login_key; ?>">click here</a> to add more orders.</p>
 
 <p>
 --<br />
