@@ -70,6 +70,8 @@ class CronController extends Controller
 			if($validator->validateValue($Cust->User->user_email)) 
 			{
 				$User=$Cust->User;
+				echo '<p>Will send reminder email to: '.$User->email.'</p>';
+				/*
 				$User->auto_login_key=$User->generatePassword(50,4);
 				$User->update_time=new CDbExpression('NOW()');
 				$User->update();
@@ -87,7 +89,7 @@ class CronController extends Controller
 				} else {
 					echo '<p>Running out of orders message sent to: ' . $Cust->User->user_email . '</p>';
 				}
-				exit;
+				 */
 			}
 			else
 			{
@@ -96,7 +98,7 @@ class CronController extends Controller
 		}
 		
 		echo '<p><strong>Finished.</strong></p>';
-//		Yii::app()->end();
+		Yii::app()->end();
 	}
 	
 }
