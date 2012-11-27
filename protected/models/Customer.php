@@ -223,6 +223,11 @@ class Customer extends CActiveRecord
 	 */
 	public function findAllWithNoOrders()
 	{
+		$NextDelivery=Week::model()->find(array(
+			'condition'=>'week_delivery_date > NOW()',
+			'order'=>'week_delivery_date ASC',
+		));
+
 		$criteria=new CDbCriteria();
 		$criteria->with=array(
 			'User'=>array(
@@ -241,8 +246,9 @@ class Customer extends CActiveRecord
 		$criteria->order='first_name ASC';
 		$criteria->select='*, COUNT(CustomerBoxes.customer_box_id) AS total_orders, MAX(Week.week_delivery_date) as last_order';
 		$criteria->group='t.customer_id';
-		$criteria->addCondition('Week.week_delivery_date < DATE_ADD(NOW(), INTERVAL 7 DAY)');
-		$criteria->addCondition('Week.week_delivery_date > NOW()');
+		$criteria->having='last_order="' . $NextDelivery->week_delivery_date . '"';
+		//$criteria->addCondition('Week.week_delivery_date < DATE_ADD(NOW(), INTERVAL 7 DAY)');
+		//$criteria->addCondition('Week.week_delivery_date > NOW()');
 		
 		return $this->findAll($criteria);
 	}

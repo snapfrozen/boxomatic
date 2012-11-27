@@ -67,10 +67,10 @@ class CronController extends Controller
 		foreach($Customers as $Cust)
 		{
 			$validator=new CEmailValidator();
-			if($validator->validateValue($Cust->User->user_email)) 
+			if($validator->validateValue(trim($Cust->User->user_email))) 
 			{
 				$User=$Cust->User;
-				echo '<p>Will send reminder email to: '.$User->user_email.'</p>';
+				echo '<p>Will send reminder email to: "'.$User->user_email.'"</p>';
 				/*
 				$User->auto_login_key=$User->generatePassword(50,4);
 				$User->update_time=new CDbExpression('NOW()');
@@ -93,12 +93,12 @@ class CronController extends Controller
 			}
 			else
 			{
-				echo '<p style="color:red"><strong>Email not valid: ' . $Cust->User->user_email . '</strong></p>';
+				echo '<p style="color:red"><strong>Email not valid: "' . $Cust->User->user_email . '"</strong></p>';
 			}
 		}
 		
 		echo '<p><strong>Finished.</strong></p>';
-		Yii::app()->end();
+		//Yii::app()->end();
 	}
 	
 }
