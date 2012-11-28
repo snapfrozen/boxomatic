@@ -31,7 +31,9 @@ class BoxItemController extends Controller
 				'roles'=>array('customer'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete','create','update','customerBoxes','processCustomers','processCustBox','refund'),
+				'actions'=>array(
+					'admin','delete','create','update','customerBoxes',
+					'processCustomers','processCustBox','refund','setDelivered','setApproved'),
 				'roles'=>array('admin'),
 			),
 			array('deny',  // deny all users
@@ -428,6 +430,48 @@ class BoxItemController extends Controller
 			$CustBox->delete();
 
 			Yii::app()->user->setFlash('success', "Customer box has been excluded for delivery and refunded.");
+		}
+		else
+		{
+			Yii::app()->user->setFlash('success', "Could not find the given Customer Box");
+		}
+
+		$this->redirect(array('customerBoxes','week'=>$CustBox->Box->week_id));
+	}
+	
+	/**
+	 * 
+	 */
+	public function actionSetApproved($custBox)
+	{
+		$CustBox=CustomerBox::model()->findByPk($custBox);
+		
+		if($CustBox)
+		{
+			$CustBox->status=CustomerBox::STATUS_APPROVED;
+			$CustBox->save();
+			Yii::app()->user->setFlash('success', "Customer box has been set to Approved.");
+		}
+		else
+		{
+			Yii::app()->user->setFlash('success', "Could not find the given Customer Box");
+		}
+
+		$this->redirect(array('customerBoxes','week'=>$CustBox->Box->week_id));
+	}
+	
+	/**
+	 * 
+	 */
+	public function actionSetDelivered($custBox)
+	{
+		$CustBox=CustomerBox::model()->findByPk($custBox);
+		
+		if($CustBox)
+		{
+			$CustBox->status=CustomerBox::STATUS_DELIVERED;
+			$CustBox->save();
+			Yii::app()->user->setFlash('success', "Customer box has been set to Delivered.");
 		}
 		else
 		{

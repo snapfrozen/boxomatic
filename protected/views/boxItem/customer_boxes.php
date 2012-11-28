@@ -63,7 +63,8 @@ EOD
 			),
 			array(
 				'name'=>'customer_first_name',
-				'value'=>'$data->Customer->User->first_name'
+				'type'=>'raw',
+				'value'=>'CHtml::link($data->Customer->User->first_name,array("user/view","id"=>$data->Customer->User->id))'
 			),
 			array(
 				'name'=>'customer_last_name',
@@ -86,8 +87,13 @@ EOD
 			array(
 			'class'=>'CButtonColumn',
 				'header'=>'Actions',
-				'template'=>'{process}{cancel}',
+				'template'=>'{login}{process}{cancel}{set_approved}{set_delivered}',
 				'buttons'=>array(
+					'login' => array
+					(
+						'url'=> 'array("user/loginAs","id"=>$data->Customer->User->id)',
+						'options'=>array('class'=>'text'),
+					),
 					'process'=>array
 					(
 						'url'=>'array("boxItem/processCustBox","custBox"=>$data->customer_box_id)',
@@ -99,6 +105,20 @@ EOD
 						'visible'=>'$data->status==CustomerBox::STATUS_APPROVED',
 						'label'=>'Cancel & Refund',
 						'options'=>array('confirm'=>'Are you sure you want to refund this box?'),
+					),
+					'set_approved'=>array
+					(
+						'url'=>'array("boxItem/setApproved","custBox"=>$data->customer_box_id)',
+						'visible'=>'$data->status==CustomerBox::STATUS_DELIVERED',
+						'label'=>'Set Approved',
+						'options'=>array('confirm'=>'Are you sure you want to set this box to Approved?'),
+					),
+					'set_delivered'=>array
+					(
+						'url'=>'array("boxItem/setDelivered","custBox"=>$data->customer_box_id)',
+						'visible'=>'$data->status==CustomerBox::STATUS_APPROVED',
+						'label'=>'Set Delivered',
+						'options'=>array('confirm'=>'Are you sure you want to set this box to Collected/Delivered?'),
 					)
 				),
 			),

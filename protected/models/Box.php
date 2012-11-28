@@ -68,7 +68,7 @@ class Box extends CActiveRecord
             ),
 			'CustomerBoxes'=> array(self::HAS_MANY, 'CustomerBox', 'box_id'),
 			'customerCount'=> array(self::STAT, 'CustomerBox', 'box_id',
-				'condition'=>'status='.CustomerBox::STATUS_APPROVED,
+				'condition'=>'status='.CustomerBox::STATUS_APPROVED.' OR status='.CustomerBox::STATUS_DELIVERED,
 				'select'=>'SUM(quantity)'
             ),
 		);

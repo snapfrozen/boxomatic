@@ -310,7 +310,11 @@ class SiteController extends Controller
 				JOIN boxes b ON cb.box_id=b.box_id
 				JOIN weeks w ON b.week_id=w.week_id
 				WHERE 
-					cb.status=1 AND
+					(
+						cb.status=".CustomerBox::STATUS_APPROVED." OR 
+						cb.status=".CustomerBox::STATUS_DELIVERED."
+					)
+					AND
 					w.week_delivery_date > \"$dateFrom\" AND
 					w.week_delivery_date < \"$dateTo\"
 				GROUP BY w.week_delivery_date
@@ -338,7 +342,10 @@ class SiteController extends Controller
 					JOIN weeks w ON b.week_id=w.week_id
 					WHERE 
 						b.size_id=$BoxSize->box_size_id AND
-						cb.status=1 AND 
+						(
+							cb.status=".CustomerBox::STATUS_APPROVED." OR 
+							cb.status=".CustomerBox::STATUS_DELIVERED."
+						) AND 
 						w.week_delivery_date > \"$dateFrom\" AND
 						w.week_delivery_date < \"$dateTo\"
 					GROUP BY w.week_delivery_date

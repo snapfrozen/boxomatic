@@ -206,7 +206,10 @@ class WeekController extends Controller
 		WHERE (
 			week_id=' . $week . ' 
 			AND customer_box_id is not null
-			AND CustomerBoxes.status='.CustomerBox::STATUS_APPROVED.'
+			AND (
+				CustomerBoxes.status='.CustomerBox::STATUS_APPROVED.' OR
+				CustomerBoxes.status='.CustomerBox::STATUS_DELIVERED.'
+			)
 		) 
 
 		GROUP BY grower_name,item_name 
@@ -335,7 +338,11 @@ class WeekController extends Controller
 		WHERE (
 			week_id=' . $week . ' 
 			AND customer_box_id is not null
-			AND CustomerBoxes.status='.CustomerBox::STATUS_APPROVED.'
+			AND 
+			(
+				CustomerBoxes.status='.CustomerBox::STATUS_APPROVED.' OR
+				CustomerBoxes.status='.CustomerBox::STATUS_DELIVERED.'
+			)
 		) 
 
 		GROUP BY grower_name,item_name 
@@ -455,7 +462,7 @@ class WeekController extends Controller
 			)
 		)
 		)->findAll(array(
-			'condition'=>'week_id='.$week.' AND status='.CustomerBox::STATUS_APPROVED,
+			'condition'=>'week_id='.$week.' AND (status='.CustomerBox::STATUS_APPROVED.' OR status='.CustomerBox::STATUS_DELIVERED.')',
 			'order'=>'User.first_name'
 		));
 
@@ -532,7 +539,7 @@ class WeekController extends Controller
 			)
 		)
 		)->findAll(array(
-			'condition'=>'week_id='.$week.' AND status='.CustomerBox::STATUS_APPROVED,
+			'condition'=>'week_id='.$week.' AND (status='.CustomerBox::STATUS_APPROVED.' OR status='.CustomerBox::STATUS_DELIVERED.')',
 			'order'=>'User.first_name'
 		));
 		

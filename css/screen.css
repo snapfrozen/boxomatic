@@ -562,6 +562,12 @@ tfoot td.total {
 		vertical-align:bottom;
 	}
 
+/* Customer Boxes */
+#customer-list-grid .button-column a {
+	display:block;
+	white-space:nowrap;
+	margin-bottom:5px;
+}
 
 /* Grower Map */
 

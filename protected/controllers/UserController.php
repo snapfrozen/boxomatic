@@ -285,10 +285,11 @@ class UserController extends Controller
 			throw new CHttpException(404,'The requested page does not exist.');
 		}
 		
-		if(Yii::app()->user->shadow_id)
+		if(Yii::app()->user->shadow_id) {
 			$this->redirect(array('customerBox/order'));
-		else
-			$this->redirect(array('user/admin'));
+		} else {
+			$this->redirect(Yii::app()->user->shadow_referrer);
+		}
 	}
 	
 	/**

@@ -70,6 +70,7 @@ class UserIdentity extends CUserIdentity
 			$shadow=User::model()->resetScope()->findByPk($curId);
 			$this->setState('shadow_id', $curId);
 			$this->setState('shadow_name', $shadow->user_email);
+			$this->setState('shadow_referrer', Yii::app()->request->getUrlReferrer());
 		} else {
 			$this->setState('shadow_id', false);
 			$this->setState('shadow_name', false);
