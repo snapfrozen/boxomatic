@@ -10,15 +10,15 @@
 	<?php echo $form->errorSummary($model); ?>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'week_num'); ?>
-		<?php echo $form->textField($model,'week_num',array('size'=>45,'maxlength'=>45)); ?>
-		<?php echo $form->error($model,'week_num'); ?>
-	</div>
-
-	<div class="row">
 		<?php echo $form->labelEx($model,'week_notes'); ?>
 		<?php echo $form->textField($model,'week_notes',array('size'=>45,'maxlength'=>45)); ?>
 		<?php echo $form->error($model,'week_notes'); ?>
+	</div>
+	
+	<div class="row">
+		<?php echo $form->labelEx($model,'week_disabled'); ?>
+		<?php echo $form->checkBox($model,'week_disabled'); ?>
+		<?php echo $form->error($model,'week_disabled'); ?>
 	</div>
 
 	<div class="row buttons">

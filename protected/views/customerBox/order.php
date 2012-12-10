@@ -153,7 +153,7 @@
 					$disabled='';
 					$classes='';
 
-					if(strtotime($Week->week_delivery_date) < $deadline && !Yii::app()->user->shadow_id) {
+					if(strtotime($Week->week_delivery_date) < $deadline && !Yii::app()->user->shadow_id || $Week->week_disabled) {
 						$disabled='disabled';
 						$classes.=' pastDeadline';
 					} else {

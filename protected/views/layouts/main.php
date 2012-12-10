@@ -50,7 +50,8 @@
 				array('label'=>'Boxes', 'url'=>array('boxItem/create'), 'visible' => Yii::app()->user->checkAccess('admin'),
 					'items'=>array(
 						array('label'=>'Box Sizes', 'url'=>array('boxSize/admin'), 'visible' => Yii::app()->user->checkAccess('admin')),
-					)
+						array('label'=>'Weeks', 'url'=>array('week/admin'), 'visible' => Yii::app()->user->checkAccess('admin')),
+					),
 				),
 				array('label'=>'Payments', 'url'=>array('customerPayment/enterPayments'), 'visible' => Yii::app()->user->checkAccess('admin')),
 				array('label'=>'Customers', 'url'=>array('user/customers'), 'visible' => Yii::app()->user->checkAccess('admin'),

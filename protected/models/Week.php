@@ -40,9 +40,10 @@ class Week extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('week_delivery_date, week_notes', 'length', 'max'=>45),
+			array('week_disabled', 'boolean'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('week_id, week_delivery_date, week_notes', 'safe', 'on'=>'search'),
+			array('week_id, week_disabled, week_delivery_date, week_notes', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -105,13 +106,14 @@ class Week extends CActiveRecord
 		$criteria->compare('week_id',$this->week_id);
 		$criteria->compare('week_delivery_date',$this->week_delivery_date,true);
 		$criteria->compare('week_notes',$this->week_notes,true);
+		$criteria->compare('week_disabled',$this->week_disabled,true);
 
-		$criteria->condition = 'week_delivery_date > NOW()';
-		$criteria->limit = 5;
+		//$criteria->condition = 'week_delivery_date > NOW()';
+		//$criteria->limit = 5;
 		
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
-			'pagination'=>false,
+			//'pagination'=>false,
 		));
 	}
 	

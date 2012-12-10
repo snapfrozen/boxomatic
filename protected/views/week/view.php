@@ -13,8 +13,8 @@ $this->menu=array(
 <?php $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,
 	'attributes'=>array(
-		'week_id',
-		'week_num',
+		'week_delivery_date',
 		'week_notes',
+		'week_disabled',
 	),
 )); ?>

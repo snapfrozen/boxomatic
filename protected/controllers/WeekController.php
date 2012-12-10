@@ -94,7 +94,7 @@ class WeekController extends Controller
 		{
 			$model->attributes=$_POST['Week'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->week_id));
+				$this->redirect(array('admin'));
 		}
 
 		$this->render('update',array(

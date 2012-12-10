@@ -272,10 +272,6 @@ class CustomerBoxController extends Controller
 						continue;
 					}
 					
-					
-//					$curQuantity=count($CustBoxes);
-//					$diff=$quantity-$curQuantity;
-
 					//Create extra customer box rows
 					for($i=0; $i<$quantity; $i++)
 					{
