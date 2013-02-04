@@ -114,6 +114,17 @@ class SiteController extends Controller
 				$Customer->attributes=$_POST['Customer'];
 				$Customer->save();
 				
+				$CustLoc=new CustomerLocation;
+				$CustLoc->customer_id=$Customer->customer_id;
+				$CustLoc->location_id=$Customer->location_id;
+				$CustLoc->address=$model->user_address;
+				$CustLoc->address2=$model->user_address2;
+				$CustLoc->suburb=$model->user_suburb;
+				$CustLoc->state=$model->user_state;
+				$CustLoc->postcode=$model->user_postcode;
+				$CustLoc->phone=!empty($model->user_phone)?$model->user_phone:$model->user_mobile;
+				$CustLoc->save();
+				
 				$model->customer_id = $Customer->customer_id;
 				$model->update(array('customer_id'));
 				
@@ -289,10 +300,11 @@ class SiteController extends Controller
 	 */
 	public function actionReports()
 	{
-		$CustBoxes=null;
 		$xAxis=array();
 		$yAxis=array();
+		$yAxis2=array();
 		$series=array();
+		$series2=array();
 		$xAxisName='';
 		$yAxisName='';
 		$r=Yii::app()->request;
@@ -360,6 +372,30 @@ class SiteController extends Controller
 				}
 				$series[]=array('name'=>$BoxSize->box_size_name . ' Boxes','data'=>$boxesData);
 			}
+			
+			//payments
+			$sql=
+				"SELECT DATE_FORMAT(payment_date, '%d-%m-%Y') as week, SUM(payment_value) as total
+				FROM customer_payments
+				GROUP BY week";
+
+				$dataReader=$connection->createCommand($sql)->query();
+
+				$paymentTotals=array();
+				$runningTotal=0;
+				foreach($dataReader as $row) {
+					//print_r($row);
+					$runningTotal+=(int)$row['total'];
+					//multiply by 1000 for milliseconds for javascript
+					$timestamp=strtotime($row['week'])*1000;
+					if($timestamp > 0)
+						$paymentTotals[]=array($timestamp, $runningTotal);
+					//print_r($paymentTotals);
+				}
+				$series2[]=array('name'=>$row['week'],'data'=>$paymentTotals);
+				$yAxis2=array('title'=>array('text'=>'Total payments'));
+				//print_r($series);
+				//print_r($series2);
 		}
 		
 		$this->render('reports',array(
@@ -368,6 +404,8 @@ class SiteController extends Controller
 			'xAxisName'=>$xAxisName,
 			'yAxisName'=>$yAxisName,
 			'series'=>$series,
+			'series2'=>$series2,
+			'yAxis2'=>$yAxis2,
 		));
 	}
 	
