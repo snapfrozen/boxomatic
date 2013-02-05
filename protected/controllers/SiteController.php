@@ -40,7 +40,7 @@ class SiteController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow',
-				'actions'=>array('reports'),
+				'actions'=>array('salesReport','creditReport'),
 				'roles'=>array('admin'),
 			),
 			array('deny',  // deny all users
@@ -294,17 +294,63 @@ class SiteController extends Controller
 		
 	}
 	 */
+	/**
+	 * Generate Reports
+	 */
+	public function actionCreditReport()
+	{
+		$xAxis=array();
+		$yAxis=array();
+		$series=array();
+		$xAxisName='';
+		$yAxisName='';
+		
+		$sql="SELECT MIN(payment_date) FROM customer_payments WHERE payment_date != '00-00-00 00:00:00'";
+		$connection=Yii::app()->db; 
+		$minDate=$connection->createCommand($sql)->queryScalar();
+		
+		$paymentTotals=array();
+		$days=0;
+		$timestamp=0;
+		
+		while($timestamp < time()) 
+		{
+			$timestamp=strtotime("+ $days days", strtotime($minDate));
+			$timestampJs=$timestamp*1000;
+			$minDate=date('Y-m-d h:i:s',$timestamp);
+			
+			$sql=
+				"SELECT SUM(payment_value) as total
+				FROM customer_payments
+				WHERE payment_date < '$minDate'";
+
+			$row=$connection->createCommand($sql)->queryRow();
+
+			$paymentTotals[]=array($timestampJs, $row['total']);
+			$days+=7;
+		}
+		$series[]=array('name'=>$minDate,'data'=>$paymentTotals);
+		$yAxis=array('title'=>array('text'=>'Total payments'));
+		//print_r($series);
+		//print_r($series2);
+			
+		$this->render('reports_credit',array(
+			'xAxis'=>$xAxis,
+			'yAxis'=>$yAxis,
+			'xAxisName'=>$xAxisName,
+			'yAxisName'=>$yAxisName,
+			'series'=>$series,
+		));
+	}
 
 	/**
 	 * Generate Reports
 	 */
-	public function actionReports()
+	public function actionSalesReport()
 	{
 		$xAxis=array();
 		$yAxis=array();
-		$yAxis2=array();
 		$series=array();
-		$series2=array();
 		$xAxisName='';
 		$yAxisName='';
 		$r=Yii::app()->request;
@@ -372,40 +418,14 @@ class SiteController extends Controller
 				}
 				$series[]=array('name'=>$BoxSize->box_size_name . ' Boxes','data'=>$boxesData);
 			}
-			
-			//payments
-			$sql=
-				"SELECT DATE_FORMAT(payment_date, '%d-%m-%Y') as week, SUM(payment_value) as total
-				FROM customer_payments
-				GROUP BY week";
-
-				$dataReader=$connection->createCommand($sql)->query();
-
-				$paymentTotals=array();
-				$runningTotal=0;
-				foreach($dataReader as $row) {
-					//print_r($row);
-					$runningTotal+=(int)$row['total'];
-					//multiply by 1000 for milliseconds for javascript
-					$timestamp=strtotime($row['week'])*1000;
-					if($timestamp > 0)
-						$paymentTotals[]=array($timestamp, $runningTotal);
-					//print_r($paymentTotals);
-				}
-				$series2[]=array('name'=>$row['week'],'data'=>$paymentTotals);
-				$yAxis2=array('title'=>array('text'=>'Total payments'));
-				//print_r($series);
-				//print_r($series2);
 		}
 		
-		$this->render('reports',array(
+		$this->render('reports_sales',array(
 			'xAxis'=>$xAxis,
 			'yAxis'=>$yAxis,
 			'xAxisName'=>$xAxisName,
 			'yAxisName'=>$yAxisName,
 			'series'=>$series,
-			'series2'=>$series2,
-			'yAxis2'=>$yAxis2,
 		));
 	}
 	

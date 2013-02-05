@@ -1,9 +1,9 @@
 <?php
 return array(
-	'connectionString' => 'mysql:host=francis-laptop;dbname=foodbox',
+	'connectionString' => 'mysql:host=francis.centos;dbname=fbapp_foodbox',
 	'emulatePrepare' => true,
 	'username' => 'root',
-	'password' => 'localdev',
+	'password' => 'francis',
 	'tablePrefix' => '',
 	'charset' => 'utf8',
 );

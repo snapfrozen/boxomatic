@@ -37,7 +37,7 @@
 			
 		$this->Widget('ext.highcharts.HighchartsWidget', array(
 			'options'=>array(
-				'title' => array('text' => 'Box Sales'),
+				'title' => array('text' => 'Credit in system'),
 				'xAxis' => array(
 					'type' => 'datetime',
 //					'dateTimeLabelFormats'=>array( // don't display the dummy year
@@ -48,27 +48,6 @@
 				),
 				'yAxis' => $yAxis,
 				'series' => $series
-			)
-		));
-		endif; ?>
-		<hr />
-		<?php if($series2): 
-			
-		//print_r(CJSON::encode($series[0]['data']));
-			
-		$this->Widget('ext.highcharts.HighchartsWidget', array(
-			'options'=>array(
-				'title' => array('text' => 'Credit in system'),
-				'xAxis' => array(
-					'type' => 'datetime',
-//					'dateTimeLabelFormats'=>array( // don't display the dummy year
-//						'month'=>'%e. %b',
-//						'year'=>'%b'
-//					),
-					//'categories' => $xAxis,
-				),
-				'yAxis' => $yAxis2,
-				'series' => $series2
 			)
 		));
 		endif; ?>
