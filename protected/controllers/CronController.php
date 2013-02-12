@@ -73,8 +73,7 @@ class CronController extends Controller
 				$User->auto_login_key=$User->generatePassword(50,4);
 				$User->update_time=new CDbExpression('NOW()');
 				$User->update();
-				
-				//email payment receipt			    
+						    
 				$message = new YiiMailMessage('Running out of orders');
 				$message->view = 'customer_running_out_of_orders';
 				$message->setBody(array('Customer'=>$Cust,'User'=>$User), 'text/html');
