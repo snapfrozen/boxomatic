@@ -92,28 +92,29 @@ SELECT * FROM customers WHERE customer_id not in (
 				$message=new YiiMailMessage('You have recieved Bellofoodbox Love Credit!');
 				$message->view = 'bonus';
 				$message->setBody(array('User'=>$User), 'text/html');
-				//$email=trim($User->user_email);
-				$email=trim('francis.beresford@gmail.com');
+				$email=trim($User->user_email);
 				
 				$validator=new CEmailValidator();
 				if($validator->validateValue($email)) 
 				{
-					//REMOVE THIS
-					$C = new Controller('Site');
-					$C->renderInternal(Yii::getPathOfAlias('application.views.mail.bonus').'.php',array('User'=>$User));
-					echo '<br /><br />---------------------------------------<br /><br />';
-					
-					
 					//$message->addTo('donovan@snapfrozen.com.au');
 					//$message->addTo('leigh@bellofoodbox.org.au');
 					$message->setFrom(array(Yii::app()->params['adminEmail'] => Yii::app()->params['adminEmailFromName']));
 					$message->addTo($email);
 					if(!@Yii::app()->mail->send($message))
 					{
-						return false;
+						echo 'Could not send email to user:'.$User->id;
+					}
+					else
+					{
+						echo 'Email sent to user:'.$User->id;
 					}
 				}
-				exit;
+				else
+				{
+					echo 'Not a valid email address for user:'.$User->id;
+				}
+				echo "\n";
 			}
 		}
 		echo "\n";
