@@ -28,9 +28,17 @@ return array(
 //			'enableProfiling' => true, //
 //			'enableParamLogging' => true, //
 		),
+		
+		'mail' => array(
+ 			'class' => 'ext.yii-mail.YiiMail',
+ 			'transportType' => 'php',
+ 			'viewPath' => 'application.views.mail',
+ 			'logging' => true,
+ 			'dryRun' => false
+ 		),
 	),
 	
-		'modules'=>array(
+	'modules'=>array(
 		// uncomment the following to enable the Gii tool
 		'gii'=>array(
 			'class'=>'system.gii.GiiModule',
@@ -50,5 +58,50 @@ return array(
 				//'identityToken'=>'YRkbQplC3JQjTdf_PaLnza2k2T5tZhQTGwtObQsenjQDxN07M5qLKKGNNu3u',
 			),
 		),
+	),
+	
+	'params'=>array(
+		// this is used in contact page
+		'googleMapKey'=>'AIzaSyAU7aJq2EcQYJV7BsjZg1lkhR2dYBTZxfU',
+		'adminEmail'=>'info@bellofoodbox.org.au',
+		'adminEmailFromName'=>'Bellofoodbox',
+		'months'=>array(
+			1=>'January',
+			2=>'February',
+			3=>'March',
+			4=>'April',
+			5=>'May',
+			6=>'June',
+			7=>'July',
+			8=>'August',
+			9=>'September',
+			10=>'October',
+			11=>'November',
+			12=>'December',
+		),
+		'states'=>array(
+			''=>' - Select - ',
+			'ACT'=>'Australian Capital Territory',
+			'NSW'=>'New South Wales',
+			'NT'=>'Northern Territory',
+			'QLD'=>'Queensland',
+			'SA'=>'South Australia',
+			'TAS'=>'Tasmania',
+			'VIC'=>'Victoria',
+			'WA'=>'Western Australia',
+		),
+		'itemUnits'=>array(
+			'EA'=>'Each',
+			'BUNCH'=>'Per bunch',
+			'KG'=>'Per kg',
+		),
+		'paymentTypes'=>array(
+			'BT'=>'Bank Transfer',
+			'CASH'=>'Cash',
+			'PAYPAL'=>'PayPal',
+		),
+		'orderDeadlineDays'=>6, //orders must be placed within 7 days of delivery 
+		'deliveryDayOfWeek'=>3, //0 (for Sunday) through 6 (for Saturday)
+		'autoCreateWeeks'=>24   //Amount of weeks to auto create boxes for in advance
 	),
 );

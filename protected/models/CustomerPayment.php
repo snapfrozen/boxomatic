@@ -155,6 +155,9 @@ class CustomerPayment extends CActiveRecord
 	/**
 	* Only allow admins to access all user information
 	*/
+	
+	//This was messing up the CustbonusCommand email
+	/*
 	public function defaultScope()
 	{
 		//This messes up the unique validation :(
@@ -168,5 +171,5 @@ class CustomerPayment extends CActiveRecord
 		{
 			return parent::defaultScope();
 		}
-	}
+	}*/
 }

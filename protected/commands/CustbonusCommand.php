@@ -10,6 +10,7 @@ OPTIONS
     credit - credit $5 to all customers
     debit [date] - debit $5 from all customers who didn't place an order in the past week.
 	    date - date that you want to test from which a transaction has been made. (strtotime formatted string)
+	email
 DESCRIPTION
 Credit or debit to and from customers
 EOD;
@@ -76,6 +77,45 @@ SELECT * FROM customers WHERE customer_id not in (
 			{
 				echo 'no action taken'."\n";
 			}
-		}	
+		}
+		
+		if(in_array('email',$args))
+		{
+			$Customers=Customer::model()->resetScope()->findAll();
+			foreach($Customers as $Customer)
+			{
+				$User=$Customer->User;
+				if(!$User) 
+					continue;
+				
+				$User->resetScope();
+				$message=new YiiMailMessage('You have recieved Bellofoodbox Love Credit!');
+				$message->view = 'bonus';
+				$message->setBody(array('User'=>$User), 'text/html');
+				//$email=trim($User->user_email);
+				$email=trim('francis.beresford@gmail.com');
+				
+				$validator=new CEmailValidator();
+				if($validator->validateValue($email)) 
+				{
+					//REMOVE THIS
+					$C = new Controller('Site');
+					$C->renderInternal(Yii::getPathOfAlias('application.views.mail.bonus').'.php',array('User'=>$User));
+					echo '<br /><br />---------------------------------------<br /><br />';
+					
+					
+					//$message->addTo('donovan@snapfrozen.com.au');
+					//$message->addTo('leigh@bellofoodbox.org.au');
+					$message->setFrom(array(Yii::app()->params['adminEmail'] => Yii::app()->params['adminEmailFromName']));
+					$message->addTo($email);
+					if(!@Yii::app()->mail->send($message))
+					{
+						return false;
+					}
+				}
+				exit;
+			}
+		}
+		echo "\n";
 	}
 }
