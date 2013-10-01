@@ -40,5 +40,10 @@ class SnapFormat extends CApplicationComponent
 	{
 		return Yii::app()->numberFormatter->format('$#,##0.00', (float)$amount);
 	}
+	
+	public function date($day)
+	{
+		return Yii::app()->dateFormatter->format("yyy-M-dd", $day);
+	}
 }
 ?>

@@ -168,4 +168,28 @@ class Grower extends CActiveRecord
 			'pagination'=> $paginate ? array('pageSize'=>$pageSize) : $paginate,
 		));
 	}
+	
+	public static function getDropdownListItems()
+	{
+		$criteria = new CDbCriteria;
+		$criteria->order = 'grower_name';
+		$criteria->addCondition('status='.self::STATUS_ACTIVE);	
+
+		$items = self::model()->findAll($criteria);
+		return CHtml::listData($items,'grower_id','grower_name');
+	}
+	
+	public static function getOSDropdownListItems($growerId=null)
+	{
+		$criteria = new CDbCriteria;
+		$criteria->select = 'grower_certification_status';
+		$criteria->order = 'grower_certification_status';
+		$criteria->distinct = true;
+		if($growerId) {
+			$criteria->addCondition('t.grower_id='.$growerId);	
+		}
+		
+		$items = self::model()->findAll($criteria);
+		return CHtml::listData($items,'grower_certification_status','grower_certification_status');
+	}
 }

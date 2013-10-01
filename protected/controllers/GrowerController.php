@@ -6,7 +6,7 @@ class GrowerController extends Controller
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
 	 * using two-column layout. See 'protected/views/layouts/column2.php'.
 	 */
-	public $layout='//layouts/column2';
+	// public $layout='//layouts/column2';
 
 	/**
 	 * @return array action filters
@@ -35,7 +35,7 @@ class GrowerController extends Controller
 				'roles'=>array('grower'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete'),
+				'actions'=>array('admin','delete','getListItems'),
 				'roles'=>array('admin'),
 			),
 			array('deny',  // deny all users
@@ -192,6 +192,13 @@ class GrowerController extends Controller
 		
 		echo json_encode($growerArray);
 		
+		exit;
+	}
+	
+	public function actionGetListItems($growerId=null)
+	{
+		$items = GrowerItem::getDropdownListItems($growerId);
+		echo json_encode($items);
 		exit;
 	}
 

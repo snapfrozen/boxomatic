@@ -99,63 +99,77 @@ class SiteController extends Controller
 	 */
 	public function actionRegister()
 	{
-		$model=new User;
+		$model = new User;
+		$vars = array();
+
 		if(isset($_POST['User']))
 		{
-			$model->attributes=$_POST['User'];
-			$model->scenario='register';
+
+			$model->attributes = $_POST['User'];
+			$model->scenario = 'register';
 			//Password is encrypted afterValidate
 			//$model->password=Yii::app()->snap->encrypt($_POST['User']['password']);
 			//$model->password_repeat=Yii::app()->snap->encrypt($_POST['User']['password_repeat']);
-			
-			if($model->save())
-			{
-				$Customer=new Customer();
-				$Customer->attributes=$_POST['Customer'];
-				$Customer->save();
-				
-				$CustLoc=new CustomerLocation;
-				$CustLoc->customer_id=$Customer->customer_id;
-				$CustLoc->location_id=$Customer->location_id;
-				$CustLoc->address=$model->user_address;
-				$CustLoc->address2=$model->user_address2;
-				$CustLoc->suburb=$model->user_suburb;
-				$CustLoc->state=$model->user_state;
-				$CustLoc->postcode=$model->user_postcode;
-				$CustLoc->phone=!empty($model->user_phone)?$model->user_phone:$model->user_mobile;
-				$CustLoc->save();
-				
-				$model->customer_id = $Customer->customer_id;
-				$model->update(array('customer_id'));
-				
-				$Auth = Yii::app()->authManager;
-				$Auth->assign('customer',$model->id);
-				
-				//Send email
-				$message = new YiiMailMessage('Welcome to Bellofoodbox');
-				$message->view = 'welcome';
-				$message->setBody(array('User'=>$model,'newPassword'=>$_POST['User']['password']), 'text/html');
-				$message->addTo('info@bellofoodbox.org.au');
-				$message->addTo($model->user_email);
-				$message->setFrom(array(Yii::app()->params['adminEmail'] => Yii::app()->params['adminEmailFromName']));
-				
-				if(!@Yii::app()->mail->send($message))
+			if(!$_POST['is_human']){
+				$vars['not_human'] = true;
+				$model->save();
+			} else {
+
+				if($model->save())
 				{
-					$mailError=true;
+					$Customer=new Customer();
+					$Customer->attributes=$_POST['Customer'];
+					$Customer->save();
+					
+					$CustLoc=new CustomerLocation;
+					$CustLoc->customer_id=$Customer->customer_id;
+					$CustLoc->location_id=$Customer->location_id;
+					$CustLoc->address=$model->user_address;
+					$CustLoc->address2=$model->user_address2;
+					$CustLoc->suburb=$model->user_suburb;
+					$CustLoc->state=$model->user_state;
+					$CustLoc->postcode=$model->user_postcode;
+					$CustLoc->phone=!empty($model->user_phone)?$model->user_phone:$model->user_mobile;
+					$CustLoc->save();
+					
+					$model->customer_id = $Customer->customer_id;
+					$model->update(array('customer_id'));
+					
+					$Auth = Yii::app()->authManager;
+					$Auth->assign('customer',$model->id);
+					
+					//Send email
+					$message = new YiiMailMessage('Welcome to Bellofoodbox');
+					$message->view = 'welcome';
+					$message->setBody(array('User'=>$model,'newPassword'=>$_POST['User']['password']), 'text/html');
+					$message->addTo('info@bellofoodbox.org.au');
+					$message->addTo($model->user_email);
+					$message->setFrom(array(Yii::app()->params['adminEmail'] => Yii::app()->params['adminEmailFromName']));
+					
+					if(!@Yii::app()->mail->send($message))
+					{
+						$mailError=true;
+					}
+					
+					$identity=new UserIdentity($model->user_email, $_POST['User']['password']);
+					$identity->authenticate();
+
+					Yii::app()->user->login($identity);
+					User::model()->updateByPk($identity->id, array('last_login_time'=>new CDbExpression('NOW()')));
+					
+					$this->redirect(array('customer/welcome'));
 				}
 				
-				$identity=new UserIdentity($model->user_email, $_POST['User']['password']);
-				$identity->authenticate();
-
-				Yii::app()->user->login($identity);
-				User::model()->updateByPk($identity->id, array('last_login_time'=>new CDbExpression('NOW()')));
-				
-				$this->redirect(array('customer/welcome'));
 			}
+
 		}
+
 		$model->password='';
 		$model->password_repeat='';
-		$this->render('register',array('model'=>$model));
+		$vars['model'] = $model;
+		
+		// $this->render('register',array('model'=>$model));
+		$this->render('register', $vars);
 	}
 
 	/**

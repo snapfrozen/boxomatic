@@ -7,14 +7,22 @@ $this->menu=array(
 	array('label'=>'Manage Location', 'url'=>array('admin')),
 );
 ?>
+<div class="row">
+	<div class="large-12 columns">
+		<h1>View Location</h1>
+	</div>
+	<div class="large-12 columns">
+		<?php $this->widget('zii.widgets.CDetailView', array(
+			'data'=>$model,
+			'cssFile' => '', 
+			'attributes'=>array(
+				'location_id',
+				'location_name',
+				'location_delivery_value',
+			),
+		)); ?>
+	</div>
+</div>
 
-<h1>View Location #<?php echo $model->location_id; ?></h1>
 
-<?php $this->widget('zii.widgets.CDetailView', array(
-	'data'=>$model,
-	'attributes'=>array(
-		'location_id',
-		'location_name',
-		'location_delivery_value',
-	),
-)); ?>
+

@@ -20,7 +20,7 @@ yummy produce to fill your Bellofoodbox.</strong></p>
 <h3>Managing your Bellofoodbox account</h3>
 
 <p>You can check your account status, add credit and view previous 
-orders at: <a href="http://www.bellofoodbox.org.au/">www.Bellofoodbox.org.au</a></p>
+orders at: <a href="http://app.foodbox.org.au/">app.foodbox.org.au</a></p>
 
 <p>You are welcome to top up your account 
 credit by making additional payments at anytime. 
@@ -32,24 +32,12 @@ Your Bellofoodbox ID is: <strong><?php echo $Customer->User->bfb_id; ?></strong>
 
 <h3>Information for collections</h3>
  
-<p>If you have opted to pick up your box from our headquarters –
- PLEASE NOTE: Any box that is not collected before 6.30pm 
-on Wednesday WILL BE DONATED TO CHARITY (no exceptions).</p>
-
-<p>If you are unable to pick up your box, please call us to arrange 
-delivery via our Courier ($7 Charge) or why not organise a group 
-of friends to car pool pick up :)</p>
+<p>If you are unable to pick up your box from Bellingen Greengrocers by 6pm when the store closes, please call us to arrange an alternative, or why not organise a group of friends to share the pick up :)</p>
 
 <p>
 --<br />
 Kind regards,<br />
 Box-o-Matic, Box Processing System</p>
-
-<p>Bellofoodbox is a community initiative promoting the local 
-economy, encouraging sustainable agricultural practices
- and contributing to a fair, connected and resilient community. 
-Distributing local, seasonal, affordable, healthy, fresh food that 
-is accessible to Bellingen, Dorrigo, Urunga, and Coffs Harbour areas.</p>
 
 <p>Thank you for your generous support and being part of this wonderful project.</p>
 

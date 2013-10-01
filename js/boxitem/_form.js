@@ -8,12 +8,18 @@ function loadSpinners()
 	$('select#new_grower').change(function(){
 		reloadBoxes(curUrl,{week: $('input#selected_week_id').val(), grower:$(this).val()});
 	})
-	$('input.number').spinner();
+	/*$('input.number').spinner();
 	$('input.currency, input.decimal').spinner({
 		places:2,
 		step:.05
+	});*/
+
+	$('input.number, input.decimal, input.currency').stepper({
+		arrow_step : 0.5, 
+		limit : [0,], 
 	});
-	$('div.sticky').stickyScroll({ container: '#current-boxes' });
+
+	// $('div.sticky').stickyScroll({ container: '#current-boxes' });
 }
 loadSpinners();
 
@@ -38,6 +44,7 @@ function reloadBoxes(url,data)
 
 $('div#inventory, form#box-item-form').on('click', 'table td:not(.button-column) a', function(){
 	var $a = $(this);
+	console.log($a.attr('href'));
 	reloadBoxes($a.attr('href'),{});
 	return false;
 });

@@ -1,23 +1,9 @@
-<div class="view">
-	
-	<b><?php echo CHtml::encode($data->getAttributeLabel('Customer.User.full_name')); ?>:</b>
-	<?php echo CHtml::encode($data->Customer->User->full_name); ?>
-	<br />
-	
-	<b><?php echo CHtml::encode($data->getAttributeLabel('payment_value')); ?>:</b>
-	<?php echo CHtml::encode($data->payment_value); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('payment_type')); ?>:</b>
-	<?php echo CHtml::encode($data->payment_type); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('payment_date')); ?>:</b>
-	<?php echo CHtml::encode($data->payment_date); ?>
-	<br />
-	
-	<b><?php echo CHtml::encode($data->getAttributeLabel('payment_note')); ?>:</b>
-	<?php echo CHtml::encode($data->payment_note); ?>
-	<br />
-
+<div class="panel">
+	<ul class='no-bullet'>
+		<li><?php echo CHtml::encode($data->getAttributeLabel('Customer.User.full_name')); ?>: <?php echo CHtml::encode($data->Customer->User->full_name); ?></li>
+		<li><?php echo CHtml::encode($data->getAttributeLabel('payment_value')); ?>: <?php echo CHtml::encode($data->payment_value); ?></li>
+		<li><?php echo CHtml::encode($data->getAttributeLabel('payment_type')); ?>: <?php echo CHtml::encode($data->payment_type); ?></li>
+		<li><?php echo CHtml::encode($data->getAttributeLabel('payment_date')); ?>: <?php echo CHtml::encode($data->payment_date); ?></li>
+		<li><?php echo CHtml::encode($data->getAttributeLabel('payment_note')); ?>: <?php echo CHtml::encode($data->payment_note); ?></li>
+	</ul>
 </div>

@@ -1,33 +1,44 @@
-<div class="form">
-
 <?php $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'location-form',
 	'enableAjaxValidation'=>false,
 )); ?>
-	<?php echo $form->errorSummary($model); ?>
 
-	<div class="row">
+<fieldset>
+	<legend>Update Location Form</legend>
+
+	<?php if($form->errorSummary($model)): ?>
+
+	<div class="large-12 columns">
+		<div data-alert class="alert-box alert">
+		 <?php echo $form->errorSummary($model); ?>
+		 <a href="#" class="close">&times;</a>
+		</div>
+	</div>
+
+	<?php endif; ?>
+
+	<div class="large-12 columns">
 		<?php echo $form->labelEx($model,'location_name'); ?>
 		<?php echo $form->textField($model,'location_name',array('size'=>45,'maxlength'=>45)); ?>
 		<?php echo $form->error($model,'location_name'); ?>
 	</div>
-
-	<div class="row">
+	<div class="large-12 columns">
 		<?php echo $form->labelEx($model,'location_delivery_value'); ?>
 		<?php echo $form->textField($model,'location_delivery_value',array('size'=>7,'maxlength'=>7)); ?>
 		<?php echo $form->error($model,'location_delivery_value'); ?>
 	</div>
-	
-	<div class="row">
-		<?php echo $form->labelEx($model,'is_pickup'); ?>
-		<?php echo $form->checkBox($model,'is_pickup'); ?>
+	<div class="large-12 columns">
+		<label for="">
+			<input type='checkbox' name='is_pickup' value='<?php echo $model->is_pickup ?>' />
+			Is Pickup?
+		</label>
 		<?php echo $form->error($model,'is_pickup'); ?>
 	</div>
-
-	<div class="row buttons">
-		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
+	<div class="large-12 columns">
+		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save', array('class' => 'button')); ?>
 	</div>
+</fieldset>
+
+
 
 <?php $this->endWidget(); ?>
-
-</div><!-- form -->

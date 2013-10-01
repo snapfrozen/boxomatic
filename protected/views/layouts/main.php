@@ -1,113 +1,156 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta name="language" content="en" />
-
-	<!-- blueprint CSS framework -->
-	<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/screen.css" media="screen, projection" />
-	<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/print.css" media="print" />
-	<!--[if lt IE 8]>
-	<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/ie.css" media="screen, projection" />
-	<![endif]-->
-
-	<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/main.css" />
-	<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/form.css" />
-
-	<title><?php echo CHtml::encode($this->pageTitle); ?></title>
-</head>
 <?php
 	$controller = Yii::app()->controller->id; //current controller
 	$action = Yii::app()->controller->getAction()->getId(); //current action
+	Yii::app()->clientScript->registerCoreScript('jquery');
 ?>
-<body class="<?php echo $controller . '-' . $action; ?>">
+<!DOCTYPE html>
+	<!--[if IE 8]> 				 <html class="no-js lt-ie9" lang="en" > <![endif]-->
+	<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width">
+		<title><?php echo isset($this->pageTitle) ? $this->pageTitle : Yii::app()->name; ?></title>
+		<link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/css/foundation/foundation.css">
+		<link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/css/stepper/jquery.stepper.min.css">
+		<link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/css/foundation/custom-foundation.css">
+		<link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/css/chosen.css">
+		<script src="<?php echo Yii::app()->request->baseUrl; ?>/js/vendor/custom.modernizr.js"></script>
+	</head>
+	<body>
+	<header class="container">
+		<!-- <div class="row"> -->
+		<nav class="top-bar" data-options="is_hover:true">
+			<ul class="title-area">
+			   <li class="name">
+			     <h1><a href="<?php echo Yii::app()->request->baseUrl; ?>"><img src="<?php echo Yii::app()->request->baseUrl; ?>/images/logo-sm.png" title='Bellofoodbox' alt=""></a></h1>
+			   </li>
+			   <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+			 </ul>
+			<section class="top-bar-section">
+			 <!-- Left Nav Section -->
+			<ul class="right">
+				<li><a href="/index.php?r=site/index">Home</a></li>
 
-<div class="container" id="page">
+				<?php if(Yii::app()->user->customer_id): ?>
+				<li class="divider"></li>
+				<li><a href="/index.php?r=user/view&id=<?php echo Yii::app()->user->id; ?>">Profile</a></li>
+				<li class="divider"></li>
+				<li><a href="/index.php?r=customerBox/order">Orders</a></li>
+				<li class="divider"></li>
+				<li><a href="index.php?r=customerPayment">Payments</a></li>
+				<?php endif; ?>
 
-	<div id="header">
-		<?php if(Yii::app()->user->shadow_id):
-			echo CHtml::link('Log back in as ' . Yii::app()->user->shadow_name, array('user/loginAs','id'=>Yii::app()->user->shadow_id),array('class'=>'shadow'));
-		endif;?>
-		<div id="logo"><?php echo CHtml::encode(Yii::app()->name); ?></div>
-	</div><!-- header -->
-	<div id="mainmenu">
-		<?php 
+				<?php if(Yii::app()->user->checkAccess('admin')): ?>
+				<li class="divider"></li>
+				<li><a href="/index.php?r=customerPayment/enterPayments">Payments</a></li>
+				<li class="divider"></li>
+				<li class="has-dropdown"><a href="/index.php?r=user/customers">Customers</a>
+					<ul class="dropdown">
+						<li><a href="/index.php?r=boxItem/customerBoxes">Customer Orders</a></li>
+					</ul>
+				</li>
+				<li class="divider"></li>
+				<li class="has-dropdown"><a href="/index.php?r=grower/admin">Growers</a>
+					<ul class="dropdown">
+						<li><a href="/index.php?r=growerItem/admin">Inventory</a></li>
+						<li><a href="/index.php?r=growerPurchase/admin">Grower Purchases</a></li>
+						<li><a href="/index.php?r=grower/map">Grower Map</a></li>
+					</ul>
+				</li>
+				<li class="divider"></li>
+				<li><a href="/index.php?r=location/admin">Locations</a></li>
+				<li class="divider"></li>
+				<li><a href="/index.php?r=user/admin">Admin Users</a></li>
+				<li class="divider"></li>
+				<li class="has-dropdown"><a href="#">Reports</a>
+					<ul class="dropdown">
+						<li><a href="/index.php?r=site/creditReport">Credit</a></li>
+						<li><a href="/index.php?r=site/salesReport">Box Sales</a></li>
+					</ul>
+				</li>
+				<?php endif; ?>
 
-		    $this->widget('zii.widgets.CMenu',array(
-			'items'=>array(
-				array('label'=>'Home', 'url'=>array('/site/index')),
-//				array('label'=>'About', 'url'=>array('/site/page', 'view'=>'about')),
-//				array('label'=>'Contact', 'url'=>array('/site/contact')),
-				
-				array('label'=>'Profile', 'url'=>array('/user/view','id'=>Yii::app()->user->id), 'visible'=>Yii::app()->user->customer_id),
-				
-				//Customer menu
-				array('label'=>'Orders', 'url'=>array('customerBox/order'), 'visible' => Yii::app()->user->customer_id),
-//				array('label'=>'Make a payment', 'url'=>array('customerPayment/create'), 'visible' => Yii::app()->user->customer_id),
-				array('label'=>'Payments', 'url'=>array('customerPayment/index'), 'visible' => Yii::app()->user->customer_id),
+				<?php if(Yii::app()->user->isGuest): ?>
+				<li class="divder"></li>
+				<li><a href="/index.php?r=site/register">Register</a></li>
+				<?php endif; ?>
 
-				//Admin menu
-				array('label'=>'Boxes', 'url'=>array('boxItem/create'), 'visible' => Yii::app()->user->checkAccess('admin'),
-					'items'=>array(
-						array('label'=>'Box Sizes', 'url'=>array('boxSize/admin'), 'visible' => Yii::app()->user->checkAccess('admin')),
-						array('label'=>'Weeks', 'url'=>array('week/admin'), 'visible' => Yii::app()->user->checkAccess('admin')),
-					),
-				),
-				array('label'=>'Payments', 'url'=>array('customerPayment/enterPayments'), 'visible' => Yii::app()->user->checkAccess('admin')),
-				array('label'=>'Customers', 'url'=>array('user/customers'), 'visible' => Yii::app()->user->checkAccess('admin'),
-					'items'=>array(
-						array('label'=>'Customer Orders', 'url'=>array('boxItem/customerBoxes'), 'visible' => Yii::app()->user->checkAccess('admin')),
-					)
-				),
-				array('label'=>'Growers', 'url'=>array('grower/admin'), 'visible' => Yii::app()->user->checkAccess('admin'),
-					'items'=>array(
-						array('label'=>'Inventory', 'url'=>array('growerItem/admin'), 'visible' => Yii::app()->user->checkAccess('grower')),
-						array('label'=>'Grower Map', 'url'=>array('grower/map'), 'visible' => Yii::app()->user->checkAccess('admin')),
-					)
-				),
-				array('label'=>'Locations', 'url'=>array('location/admin'), 'visible' => Yii::app()->user->checkAccess('admin')),
-				array('label'=>'Admin Users', 'url'=>array('user/admin'), 'visible' => Yii::app()->user->checkAccess('admin')),
-				array('label'=>'Reports', 'url'=>'#', 'visible' => Yii::app()->user->checkAccess('admin'),
-						'items'=>array(
-							array('label'=>'Credit', 'url'=>array('site/creditReport'), 'visible' => Yii::app()->user->checkAccess('admin')),
-							array('label'=>'Box Sales', 'url'=>array('site/salesReport'), 'visible' => Yii::app()->user->checkAccess('admin')),
-						)
-					),
-				array('label'=>'Register', 'url'=>array('site/register'), 'visible'=>Yii::app()->user->isGuest),
-				array('label'=>'Login', 'url'=>array('site/login'), 'visible'=>Yii::app()->user->isGuest),
-				array('label'=>'Logout ('.Yii::app()->user->name.')', 'url'=>array('site/logout'), 'visible'=>!Yii::app()->user->isGuest)
-			),
-		));
-		
-		?>
-	</div><!-- mainmenu -->
-	<?php if(isset($this->breadcrumbs)):?>
-		<?php $this->widget('zii.widgets.CBreadcrumbs', array(
-			'links'=>$this->breadcrumbs,
-		)); ?><!-- breadcrumbs -->
-	<?php endif?>
-	
-	<?php
-    foreach(Yii::app()->user->getFlashes() as $key => $message) {
-        echo '<div class="flash-' . $key . '">' . $message . "</div>\n";
-    }
-	?>
-	<?php echo $content; ?>
-
-	<div class="clear"></div>
-
-	<div id="footer">
-		<div id="site-generator">
-			Developed by <a href="http://www.snapfrozen.com.au/">Snapfrozen</a>.
+				<?php if(!Yii::app()->user->isGuest): ?>
+				<li class="has-form mobile-hidden"><a class="button" href="#" data-dropdown="topUserBtn"><?php echo Yii::app()->user->name; ?></a></li>
+				<ul id="topUserBtn" class="f-dropdown content" data-dropdown-content>
+				  <li><a href="/index.php?r=user/view&id=<?php echo Yii::app()->user->id; ?>">Profile</a></li>
+				  <li><a href="/index.php?r=site/logout">Logout</a></li>
+				</ul>
+			  	<li class='desktop-hidden has-form'><a href="/index.php?r=site/logout" class='button'>Logout</a></li>
+				<?php else: ?>
+				<li class='has-form'><a href="/index.php?r=site/login" class="button">Login</a></li>
+				<?php endif; ?>
+			</ul>
+			</section>			
+		</nav>
+		<!-- </div> -->
+	</header>
+	<div class="container content">
+		<?php echo $content; ?>
+	</div>
+	<footer class="container">
+		<div class="row">
+			<div class="large-4 columns">
+				<p>&copy; Snapfrozen Pty Ltd</p>
+			</div>
+			<div class="large-4 large-offset-4 columns">
+				<div class="right">
+					<p>Made with Love by <a href="http://www.snapfrozen.com.au/">Snapfrozen</a></p>
+				</div>
+			</div>
 		</div>
-	</div><!-- footer -->
+	</footer>
 
-</div><!-- page -->
-<?php
-	$jsFile = 'js/' . strtolower($controller) . '/' . strtolower($action) . '.js'; // filename to load
-	if( is_file($jsFile) ) { 
-		Yii::app()->clientScript->registerCoreScript('jquery');
-		Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl . '/' . $jsFile,CClientScript::POS_END);
-	} ?>
-</body>
+	<script src="<?php echo Yii::app()->request->baseUrl; ?>/js/foundation.min.js"></script>
+	<script src="<?php echo Yii::app()->request->baseUrl; ?>/js/foundation/foundation.forms.js"></script>
+	<script src="<?php echo Yii::app()->request->baseUrl; ?>/js/foundation/foundation.dropdown.js"></script>
+	<script src="<?php echo Yii::app()->request->baseUrl; ?>/js/foundation/foundation.abide.js"></script>
+	<script src="<?php echo Yii::app()->request->baseUrl; ?>/js/vendor/jquery.stepper.min.js"></script>	
+	<script src="<?php echo Yii::app()->request->baseUrl; ?>/js/chosen.jquery.min.js"></script>	
+	<script src="<?php echo Yii::app()->request->baseUrl; ?>/js/site-scripts.js"></script>	
+	
+	<!--
+
+	<script src="js/foundation/foundation.js"></script>
+
+	<script src="js/foundation/foundation.interchange.js"></script>
+
+
+	<script src="js/foundation/foundation.dropdown.js"></script>
+
+	<script src="js/foundation/foundation.placeholder.js"></script>
+
+
+	<script src="js/foundation/foundation.alerts.js"></script>
+
+	<script src="js/foundation/foundation.magellan.js"></script>
+
+	<script src="js/foundation/foundation.reveal.js"></script>
+
+	<script src="js/foundation/foundation.tooltips.js"></script>
+
+	<script src="js/foundation/foundation.clearing.js"></script>
+
+	<script src="js/foundation/foundation.cookie.js"></script>
+
+	<script src="js/foundation/foundation.joyride.js"></script>
+
+	<script src="js/foundation/foundation.orbit.js"></script>
+
+	<script src="js/foundation/foundation.section.js"></script>
+
+	<script src="js/foundation/foundation.topbar.js"></script>
+
+	-->
+
+		<script>
+		
+		</script>
+	</body>
 </html>

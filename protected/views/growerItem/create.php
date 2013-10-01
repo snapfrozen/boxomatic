@@ -1,10 +1,14 @@
-<?php
-$this->menu=array(
-	array('label'=>'List GrowerItem', 'url'=>array('index')),
-	array('label'=>'Manage GrowerItem', 'url'=>array('admin')),
-);
-?>
-
-<h1>Create GrowerItem</h1>
-
-<?php echo $this->renderPartial('_form', array('model'=>$model)); ?>
+<div class="row">
+	<div class="large-12 columns">
+		<h1>Create GrowerItem</h1>
+	</div>
+	<div class="large-12 columns">
+		<div class="panel">
+			<a href="index.php?r=growerItem/index" class='button small'>List GrowerItem</a>
+			<a href="index.php?r=growerItem/admin" class='button small'>Manage GrowerItem</a>
+		</div>
+	</div>
+	<div class="large-12 columns">
+		<?php echo $this->renderPartial('_form', array('model'=>$model)); ?>
+	</div>
+</div>

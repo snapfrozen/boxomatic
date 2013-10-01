@@ -14,11 +14,7 @@
 Kind regards,<br />
 Box-o-matic, Box Processing System</p>
 
-<p>Bellofoodbox is a community initiative promoting the local 
-economy, encouraging sustainable agricultural practices
- and contributing to a fair, connected and resilient community. 
-Distributing local, seasonal, affordable, healthy, fresh food that 
-is accessible to Bellingen, Dorrigo, Urunga, and Coffs Harbour areas.</p>
+<p>Bellofoodbox is run by Bellingen Greengrocers and encourages sustainable agricultural practices and supports local economy and community, distributing local, seasonal, affordable, healthy, fresh food that is accessible to Bellingen, Dorrigo, Urunga, Valla and Coffs Harbour areas.</p>
 
 <p>Thank you for your generous support and being part of this wonderful project.</p>
 

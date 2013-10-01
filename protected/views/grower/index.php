@@ -5,9 +5,14 @@ $this->menu=array(
 );
 ?>
 
-<h1>Growers</h1>
+<div class="row">
+	<div class="large-12 columns">
+		<h1>Growers</h1>
+	</div>
+	<?php $this->widget('zii.widgets.CListView', array(
+		'dataProvider'=>$dataProvider,
+		'itemView'=>'_view',
+	)); ?>
+	
+</div>
 
-<?php $this->widget('zii.widgets.CListView', array(
-	'dataProvider'=>$dataProvider,
-	'itemView'=>'_view',
-)); ?>

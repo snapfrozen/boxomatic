@@ -164,4 +164,21 @@ class GrowerItem extends CActiveRecord
 	{
 		return Yii::app()->params['itemUnits'][$this->item_unit];
 	}
+	
+	public function getItem_name_with_unit()
+	{
+		return $this->item_name . ' (' . $this->item_unit. ')';
+	}
+	
+	public static function getDropdownListItems($growerId=null)
+	{
+		$criteria = new CDbCriteria;
+		$criteria->order = 'item_name, grower_name';
+		if($growerId) {
+			$criteria->addCondition('t.grower_id='.$growerId);	
+		}
+		
+		$items = self::model()->with('Grower')->findAll($criteria);
+		return CHtml::listData($items,'item_id','item_name_with_unit');
+	}
 }

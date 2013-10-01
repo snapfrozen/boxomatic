@@ -1,49 +1,39 @@
 <?php
 	$cs=Yii::app()->clientScript;
 	$cs->registerCssFile(Yii::app()->request->baseUrl . '/css/ui-lightness/jquery-ui.css');
-	$cs->registerCssFile(Yii::app()->request->baseUrl . '/css/ui.spinner.css');
+	// $cs->registerCssFile(Yii::app()->request->baseUrl . '/css/ui.spinner.css');
 	$cs->registerCssFile(Yii::app()->request->baseUrl . '/css/chosen.css');
-	
 	$cs->registerCoreScript('jquery.ui');
 	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/ui.touch-punch.min.js', CClientScript::POS_END);
 	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/ui.datepicker.min.js', CClientScript::POS_END);
-	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/ui.spinner.min.js', CClientScript::POS_END);
+	// $cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/ui.spinner.min.js', CClientScript::POS_END);
 	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/chosen.jquery.min.js', CClientScript::POS_END);
-	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/jquery.stickyscroll.js', CClientScript::POS_END);
+	// $cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/jquery.stickyscroll.js', CClientScript::POS_END);
 	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/boxitem/_form.js',CClientScript::POS_END);
 	
 Yii::app()->clientScript->registerScript('initPageSize',<<<EOD
-	$('.change-pageSize').live('change', function() {
+	$('.change-pageSize').on('change', function() {
 		$.fn.yiiGridView.update('grower-item-grid',{ data:{ pageSize: $(this).val() }})
 	});
+
 EOD
 ,CClientScript::POS_READY);
 ?>
-<div id="fillBoxForm" class="form">
-	
-	<div class="calendar">
-		<h2>Delivery date</h2>
-		<div class="row">
-			<script type="text/javascript">
-				var curUrl="<?php echo $this->createUrl('boxItem/create'); ?>";
-				var selectedDate=<?php echo $SelectedWeek ? "'$SelectedWeek->week_delivery_date'" : 'null' ?>;
-				var availableWeeks=<?php echo json_encode(SnapUtil::makeArray($Weeks)) ?>;
-			</script>
-			<div class="week-picker"></div>
-			<noscript>
-			<?php foreach($Weeks as $Week): ?>
-				<?php echo CHtml::link($Week->week_delivery_date, array('boxItem/create','week'=>$Week->week_id)) ?>, 
-			<?php endforeach; ?>
-			</noscript>
-		</div>
-	</div>
 
-	<div id="inventory" class="row">
-		<h2>Inventory</h2>
+<?php $form=$this->beginWidget('CActiveForm', array(
+	'id'=>'box-item-form',
+	'enableAjaxValidation'=>false,
+	'action'=>$this->createUrl('boxItem/create',array('week'=>Yii::app()->request->getQuery('week'))),
+)); ?>
+
+<div class="large-8 columns">
+	<div id="inventory">
+		<h4>Inventory</h4>
 		<?php $dataProvider=$GrowerItems->search(); ?>
 		<?php $pageSize=Yii::app()->user->getState('pageSize',10); ?>
 		<?php $this->widget('zii.widgets.grid.CGridView', array(
 			'id'=>'grower-item-grid',
+			'cssFile' => '', 
 			'dataProvider'=>$dataProvider,
 			'filter'=>$GrowerItems,
 			'summaryText'=>'Displaying {start}-{end} of {count} result(s). ' .
@@ -92,31 +82,48 @@ EOD
 				)
 			),
 		)); ?>
-		
 	</div>
-	
-	<div class="clear"></div>
-	
-	<div class="section">
-		<h2><span>Boxes</span> <span class="loading"></span></h2>
+</div>
+
+<div class="large-4 columns">
+	<div class="calendar">
+		<h4>Delivery date</h4>
+		<script type="text/javascript">
+			var curUrl="<?php echo $this->createUrl('boxItem/create'); ?>";
+			var selectedDate=<?php echo $SelectedWeek ? "'$SelectedWeek->week_delivery_date'" : 'null' ?>;
+			var availableWeeks=<?php echo json_encode(SnapUtil::makeArray($Weeks)) ?>;
+		</script>
+		<div class="week-picker"></div>
+		<noscript>
+		<?php foreach($Weeks as $Week): ?>
+			<?php echo CHtml::link($Week->week_delivery_date, array('boxItem/create','week'=>$Week->week_id)) ?>, 
+		<?php endforeach; ?>
+		</noscript>
+	</div>
+</div>
+
+<div class="large-12 columns">
+		<h4><span>Boxes</span> <span class="loading"></span></h4>
 		<div class="clear"></div>
-		<?php $form=$this->beginWidget('CActiveForm', array(
-		'id'=>'box-item-form',
-		'enableAjaxValidation'=>false,
-		'action'=>$this->createUrl('boxItem/create',array('week'=>Yii::app()->request->getQuery('week'))),
-		)); ?>
-		
+
 		<div id="current-boxes">
 			
 			<?php echo CHtml::hiddenField('curUrl', $this->createUrl('boxItem/create',array('week'=>Yii::app()->request->getQuery('week')))); ?>
 			<?php if($SelectedWeek): ?>
-			<div class="row">
-				<?php echo CHtml::dropDownList('new_grower',null,CHtml::listData(Grower::model()->findAll(array('order'=>'grower_name ASC')),'grower_id','grower_name'),array('class'=>'chosen')); ?>
-				<?php echo CHtml::hiddenField('selected_week_id',$SelectedWeek->week_id); ?>
-				<div class="sticky" style="float:right">
-					<?php echo CHtml::submitButton('Update Boxes'); ?>
+
+			<fieldset>
+				<legend>Add Grower</legend>
+				<div class="large-12 columns">
+					<?php echo CHtml::dropDownList('new_grower',null,CHtml::listData(Grower::model()->findAll(array('order'=>'grower_name ASC')),'grower_id','grower_name'),array('class'=>'chosen')); ?>
+					<?php echo CHtml::hiddenField('selected_week_id',$SelectedWeek->week_id); ?>
 				</div>
-			</div>
+				<div class="large-12 columns">
+					<div class='right'>
+						<?php echo CHtml::submitButton('Update Boxes', array('class' => 'button small')); ?>
+					</div>
+				</div>
+			</fieldset>
+				
 			<table>
 				<thead>
 					<tr>
@@ -178,11 +185,11 @@ EOD
 						
 					<tr <?php echo $selectedClass ?>>
 						<td>
-							<?php echo CHtml::checkbox('bc['.$key.'][add_to_inventory]',false,array('title'=>'Add this item to the inventory')); ?>
+							<?php echo CHtml::checkbox('bc['.$key.'][add_to_inventory]',false,array('title'=>'Add this item to the inventory', 'class' => 'inline')); ?>
 							<?php
 								echo CHtml::hiddenField('bc['.$key.'][grower_id]',$WeekItemContent->grower_id);
 								echo CHtml::hiddenField('bc['.$key.'][week_id]',$SelectedWeek->week_id);
-								echo CHtml::textField('bc['.$key.'][item_name]',$WeekItemContent->item_name);
+								echo CHtml::textField('bc['.$key.'][item_name]',$WeekItemContent->item_name, array('class' => 'inline-85'));
 								
 								$totalQuantity=BoxItem::totalQuantity($WeekItemContent->box_item_ids);
 								$totalValue=$WeekItemContent->item_value*$totalQuantity;
@@ -324,18 +331,15 @@ EOD
 					
 				</tfoot>
 			</table>
-			<p><?php echo CHtml::link('Generate packing list Spreadsheet',array('week/generatePackingList','week'=>$SelectedWeek->week_id)) ?></p>
-			<p><?php echo CHtml::link('Generate customer list',array('week/generateCustomerList','week'=>$SelectedWeek->week_id)) ?></p>
-			<p><?php echo CHtml::link('Generate customer list PDF',array('week/generateCustomerListPdf','week'=>$SelectedWeek->week_id)) ?></p>
-			<p><?php echo CHtml::link('Generate order list',array('week/generateOrderList','week'=>$SelectedWeek->week_id)) ?></p>
+
+			<div class="panel">
+				<?php echo CHtml::link('Generate packing list Spreadsheet',array('week/generatePackingList','week'=>$SelectedWeek->week_id), array('class' => 'button small')) ?>
+				<?php echo CHtml::link('Generate customer list',array('week/generateCustomerList','week'=>$SelectedWeek->week_id), array('class' => 'button small')) ?>
+				<?php echo CHtml::link('Generate customer list PDF',array('week/generateCustomerListPdf','week'=>$SelectedWeek->week_id), array('class' => 'button small')) ?>
+				<?php echo CHtml::link('Generate order list',array('week/generateOrderList','week'=>$SelectedWeek->week_id), array('class' => 'button small')) ?>
+			</div>
 		<?php endif; ?>
 		</div>
-		
-		<?php $this->endWidget(); ?>
-	</div>
+</div>
 
-	<div class="section half">
-
-	</div>
-
-</div><!-- form -->
+<?php $this->endWidget(); ?>

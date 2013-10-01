@@ -18,17 +18,18 @@ return array(
 	
 	// application components
 	'components'=>array(
-		'db'=>array(
-			'connectionString' => 'mysql:host=francis.centos;dbname=fbapp_foodbox',
-			'emulatePrepare' => true,
-			'username' => 'root',
-			'password' => 'francis',
-			'tablePrefix' => '',
-			'charset' => 'utf8',
-//			'enableProfiling' => true, //
-//			'enableParamLogging' => true, //
-		),
 		
+                'db'=>array(
+                    'connectionString' => 'mysql:host=localhost;dbname=fbapp_foodbox',
+                    'emulatePrepare' => true,
+                    'username' => 'fbapp_foodbox',
+                    'password' => 'f00dbox!',
+                    'tablePrefix' => '',
+                    'charset' => 'utf8',
+//                      'enableProfiling' => true, //
+//                      'enableParamLogging' => true, //
+                ),
+
 		'mail' => array(
  			'class' => 'ext.yii-mail.YiiMail',
  			'transportType' => 'php',
