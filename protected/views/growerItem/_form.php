@@ -6,7 +6,7 @@
 )); ?>
 
 <fieldset>
-	<legend>GrowerItem Registration Form</legend>
+	<legend>Grower Item Form</legend>
 
 	<?php if($form->errorSummary($model)): ?>
 
@@ -19,11 +19,14 @@
 
 	<?php endif; ?>
 
+	<?php if(!isset($hideGrower)): ?>
 	<div class="large-12 columns">
 		<?php echo $form->labelEx($model,'grower_id'); ?>
 		<?php echo $form->dropDownList($model,'grower_id', CHtml::listData(Grower::model()->findAll(), 'grower_id', 'grower_name')); ?>
 		<?php echo $form->error($model,'grower_id'); ?>
 	</div>
+	<?php endif; ?>
+	
 	<div class="large-4 columns">
 		<?php echo $form->labelEx($model,'item_name'); ?>
 		<?php echo $form->textField($model,'item_name',array('size'=>45,'maxlength'=>45)); ?>
@@ -49,11 +52,14 @@
         <?php echo $form->dropDownList($model,'item_available_to', $model->getMonthList()); ?>   
         <?php echo $form->error($model,'item_available_to'); ?>
 	</div>
+	
+	<?php if(!isset($hideGrower)): ?>
 	<div class="large-12 columns">
 		<div class="right">
 			<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save', array('class' => 'button')); ?>
 		</div>
 	</div>
+	<?php endif; ?>
 </fieldset>
 
 <?php $this->endWidget(); ?>

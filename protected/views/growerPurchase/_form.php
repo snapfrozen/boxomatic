@@ -11,7 +11,7 @@ $cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/growerpurchase/_form
 )); ?>
 	
 <fieldset>
-	<legend>GrowerItem Registration Form</legend>
+	<legend>Grower Purchases Form</legend>
 
 	<?php if($form->errorSummary($model)): ?>
 
@@ -38,6 +38,13 @@ $cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/growerpurchase/_form
 			<?php echo $form->dropDownList($model,'grower_item_id',array(),array('class'=>'chosen')); ?>
 		<?php endif; ?>
 		<?php echo $form->error($model,'grower_item_id'); ?>
+	</div>
+
+	<div class="large-12 columns">
+		<h4 class="toggle"><span>[+]</span> Add new item</h4>
+		<div class="toggleSectionContent hide">
+			<?php echo $this->renderPartial('../growerItem/_form', array('model'=>new GrowerItem, 'hideGrower'=>true)); ?>
+		</div>
 	</div>
 
 	<div class="large-12 columns">

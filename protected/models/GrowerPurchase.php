@@ -86,6 +86,10 @@ class GrowerPurchase extends CActiveRecord
 			'delivered_quantity' => 'Delivered Quantity',
 			'final_price' => 'Final Price',
 			'delivery_nots' => 'Delivery Nots',
+			'grower_cert_search'=>'Grower Certification',
+			'grower_name_search'=>'Grower Name',
+			'item_name_search'=>'Item',
+			'proposed_delivery_date_formatted' => 'Proposed Delivery Date',
 		);
 	}
 

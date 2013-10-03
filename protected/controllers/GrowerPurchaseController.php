@@ -62,13 +62,22 @@ class GrowerPurchaseController extends Controller
 	public function actionCreate()
 	{
 		$model=new GrowerPurchase;
+		$GrowerItem=new GrowerItem;
 
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		if(isset($_POST['GrowerItem']) && !empty($_POST['GrowerItem']['item_name']))
+		{
+			$GrowerItem->attributes=$_POST['GrowerItem'];
+			$GrowerItem->grower_id=$_POST['grower_id'];
+			$GrowerItem->save();
+		}
 
 		if(isset($_POST['GrowerPurchase']))
 		{
 			$model->attributes=$_POST['GrowerPurchase'];
+			if(!empty($GrowerItem->item_id)) {
+				$model->grower_item_id = $GrowerItem->item_id;
+			}
+			
 			if($model->save())
 				$this->redirect(array('admin','id'=>$model->grower_purchases_id));
 		}
@@ -86,13 +95,22 @@ class GrowerPurchaseController extends Controller
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
+		$GrowerItem=new GrowerItem;
 
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		if(isset($_POST['GrowerItem']) && !empty($_POST['GrowerItem']['item_name']))
+		{
+			$GrowerItem->attributes=$_POST['GrowerItem'];
+			$GrowerItem->grower_id=$_POST['grower_id'];
+			$GrowerItem->save();
+		}
 
 		if(isset($_POST['GrowerPurchase']))
 		{
 			$model->attributes=$_POST['GrowerPurchase'];
+			if(!empty($GrowerItem->item_id)) {
+				$model->grower_item_id = $GrowerItem->item_id;
+			}
+			
 			if($model->save())
 				$this->redirect(array('admin','id'=>$model->grower_purchases_id));
 		}

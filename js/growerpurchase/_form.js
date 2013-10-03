@@ -11,6 +11,7 @@ $('select#grower_id').change(function(){
 		},
 		success: function(data,status) {
 			$growerItems.html(' ');
+			$growerItems.append('<option value=""> - Select - </option>');
 			$.each(data, function(i,v) {
 				$growerItems.append('<option value="' + i + '">' + v + '</option>');
 			});

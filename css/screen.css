@@ -607,3 +607,8 @@ tfoot td.total {
 /* Customer Locations */
 
 div.view .update {float:right; margin-left:10px;}
+
+
+.f-dropdown.content {
+	left:-9000px;
+}
