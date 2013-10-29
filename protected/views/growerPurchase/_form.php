@@ -11,7 +11,7 @@ $cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/growerpurchase/_form
 )); ?>
 	
 <fieldset>
-	<legend>Grower Purchases Form</legend>
+	<legend>Grower Purchase Form</legend>
 
 	<?php if($form->errorSummary($model)): ?>
 

@@ -45,8 +45,6 @@
 		<div class="large-12 columns">
 			<?php echo $form->label($model,'user_address'); ?>
 			<?php echo $form->textArea($model,'user_address',array('size'=>60,'maxlength'=>150)); ?>
-			<?php/* echo $form->label($model,'user_address2'); ?>
-			<?php echo $form->textField($model,'user_address2',array('size'=>60,'maxlength'=>150)); */?>
 		</div>
 		<div class="large-4 columns">
 			<?php echo $form->label($model,'user_suburb'); ?>

@@ -30,61 +30,68 @@
 			<section class="top-bar-section">
 			 <!-- Left Nav Section -->
 			<ul class="right">
-				<li><a href="/index.php?r=site/index">Home</a></li>
-
+				<li><?php echo CHtml::link('Home',array('site/index')) ?></li>
 				<?php if(Yii::app()->user->customer_id): ?>
 				<li class="divider"></li>
-				<li><a href="/index.php?r=user/view&id=<?php echo Yii::app()->user->id; ?>">Profile</a></li>
+				<li><?php echo CHtml::link('Profile',array('user/view','id'=>Yii::app()->user->id)) ?></li>
 				<li class="divider"></li>
-				<li><a href="/index.php?r=customerBox/order">Orders</a></li>
+				<li><?php echo CHtml::link('Orders',array('customerBox/order')) ?></li>
 				<li class="divider"></li>
-				<li><a href="index.php?r=customerPayment">Payments</a></li>
+				<li><?php echo CHtml::link('Payments',array('customerPayment/index')) ?></li>
 				<?php endif; ?>
 
 				<?php if(Yii::app()->user->checkAccess('admin')): ?>
 				<li class="divider"></li>
-				<li><a href="/index.php?r=customerPayment/enterPayments">Payments</a></li>
+				<li><?php echo CHtml::link('Payments',array('customerPayment/enterPayments')) ?></li>
 				<li class="divider"></li>
-				<li class="has-dropdown"><a href="/index.php?r=user/customers">Customers</a>
+				<li class="has-dropdown">
+					<?php echo CHtml::link('Customers',array('user/customers')) ?>
 					<ul class="dropdown">
-						<li><a href="/index.php?r=boxItem/customerBoxes">Customer Orders</a></li>
+						<li><?php echo CHtml::link('Customer Orders',array('boxItem/customerBoxes')) ?></li>
 					</ul>
 				</li>
 				<li class="divider"></li>
-				<li class="has-dropdown"><a href="/index.php?r=grower/admin">Growers</a>
+				<li class="has-dropdown">
+					<?php echo CHtml::link('Growers',array('grower/admin')) ?>
 					<ul class="dropdown">
-						<li><a href="/index.php?r=growerItem/admin">Inventory</a></li>
-						<li><a href="/index.php?r=growerPurchase/admin">Grower Purchases</a></li>
-						<li><a href="/index.php?r=grower/map">Grower Map</a></li>
+						<li><?php echo CHtml::link('Inventory',array('growerItem/admin')) ?></li>
+						<li><?php echo CHtml::link('Grower Purchases',array('growerPurchase/admin')) ?></li>
+						<li><?php echo CHtml::link('Grower Map',array('grower/map')) ?></li>
 					</ul>
 				</li>
 				<li class="divider"></li>
-				<li><a href="/index.php?r=location/admin">Locations</a></li>
+				<li><?php echo CHtml::link('Locations',array('location/admin')) ?></li>
 				<li class="divider"></li>
-				<li><a href="/index.php?r=user/admin">Admin Users</a></li>
+				<li><?php echo CHtml::link('Admin Users',array('user/admin')) ?></li>
 				<li class="divider"></li>
-				<li class="has-dropdown"><a href="#">Reports</a>
+				<li class="has-dropdown">
+					<a href="#">Reports</a>
 					<ul class="dropdown">
-						<li><a href="/index.php?r=site/creditReport">Credit</a></li>
-						<li><a href="/index.php?r=site/salesReport">Box Sales</a></li>
+						<li><?php echo CHtml::link('Credit',array('site/creditReport')) ?></li>
+						<li><?php echo CHtml::link('Box Sales',array('site/salesReport')) ?></li>
 					</ul>
 				</li>
 				<?php endif; ?>
 
 				<?php if(Yii::app()->user->isGuest): ?>
 				<li class="divder"></li>
-				<li><a href="/index.php?r=site/register">Register</a></li>
+				<li><?php echo CHtml::link('Register',array('site/register')) ?></li>
 				<?php endif; ?>
 
 				<?php if(!Yii::app()->user->isGuest): ?>
-				<li class="has-form mobile-hidden"><a class="button" href="#" data-dropdown="topUserBtn"><?php echo Yii::app()->user->name; ?></a></li>
-				<ul id="topUserBtn" class="f-dropdown content" data-dropdown-content>
-				  <li><a href="/index.php?r=user/view&id=<?php echo Yii::app()->user->id; ?>">Profile</a></li>
-				  <li><a href="/index.php?r=site/logout">Logout</a></li>
-				</ul>
-			  	<li class='desktop-hidden has-form'><a href="/index.php?r=site/logout" class='button'>Logout</a></li>
+				<li class="has-form mobile-hidden">
+					<a class="button" href="#" data-dropdown="topUserBtn"><?php echo Yii::app()->user->name; ?></a></li>
+					<ul id="topUserBtn" class="f-dropdown content" data-dropdown-content>
+					  <li><?php echo CHtml::link('Profile',array('user/view','id'=>Yii::app()->user->id)) ?></li>
+					  <li><?php echo CHtml::link('Logout',array('site/logout')) ?></li>
+					</ul>
+				<li class='desktop-hidden has-form'>
+					<?php echo CHtml::link('Logout',array('site/logout')) ?>
+				</li>
 				<?php else: ?>
-				<li class='has-form'><a href="/index.php?r=site/login" class="button">Login</a></li>
+				<li class='has-form'>
+					<?php echo CHtml::link('Login',array('site/login')) ?>
+				</li>
 				<?php endif; ?>
 			</ul>
 			</section>			

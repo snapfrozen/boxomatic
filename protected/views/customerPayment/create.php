@@ -10,8 +10,8 @@
 				<input type="hidden" name="cmd" value="_ext-enter" />
 
 				<input type="hidden" name="redirect_cmd" value="_xclick" />
-				<input type="hidden" name="return" value = "http://app.foodbox.org.au/index.php?r=customerPayment/paypalSuccess" />
-				<input type="hidden" name="cancel_return" value = "http://app.foodbox.org.au/index.php?r=customerPayment/paypalFailure" />
+				<input type="hidden" name="return" value = "<?php echo $this->createAbsoluteUrl('customerPayment/paypalSuccess') ?>" />
+				<input type="hidden" name="cancel_return" value = "<?php echo $this->createAbsoluteUrl('customerPayment/paypalFailure') ?>" />
 				<input type="hidden" name="business" value="Bellingengreengrocers@westnet.com.au" />
 				<input type="hidden" name="item_name" value="Box-o-Matic 'Bellofoodbox' Credit" />
 				<input type="hidden" name="quantity" value="1" />
