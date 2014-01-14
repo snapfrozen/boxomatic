@@ -29,8 +29,8 @@ class Controller extends CController
 	{
 		if( !Yii::app()->user->hasState('customer_id') )
 			Yii::app()->user->setState('customer_id', false);
-		if( !Yii::app()->user->hasState('grower_id') )
-			Yii::app()->user->setState('grower_id', false);
+		if( !Yii::app()->user->hasState('supplier_id') )
+			Yii::app()->user->setState('supplier_id', false);
 		if( !Yii::app()->user->hasState('shadow_id') )
 			Yii::app()->user->setState('shadow_id', false);
 		if( !Yii::app()->user->hasState('shadow_name') )

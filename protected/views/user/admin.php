@@ -67,7 +67,7 @@ EOD
 				),
 				'last_login_time',
 				array( 'name'=>'customer_id', 'value'=>'empty($data->customer_id) ? "No" : "Yes"'),
-				array( 'name'=>'grower_id', 'value'=>'empty($data->grower_id) ? "No" : "Yes"'),
+				array( 'name'=>'supplier_id', 'value'=>'empty($data->supplier_id) ? "No" : "Yes"'),
 				array(
 					'class'=>'CButtonColumn',
 					'template'=>'{view}{update}{delete}{login}',

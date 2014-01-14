@@ -142,11 +142,11 @@ class UserController extends Controller
 			$Customer->updateOrderDeliveryLocations();
 		}
 		
-		if(isset($_POST['Grower']))
+		if(isset($_POST['Supplier']))
 		{
-			$Grower=$model->Grower;
-			$Grower->attributes=$_POST['Grower'];
-			if(!$Grower->update())
+			$Supplier=$model->Supplier;
+			$Supplier->attributes=$_POST['Supplier'];
+			if(!$Supplier->update())
 				$allSaved=false;
 		}
 		

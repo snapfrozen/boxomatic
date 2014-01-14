@@ -145,7 +145,7 @@ fieldset legend {
 .pager, .calendar { 
 	margin-bottom: 20px;
 }
-#CustomerPayment_customer_id_chzn, #new_grower_chzn, .chzn-container{
+#CustomerPayment_customer_id_chzn, #new_supplier_chzn, .chzn-container{
 	margin-bottom: 15px; 
 }
 /* @media only screen and (max-width: 479px) {
@@ -167,3 +167,5 @@ fieldset legend {
 .f-dropdown.content {
 	left:-9000px;
 }
+
+.summary {margin-bottom:1em;}

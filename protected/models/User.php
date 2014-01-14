@@ -6,7 +6,7 @@
  * The followings are the available columns in table 'users':
  * @property integer $id
  * @property integer $customer_id
- * @property integer $grower_id
+ * @property integer $supplier_id
  * @property string $user_email
  * @property string $password
  * @property string $first_name
@@ -60,7 +60,7 @@ class User extends SnapActiveRecord
 		return array(
 			array('password, first_name, last_name','required'),
 			array('user_email','required','on'=>'register'),
-			array('customer_id, grower_id, update_user_id, create_user_id', 'numerical', 'integerOnly'=>true),
+			array('customer_id, supplier_id, update_user_id, create_user_id', 'numerical', 'integerOnly'=>true),
 			array('user_email, password', 'length', 'max'=>255),
 			array('user_email', 'unique'),
 			array('user_email', 'email'),
@@ -85,7 +85,7 @@ class User extends SnapActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'Customer'=>array(self::BELONGS_TO,'Customer','customer_id'),
-			'Grower'=>array(self::BELONGS_TO,'Grower','grower_id'),
+			'Supplier'=>array(self::BELONGS_TO,'Supplier','supplier_id'),
 		);
 	}
 
@@ -97,7 +97,7 @@ class User extends SnapActiveRecord
 		return array(
 			'id' => 'ID',
 			'customer_id' => 'Customer',
-			'grower_id' => 'Grower',
+			'supplier_id' => 'Supplier',
 			'password' => 'Password',
 			'password_repeat' => 'Repeat Password',
 			'password_current' => 'Current Password',
@@ -139,7 +139,7 @@ class User extends SnapActiveRecord
 
 		$criteria->compare('id',$this->id);
 		$criteria->compare('customer_id',$this->customer_id);
-		$criteria->compare('grower_id',$this->grower_id);
+		$criteria->compare('supplier_id',$this->supplier_id);
 		$criteria->compare('user_email',$this->user_email,true);
 		$criteria->compare('password',$this->password,true);
 		$criteria->compare('first_name',$this->first_name,true);
@@ -160,7 +160,7 @@ class User extends SnapActiveRecord
 		$criteria->compare('update_user_id',$this->update_user_id);
 		
 		if($this->searchAdmin)
-			$criteria->addCondition('customer_id is null AND grower_id is null');
+			$criteria->addCondition('customer_id is null AND supplier_id is null');
 		
 		return new CActiveDataProvider(get_class($this), array(
 			'criteria'=>$criteria,

@@ -23,13 +23,13 @@ EOD
 			<div>
 				<script type="text/javascript">
 					var curUrl="<?php echo $this->createUrl('boxItem/customerBoxes'); ?>";
-					var selectedDate=<?php echo $SelectedWeek ? "'$SelectedWeek->week_delivery_date'" : 'null' ?>;
-					var availableWeeks=<?php echo json_encode(SnapUtil::makeArray($Weeks)) ?>;
+					var selectedDate=<?php echo $SelectedDeliveryDate ? "'$SelectedDeliveryDate->date'" : 'null' ?>;
+					var availableDates=<?php echo json_encode(SnapUtil::makeArray($DeliveryDates)) ?>;
 				</script>
-				<div class="week-picker"></div>
+				<div class="delivery-date-picker"></div>
 				<noscript>
-				<?php foreach($Weeks as $Week): ?>
-					<?php echo CHtml::link($Week->week_delivery_date, array('boxItem/customerBoxes','week'=>$Week->week_id)) ?>, 
+				<?php foreach($DeliveryDates as $DeliveryDate): ?>
+					<?php echo CHtml::link($DeliveryDate->date, array('boxItem/customerBoxes','date'=>$DeliveryDate->id)) ?>, 
 				<?php endforeach; ?>
 				</noscript>
 			</div>
@@ -37,14 +37,14 @@ EOD
 		<div id="customerList">
 			<?php 
 			
-			if($SelectedWeek):
-				if(strtotime($SelectedWeek->deadline) < time()):
-					echo CHtml::link('Process Customers', array('boxItem/processCustomers','week'=>$SelectedWeek->week_id), array('id'=>'process', 'class' => 'button small'));
+			if($SelectedDeliveryDate):
+				if(strtotime($SelectedDeliveryDate->deadline) < time()):
+					echo CHtml::link('Process Customers', array('boxItem/processCustomers','date'=>$SelectedDeliveryDate->id), array('id'=>'process', 'class' => 'button small'));
 				endif;
-				echo ' ' . CHtml::link('Pack Boxes', array('boxItem/create','week'=>$SelectedWeek->week_id), array('class' => 'button small'));
+				echo ' ' . CHtml::link('Pack Boxes', array('boxItem/create','date'=>$SelectedDeliveryDate->id), array('class' => 'button small'));
 			endif; ?>
 			
-			<?php $dataProvider=$SelectedWeek ? $CustomerBoxes->boxSearch($SelectedWeek->week_id) : $CustomerBoxes->boxSearch(-1); ?>
+			<?php $dataProvider=$SelectedDeliveryDate ? $CustomerBoxes->boxSearch($SelectedDeliveryDate->id) : $CustomerBoxes->boxSearch(-1); ?>
 			<?php $pageSize=Yii::app()->user->getState('pageSize',10); ?>
 			<?php
 			$this->widget('zii.widgets.grid.CGridView', array(

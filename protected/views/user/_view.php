@@ -3,7 +3,7 @@
 		<ul class='no-bullet'>
 			<li><?php echo CHtml::encode($data->getAttributeLabel('id')); ?> : <?php echo CHtml::link(CHtml::encode($data->id), array('view', 'id'=>$data->id)); ?></li>
 			<li><?php echo CHtml::encode($data->getAttributeLabel('customer_id')); ?> : <?php echo CHtml::encode($data->customer_id); ?></li>
-			<li><?php echo CHtml::encode($data->getAttributeLabel('grower_id')); ?> : <?php echo CHtml::encode($data->grower_id); ?></li>
+			<li><?php echo CHtml::encode($data->getAttributeLabel('supplier_id')); ?> : <?php echo CHtml::encode($data->supplier_id); ?></li>
 			<li><?php echo CHtml::encode($data->getAttributeLabel('user_email')); ?> : <?php echo CHtml::encode($data->user_email); ?></li>
 			<!-- <li><?php echo CHtml::encode($data->getAttributeLabel('password')); ?> : <?php echo CHtml::encode($data->password); ?></li> -->
 			<li><?php echo CHtml::encode($data->getAttributeLabel('full_name')); ?> : <?php echo CHtml::encode($data->full_name); ?></li>

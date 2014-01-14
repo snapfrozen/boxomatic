@@ -17,6 +17,6 @@ $this->menu=array(
 		'item_name',
 		'box_id',
 		'item_value',
-		'grower_id',
+		'supplier_id',
 	),
 )); ?>

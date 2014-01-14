@@ -14,4 +14,6 @@ return array(
 	'password' => '',
 	'tablePrefix' => '',
 	'charset' => 'utf8',
+	'enableProfiling' => true, //
+	'enableParamLogging' => true, //
 );

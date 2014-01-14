@@ -10,20 +10,20 @@ function initialize() {
   var map = new google.maps.Map(document.getElementById("map-canvas"),
       mapOptions);
 
-  $.each(growers, function(){
+  $.each(suppliers, function(){
     	if(this.longitude !== defaultCoordinate && this.lattitude !== defaultCoordinate){
-    		 var growerLatlng = new google.maps.LatLng(this.lattitude, this.longitude);
+    		 var supplierLatlng = new google.maps.LatLng(this.lattitude, this.longitude);
     		 var marker = new google.maps.Marker({
-    		       position: growerLatlng,
+    		       position: supplierLatlng,
     		       map : map,
-    		       title : this.grower_name,
+    		       title : this.name,
                icon : 'images/icons/map/carrot.png'
     		   });
 
-    		var html = '<div class="info-window-content"><h3>' + this.grower_name + '</h3>';
+    		var html = '<div class="info-window-content"><h3>' + this.name + '</h3>';
     		html += '<ul class="no-bullet">'
-    		html += '<li>' + this.grower_address + '</li>';
-    		html += '<li>' + this.grower_produce + '</li>';
+    		html += '<li>' + this.address + '</li>';
+    		html += '<li>' + this.produce + '</li>';
     		html += '</ul>';
     		html += '</div>';
 

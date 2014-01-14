@@ -9,4 +9,4 @@ $this->menu=array(
 
 <h1>Update BoxItem <?php echo $model->box_item_id; ?></h1>
 
-<?php echo $this->renderPartial('_form', array('model'=>$model,'GrowerItems'=>$GrowerItems)); ?>
+<?php echo $this->renderPartial('_form', array('model'=>$model,'SupplierProducts'=>$SupplierProducts)); ?>

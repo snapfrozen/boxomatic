@@ -12,8 +12,8 @@
 	<?php echo CHtml::encode($data->box_price); ?>
 	<br />
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('week_id')); ?>:</b>
-	<?php echo CHtml::encode($data->week_id); ?>
+	<b><?php echo CHtml::encode($data->getAttributeLabel('delivery_date_id')); ?>:</b>
+	<?php echo CHtml::encode($data->delivery_date_id); ?>
 	<br />
 
 

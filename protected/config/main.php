@@ -183,11 +183,11 @@ return array(
 					'class'=>'CFileLogRoute',
 					'levels'=>'error, warning',
 				),
-//				array(
-//					'class'=>'CWebLogRoute',
-//					'categories'=>'system.db.CDbCommand',
-//					//'showInFireBug'=>true,
-//				),
+				array(
+					'class'=>'CWebLogRoute',
+					'categories'=>'system.db.CDbCommand',
+					//'showInFireBug'=>true,
+				),
 				// uncomment the following to show log messages on web pages
 				/*
 				array(
@@ -242,6 +242,6 @@ return array(
 		),
 		'orderDeadlineDays'=>4, //orders must be placed within 7 days of delivery 
 		'deliveryDayOfWeek'=>1, //0 (for Sunday) through 6 (for Saturday)
-		'autoCreateWeeks'=>24   //Amount of weeks to auto create boxes for in advance
+		'autoCreateDeliveryDates'=>24   //Amount of weeks to auto create boxes for in advance
 	),
 );

@@ -200,37 +200,39 @@ class SiteController extends Controller
 	
 	public function actionUpdateDeliveryCosts()
 	{
-//		$sql=
-//			'SELECT cb.customer_box_id, w.week_delivery_date, cw.week_id, cb.customer_id, b.box_price, cb.delivery_cost, l.location_delivery_value, l.is_pickup
-//			FROM `customer_boxes` cb
-//			INNER JOIN boxes b ON cb.box_id = b.box_id
-//			INNER JOIN customer_weeks cw ON b.week_id = cw.week_id
-//			INNER JOIN locations l ON cw.customer_location_id = l.location_id
-//			INNER JOIN weeks w ON b.week_id = w.week_id
-//			WHERE delivery_cost != location_delivery_value
-//			AND week_delivery_date > NOW()';
+		/*
+		$sql=
+			'SELECT cb.customer_box_id, w.date, cw.week_id, cb.customer_id, b.box_price, cb.delivery_cost, l.location_delivery_value, l.is_pickup
+			FROM `customer_boxes` cb
+			INNER JOIN boxes b ON cb.box_id = b.box_id
+			INNER JOIN customer_weeks cw ON b.week_id = cw.week_id
+			INNER JOIN locations l ON cw.customer_location_id = l.location_id
+			INNER JOIN weeks w ON b.week_id = w.week_id
+			WHERE delivery_cost != location_delivery_value
+			AND date > NOW()';
 		
-//		$connection=Yii::app()->db; 
-//		$dataReader=$connection->createCommand($sql)->query();
-//		foreach($dataReader as $row)
-//		{
-//			$custBoxId=$row['customer_box_id'];
-//			$delivery=$row['location_delivery_value'];
-//			$upSql="UPDATE customer_box SET delivery_cost=$delivery WHERE customer_box_id=$custBoxId;";
-//			echo $upSql.'<br />';
-//			//$connection->createCommand($upSql)->execute();
-//		}
+		$connection=Yii::app()->db; 
+		$dataReader=$connection->createCommand($sql)->query();
+		foreach($dataReader as $row)
+		{
+			$custBoxId=$row['customer_box_id'];
+			$delivery=$row['location_delivery_value'];
+			$upSql="UPDATE customer_box SET delivery_cost=$delivery WHERE customer_box_id=$custBoxId;";
+			echo $upSql.'<br />';
+			//$connection->createCommand($upSql)->execute();
+		}
+		 */
 		
-		$CustBoxes=CustomerBox::model()->with(array('Box'=>array('with'=>array('Week'))))->findAll('Week.week_delivery_date > NOW()');
+		$CustBoxes=CustomerBox::model()->with(array('Box'=>array('with'=>array('DeliveryDate'))))->findAll('DeliveryDate.date > NOW()');
 		$n=0;
 		foreach($CustBoxes as $CustBox)
 		{
-			$CustWeek=CustomerWeek::model()->findByAttributes(array('customer_id'=>$CustBox->customer_id, 'week_id'=>$CustBox->Box->week_id));
-			if($CustBox->delivery_cost != $CustWeek->Location->location_delivery_value)
+			$CustDeliveryDate=CustomerDeliveryDate::model()->findByAttributes(array('customer_id'=>$CustBox->customer_id, 'delivery_date_id'=>$CustBox->Box->delivery_date_id));
+			if($CustBox->delivery_cost != $CustDeliveryDate->Location->location_delivery_value)
 			{
 				$User=$CustBox->Customer->User;
-				echo "<p>Customer $User->id: {$User->full_name} ($CustBox->delivery_cost - {$CustWeek->Location->location_delivery_value})</p>";
-				$upSql="UPDATE customer_box SET delivery_cost={$CustWeek->Location->location_delivery_value} WHERE customer_box_id=$CustBox->customer_box_id;";
+				echo "<p>Customer $User->id: {$User->full_name} ($CustBox->delivery_cost - {$CustDeliveryDate->Location->location_delivery_value})</p>";
+				$upSql="UPDATE customer_box SET delivery_cost={$CustDeliveryDate->Location->location_delivery_value} WHERE customer_box_id=$CustBox->customer_box_id;";
 				$n++;
 			}
 		}
@@ -241,12 +243,12 @@ class SiteController extends Controller
 	{
 	
 		/*
-		$CustWeeks=CustomerWeek::model()->findAll();
-		foreach($CustWeeks as $CustWeek)
+		$CustDeliveryDates=CustomerDeliveryDate::model()->findAll();
+		foreach($CustDeliveryDates as $CustDeliveryDate)
 		{
-			$CustWeek->location_id=$CustWeek->Customer->location_id;
-			$CustWeek->customer_location_id=$CustWeek->Customer->customer_location_id;
-			$CustWeek->save();
+			$CustDeliveryDate->location_id=$CustDeliveryDate->Customer->location_id;
+			$CustDeliveryDate->customer_location_id=$CustDeliveryDate->Customer->customer_location_id;
+			$CustDeliveryDate->save();
 		}
 		*/
 		
@@ -370,27 +372,27 @@ class SiteController extends Controller
 		$r=Yii::app()->request;
 		if(isset($_POST['boxSales']))
 		{	
-			$xAxisName='Week';
+			$xAxisName='DeliveryDate';
 			$yAxisName='Boxes Sold';
 			$dateFrom=$r->getPost($_POST['date_from'],'2012-01-01');
 			$dateTo=$r->getPost($_POST['date_to'],'2020-01-01');
 
 			//All boxes
 			$sql=
-				"SELECT w.week_delivery_date, count(customer_box_id) as total
+				"SELECT d.date, count(customer_box_id) as total
 				FROM customer_boxes cb
 				JOIN boxes b ON cb.box_id=b.box_id
-				JOIN weeks w ON b.week_id=w.week_id
+				JOIN delivery_dates d ON b.delivery_date_id=d.id
 				WHERE 
 					(
 						cb.status=".CustomerBox::STATUS_APPROVED." OR 
 						cb.status=".CustomerBox::STATUS_DELIVERED."
 					)
 					AND
-					w.week_delivery_date > \"$dateFrom\" AND
-					w.week_delivery_date < \"$dateTo\"
-				GROUP BY w.week_delivery_date
-				ORDER BY w.week_delivery_date ASC";
+					d.date > \"$dateFrom\" AND
+					d.date < \"$dateTo\"
+				GROUP BY d.date
+				ORDER BY d.date ASC";
 			
 			$connection=Yii::app()->db; 
 			$dataReader=$connection->createCommand($sql)->query();
@@ -398,7 +400,7 @@ class SiteController extends Controller
 			$allBoxesData=array();
 			foreach($dataReader as $row) {
 				//multiply by 1000 for milliseconds for javascript
-				$allBoxesData[]=array(strtotime($row['week_delivery_date'])*1000, (int)$row['total']);
+				$allBoxesData[]=array(strtotime($row['date'])*1000, (int)$row['total']);
 			}
 			$series[]=array('name'=>'All Boxes','data'=>$allBoxesData);
 			$yAxis=array('title'=>array('text'=>'Boxes Sold'), 'min'=>0);
@@ -408,27 +410,27 @@ class SiteController extends Controller
 			foreach($BoxSizes as $BoxSize)
 			{
 				$sql=
-					"SELECT w.week_delivery_date, count(customer_box_id) as total
+					"SELECT d.date, count(customer_box_id) as total
 					FROM customer_boxes cb
 					JOIN boxes b ON cb.box_id=b.box_id
-					JOIN weeks w ON b.week_id=w.week_id
+					JOIN delivery_dates d ON b.delivery_date_id=d.id
 					WHERE 
 						b.size_id=$BoxSize->box_size_id AND
 						(
 							cb.status=".CustomerBox::STATUS_APPROVED." OR 
 							cb.status=".CustomerBox::STATUS_DELIVERED."
 						) AND 
-						w.week_delivery_date > \"$dateFrom\" AND
-						w.week_delivery_date < \"$dateTo\"
-					GROUP BY w.week_delivery_date
-					ORDER BY w.week_delivery_date ASC";
+						d.date > \"$dateFrom\" AND
+						d.date < \"$dateTo\"
+					GROUP BY d.date
+					ORDER BY d.date ASC";
 
 				$dataReader=$connection->createCommand($sql)->query();
 
 				$boxesData=array();
 				foreach($dataReader as $row) {
 					//multiply by 1000 for milliseconds for javascript
-					$boxesData[]=array(strtotime($row['week_delivery_date'])*1000, (int)$row['total']);
+					$boxesData[]=array(strtotime($row['date'])*1000, (int)$row['total']);
 				}
 				$series[]=array('name'=>$BoxSize->box_size_name . ' Boxes','data'=>$boxesData);
 			}

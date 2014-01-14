@@ -7,7 +7,7 @@
 <body style="margin:0;">
 <p>Hi <?php echo $Customer->User->first_name ?>,</p>
 
-<p><strong>Your Bellofoodbox order for <?php echo $CustomerBox->Box->Week->week_delivery_date ?>, has been APPROVED. 
+<p><strong>Your Bellofoodbox order for <?php echo $CustomerBox->Box->DeliveryDate->date ?>, has been APPROVED. 
 And our growers are now busy harvesting all the fresh 
 yummy produce to fill your Bellofoodbox.</strong></p>
 

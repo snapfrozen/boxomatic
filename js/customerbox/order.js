@@ -70,7 +70,7 @@ $('span.btnAdvanced').click(function(){
 	
 	if($elem.hasClass('selected')) {
 		
-		if($elem.parents('#reccuring-customer-order-form').length!=0 || window.confirm('This will reset your order for the week, are you sure?')) {
+		if($elem.parents('#reccuring-customer-order-form').length!=0 || window.confirm('This will reset your order for this date, are you sure?')) {
 			
 			$elem.removeClass('selected');
 			$elem

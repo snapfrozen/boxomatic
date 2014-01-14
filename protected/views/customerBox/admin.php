@@ -25,8 +25,8 @@ $this->widget('zii.widgets.grid.CGridView', array(
 		'quantity',
 		'total_price',
 		array(
-			'name'=>'Box.week_id',
-			'value'=>'Yii::app()->dateFormatter->format("EEE, MMM d",$data->Box->Week->week_delivery_date)',
+			'name'=>'Box.delivery_date_id',
+			'value'=>'Yii::app()->dateFormatter->format("EEE, MMM d",$data->Box->DeliveryDate->date)',
 		),
 		array(
 			'class'=>'CButtonColumn',

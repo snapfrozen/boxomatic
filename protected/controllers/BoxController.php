@@ -109,9 +109,9 @@ class BoxController extends Controller
 	public function actionDelete($id)
 	{
 		$model=$this->loadModel($id);
-		$weekId=$model->week_id;
+		$dateId=$model->delivery_date_id;
 		$model->delete();
-		$this->redirect(array('boxItem/create','week'=>$weekId));
+		$this->redirect(array('boxItem/create','date'=>$dateId));
 	}
 	
 	/**
@@ -122,7 +122,7 @@ class BoxController extends Controller
 	{
 		$model=$this->loadModel($id);
 		$model->duplicate();
-		$this->redirect(array('boxItem/create','week'=>$model->week_id));
+		$this->redirect(array('boxItem/create','date'=>$model->delivery_date_id));
 	}
 	
 	/**
@@ -141,7 +141,7 @@ class BoxController extends Controller
 		$CustBoxFrom->box_id=$to;
 		$CustBoxFrom->save();
 		
-		$this->redirect(array('boxItem/create','week'=>$CustBoxFrom->Box->week_id));
+		$this->redirect(array('boxItem/create','date'=>$CustBoxFrom->Box->delivery_date_id));
 	}
 	
 	/**

@@ -4,9 +4,9 @@
 	</div>
 	<?php echo $this->renderPartial('_form', array(
 			'model'=>$model,
-			'GrowerItems'=>$GrowerItems,
-			'Weeks'=>$Weeks,
-			'WeekBoxes'=>$WeekBoxes,
+			'SupplierProducts'=>$SupplierProducts,
+			'DeliveryDates'=>$DeliveryDates,
+			'DeliveryDateBoxes'=>$DeliveryDateBoxes,
 			'SelectedWeek'=>$SelectedWeek,
 			'selectedItemId'=>$selectedItemId,
 		)); 

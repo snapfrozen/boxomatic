@@ -21,8 +21,8 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->label($model,'week_id'); ?>
-		<?php echo $form->textField($model,'week_id'); ?>
+		<?php echo $form->label($model,'delivery_date_id'); ?>
+		<?php echo $form->textField($model,'delivery_date_id'); ?>
 	</div>
 
 	<div class="row buttons">

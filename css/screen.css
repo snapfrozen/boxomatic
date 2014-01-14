@@ -503,10 +503,10 @@ table th div {
 		}
 
 		
-#grower-item-grid_c3 {
+#supplier-item-grid_c3 {
 	width:25%;
 }
-#grower-item-grid_c2 {
+#supplier-item-grid_c2 {
 	width:15%;
 }
 
@@ -555,7 +555,7 @@ tfoot td.total {
 #box-item-form {
 	position:relative;
 }
-	#box-item-form .growerName {
+	#box-item-form .supplierName {
 		width:100%;
 	}
 	#box-item-form thead th {
@@ -569,9 +569,9 @@ tfoot td.total {
 	margin-bottom:5px;
 }
 
-/* Grower Map */
+/* Supplier Map */
 
-.grower-map #map {
+.supplier-map #map {
 	display:block;
 	height:500px;
 }
@@ -585,22 +585,22 @@ tfoot td.total {
 	.infoWindow h3 a:hover {
 		text-decoration:underline;
 	}
-#grower-search {
+#supplier-search {
 	overflow:hidden;
 }
-	#grower-search .row {
+	#supplier-search .row {
 		float:left;
 		margin-right:1em;
 		clear:none;
 	}
-	#grower-search label {
+	#supplier-search label {
 		width:auto;
 		padding-top:3px;
 	}
-	#grower-search input {
+	#supplier-search input {
 		margin:0;
 	}
-	#grower-search .buttons {
+	#supplier-search .buttons {
 		padding-left:0;
 	}
 	

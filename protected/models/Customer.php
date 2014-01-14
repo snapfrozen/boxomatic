@@ -112,43 +112,43 @@ class Customer extends CActiveRecord
 		return $this->totalPayments;
 	}
 	
-	public function totalByWeek($weekId)
+	public function totalByDeliveryDate($dateId)
 	{
 		$customerId=Yii::app()->user->customer_id;
 		
 		$criteria=new CDbCriteria;
-		$criteria->condition = 'week_id=:weekId AND customer_id=:customerId';
-		$criteria->params = array(':weekId'=>$weekId,':customerId'=>$customerId);
-		$criteria->select = 'SUM((box_price * quantity) + (delivery_cost * quantity)) as week_total';
+		$criteria->condition = 'delivery_date_id=:dateId AND customer_id=:customerId';
+		$criteria->params = array(':dateId'=>$dateId,':customerId'=>$customerId);
+		$criteria->select = 'SUM((box_price * quantity) + (delivery_cost * quantity)) as date_total';
 		
 		$result = CustomerBox::model()->with('Box')->find($criteria);		
-		return $result ? $result->week_total : '';
+		return $result ? $result->date_total : '';
 	}
 	
-	public function totalDeliveryByWeek($weekId)
+	public function totalDeliveryByDeliveryDate($dateId)
 	{
 		$customerId=Yii::app()->user->customer_id;
 		
 		$criteria=new CDbCriteria;
-		$criteria->condition = 'week_id=:weekId AND customer_id=:customerId';
-		$criteria->params = array(':weekId'=>$weekId,':customerId'=>$customerId);
-		$criteria->select = 'SUM(delivery_cost * quantity) as week_total';
+		$criteria->condition = 'delivery_date_id=:dateId AND customer_id=:customerId';
+		$criteria->params = array(':dateId'=>$dateId,':customerId'=>$customerId);
+		$criteria->select = 'SUM(delivery_cost * quantity) as date_total';
 		
 		$result = CustomerBox::model()->with('Box')->find($criteria);		
-		return $result ? $result->week_total : '';
+		return $result ? $result->date_total : '';
 	}
 	
-	public function totalBoxesByWeek($weekId)
+	public function totalBoxesByDeliveryDate($dateId)
 	{
 		$customerId=Yii::app()->user->customer_id;
 		
 		$criteria=new CDbCriteria;
-		$criteria->condition = 'week_id=:weekId AND customer_id=:customerId';
-		$criteria->params = array(':weekId'=>$weekId,':customerId'=>$customerId);
-		$criteria->select = 'SUM((box_price * quantity)) as week_total';
+		$criteria->condition = 'delivery_date_id=:dateId AND customer_id=:customerId';
+		$criteria->params = array(':dateId'=>$dateId,':customerId'=>$customerId);
+		$criteria->select = 'SUM((box_price * quantity)) as date_total';
 		
 		$result = CustomerBox::model()->with('Box')->find($criteria);		
-		return $result ? $result->week_total : '';
+		return $result ? $result->date_total : '';
 	}
 	
 	public function getFulfilled_order_total()
@@ -156,12 +156,12 @@ class Customer extends CActiveRecord
 		$deadlineDays=Yii::app()->params['orderDeadlineDays'];
 		
 		$customerId=Yii::app()->user->customer_id;
-		$weekDeadline=date('Y-m-d', strtotime('+' . $deadlineDays . ' days'));
+		$deliveryDateDeadline=date('Y-m-d', strtotime('+' . $deadlineDays . ' days'));
 		
 		$criteria=new CDbCriteria;
-		$criteria->with = array('Box.Week');
-		$criteria->condition = 'week_delivery_date<=:weekDeadline AND customer_id=:customerId';
-		$criteria->params = array(':weekDeadline'=>$weekDeadline,':customerId'=>$customerId);
+		$criteria->with = array('Box.DeliveryDate');
+		$criteria->condition = 'date<=:deliveryDateDeadline AND customer_id=:customerId';
+		$criteria->params = array(':deliveryDateDeadline'=>$deliveryDateDeadline,':customerId'=>$customerId);
 		$criteria->select = 'SUM((box_price * quantity) + (delivery_cost * quantity)) as fulfilled_total';
 		
 		$result = CustomerBox::model()->with('Box')->find($criteria);		
@@ -190,19 +190,19 @@ class Customer extends CActiveRecord
 		$Customer=self::model()->findByPk($this->customer_id);
 		
 		$deadlineDays=Yii::app()->params['orderDeadlineDays'];
-		$CustWeeks=CustomerWeek::model()->with('Week')->findAllByAttributes(array(
+		$CustDeliveryDates=CustomerDeliveryDate::model()->with('DeliveryDate')->findAllByAttributes(array(
 			'customer_id'=>$Customer->customer_id,
-		),"date_sub(Week.week_delivery_date, interval $deadlineDays day) > NOW()");
+		),"date_sub(DeliveryDate.date, interval $deadlineDays day) > NOW()");
 		
-		foreach($CustWeeks as $CustWeek)
+		foreach($CustDeliveryDates as $CustDate)
 		{
-			$CustWeek->location_id=$Customer->location_id;
+			$CustDate->location_id=$Customer->location_id;
 			if(empty($Customer->customer_location_id)) {
-				$CustWeek->customer_location_id=new CDbExpression('NULL');
+				$CustDate->customer_location_id=new CDbExpression('NULL');
 			} else
-				$CustWeek->customer_location_id=$CustWeek->customer_location_id;
+				$CustDate->customer_location_id=$CustDate->customer_location_id;
 			
-			$CustWeek->save();
+			$CustDate->save();
 		}
 	}
 	
@@ -223,9 +223,9 @@ class Customer extends CActiveRecord
 	 */
 	public function findAllWithNoOrders()
 	{
-		$NextDelivery=Week::model()->find(array(
-			'condition'=>'week_delivery_date > NOW()',
-			'order'=>'week_delivery_date ASC',
+		$NextDelivery=DeliveryDate::model()->find(array(
+			'condition'=>'date > NOW()',
+			'order'=>'date ASC',
 		));
 
 		$criteria=new CDbCriteria();
@@ -237,18 +237,18 @@ class Customer extends CActiveRecord
 				'with'=>array(
 					'Box'=>array(
 						'with'=>array(
-							'Week'=>array()
+							'DeliveryDate'=>array()
 						)
 					)
 				),
 			),
 		);
 		$criteria->order='first_name ASC';
-		$criteria->select='*, COUNT(CustomerBoxes.customer_box_id) AS total_orders, MAX(Week.week_delivery_date) as last_order';
+		$criteria->select='*, COUNT(CustomerBoxes.customer_box_id) AS total_orders, MAX(DeliveryDate.date) as last_order';
 		$criteria->group='t.customer_id';
-		$criteria->having='last_order="' . $NextDelivery->week_delivery_date . '"';
-		//$criteria->addCondition('Week.week_delivery_date < DATE_ADD(NOW(), INTERVAL 7 DAY)');
-		//$criteria->addCondition('Week.week_delivery_date > NOW()');
+		$criteria->having='last_order="' . $NextDelivery->date . '"';
+		//$criteria->addCondition('DeliveryDate.date < DATE_ADD(NOW(), INTERVAL 7 DAY)');
+		//$criteria->addCondition('DeliveryDate.date > NOW()');
 		
 		return $this->findAll($criteria);
 	}

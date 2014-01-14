@@ -5,8 +5,8 @@ $loading.hide();
 function loadSpinners()
 {
 	$('select.chosen').chosen();
-	$('select#new_grower').change(function(){
-		reloadBoxes(curUrl,{week: $('input#selected_week_id').val(), grower:$(this).val()});
+	$('select#new_supplier').change(function(){
+		reloadBoxes(curUrl,{date: $('input#selected_delivery_date_id').val(), supplier:$(this).val()});
 	})
 	/*$('input.number').spinner();
 	$('input.currency, input.decimal').spinner({
@@ -25,7 +25,7 @@ loadSpinners();
 
 function reloadBoxes(url,data)
 {
-	var ajaxUpdate = ['current-boxes','grower-item-grid'];
+	var ajaxUpdate = ['current-boxes','supplier-item-grid'];
 	$loading.show();
 	$.ajax({
 		type: 'GET',
@@ -56,7 +56,7 @@ $('form#box-item-form').on('change', 'input, select', function(){
 $('form#box-item-form').on('submit', function() {
 
 	$loading.show();
-	var ajaxUpdate = ['current-boxes','grower-item-grid'];
+	var ajaxUpdate = ['current-boxes','supplier-item-grid'];
 	$.ajax({
 		type: 'POST',
 		url: $('input#curUrl').val(),
@@ -74,26 +74,26 @@ $('form#box-item-form').on('submit', function() {
 	return false;
 });
 
-$('.week-picker').datepicker({
+$('.delivery-date-picker').datepicker({
 	showOtherMonths: true,
 	selectOtherMonths: true,
 	numberOfMonths: 1,
 	onSelect: function(dateText, inst) {
 		var date = $(this).datepicker('getDate');
 		
-		//availableWeeks is a global variable found in the boxItem/create page
-		$.each(availableWeeks, function(key,week){
-			var parts = week['week_delivery_date'].split('-');
+		//availableDates is a global variable found in the boxItem/create page
+		$.each(availableDates, function(key,date){
+			var parts = date['date'].split('-');
 			var dateObj = new Date(parts[0],parts[1]-1,parts[2]);
 			if (dateObj.getTime() == date.getTime()) {
-				reloadBoxes(curUrl,{week: week['week_id']});
+				reloadBoxes(curUrl,{date: date['id']});
 			}
 		});
 	},
 	beforeShowDay: function(date) {
 		
 		var found = false;
-		var weekNotes = null;
+		var dateNotes = null;
 		var oSelDate = null;
 		var cssClass = ''
 		
@@ -104,31 +104,31 @@ $('.week-picker').datepicker({
 			oSelDate = new Date(selParts[0],selParts[1]-1,selParts[2]);
 		}
 		
-		//availableWeeks is a global variable found in the boxItem/create page
-		$.each(availableWeeks, function(key,week) {
-			var parts = week['week_delivery_date'].split('-');
+		//availableDates is a global variable found in the boxItem/create page
+		$.each(availableDates, function(key,date) {
+			var parts = date['date'].split('-');
 			
-			if(week['week_notes'])
-				weekNotes = week['week_notes'];
+			if(date['notes'])
+				dateNotes = date['notes'];
 			else 
-				weekNotes = null;
+				dateNotes = null;
 			
-			var oWeekDate = new Date(parts[0],parts[1]-1,parts[2]);
+			var oDeliveryDate = new Date(parts[0],parts[1]-1,parts[2]);
 			
 			if(oSelDate && oSelDate.getTime() == date.getTime()) {
 				cssClass = 'ui-state-active';
 			}
 			
-			if (oWeekDate.getTime() == date.getTime()) {
+			if (oDeliveryDate.getTime() == date.getTime()) {
 				found=true;
 				return false; //break out of each loop
 			}
 		});
 
 		if(found)
-			return [true,cssClass,weekNotes];
+			return [true,cssClass,dateNotes];
 		else
-			return [false,cssClass,weekNotes];
+			return [false,cssClass,dateNotes];
 
 	}
 });

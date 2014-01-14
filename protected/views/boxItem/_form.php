@@ -13,7 +13,7 @@
 	
 Yii::app()->clientScript->registerScript('initPageSize',<<<EOD
 	$('.change-pageSize').on('change', function() {
-		$.fn.yiiGridView.update('grower-item-grid',{ data:{ pageSize: $(this).val() }})
+		$.fn.yiiGridView.update('supplier-item-grid',{ data:{ pageSize: $(this).val() }})
 	});
 
 EOD
@@ -23,19 +23,19 @@ EOD
 <?php $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'box-item-form',
 	'enableAjaxValidation'=>false,
-	'action'=>$this->createUrl('boxItem/create',array('week'=>Yii::app()->request->getQuery('week'))),
+	'action'=>$this->createUrl('boxItem/create',array('date'=>Yii::app()->request->getQuery('date'))),
 )); ?>
 
 <div class="large-8 columns">
 	<div id="inventory">
 		<h4>Inventory</h4>
-		<?php $dataProvider=$GrowerItems->search(); ?>
+		<?php $dataProvider=$SupplierProducts->search(); ?>
 		<?php $pageSize=Yii::app()->user->getState('pageSize',10); ?>
 		<?php $this->widget('zii.widgets.grid.CGridView', array(
-			'id'=>'grower-item-grid',
+			'id'=>'supplier-item-grid',
 			'cssFile' => '', 
 			'dataProvider'=>$dataProvider,
-			'filter'=>$GrowerItems,
+			'filter'=>$SupplierProducts,
 			'summaryText'=>'Displaying {start}-{end} of {count} result(s). ' .
 			CHtml::dropDownList(
 				'pageSize',
@@ -48,15 +48,15 @@ EOD
 			//'selectionChanged'=>'changeBoxItem',
 			'columns'=>array(
 				array(
-					'name'=>'grower_search',
+					'name'=>'search',
 					'type'=>'raw',
 					'value'=>'
-						Yii::app()->request->getQuery("week") ?
-							CHtml::link($data->Grower->grower_name,array_merge(array("boxItem/create","item"=>$data->item_id,"week"=>Yii::app()->request->getQuery("week"))))
+						Yii::app()->request->getQuery("date") ?
+							CHtml::link($data->Supplier->name,array_merge(array("boxItem/create","item"=>$data->item_id,"date"=>Yii::app()->request->getQuery("date"))))
 						:
-							$data->Grower->grower_name',
-					'cssClassExpression'=>'"grower-".$data->Grower->grower_id',
-					//'filter'=>$GrowerItems
+							$data->Supplier->name',
+					'cssClassExpression'=>'"supplier-".$data->Supplier->id',
+					//'filter'=>$SupplierProducts
 				),
 				'item_name',
 				array(
@@ -73,10 +73,10 @@ EOD
 					'template'=>'{update}{delete}',
 					'buttons'=>array(
 						'update'=>array(
-							'url'=>'array("growerItem/update","id"=>$data->item_id)',
+							'url'=>'array("supplierProduct/update","id"=>$data->item_id)',
 						),
 						'delete'=>array(
-							'url'=>'array("growerItem/delete","id"=>$data->item_id)',
+							'url'=>'array("supplierProduct/delete","id"=>$data->item_id)',
 						)
 					)
 				)
@@ -90,13 +90,13 @@ EOD
 		<h4>Delivery date</h4>
 		<script type="text/javascript">
 			var curUrl="<?php echo $this->createUrl('boxItem/create'); ?>";
-			var selectedDate=<?php echo $SelectedWeek ? "'$SelectedWeek->week_delivery_date'" : 'null' ?>;
-			var availableWeeks=<?php echo json_encode(SnapUtil::makeArray($Weeks)) ?>;
+			var selectedDate=<?php echo $SelectedDeliveryDate ? "'$SelectedDeliveryDate->date'" : 'null' ?>;
+			var availableDeliveryDates=<?php echo json_encode(SnapUtil::makeArray($DeliveryDates)) ?>;
 		</script>
-		<div class="week-picker"></div>
+		<div class="delivery-date-picker"></div>
 		<noscript>
-		<?php foreach($Weeks as $Week): ?>
-			<?php echo CHtml::link($Week->week_delivery_date, array('boxItem/create','week'=>$Week->week_id)) ?>, 
+		<?php foreach($DeliveryDates as $DeliveryDate): ?>
+			<?php echo CHtml::link($DeliveryDate->date, array('boxItem/create','date'=>$DeliveryDate->id)) ?>, 
 		<?php endforeach; ?>
 		</noscript>
 	</div>
@@ -108,14 +108,14 @@ EOD
 
 		<div id="current-boxes">
 			
-			<?php echo CHtml::hiddenField('curUrl', $this->createUrl('boxItem/create',array('week'=>Yii::app()->request->getQuery('week')))); ?>
-			<?php if($SelectedWeek): ?>
+			<?php echo CHtml::hiddenField('curUrl', $this->createUrl('boxItem/create',array('date'=>Yii::app()->request->getQuery('date')))); ?>
+			<?php if($SelectedDeliveryDate): ?>
 
 			<fieldset>
-				<legend>Add Grower</legend>
+				<legend>Add Supplier</legend>
 				<div class="large-12 columns">
-					<?php echo CHtml::dropDownList('new_grower',null,CHtml::listData(Grower::model()->findAll(array('order'=>'grower_name ASC')),'grower_id','grower_name'),array('class'=>'chosen')); ?>
-					<?php echo CHtml::hiddenField('selected_week_id',$SelectedWeek->week_id); ?>
+					<?php echo CHtml::dropDownList('new_supplier',null,CHtml::listData(Supplier::model()->findAll(array('order'=>'name ASC')),'id','name'),array('class'=>'chosen')); ?>
+					<?php echo CHtml::hiddenField('selected_delivery_date_id',$SelectedDeliveryDate->id); ?>
 				</div>
 				<div class="large-12 columns">
 					<div class='right'>
@@ -127,37 +127,37 @@ EOD
 			<table>
 				<thead>
 					<tr>
-						<th class="growerName">Items</th>
+						<th class="supplierName">Items</th>
 						<th>Value</th>
 						<?php
-						$weekBoxCount=0;
-						foreach($WeekBoxes as $WeekBoxMerged): 
-							$weekBoxIds=explode(',',$WeekBoxMerged->box_ids);
+						$dateBoxCount=0;
+						foreach($DeliveryDateBoxes as $DeliveryDateBoxMerged): 
+							$dateBoxIds=explode(',',$DeliveryDateBoxMerged->box_ids);
 						
-							foreach($weekBoxIds as $pos=>$weekBoxId): 
-							$WeekBox=Box::model()->findByPk($weekBoxId);
+							foreach($dateBoxIds as $pos=>$dateBoxId): 
+							$DateBox=Box::model()->findByPk($dateBoxId);
 							?>
 							<th>
-								<?php echo $WeekBox->customerCount ?><br />
-								<?php echo $WeekBox->BoxSize->box_size_name ?>
+								<?php echo $DateBox->customerCount ?><br />
+								<?php echo $DateBox->BoxSize->box_size_name ?>
 								<div><div>
-									<?php if($WeekBox->customerCount && isset($weekBoxIds[$pos-1])): ?>
-										<?php echo CHtml::link('<', array('box/moveBox','from'=>$weekBoxId,'to'=>$weekBoxIds[$pos-1]), array('title'=>'Move a box from this variation')); ?>
+									<?php if($DateBox->customerCount && isset($dateBoxIds[$pos-1])): ?>
+										<?php echo CHtml::link('<', array('box/moveBox','from'=>$dateBoxId,'to'=>$dateBoxIds[$pos-1]), array('title'=>'Move a box from this variation')); ?>
 									<?php endif; ?>
 										
-									<?php echo CHtml::link('duplicate', array('box/duplicate','id'=>$weekBoxId)); ?>
+									<?php echo CHtml::link('duplicate', array('box/duplicate','id'=>$dateBoxId)); ?>
 
-									<?php if($WeekBox->customerCount && isset($weekBoxIds[$pos+1])): ?>
-										<?php echo CHtml::link('>', array('box/moveBox','from'=>$weekBoxId,'to'=>$weekBoxIds[$pos+1]), array('title'=>'Move a box from this variation')); ?>
+									<?php if($DateBox->customerCount && isset($dateBoxIds[$pos+1])): ?>
+										<?php echo CHtml::link('>', array('box/moveBox','from'=>$dateBoxId,'to'=>$dateBoxIds[$pos+1]), array('title'=>'Move a box from this variation')); ?>
 									<?php endif; ?>
 										
-									<?php if(!$WeekBox->customerCount && count($weekBoxIds) > 1): ?>
+									<?php if(!$DateBox->customerCount && count($dateBoxIds) > 1): ?>
 										<br />
-										<?php echo CHtml::link('delete', array('box/delete','id'=>$weekBoxId)); ?>
+										<?php echo CHtml::link('delete', array('box/delete','id'=>$dateBoxId)); ?>
 									<?php endif; ?>
 								</div></div>
 							</th>
-							<?php $weekBoxCount++ ?>
+							<?php $dateBoxCount++ ?>
 							<?php endforeach; ?>
 							
 						<?php endforeach; ?>
@@ -167,60 +167,60 @@ EOD
 				</thead>
 				<tbody>					
 				<?php 
-				$lastGrowerId=null;
-				foreach($SelectedWeek->BoxItemsContent as $key=>$WeekItemContent): 
+				$lastSupplierId=null;
+				foreach($SelectedDeliveryDate->BoxItemsContent as $key=>$BoxItemsContent): 
 
-					if($lastGrowerId != $WeekItemContent->grower_id): 
-					$lastGrowerId=$WeekItemContent->grower_id;
+					if($lastSupplierId != $BoxItemsContent->supplier_id): 
+					$lastSupplierId=$BoxItemsContent->supplier_id;
 					?>
 					<tr class="group">
-						<td colspan="<?php echo $weekBoxCount+4 ?>">
-							<?php echo CHtml::link($WeekItemContent->Grower->grower_name, array('boxItem/create','grower'=>$WeekItemContent->grower_id,'week'=>Yii::app()->request->getQuery('week'))); ?>
-							(<strong><?php echo Yii::app()->snapFormat->currency(BoxItem::growerTotalByWeek($WeekItemContent->grower_id, $SelectedWeek->week_id)) ?></strong>)
+						<td colspan="<?php echo $dateBoxCount+4 ?>">
+							<?php echo CHtml::link($BoxItemsContent->Supplier->name, array('boxItem/create','supplier'=>$BoxItemsContent->supplier_id,'date'=>Yii::app()->request->getQuery('date'))); ?>
+							(<strong><?php echo Yii::app()->snapFormat->currency(BoxItem::supplierTotalByDeliveryDate($BoxItemsContent->supplier_id, $SelectedDeliveryDate->id)) ?></strong>)
 						</td>
 					</tr>
 					<?php endif; ?>
 
-					<?php $selectedClass=in_array($selectedItemId,explode(',',$WeekItemContent->box_item_ids)) ? 'class="selected"' : ''; ?>
+					<?php $selectedClass=in_array($selectedItemId,explode(',',$BoxItemsContent->box_item_ids)) ? 'class="selected"' : ''; ?>
 						
 					<tr <?php echo $selectedClass ?>>
 						<td>
 							<?php echo CHtml::checkbox('bc['.$key.'][add_to_inventory]',false,array('title'=>'Add this item to the inventory', 'class' => 'inline')); ?>
 							<?php
-								echo CHtml::hiddenField('bc['.$key.'][grower_id]',$WeekItemContent->grower_id);
-								echo CHtml::hiddenField('bc['.$key.'][week_id]',$SelectedWeek->week_id);
-								echo CHtml::textField('bc['.$key.'][item_name]',$WeekItemContent->item_name, array('class' => 'inline-85'));
+								echo CHtml::hiddenField('bc['.$key.'][supplier_id]',$BoxItemsContent->supplier_id);
+								echo CHtml::hiddenField('bc['.$key.'][date_id]',$SelectedDeliveryDate->id);
+								echo CHtml::textField('bc['.$key.'][item_name]',$BoxItemsContent->item_name, array('class' => 'inline-85'));
 								
-								$totalQuantity=BoxItem::totalQuantity($WeekItemContent->box_item_ids);
-								$totalValue=$WeekItemContent->item_value*$totalQuantity;
+								$totalQuantity=BoxItem::totalQuantity($BoxItemsContent->box_item_ids);
+								$totalValue=$BoxItemsContent->item_value*$totalQuantity;
 							?>
 						</td>
 						<td class="itemValue">
-							<?php echo CHtml::textField('bc['.$key.'][item_value]',$WeekItemContent->item_value,array('class'=>'currency')); ?> 
-							<?php echo CHtml::dropDownList('bc['.$key.'][item_unit]',$WeekItemContent->item_unit,Yii::app()->params['itemUnits']); ?>
+							<?php echo CHtml::textField('bc['.$key.'][item_value]',$BoxItemsContent->item_value,array('class'=>'currency')); ?> 
+							<?php echo CHtml::dropDownList('bc['.$key.'][item_unit]',$BoxItemsContent->item_unit,Yii::app()->params['itemUnits']); ?>
 						</td>
 						<?php
 						$key2=0;
-						foreach($WeekBoxes as $WeekBoxMerged): 
-							$weekBoxIds=explode(',',$WeekBoxMerged->box_ids);
+						foreach($DeliveryDateBoxes as $DeliveryDateBoxMerged): 
+							$dateBoxIds=explode(',',$DeliveryDateBoxMerged->box_ids);
 						
-							foreach($weekBoxIds as $weekBoxId): 
-								$Box=Box::model()->findByPk($weekBoxId);
+							foreach($dateBoxIds as $dateBoxId): 
+								$Box=Box::model()->findByPk($dateBoxId);
 
 								$BoxItem=BoxItem::model()->with('Box')->find(
 									'item_name=:itemName AND 
-									grower_id=:growerId AND 
+									supplier_id=:supplierId AND 
 									item_unit=:itemUnit AND 
 									item_value=:itemValue AND 
-									Box.week_id=:weekId AND 
+									Box.delivery_date_id=:dateId AND 
 									Box.size_id=:sizeId AND
 									t.box_id = ' . $Box->box_id, 
 									array (
-										':itemName'=>$WeekItemContent->item_name,
-										':growerId'=>$WeekItemContent->grower_id,
-										':itemUnit'=>$WeekItemContent->item_unit,
-										':itemValue'=>$WeekItemContent->item_value,
-										':weekId'=>$Box->week_id,
+										':itemName'=>$BoxItemsContent->item_name,
+										':supplierId'=>$BoxItemsContent->supplier_id,
+										':itemUnit'=>$BoxItemsContent->item_unit,
+										':itemValue'=>$BoxItemsContent->item_value,
+										':dateId'=>$Box->delivery_date_id,
 										':sizeId'=>$Box->size_id
 									)
 								); 
@@ -256,19 +256,19 @@ EOD
 						</td>
 						<?php 
 						$totalValue=0;
-						foreach($WeekBoxes as $WeekBoxMerged): 
-							$weekBoxIds=explode(',',$WeekBoxMerged->box_ids);
+						foreach($DeliveryDateBoxes as $DeliveryDateBoxMerged): 
+							$dateBoxIds=explode(',',$DeliveryDateBoxMerged->box_ids);
 						
-							foreach($weekBoxIds as $weekBoxId): 
-								$WeekBox=Box::model()->findByPk($weekBoxId);
-								//$value=$SelectedWeek->with(array('totalBoxValue'=>array('params'=>array(':sizeId'=>$WeekBox->size_id))))->findByPk($SelectedWeek->week_id)->totalBoxValue;
-								$value=$WeekBox->totalValue;
+							foreach($dateBoxIds as $dateBoxId): 
+								$DateBox=Box::model()->findByPk($dateBoxId);
+								//$value=$SelectedDeliveryDate->with(array('totalBoxValue'=>array('params'=>array(':sizeId'=>$DateBox->size_id))))->findByPk($SelectedDeliveryDate->id)->totalBoxValue;
+								$value=$DateBox->totalValue;
 								$totalValue+=$value;
 							?>
 							<td class="value"><?php echo Yii::app()->snapFormat->currency($value) ?></td>
 							<?php endforeach; ?>
 						<?php endforeach; ?>
-						<td class="value"><strong><?php echo Yii::app()->snapFormat->currency(BoxItem::weekWholesale($SelectedWeek->week_id)) ?></strong></td>
+						<td class="value"><strong><?php echo Yii::app()->snapFormat->currency(BoxItem::dateWholesale($SelectedDeliveryDate->id)) ?></strong></td>
 						<td></td>
 					</tr>
 					<tr>
@@ -277,17 +277,17 @@ EOD
 						</td>
 						<?php 
 						$totalRetal=0;
-						foreach($WeekBoxes as $WeekBoxMerged): 
-							$weekBoxIds=explode(',',$WeekBoxMerged->box_ids);
+						foreach($DeliveryDateBoxes as $DeliveryDateBoxMerged): 
+							$dateBoxIds=explode(',',$DeliveryDateBoxMerged->box_ids);
 						
-							foreach($weekBoxIds as $weekBoxId): 
-								$WeekBox=Box::model()->findByPk($weekBoxId);
-								$totalRetal+=$WeekBox->box_price;
+							foreach($dateBoxIds as $dateBoxId): 
+								$DateBox=Box::model()->findByPk($dateBoxId);
+								$totalRetal+=$DateBox->box_price;
 							?>
-							<td class="value"><?php echo Yii::app()->snapFormat->currency($WeekBox->box_price) ?></td>
+							<td class="value"><?php echo Yii::app()->snapFormat->currency($DateBox->box_price) ?></td>
 							<?php endforeach; ?>
 						<?php endforeach; ?>
-						<td class="value"><strong><?php echo Yii::app()->snapFormat->currency(BoxItem::weekTarget($SelectedWeek->week_id)) ?></strong></td>
+						<td class="value"><strong><?php echo Yii::app()->snapFormat->currency(BoxItem::dateTarget($SelectedDeliveryDate->id)) ?></strong></td>
 						<td></td>
 					</tr>
 					<tr>
@@ -296,16 +296,16 @@ EOD
 						</td>
 						<?php 
 						$totalRetal=0;
-						foreach($WeekBoxes as $WeekBoxMerged): 
-							$weekBoxIds=explode(',',$WeekBoxMerged->box_ids);
+						foreach($DeliveryDateBoxes as $DeliveryDateBoxMerged): 
+							$dateBoxIds=explode(',',$DeliveryDateBoxMerged->box_ids);
 						
-							foreach($weekBoxIds as $weekBoxId): 
-								$WeekBox=Box::model()->findByPk($weekBoxId);
+							foreach($dateBoxIds as $dateBoxId): 
+								$DateBox=Box::model()->findByPk($dateBoxId);
 							?>
-							<td class="value">%<?php echo $WeekBox->BoxSize->box_size_markup ?></td>
+							<td class="value">%<?php echo $DateBox->BoxSize->box_size_markup ?></td>
 							<?php endforeach; ?>
 						<?php endforeach; ?>
-						<td class="value"><strong><?php echo Yii::app()->snapFormat->currency(BoxItem::weekTarget($SelectedWeek->week_id)) ?></strong></td>
+						<td class="value"><strong><?php echo Yii::app()->snapFormat->currency(BoxItem::dateTarget($SelectedDeliveryDate->id)) ?></strong></td>
 						<td></td>
 					</tr>
 					<tr>
@@ -314,18 +314,18 @@ EOD
 						</td>
 						<?php 
 						$totalRetal=0;
-						foreach($WeekBoxes as $WeekBoxMerged): 
-							$weekBoxIds=explode(',',$WeekBoxMerged->box_ids);
+						foreach($DeliveryDateBoxes as $DeliveryDateBoxMerged): 
+							$dateBoxIds=explode(',',$DeliveryDateBoxMerged->box_ids);
 						
-							foreach($weekBoxIds as $weekBoxId): 
-								$WeekBox=Box::model()->findByPk($weekBoxId);
-								$retail=$value=$WeekBox->retailPrice;
+							foreach($dateBoxIds as $dateBoxId): 
+								$DateBox=Box::model()->findByPk($dateBoxId);
+								$retail=$value=$DateBox->retailPrice;
 								$totalRetal+=$retail;
 							?>
-							<td class="value <?php echo $retail > $WeekBox->box_price ? 'red' : '' ?>"><?php echo Yii::app()->snapFormat->currency($retail) ?></td>
+							<td class="value <?php echo $retail > $DateBox->box_price ? 'red' : '' ?>"><?php echo Yii::app()->snapFormat->currency($retail) ?></td>
 							<?php endforeach; ?>
 						<?php endforeach; ?>
-						<td class="value"><strong><?php echo Yii::app()->snapFormat->currency(BoxItem::weekRetail($SelectedWeek->week_id)) ?></strong></td>
+						<td class="value"><strong><?php echo Yii::app()->snapFormat->currency(BoxItem::dateRetail($SelectedDeliveryDate->id)) ?></strong></td>
 						<td></td>
 					</tr>
 					
@@ -333,10 +333,10 @@ EOD
 			</table>
 
 			<div class="panel">
-				<?php echo CHtml::link('Generate packing list Spreadsheet',array('week/generatePackingList','week'=>$SelectedWeek->week_id), array('class' => 'button small')) ?>
-				<?php echo CHtml::link('Generate customer list',array('week/generateCustomerList','week'=>$SelectedWeek->week_id), array('class' => 'button small')) ?>
-				<?php echo CHtml::link('Generate customer list PDF',array('week/generateCustomerListPdf','week'=>$SelectedWeek->week_id), array('class' => 'button small')) ?>
-				<?php echo CHtml::link('Generate order list',array('week/generateOrderList','week'=>$SelectedWeek->week_id), array('class' => 'button small')) ?>
+				<?php echo CHtml::link('Generate packing list Spreadsheet',array('deliveryDate/generatePackingList','date'=>$SelectedDeliveryDate->id), array('class' => 'button small')) ?>
+				<?php echo CHtml::link('Generate customer list',array('deliveryDate/generateCustomerList','date'=>$SelectedDeliveryDate->id), array('class' => 'button small')) ?>
+				<?php echo CHtml::link('Generate customer list PDF',array('deliveryDate/generateCustomerListPdf','date'=>$SelectedDeliveryDate->id), array('class' => 'button small')) ?>
+				<?php echo CHtml::link('Generate order list',array('deliveryDate/generateOrderList','date'=>$SelectedDeliveryDate->id), array('class' => 'button small')) ?>
 			</div>
 		<?php endif; ?>
 		</div>

@@ -22,26 +22,26 @@ function reloadCustomers(url,data)
 
 $('body').on('click','#process',function(){return confirm('Are you sure?');});
 
-$('.week-picker').datepicker({
+$('.delivery-date-picker').datepicker({
 	showOtherMonths: true,
 	selectOtherMonths: true,
 	numberOfMonths: 1,
 	onSelect: function(dateText, inst) {
 		var date = $(this).datepicker('getDate');
 		
-		//availableWeeks is a global variable found in the boxItem/create page
-		$.each(availableWeeks, function(key,week){
-			var parts = week['week_delivery_date'].split('-');
+		//availableDeliveryDates is a global variable found in the boxItem/create page
+		$.each(availableDeliveryDates, function(key,date){
+			var parts = date['date'].split('-');
 			var dateObj = new Date(parts[0],parts[1]-1,parts[2]);
 			if (dateObj.getTime() == date.getTime()) {
-				reloadCustomers(curUrl,{week: week['week_id']});
+				reloadCustomers(curUrl,{date: date['id']});
 			}
 		});
 	},
 	beforeShowDay: function(date) {
 		
 		var found = false;
-		var weekNotes = null;
+		var notes = null;
 		var oSelDate = null;
 		var cssClass = ''
 		
@@ -52,31 +52,31 @@ $('.week-picker').datepicker({
 			oSelDate = new Date(selParts[0],selParts[1]-1,selParts[2]);
 		}
 		
-		//availableWeeks is a global variable found in the boxItem/create page
-		$.each(availableWeeks, function(key,week) {
-			var parts = week['week_delivery_date'].split('-');
+		//availableDeliveryDates is a global variable found in the boxItem/create page
+		$.each(availableDeliveryDates, function(key,date) {
+			var parts = date['date'].split('-');
 			
-			if(week['week_notes'])
-				weekNotes = week['week_notes'];
+			if(date['notes'])
+				notes = date['notes'];
 			else 
-				weekNotes = null;
+				notes = null;
 			
-			var oWeekDate = new Date(parts[0],parts[1]-1,parts[2]);
+			var oDeliveryDate = new Date(parts[0],parts[1]-1,parts[2]);
 			
 			if(oSelDate && oSelDate.getTime() == date.getTime()) {
 				cssClass = 'ui-state-active';
 			}
 			
-			if (oWeekDate.getTime() == date.getTime()) {
+			if (oDeliveryDate.getTime() == date.getTime()) {
 				found=true;
 				return false; //break out of each loop
 			}
 		});
 
 		if(found)
-			return [true,cssClass,weekNotes];
+			return [true,cssClass,notes];
 		else
-			return [false,cssClass,weekNotes];
+			return [false,cssClass,notes];
 
 	}
 });

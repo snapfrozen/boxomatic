@@ -4,8 +4,8 @@
 	<?php echo CHtml::encode($data->item_name); ?>
 	<br />
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('grower_id')); ?>:</b>
-	<?php echo CHtml::link(CHtml::encode($data->Grower->grower_name), array('grower/view', 'id'=>$data->Grower->grower_id)); ?>
+	<b><?php echo CHtml::encode($data->getAttributeLabel('supplier_id')); ?>:</b>
+	<?php echo CHtml::link(CHtml::encode($data->Supplier->name), array('supplier/view', 'id'=>$data->Supplier->id)); ?>
 	<br />
 
 	<?php if(Yii::app()->user->checkAccess('admin')): ?>

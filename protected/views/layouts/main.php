@@ -52,11 +52,18 @@
 				</li>
 				<li class="divider"></li>
 				<li class="has-dropdown">
-					<?php echo CHtml::link('Growers',array('grower/admin')) ?>
+					<?php echo CHtml::link('Supplier',array('supplier/admin')) ?>
 					<ul class="dropdown">
-						<li><?php echo CHtml::link('Inventory',array('growerItem/admin')) ?></li>
-						<li><?php echo CHtml::link('Grower Purchases',array('growerPurchase/admin')) ?></li>
-						<li><?php echo CHtml::link('Grower Map',array('grower/map')) ?></li>
+						<li><?php echo CHtml::link('Products',array('supplierProduct/admin')) ?></li>
+						<li><?php echo CHtml::link('Purchases',array('supplierPurchase/admin')) ?></li>
+						<li><?php echo CHtml::link('Supplier Map',array('supplier/map')) ?></li>
+					</ul>
+				</li>
+				<li class="divider"></li>
+				<li class="has-dropdown">
+					<?php echo CHtml::link('Inventory',array('inventory/index')) ?>
+					<ul class="dropdown">
+						<li><?php echo CHtml::link('Log',array('inventory/admin')) ?></li>
 					</ul>
 				</li>
 				<li class="divider"></li>
@@ -99,7 +106,11 @@
 		<!-- </div> -->
 	</header>
 	<div class="container content">
-		<?php echo $content; ?>
+		<div class="row">
+			<div class="large-12 columns">
+			<?php echo $content; ?>
+			</div>
+		</div>
 	</div>
 	<footer class="container">
 		<div class="row">

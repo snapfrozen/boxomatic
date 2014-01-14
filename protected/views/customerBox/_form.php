@@ -28,9 +28,9 @@
 				'filter'=>CHtml::listData(Boxes::model()->findAll(array('order'=>'box_price')), 'box_price', 'box_price'),
 			),
 			array(
-				'name'=>'week_id',
-				'value'=>'Yii::app()->dateFormatter->format("EEE, MMM d",$data->Week->week_delivery_date)',
-				'filter'=>CHtml::listData(Week::model()->findAll(array('order'=>'week_delivery_date')), 'week_id', 'week_delivery_date'),
+				'name'=>'delivery_date_id',
+				'value'=>'Yii::app()->dateFormatter->format("EEE, MMM d",$data->DeliveryDate->date)',
+				'filter'=>CHtml::listData(DeliveryDate::model()->findAll(array('order'=>'date')), 'id', 'date'),
 			)
 		),
 	)); ?>

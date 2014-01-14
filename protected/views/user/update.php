@@ -92,59 +92,59 @@
 
 		<?php endif; ?>
 
-		<?php if($model->Grower): $Grower=$model->Grower; ?>
+		<?php if($model->Supplier): $Supplier=$model->Supplier; ?>
 		
 		<fieldset>
-			<legend>Grower Details</legend>
+			<legend>Supplier Details</legend>
 			<div class="large-12 columns">
-				<?php echo $form->labelEx($Grower,'grower_website'); ?>
-				<?php echo $form->textField($Grower,'grower_website',array('size'=>60,'maxlength'=>100)); ?>
-				<?php echo $form->error($Grower,'grower_website'); ?>
+				<?php echo $form->labelEx($Supplier,'website'); ?>
+				<?php echo $form->textField($Supplier,'website',array('size'=>60,'maxlength'=>100)); ?>
+				<?php echo $form->error($Supplier,'website'); ?>
 			</div>
 			<div class="large-12 columns">
-				<?php echo $form->labelEx($Grower,'grower_distance_kms'); ?>
-				<?php echo $form->textField($Grower,'grower_distance_kms',array('size'=>45,'maxlength'=>45)); ?>
-				<?php echo $form->error($Grower,'grower_distance_kms'); ?>
+				<?php echo $form->labelEx($Supplier,'distance_kms'); ?>
+				<?php echo $form->textField($Supplier,'distance_kms',array('size'=>45,'maxlength'=>45)); ?>
+				<?php echo $form->error($Supplier,'distance_kms'); ?>
 			</div>
 			<div class="large-12 columns">
-				<?php echo $form->labelEx($Grower,'grower_bank_account_name'); ?>
-				<?php echo $form->textField($Grower,'grower_bank_account_name',array('size'=>45,'maxlength'=>45)); ?>
-				<?php echo $form->error($Grower,'grower_bank_account_name'); ?>
+				<?php echo $form->labelEx($Supplier,'bank_account_name'); ?>
+				<?php echo $form->textField($Supplier,'bank_account_name',array('size'=>45,'maxlength'=>45)); ?>
+				<?php echo $form->error($Supplier,'bank_account_name'); ?>
 			</div>
 			<div class="large-6 columns">
-				<?php echo $form->labelEx($Grower,'grower_bank_bsb'); ?>
-			<?php echo $form->textField($Grower,'grower_bank_bsb',array('size'=>45,'maxlength'=>45)); ?>
-			<?php echo $form->error($Grower,'grower_bank_bsb'); ?>
+				<?php echo $form->labelEx($Supplier,'bank_bsb'); ?>
+			<?php echo $form->textField($Supplier,'bank_bsb',array('size'=>45,'maxlength'=>45)); ?>
+			<?php echo $form->error($Supplier,'bank_bsb'); ?>
 			</div>
 			<div class="large-6 columns">
-				<?php echo $form->labelEx($Grower,'grower_bank_acc'); ?>
-				<?php echo $form->textField($Grower,'grower_bank_acc',array('size'=>45,'maxlength'=>45)); ?>
-				<?php echo $form->error($Grower,'grower_bank_acc'); ?>
+				<?php echo $form->labelEx($Supplier,'bank_acc'); ?>
+				<?php echo $form->textField($Supplier,'bank_acc',array('size'=>45,'maxlength'=>45)); ?>
+				<?php echo $form->error($Supplier,'bank_acc'); ?>
 			</div>
 			<div class="large-6 columns">
-				<?php echo $form->labelEx($Grower,'grower_certification_status'); ?>
-				<?php echo $form->textField($Grower,'grower_certification_status',array('size'=>60,'maxlength'=>150)); ?>
-				<?php echo $form->error($Grower,'grower_certification_status'); ?>
+				<?php echo $form->labelEx($Supplier,'certification_status'); ?>
+				<?php echo $form->textField($Supplier,'certification_status',array('size'=>60,'maxlength'=>150)); ?>
+				<?php echo $form->error($Supplier,'certification_status'); ?>
 			</div>
 			<div class="large-6 columns">
-				<?php echo $form->labelEx($Grower,'grower_order_days'); ?>
-				<?php echo $form->textField($Grower,'grower_order_days',array('size'=>60,'maxlength'=>255)); ?>
-				<?php echo $form->error($Grower,'grower_order_days'); ?>
+				<?php echo $form->labelEx($Supplier,'order_days'); ?>
+				<?php echo $form->textField($Supplier,'order_days',array('size'=>60,'maxlength'=>255)); ?>
+				<?php echo $form->error($Supplier,'order_days'); ?>
 			</div>
 			<div class="large-12 columns">
-				<?php echo $form->labelEx($Grower,'grower_produce'); ?>
-				<?php echo $form->textArea($Grower,'grower_produce',array('rows'=>6, 'cols'=>50)); ?>
-				<?php echo $form->error($Grower,'grower_produce'); ?>
+				<?php echo $form->labelEx($Supplier,'produce'); ?>
+				<?php echo $form->textArea($Supplier,'produce',array('rows'=>6, 'cols'=>50)); ?>
+				<?php echo $form->error($Supplier,'produce'); ?>
 			</div>
 			<div class="large-12 columns">
-				<?php echo $form->labelEx($Grower,'grower_notes'); ?>
-				<?php echo $form->textArea($Grower,'grower_notes',array('rows'=>6, 'cols'=>50)); ?>
-				<?php echo $form->error($Grower,'grower_notes'); ?>
+				<?php echo $form->labelEx($Supplier,'notes'); ?>
+				<?php echo $form->textArea($Supplier,'notes',array('rows'=>6, 'cols'=>50)); ?>
+				<?php echo $form->error($Supplier,'notes'); ?>
 			</div>
 			<div class="large-12 columns">
-				<?php echo $form->labelEx($Grower,'grower_payment_details'); ?>
-				<?php echo $form->textArea($Grower,'grower_payment_details',array('rows'=>6, 'cols'=>50)); ?>
-				<?php echo $form->error($Grower,'grower_payment_details'); ?>
+				<?php echo $form->labelEx($Supplier,'payment_details'); ?>
+				<?php echo $form->textArea($Supplier,'payment_details',array('rows'=>6, 'cols'=>50)); ?>
+				<?php echo $form->error($Supplier,'payment_details'); ?>
 			</div>
 		</fieldset>
 		<?php endif; ?>		

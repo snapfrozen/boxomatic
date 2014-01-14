@@ -36,7 +36,7 @@ class UserIdentity extends CUserIdentity
 				}
 				$this->setState('last_login_time', $lastLogin); 
 				$this->setState('customer_id', $user->customer_id); 
-				$this->setState('grower_id', $user->grower_id); 
+				$this->setState('supplier_id', $user->supplier_id); 
 				$this->errorCode=self::ERROR_NONE;
 			}
 			else if($validatePassword && $user->password!==Yii::app()->snap->encrypt($this->password))
@@ -54,7 +54,7 @@ class UserIdentity extends CUserIdentity
 				}
 				$this->setState('last_login_time', $lastLogin); 
 				$this->setState('customer_id', $user->customer_id); 
-				$this->setState('grower_id', $user->grower_id); 
+				$this->setState('supplier_id', $user->supplier_id); 
 				$this->errorCode=self::ERROR_NONE;
 			}
 		}
@@ -88,7 +88,7 @@ class UserIdentity extends CUserIdentity
 		
 		$this->setState('last_login_time', $lastLogin); 
 		$this->setState('customer_id', $user->customer_id); 
-		$this->setState('grower_id', $user->grower_id); 
+		$this->setState('supplier_id', $user->supplier_id); 
 		
 		$this->errorCode=self::ERROR_NONE;
 		return !$this->errorCode;

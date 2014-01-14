@@ -224,10 +224,10 @@ class CustomerBoxController extends Controller
 		$deadlineDays=Yii::app()->params['orderDeadlineDays'];
 		
 		if(isset($_GET['all']))
-			$Weeks=Week::model()->findAll();
+			$DeliveryDates=DeliveryDate::model()->findAll();
 		else
-			$Weeks=Week::model()->with('Boxes')->findAll(array(
-				'condition'=>'date_sub(week_delivery_date, interval -1 week) > NOW()',
+			$DeliveryDates=DeliveryDate::model()->with('Boxes')->findAll(array(
+				'condition'=>'date_sub(date, interval -1 week) > NOW()',
 				'limit'=>$show+1
 			));
 		
@@ -252,10 +252,10 @@ class CustomerBoxController extends Controller
 			foreach($_POST['Recurring'] as $key=>$quantity)
 			{
 				$boxSizeId=str_replace('bs_','',$key);
-				$Boxes=Box::model()->with('Week')->findAll("
-					week_delivery_date >= '$startingFrom' AND
-					week_delivery_date <=  date_add('$startingFrom', interval $monthsAdvance month) AND
-					date_sub(week_delivery_date, interval $deadlineDays day) > NOW() AND
+				$Boxes=Box::model()->with('DeliveryDate')->findAll("
+					date >= '$startingFrom' AND
+					date <=  date_add('$startingFrom', interval $monthsAdvance month) AND
+					date_sub(date, interval $deadlineDays day) > NOW() AND
 					size_id=$boxSizeId");
 				
 				$n=0;
@@ -282,19 +282,19 @@ class CustomerBoxController extends Controller
 						$CustBox->delivery_cost=$Location->location_delivery_value;
 						$CustBox->save();
 
-						$CustWeek=CustomerWeek::model()->findByAttributes(array(
+						$CustDeliveryDate=CustomerDeliveryDate::model()->findByAttributes(array(
 							'customer_id'=>$Customer->customer_id,
-							'week_id'=>$CustBox->Box->week_id,
+							'delivery_date_id'=>$CustBox->Box->delivery_date_id,
 						));
-						if(!$CustWeek) 
+						if(!$CustDeliveryDate) 
 						{
-							$CustWeek=new CustomerWeek();
-							$CustWeek->customer_id=$Customer->customer_id;
-							$CustWeek->week_id=$CustBox->Box->week_id;
+							$CustDeliveryDate=new CustomerDeliveryDate();
+							$CustDeliveryDate->customer_id=$Customer->customer_id;
+							$CustDeliveryDate->delivery_date_id=$CustBox->Box->delivery_date_id;
 						}
-						$CustWeek->location_id=$locationId;
-						$CustWeek->customer_location_id=$custLocationId;
-						$CustWeek->save();
+						$CustDeliveryDate->location_id=$locationId;
+						$CustDeliveryDate->customer_location_id=$custLocationId;
+						$CustDeliveryDate->save();
 					}
 				}
 			}
@@ -303,8 +303,8 @@ class CustomerBoxController extends Controller
 		if(isset($_POST['btn_clear_orders'])) //clear orders button pressed
 		{
 			//Get all boxes beyond the deadline date
-			$Boxes=Box::model()->with('Week')->findAll("
-				date_sub(week_delivery_date, interval $deadlineDays day) > NOW()");
+			$Boxes=Box::model()->with('DeliveryDate')->findAll("
+				date_sub(date, interval $deadlineDays day) > NOW()");
 
 			foreach($Boxes as $Box)
 			{
@@ -325,8 +325,8 @@ class CustomerBoxController extends Controller
 				$Box=Box::model()->findByPk($boxId);
 				
 				$CustBoxes=CustomerBox::model()->with('Box')->findAll(array(	
-					'condition'=>'customer_id=:customerId AND size_id=:sizeId AND week_id=:weekId',
-					'params'=>array(':customerId'=>$Customer->customer_id,':sizeId'=>$Box->size_id,':weekId'=>$Box->week_id)
+					'condition'=>'customer_id=:customerId AND size_id=:sizeId AND delivery_date_id=:deliveryDateId',
+					'params'=>array(':customerId'=>$Customer->customer_id,':sizeId'=>$Box->size_id,':deliveryDateId'=>$Box->delivery_date_id)
 				));
 				
 				$curQuantity=count($CustBoxes);
@@ -358,11 +358,11 @@ class CustomerBoxController extends Controller
 			}
 		}
 		
-		if(isset($_POST['CustWeeks']))
+		if(isset($_POST['CustDeliveryDates']))
 		{
-			foreach($_POST['CustWeeks'] as $key=>$locationId)
+			foreach($_POST['CustDeliveryDates'] as $key=>$locationId)
 			{
-				$CustWeek=CustomerWeek::model()->findByPk($key);
+				$CustDeliveryDate=CustomerDeliveryDate::model()->findByPk($key);
 				
 				$custLocationId=new CDbExpression('NULL');
 				if(strpos($locationId,'-'))
@@ -372,18 +372,18 @@ class CustomerBoxController extends Controller
 					$custLocationId=$parts[0];
 				}
 				
-				$CustWeek->location_id=$locationId;
-				$CustWeek->customer_location_id=$custLocationId;
-				$CustWeek->save();
+				$CustDeliveryDate->location_id=$locationId;
+				$CustDeliveryDate->customer_location_id=$custLocationId;
+				$CustDeliveryDate->save();
 				
-				$CustBoxesWeek=CustomerBox::model()->with('Box')->findAll(
-					'customer_id=:customerId AND Box.week_id=:weekId', array(
+				$CustBoxesDate=CustomerBox::model()->with('Box')->findAll(
+					'customer_id=:customerId AND Box.delivery_date_id=:dateId', array(
 						'customerId'=>Yii::app()->user->customer_id,
-						'weekId'=>$CustWeek->week_id
+						'deliveryDateId'=>$CustDeliveryDate->delivery_date_id
 					));
 				
-				foreach($CustBoxesWeek as $CustBox) {
-					$CustBox->delivery_cost=$CustWeek->Location->location_delivery_value;					
+				foreach($CustBoxesDate as $CustBox) {
+					$CustBox->delivery_cost=$CustDeliveryDate->Location->location_delivery_value;					
 					$CustBox->save();
 				}
 			}
@@ -391,7 +391,7 @@ class CustomerBoxController extends Controller
 
 		$this->render('order',array(
 			'model'=>$model,
-			'Weeks'=>$Weeks,
+			'DeliveryDates'=>$DeliveryDates,
 			'Customer'=>$Customer,
 			'BoxSizes'=>$BoxSizes,
 			'deadline'=>strtotime('+'.$deadlineDays.' days'),

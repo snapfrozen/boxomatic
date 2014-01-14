@@ -7,16 +7,16 @@
  * @property integer $box_id
  * @property integer $size_id
  * @property string $box_price
- * @property integer $week_id
+ * @property integer $delivery_date_id
  *
  * The followings are the available model relations:
- * @property Weeks $week
+ * @property DeliveryDates $date
  * @property BoxSizes $size
  */
 class Box extends CActiveRecord
 {
 	public $total;    //variable to store different kinds of aggregate totals
-	//public $quantity; //variable to store the aggregate quantity of a box size (see: models/Week.php, relation MergedBoxes)
+	//public $quantity; //variable to store the aggregate quantity of a box size (see: models/DeliveryDate.php, relation MergedBoxes)
 	public $box_ids;
 	/**
 	 * Returns the static model of the specified AR class.
@@ -44,11 +44,11 @@ class Box extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('size_id, week_id', 'numerical', 'integerOnly'=>true),
+			array('size_id, delivery_date_id', 'numerical', 'integerOnly'=>true),
 			array('box_price', 'length', 'max'=>7),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('box_id, size_id, box_price, week_id', 'safe', 'on'=>'search'),
+			array('box_id, size_id, box_price, delivery_date_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -60,7 +60,7 @@ class Box extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'Week' => array(self::BELONGS_TO, 'Week', 'week_id'),
+			'DeliveryDate' => array(self::BELONGS_TO, 'DeliveryDate', 'delivery_date_id'),
 			'BoxSize' => array(self::BELONGS_TO, 'BoxSize', 'size_id'),
 			'BoxItems' => array(self::HAS_MANY, 'BoxItem', 'box_id'),
 			'totalValue'=>array(
@@ -83,7 +83,7 @@ class Box extends CActiveRecord
 			'box_id' => 'Box',
 			'size_id' => 'Size',
 			'box_price' => 'Box Price',
-			'week_id' => 'Week',
+			'delivery_date_id' => 'DeliveryDate',
 		);
 	}
 
@@ -101,7 +101,7 @@ class Box extends CActiveRecord
 		$criteria->compare('box_id',$this->box_id);
 		$criteria->compare('size_id',$this->size_id);
 		$criteria->compare('box_price',$this->box_price,true);
-		$criteria->compare('week_id',$this->week_id);
+		$criteria->compare('delivery_date_id',$this->delivery_date_id);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

@@ -37,16 +37,16 @@ jQuery(document).ready(function() {
 	addMarkers();
 	
 	
-	$('form#grower-search').find('input[name="r"]').remove();
-	$('form#grower-search').submit(function(){
-		var postUrl=$('input#growerSearchUrl').val();
+	$('form#supplier-search').find('input[name="r"]').remove();
+	$('form#supplier-search').submit(function(){
+		var postUrl=$('input#supplierSearchUrl').val();
 		$.ajax({
 			url:postUrl,
 			type:'GET',
 			data:$(this).serialize(),
 			dataType:'json',
 			success:function(data) {
-				growers=data;
+				suppliers=data;
 				addMarkers();
 			}
 		})
@@ -64,7 +64,7 @@ function addMarkers()
 	});
 	searchMarkers = [];
 
-	jQuery.each(growers, function(key, item) {
+	jQuery.each(suppliers, function(key, item) {
 		
 		var pos = new google.maps.LatLng(parseFloat(item.lattitude), parseFloat(item.longitude))
 		var icon = new google.maps.MarkerImage("images/icons/map/carrot.png", null, null, new google.maps.Point(35,35));

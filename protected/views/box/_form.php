@@ -22,9 +22,9 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'week_id'); ?>
-		<?php echo $form->textField($model,'week_id'); ?>
-		<?php echo $form->error($model,'week_id'); ?>
+		<?php echo $form->labelEx($model,'delivery_date_id'); ?>
+		<?php echo $form->textField($model,'delivery_date_id'); ?>
+		<?php echo $form->error($model,'delivery_date_id'); ?>
 	</div>
 
 	<div class="row buttons">

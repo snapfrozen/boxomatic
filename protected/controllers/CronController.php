@@ -18,14 +18,14 @@ class CronController extends Controller
 	}
 
 	/**
-	 * Generate new weeks and boxes for each week
+	 * Generate new delivery dates and boxes for each date
 	 */
-	public function actionCreateFutureWeeksAndBoxes()
+	public function actionCreateFutureDeliveryDatesAndBoxes()
 	{
-		$weeksInAdvance=Yii::app()->params['autoCreateWeeks'];
+		$weeksInAdvance=Yii::app()->params['autoCreateDeliveryDates'];
 		
-		$latestWeek=Week::getLastEnteredWeek();
-		$latestDate=strtotime($latestWeek->week_delivery_date);
+		$latestDate=DeliveryDate::getLastEnteredDate();
+		$latestDate=strtotime($latestDate->date);
 		$targetDate=strtotime('+' . $weeksInAdvance . ' weeks');
 
 		$BoxSizes=BoxSize::model()->findAll();
@@ -36,20 +36,20 @@ class CronController extends Controller
 			$latestDate=strtotime($latestDateStr . ' +1 week');
 			$newDateStr=date('Y-m-d', $latestDate);			
 			
-			$Week=new Week;
-			$Week->week_delivery_date=$newDateStr;
-			$Week->save();
+			$DeliveryDate=new DeliveryDate;
+			$DeliveryDate->date=$newDateStr;
+			$DeliveryDate->save();
 			
 			foreach($BoxSizes as $BoxSize)
 			{
 				$Box=new Box;
 				$Box->size_id=$BoxSize->box_size_id;
 				$Box->box_price=$BoxSize->box_size_price;
-				$Box->week_id=$Week->week_id;
+				$Box->delivery_date_id=$DeliveryDate->id;
 				$Box->save();
 			}
 			
-			echo '<p>Created new week: ' . $Week->week_delivery_date . '</p>';
+			echo '<p>Created new delivery_date: ' . $DeliveryDate->date . '</p>';
 		}
 		
 		echo '<p><strong>Finished.</strong></p>';

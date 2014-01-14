@@ -8,7 +8,7 @@
  * @property string $item_name
  * @property integer $box_id
  * @property string $item_value
- * @property integer $grower_id
+ * @property integer $supplier_id
  */
 class BoxItem extends CActiveRecord
 {
@@ -41,13 +41,13 @@ class BoxItem extends CActiveRecord
 		// will receive user inputs.
 		return array(
 //			array('box_item_id', 'required'),
-			array('box_item_id, box_id, grower_id', 'numerical', 'integerOnly'=>true),
+			array('box_item_id, box_id, supplier_id', 'numerical', 'integerOnly'=>true),
 			array('item_quantity', 'numerical'),
 			array('item_name, item_value', 'length', 'max'=>45),
 			array('item_unit', 'length', 'max'=>5),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('box_item_id, item_name, box_id, item_value, grower_id', 'safe', 'on'=>'search'),
+			array('box_item_id, item_name, box_id, item_value, supplier_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -60,7 +60,7 @@ class BoxItem extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'Box' => array(self::BELONGS_TO, 'Box', 'box_id'),
-			'Grower' => array(self::BELONGS_TO, 'Grower', 'grower_id'),
+			'Supplier' => array(self::BELONGS_TO, 'Supplier', 'supplier_id'),
 		);
 	}
 
@@ -74,7 +74,7 @@ class BoxItem extends CActiveRecord
 			'item_name' => 'Item Name',
 			'box_id' => 'Box',
 			'item_value' => 'Item Value',
-			'grower_id' => 'Grower',
+			'supplier_id' => 'Supplier',
 		);
 	}
 
@@ -93,7 +93,7 @@ class BoxItem extends CActiveRecord
 		$criteria->compare('item_name',$this->item_name,true);
 		$criteria->compare('box_id',$this->box_id);
 		$criteria->compare('item_value',$this->item_value,true);
-		$criteria->compare('grower_id',$this->grower_id);
+		$criteria->compare('supplier_id',$this->supplier_id);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -145,52 +145,52 @@ class BoxItem extends CActiveRecord
 	}
 	
 	/**
-	 * Get the wholesale cost for a given week_id
+	 * Get the wholesale cost for a given date_id
 	 */
-	static function weekWholesale($weekId)
+	static function dateWholesale($dateId)
 	{
 		$Item = self::model()->with(array('Box'=>array('with'=>'CustomerBoxes')))->find(array(
 			'select'=>'SUM(quantity * item_quantity * item_value) as total',
-			'condition'=>'week_id = ' . $weekId . ' AND (status='.CustomerBox::STATUS_APPROVED.' OR status='.CustomerBox::STATUS_DELIVERED.')',
+			'condition'=>'date_id = ' . $dateId . ' AND (status='.CustomerBox::STATUS_APPROVED.' OR status='.CustomerBox::STATUS_DELIVERED.')',
 		));
 		
 		return $Item ? $Item->total : 0;
 	}
 	
 	/**
-	 * Get the wholesale cost for a given week_id
+	 * Get the wholesale cost for a given date_id
 	 */
-	static function growerTotalByWeek($growerId, $weekId)
+	static function supplierTotalByDeliveryDate($supplierId, $dateId)
 	{
 		$Item = self::model()->with(array('Box'=>array('with'=>'CustomerBoxes')))->find(array(
 			'select'=>'SUM(quantity * item_quantity * item_value) as total',
-			'condition'=>'week_id = ' . $weekId . ' AND grower_id = ' . $growerId,
+			'condition'=>'date_id = ' . $dateId . ' AND supplier_id = ' . $supplierId,
 		));
 		
 		return $Item ? $Item->total : 0;
 	}
 	
 	/**
-	 * Get the wholesale cost for a given week_id
+	 * Get the wholesale cost for a given date_id
 	 */
-	static function weekRetail($weekId)
+	static function dateRetail($dateId)
 	{
 		$Item = self::model()->with(array('Box'=>array('with'=>array('CustomerBoxes','BoxSize') )))->find(array(
 			'select'=>'SUM(quantity * item_quantity * item_value * (box_size_markup/100) ) + SUM(quantity * item_quantity * item_value) as total',
-			'condition'=>'week_id = ' . $weekId . ' AND (status='.CustomerBox::STATUS_APPROVED.' OR status='.CustomerBox::STATUS_DELIVERED.')',
+			'condition'=>'date_id = ' . $dateId . ' AND (status='.CustomerBox::STATUS_APPROVED.' OR status='.CustomerBox::STATUS_DELIVERED.')',
 		));
 		
 		return $Item ? $Item->total : 0;
 	}
 	
 	/**
-	 * Get the week target
+	 * Get the date target
 	 */
-	static function weekTarget($weekId)
+	static function dateTarget($dateId)
 	{
 		$Item = Box::model()->with('CustomerBoxes')->find(array(
 			'select'=>'SUM(quantity * box_price) as total',
-			'condition'=>'week_id = ' . $weekId . '',
+			'condition'=>'date_id = ' . $dateId . '',
 		));
 		
 		return $Item ? $Item->total : 0;

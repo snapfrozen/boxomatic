@@ -39,11 +39,11 @@ EOD;
 			$this->_authManager->clearAll();
 
 			$role=$this->_authManager->createRole("customer");
-			$role=$this->_authManager->createRole("grower");
+			$role=$this->_authManager->createRole("supplier");
 			$role->addChild("customer");
 			
 			$role=$this->_authManager->createRole("admin");
-			$role->addChild("grower");
+			$role->addChild("supplier");
 			
 			
 			//create the lowest level operations for users

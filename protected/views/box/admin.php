@@ -34,7 +34,7 @@ $('.search-form form').submit(function(){
 	'columns'=>array(
 		'BoxSize.box_size_name',
 		'box_price',
-		'Week.week_delivery_date',
+		'DeliveryDate.date',
 		array(
 			'class'=>'CButtonColumn',
 		),

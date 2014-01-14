@@ -57,10 +57,10 @@ class BoxItemController extends Controller
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
-	public function actionCreate($week=null,$item=null,$grower=null)
+	public function actionCreate($date=null,$item=null,$supplier=null)
 	{	
 		$model=new BoxItem;
-		$SelectedWeek=null;
+		$SelectedDeliveryDate=null;
 		$NewItem=null;
 		
 		if(isset($_POST['bc']))
@@ -83,7 +83,7 @@ class BoxItemController extends Controller
 					if($boxItem['item_quantity']>0) 
 					{
 						$BoxItem->item_name=$boxContents['item_name'];
-						$BoxItem->grower_id=$boxContents['grower_id'];
+						$BoxItem->supplier_id=$boxContents['supplier_id'];
 						$BoxItem->item_unit=$boxContents['item_unit'];
 						$BoxItem->item_value=$boxContents['item_value'];
 						$BoxItem->item_quantity=$boxItem['item_quantity'];
@@ -95,67 +95,67 @@ class BoxItemController extends Controller
 				//Add an item to the inventory selected
 				if(isset($boxContents['add_to_inventory']))
 				{
-					$GrowerItem=GrowerItem::model()->findByAttributes(array(
-						'grower_id'=>$boxContents['grower_id'],
+					$SupplierProduct=SupplierProduct::model()->findByAttributes(array(
+						'supplier_id'=>$boxContents['supplier_id'],
 						'item_name'=>$boxContents['item_name'],
 						'item_unit'=>$boxContents['item_unit'],
 					));
 					
-					//Update the grower item price already exists
-					if($GrowerItem)
+					//Update the supplier item price already exists
+					if($SupplierProduct)
 					{
-						$GrowerItem->item_value=$boxContents['item_value'];
-						$GrowerItem->save();
+						$SupplierProduct->item_value=$boxContents['item_value'];
+						$SupplierProduct->save();
 					}
 					else
 					{
-						$GrowerItem=new GrowerItem;
-						$GrowerItem->grower_id=$boxContents['grower_id'];
-						$GrowerItem->item_name=$boxContents['item_name'];
-						$GrowerItem->item_value=$boxContents['item_value'];
-						$GrowerItem->item_unit=$boxContents['item_unit'];
-						$GrowerItem->item_available_from=1;
-						$GrowerItem->item_available_to=12;
-						$GrowerItem->save();
+						$SupplierProduct=new SupplierProduct;
+						$SupplierProduct->supplier_id=$boxContents['supplier_id'];
+						$SupplierProduct->item_name=$boxContents['item_name'];
+						$SupplierProduct->item_value=$boxContents['item_value'];
+						$SupplierProduct->item_unit=$boxContents['item_unit'];
+						$SupplierProduct->item_available_from=1;
+						$SupplierProduct->item_available_to=12;
+						$SupplierProduct->save();
 					}
 				}
 				
 			}			
 		}
 		
-		$GrowerItems=new GrowerItem('search');
-		$GrowerItems->unsetAttributes();  // clear any default values
-		if(isset($_GET['GrowerItem']))
-			$GrowerItems->attributes=$_GET['GrowerItem'];
+		$SupplierProducts=new SupplierProduct('search');
+		$SupplierProducts->unsetAttributes();  // clear any default values
+		if(isset($_GET['SupplierProduct']))
+			$SupplierProducts->attributes=$_GET['SupplierProduct'];
 		
-		$Weeks=Week::model()->findAll();
-		//$Weeks=Week::model()->findAll('week_delivery_date > NOW()');
+		$DeliveryDates=DeliveryDate::model()->findAll();
+		//$DeliveryDates=DeliveryDate::model()->findAll('date > NOW()');
 
-		//Get the boxes for the selected week
-		$WeekBoxes=null;
-		if($week) {
-			$SelectedWeek=Week::model()->findByPk($week);
-			$WeekBoxes=$SelectedWeek->MergedBoxes;
+		//Get the boxes for the selected date
+		$DeliveryDateBoxes=null;
+		if($date) {
+			$SelectedDeliveryDate=DeliveryDate::model()->findByPk($date);
+			$DeliveryDateBoxes=$SelectedDeliveryDate->MergedBoxes;
 		}
 		
-		//Item has been selected from inventory, if it doesn't exist in the week
+		//Item has been selected from inventory, if it doesn't exist in the date
 		//Load it to be added as a new row up the top of the box item list
 		$selectedItemId=null;
 		if($item) 
 		{
-			$NewItem=GrowerItem::model()->findByPk($item);
+			$NewItem=SupplierProduct::model()->findByPk($item);
 			$TmpItem=BoxItem::model()->with('Box')->find(
 				'item_name=:itemName AND 
-				grower_id=:growerId AND 
+				supplier_id=:supplierId AND 
 				item_unit=:itemUnit AND 
 				item_value=:itemValue AND 
-				Box.week_id=:weekId',
+				Box.delivery_date_id=:deliveryDateId',
 				array (
 					':itemName'=>$NewItem->item_name,
-					':growerId'=>$NewItem->grower_id,
+					':supplierId'=>$NewItem->supplier_id,
 					':itemUnit'=>$NewItem->item_unit,
 					':itemValue'=>$NewItem->item_value,
-					':weekId'=>$week,
+					':deliveryDateId'=>$date,
 				)
 			);
 			
@@ -165,15 +165,15 @@ class BoxItemController extends Controller
 			}
 			else 
 			{
-				foreach($WeekBoxes as $WeekBox)
+				foreach($DeliveryDateBoxes as $DeliveryDateBox)
 				{
 					$BoxItem=new BoxItem;
 					$BoxItem->item_name=$NewItem->item_name;
-					$BoxItem->grower_id=$NewItem->grower_id;
+					$BoxItem->supplier_id=$NewItem->supplier_id;
 					$BoxItem->item_unit=$NewItem->item_unit;
 					$BoxItem->item_value=$NewItem->item_value;
 					$BoxItem->item_quantity=1;
-					$BoxItem->box_id=$WeekBox->box_id;
+					$BoxItem->box_id=$DeliveryDateBox->box_id;
 					$BoxItem->save();
 					
 					$selectedItemId=$BoxItem->box_item_id;
@@ -181,21 +181,21 @@ class BoxItemController extends Controller
 			}
 		}
 		
-		//User chose to add a new entry by clicking a grower name
-		if($grower)
+		//User chose to add a new entry by clicking a supplier name
+		if($supplier)
 		{
 			$TmpItem=BoxItem::model()->with('Box')->find(
 				'item_name=:itemName AND 
-				grower_id=:growerId AND 
+				supplier_id=:supplierId AND 
 				item_unit=:itemUnit AND 
 				item_value=:itemValue AND 
-				Box.week_id=:weekId',
+				Box.delivery_date_id=:deliveryDateId',
 				array (
 					':itemName'=>'',
-					':growerId'=>(int)$grower,
+					':supplierId'=>(int)$supplier,
 					':itemUnit'=>'KG',
 					':itemValue'=>0,
-					':weekId'=>$week,
+					':deliveryDateId'=>$date,
 				)
 			);
 			
@@ -205,15 +205,15 @@ class BoxItemController extends Controller
 			}
 			else 
 			{
-				foreach($WeekBoxes as $WeekBox)
+				foreach($DeliveryDateBoxes as $DeliveryDateBox)
 				{
 					$BoxItem=new BoxItem;
 					$BoxItem->item_name='';
-					$BoxItem->grower_id=(int)$grower;
+					$BoxItem->supplier_id=(int)$supplier;
 					$BoxItem->item_unit='KG';
 					$BoxItem->item_value=0;
 					$BoxItem->item_quantity=1;
-					$BoxItem->box_id=$WeekBox->box_id;
+					$BoxItem->box_id=$DeliveryDateBox->box_id;
 					$BoxItem->save();
 
 					$selectedItemId=$BoxItem->box_item_id;
@@ -233,10 +233,10 @@ class BoxItemController extends Controller
 		
 		$this->render('create',array(
 			'model'=>$model,
-			'GrowerItems'=>$GrowerItems,
-			'Weeks'=>$Weeks,
-			'WeekBoxes'=>$WeekBoxes,
-			'SelectedWeek'=>$SelectedWeek,
+			'SupplierProducts'=>$SupplierProducts,
+			'DeliveryDates'=>$DeliveryDates,
+			'DeliveryDateBoxes'=>$DeliveryDateBoxes,
+			'SelectedDeliveryDate'=>$SelectedDeliveryDate,
 			'selectedItemId'=>$selectedItemId,
 		));
 	}
@@ -244,13 +244,13 @@ class BoxItemController extends Controller
 	/**
 	 * 
 	 */
-	public function actionCustomerBoxes($week=null)
+	public function actionCustomerBoxes($date=null)
 	{
-		$Weeks=Week::model()->findAll();
+		$DeliveryDates=DeliveryDate::model()->findAll();
 
-		$SelectedWeek=null;
-		if($week) {
-			$SelectedWeek=Week::model()->findByPk($week);
+		$SelectedDeliveryDate=null;
+		if($date) {
+			$SelectedDeliveryDate=DeliveryDate::model()->findByPk($date);
 		}
 		
 		$CustomerBoxes=new CustomerBox('search');
@@ -261,8 +261,8 @@ class BoxItemController extends Controller
 			$CustomerBoxes->attributes=$_GET['CustomerBox'];
 		
 		$this->render('customer_boxes',array(
-			'SelectedWeek'=>$SelectedWeek,
-			'Weeks'=>$Weeks,
+			'SelectedDeliveryDate'=>$SelectedDeliveryDate,
+			'DeliveryDates'=>$DeliveryDates,
 			'CustomerBoxes'=>$CustomerBoxes,
 		));
 	}
@@ -270,10 +270,10 @@ class BoxItemController extends Controller
 	/**
 	 * 
 	 */
-	public function actionProcessCustomers($week)
+	public function actionProcessCustomers($date)
 	{
 		$CustomerBoxes=CustomerBox::model()->with('Box')->findAll(array(
-			'condition'=>'Box.week_id = ' . $week . ' AND status = ' . CustomerBox::STATUS_NOT_PROCESSED,
+			'condition'=>'Box.delivery_date_id = ' . $date . ' AND status = ' . CustomerBox::STATUS_NOT_PROCESSED,
 			'order'=>'box_price',//Attempt to process most expensive boxes first
 		));
 		
@@ -306,8 +306,8 @@ class BoxItemController extends Controller
 				$validator=new CEmailValidator();
 				if($validator->validateValue($Customer->User->user_email)) 
 				{
-					$week_delivery_date = $Box->Week->week_delivery_date;
-					$message = new YiiMailMessage('Your order for '.$week_delivery_date.' has been approved');
+					$date = $Box->DeliveryDate->date;
+					$message = new YiiMailMessage('Your order for '.$date.' has been approved');
 					$message->view = 'customer_box_approved';
 					$message->setBody(array('Customer'=>$Customer, 'CustomerBox' =>$CustBox), 'text/html');
 					$message->addTo($Customer->User->user_email);
@@ -329,8 +329,8 @@ class BoxItemController extends Controller
 				$validator=new CEmailValidator();
 				if($validator->validateValue($Customer->User->user_email)) 
 				{
-					$week_delivery_date = $Box->Week->week_delivery_date;
-					$message = new YiiMailMessage('Your order for '.$week_delivery_date.' has been declined');
+					$date = $Box->DeliveryDate->date;
+					$message = new YiiMailMessage('Your order for '.$date.' has been declined');
 					$message->view = 'customer_box_declined';
 					$message->setBody(array('Customer'=>$Customer, 'CustomerBox' => $CustBox), 'text/html');
 					$message->addTo($Customer->User->user_email);
@@ -345,7 +345,7 @@ class BoxItemController extends Controller
 			}
 		}
 		
-		$this->redirect(array('customerBoxes','week'=>$week));
+		$this->redirect(array('customerBoxes','date'=>$date));
 	}
 	
 	/**
@@ -380,8 +380,8 @@ class BoxItemController extends Controller
 			$validator=new CEmailValidator();
 			if($validator->validateValue($Customer->User->user_email)) 
 			{
-				$week_delivery_date = $CustBox->Box->Week->week_delivery_date;
-				$message = new YiiMailMessage('Your order for '.$week_delivery_date.' has been approved');
+				$date = $CustBox->Box->DeliveryDate->date;
+				$message = new YiiMailMessage('Your order for '.$date.' has been approved');
 				$message->view = 'customer_box_approved';
 				$message->setBody(array('Customer'=>$Customer, 'CustomerBox' => $CustBox), 'text/html');
 				$message->addTo($Customer->User->user_email);
@@ -394,13 +394,13 @@ class BoxItemController extends Controller
 				}
 			}
 			
-			Yii::app()->user->setFlash('success', "User included in this week's delivery.");
+			Yii::app()->user->setFlash('success', "User included in this date's delivery.");
 		}
 		else
 		{
 			Yii::app()->user->setFlash('error', "Insufficient funds!");
 		}
-		$this->redirect(array('customerBoxes','week'=>$CustBox->Box->week_id));
+		$this->redirect(array('customerBoxes','date'=>$CustBox->Box->delivery_date_id));
 	}
 	
 	/**
@@ -436,7 +436,7 @@ class BoxItemController extends Controller
 			Yii::app()->user->setFlash('success', "Could not find the given Customer Box");
 		}
 
-		$this->redirect(array('customerBoxes','week'=>$CustBox->Box->week_id));
+		$this->redirect(array('customerBoxes','date'=>$CustBox->Box->delivery_date_id));
 	}
 	
 	/**
@@ -457,7 +457,7 @@ class BoxItemController extends Controller
 			Yii::app()->user->setFlash('success', "Could not find the given Customer Box");
 		}
 
-		$this->redirect(array('customerBoxes','week'=>$CustBox->Box->week_id));
+		$this->redirect(array('customerBoxes','date'=>$CustBox->Box->delivery_date_id));
 	}
 	
 	/**
@@ -478,7 +478,7 @@ class BoxItemController extends Controller
 			Yii::app()->user->setFlash('success', "Could not find the given Customer Box");
 		}
 
-		$this->redirect(array('customerBoxes','week'=>$CustBox->Box->week_id));
+		$this->redirect(array('customerBoxes','date'=>$CustBox->Box->delivery_date_id));
 	}
 
 	/**

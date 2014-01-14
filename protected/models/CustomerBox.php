@@ -20,7 +20,7 @@ class CustomerBox extends CActiveRecord
 	const STATUS_DECLINED=2;
 	const STATUS_DELIVERED=3;
 	
-	public $week_total=null;		//holds an aggregate total for the week;
+	public $date_total=null;		//holds an aggregate total for the date;
 	public $fulfilled_total=null;	//holds an aggregate total for all orders before the deadline
 	public $customer_first_name;
 	public $customer_last_name;
@@ -119,19 +119,19 @@ class CustomerBox extends CActiveRecord
 	 * Retrieves a list of models based on the current search/filter conditions.
 	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
 	 */
-	public function boxSearch($week=null)
+	public function boxSearch($date=null)
 	{
 		$pageSize=isset($_GET['pageSize'])?$_GET['pageSize']:10;
 		Yii::app()->user->setState('pageSize',$pageSize);
 		
 		$criteria=new CDbCriteria;
 		
-		if($week) 
+		if($date) 
 		{
 			$criteria->together=true;
 			$criteria->with=array(
 				'Box'=>array(
-					'condition'=>'week_id='.$week,
+					'condition'=>'delivery_date_id='.$date,
 				),
 				'Customer.User'
 			);
@@ -187,9 +187,9 @@ class CustomerBox extends CActiveRecord
 	 */
 	public function beforeSave()
 	{
-		$Week=$this->Box->Week;
+		$DeliveryDate=$this->Box->DeliveryDate;
 
-		if(	time() > strtotime($Week->deadline) && 
+		if(	time() > strtotime($DeliveryDate->deadline) && 
 			!Yii::app()->user->checkAccess('admin') && 
 			!isset(Yii::app()->user->shadow_id) && 
 			Yii::app()->getAuthManager()->checkAccess('admin', Yii::app()->user->shadow_id)) {		
@@ -199,13 +199,13 @@ class CustomerBox extends CActiveRecord
 			return true;
 	}
 	
-	public static function findCustomerBox($weekId, $sizeId, $customerId)
+	public static function findCustomerBox($dateId, $sizeId, $customerId)
 	{
 		$criteria=new CDbCriteria;
 		$criteria->with='Box';
 		$criteria->select='COUNT(customer_box_id) as quantity';
 		$criteria->addCondition("Box.size_id=$sizeId");
-		$criteria->addCondition("Box.week_id=$weekId");
+		$criteria->addCondition("Box.delivery_date_id=$dateId");
 		$criteria->addCondition("customer_id=$customerId");
 		$box=self::model()->find($criteria);
 		
@@ -245,20 +245,20 @@ class CustomerBox extends CActiveRecord
 	
 	public function getDelivery_location()
 	{
-		$CustWeek=CustomerWeek::model()->findByAttributes(array(
+		$CustDeliveryDate=CustomerDeliveryDate::model()->findByAttributes(array(
 			'customer_id'=>$this->customer_id,
-			'week_id'=>$this->Box->week_id
+			'delivery_date_id'=>$this->Box->delivery_date_id
 		));
-		return $CustWeek->delivery_location;
+		return $CustDeliveryDate->delivery_location;
 	}
 	
 	public function getDelivery_address()
 	{
-		$CustWeek=CustomerWeek::model()->findByAttributes(array(
+		$CustDeliveryDate=CustomerDeliveryDate::model()->findByAttributes(array(
 			'customer_id'=>$this->customer_id,
-			'week_id'=>$this->Box->week_id
+			'delivery_date_id'=>$this->Box->delivery_date_id
 		));
-		return $CustWeek->delivery_address;
+		return $CustDeliveryDate->delivery_address;
 	}
 	
 	public function getQrCode()

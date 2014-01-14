@@ -8,7 +8,7 @@
 <p>Hi <?php echo $Customer->User->first_name ?>,</p>
 
 <p>Unfortunately your Bellofoodbox order for 
-pick up on <?php echo $CustomerBox->Box->Week->week_delivery_date ?> has been DECLINED, as you 
+pick up on <?php echo $CustomerBox->Box->DeliveryDate->date ?> has been DECLINED, as you 
 have insufficient Bellofoodbox credit.</p>
 
 <p>Please contact us immediately if you feel this is an error.</p>

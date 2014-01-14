@@ -26,8 +26,8 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->label($model,'grower_id'); ?>
-		<?php echo $form->textField($model,'grower_id'); ?>
+		<?php echo $form->label($model,'supplier_id'); ?>
+		<?php echo $form->textField($model,'supplier_id'); ?>
 	</div>
 
 	<div class="row buttons">
