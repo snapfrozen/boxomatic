@@ -69,13 +69,14 @@ EOD
 				array( 'name'=>'customer_id', 'value'=>'empty($data->customer_id) ? "No" : "Yes"'),
 				array( 'name'=>'supplier_id', 'value'=>'empty($data->supplier_id) ? "No" : "Yes"'),
 				array(
-					'class'=>'CButtonColumn',
+					'class'=>'SnapButtonColumn',
 					'template'=>'{view}{update}{delete}{login}',
 					'buttons'=>array(
 						'login' => array
 						(
+							'label'=>'<i class="fi fi-key"></i>',
 							'url'=> 'array("user/loginAs","id"=>$data->id)',
-							'options'=>array('class'=>'text'),
+							'options'=>array('title'=>'Login As'),
 						),
 					),
 				),

@@ -120,9 +120,9 @@ class DeliveryDate extends CActiveRecord
 	/**
 	 * Get the delivery date id for the next delivery
 	 */
-	public function getCurrentDeliveryDateId()
+	public static function getCurrentDeliveryDateId()
 	{
-		$date=$this->findByAttributes('date > NOW()');
+		$date=self::model()->find('date > NOW()');
 		return $date ? $date->id : false;
 	}
 	

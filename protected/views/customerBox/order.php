@@ -144,6 +144,7 @@
 												<thead>
 													<tr>
 														<th>Boxes</th>
+														<th>Extras</th>
 														<th>Delivery</th>
 														<th>Total</th>
 													</tr>
@@ -151,6 +152,7 @@
 												<tbody>
 													<tr>
 														<td class='boxes'><?php echo Yii::app()->snapFormat->currency($Customer->totalBoxesByDeliveryDate($DeliveryDate->id)) ?></td>
+														<td class='extras'>?</td>
 														<td class='delivery'><?php echo Yii::app()->snapFormat->currency($Customer->totalDeliveryByDeliveryDate($DeliveryDate->id)); ?></td>
 														<td class='total'>
 															<strong><?php echo Yii::app()->snapFormat->currency($Customer->totalByDeliveryDate($DeliveryDate->id)) ?></strong>

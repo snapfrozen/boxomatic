@@ -19,7 +19,20 @@
  */
 class SupplierProduct extends CActiveRecord
 {
-
+	const imageDir = 'data/products';
+	
+	static $phpThumbSizes = array(
+		'small'=>array(
+			'w'=>168,
+			'h'=>168,
+			'zc'=>1,
+		),
+		//large-4 column
+		'medium'=>array(
+			'w'=>279,
+		),
+	);
+	
     /*
      * supplier name search attribute
      */
@@ -28,6 +41,15 @@ class SupplierProduct extends CActiveRecord
 	 * attribute for searching availablity by month
 	 */
 	public $month_available;
+	
+	public function behaviors()
+	{
+		return array(
+			'activerecord-relation'=>array(
+				'class'=>'ext.active-relation-behavior.EActiveRecordRelationBehavior',
+			)
+		);
+	}
     
     
 	/**
@@ -78,11 +100,12 @@ class SupplierProduct extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('supplier_id', 'numerical', 'integerOnly'=>true),
-			array('price, wholesale_price', 'numerical'),
+			array('image_ext', 'length', 'max'=>20),
 			array('name', 'length', 'max'=>45),
 			array('value', 'length', 'max'=>7),
 			array('unit', 'length', 'max'=>5),
-			array('available_from, available_to', 'safe'),
+			array('description, available_from, available_to', 'safe'),
+			array('image', 'file', 'types'=>'jpg, gif, png', 'allowEmpty'=>true),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, supplier_id, supplier_search, month_available, name, value, unit, available_from, available_to', 'safe', 'on'=>'search'),
@@ -98,6 +121,7 @@ class SupplierProduct extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'Supplier' => array(self::BELONGS_TO, 'Supplier', 'supplier_id'),
+			'Categories' => array(self::MANY_MANY, 'Category', 'supplier_product_categories(supplier_product_id, category_id)'),
 		);
 	}
 
@@ -112,12 +136,11 @@ class SupplierProduct extends CActiveRecord
 			'name' => 'Name',
 			'value' => 'Value',
 			'unit' => 'Unit',
-			'price' => 'Unit Price',
-			'wholesale_price' => 'Unit Wholesale Price',
 			'available_from' => 'Available From',
 			'available_to' => 'Available To',
 			'supplier_search' => 'Supplier Name',
 			'month_available' => 'Month Available',
+			'image' => 'Image',
 		);
 	}
 
@@ -142,7 +165,7 @@ class SupplierProduct extends CActiveRecord
 		$criteria->compare('id',$this->id);
 		$criteria->compare('supplier_id',$this->supplier_id);
 		$criteria->compare('Supplier.name', $this->supplier_search, true );
-		$criteria->compare('name',$this->name,true);
+		$criteria->compare('t.name',$this->name,true);
 		$criteria->compare('value',$this->value,true);
 		$criteria->compare('unit',$this->unit,true);
 		
@@ -160,6 +183,11 @@ class SupplierProduct extends CActiveRecord
 				'pageSize'=>$pageSize,
 			),
 		));
+	}
+	
+	public static function setPHPThumbParameters($size)
+	{
+		$_GET += self::$phpThumbSizes[$size];
 	}
 	
 	/**
@@ -188,21 +216,33 @@ class SupplierProduct extends CActiveRecord
 	}
 	
 	/**
-	 * @param SupplierPurchase $supplierPurchase
-	 * @return float price
+	 * 
 	 */
-	public function getDefaultItemPrice($SP)
+	public function getImage_location()
 	{
-		return round($this->getWholesalePrice($SP) * self::defaultItemPriceMultiplier,2);
+		$imageLoc='';
+		if(!empty($this->image))
+			$imageLoc = Yii::app()->basePath . '/'. self::imageDir . '/' . $this->id . '.' . $this->image_ext;
+		return $imageLoc;
 	}
 	
 	/**
 	 * 
-	 * @param SupplierPurchase $SP
-	 * @return float price
 	 */
-	public function getWholesalePrice($SP)
+	public function getImage_url()
 	{
-		return round($SP->final_price / $SP->delivered_quantity);
+		$imageUrl='';
+		if(!empty($this->image))
+			$imageUrl = Yii::app()->baseUrl . self::imageDir . '/' . $this->id . '' . $this->image_ext;
+		return $imageUrl;
+	}
+	
+	public function beforeSave()
+	{
+		if($this->image instanceof CUploadedFile) {
+			$this->setAttribute('image_ext',$this->image->extensionName);
+			$this->image->saveAs($this->image_location);
+		}
+		return parent::beforeSave();
 	}
 }

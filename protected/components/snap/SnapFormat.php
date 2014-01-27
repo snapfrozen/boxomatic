@@ -41,9 +41,20 @@ class SnapFormat extends CApplicationComponent
 		return Yii::app()->numberFormatter->format('$#,##0.00', (float)$amount);
 	}
 	
-	public function date($day)
+//	public function date($day)
+//	{
+//		return Yii::app()->dateFormatter->format("yyy-M-dd", $day);
+//	}
+	
+	/**
+	 * 
+	 * @param type $date
+	 * @param string $dateWidth 'full', 'long', 'medium', 'short'
+	 * @return type
+	 */
+	static function date($date,$dateWidth='medium',$timeWidth=null)
 	{
-		return Yii::app()->dateFormatter->format("yyy-M-dd", $day);
+		return Yii::app()->dateFormatter->formatDateTime($date,$dateWidth,$timeWidth);
 	}
 }
 ?>

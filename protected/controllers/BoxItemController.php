@@ -97,8 +97,8 @@ class BoxItemController extends Controller
 				{
 					$SupplierProduct=SupplierProduct::model()->findByAttributes(array(
 						'supplier_id'=>$boxContents['supplier_id'],
-						'item_name'=>$boxContents['item_name'],
-						'item_unit'=>$boxContents['item_unit'],
+						'name'=>$boxContents['item_name'],
+						'unit'=>$boxContents['item_unit'],
 					));
 					
 					//Update the supplier item price already exists
@@ -111,11 +111,11 @@ class BoxItemController extends Controller
 					{
 						$SupplierProduct=new SupplierProduct;
 						$SupplierProduct->supplier_id=$boxContents['supplier_id'];
-						$SupplierProduct->item_name=$boxContents['item_name'];
-						$SupplierProduct->item_value=$boxContents['item_value'];
-						$SupplierProduct->item_unit=$boxContents['item_unit'];
-						$SupplierProduct->item_available_from=1;
-						$SupplierProduct->item_available_to=12;
+						$SupplierProduct->name=$boxContents['item_name'];
+						$SupplierProduct->value=$boxContents['item_value'];
+						$SupplierProduct->unit=$boxContents['item_unit'];
+						$SupplierProduct->available_from=1;
+						$SupplierProduct->available_to=12;
 						$SupplierProduct->save();
 					}
 				}
@@ -133,10 +133,13 @@ class BoxItemController extends Controller
 
 		//Get the boxes for the selected date
 		$DeliveryDateBoxes=null;
-		if($date) {
-			$SelectedDeliveryDate=DeliveryDate::model()->findByPk($date);
-			$DeliveryDateBoxes=$SelectedDeliveryDate->MergedBoxes;
+		if(!$date) {
+			$date = DeliveryDate::getCurrentDeliveryDateId();
 		}
+		
+		$SelectedDeliveryDate=DeliveryDate::model()->findByPk($date);
+		$DeliveryDateBoxes=$SelectedDeliveryDate->MergedBoxes;
+		
 		
 		//Item has been selected from inventory, if it doesn't exist in the date
 		//Load it to be added as a new row up the top of the box item list
@@ -151,10 +154,10 @@ class BoxItemController extends Controller
 				item_value=:itemValue AND 
 				Box.delivery_date_id=:deliveryDateId',
 				array (
-					':itemName'=>$NewItem->item_name,
+					':itemName'=>$NewItem->name,
 					':supplierId'=>$NewItem->supplier_id,
-					':itemUnit'=>$NewItem->item_unit,
-					':itemValue'=>$NewItem->item_value,
+					':itemUnit'=>$NewItem->unit,
+					':itemValue'=>$NewItem->value,
 					':deliveryDateId'=>$date,
 				)
 			);
@@ -168,10 +171,10 @@ class BoxItemController extends Controller
 				foreach($DeliveryDateBoxes as $DeliveryDateBox)
 				{
 					$BoxItem=new BoxItem;
-					$BoxItem->item_name=$NewItem->item_name;
+					$BoxItem->item_name=$NewItem->name;
 					$BoxItem->supplier_id=$NewItem->supplier_id;
-					$BoxItem->item_unit=$NewItem->item_unit;
-					$BoxItem->item_value=$NewItem->item_value;
+					$BoxItem->item_unit=$NewItem->unit;
+					$BoxItem->item_value=$NewItem->value;
 					$BoxItem->item_quantity=1;
 					$BoxItem->box_id=$DeliveryDateBox->box_id;
 					$BoxItem->save();

@@ -43,7 +43,7 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 		'item_value',
 		'item_quantity',
 		array(
-			'class'=>'CButtonColumn',
+			'class'=>'SnapButtonColumn',
 		),
 	),
 )); ?>

@@ -379,7 +379,7 @@ class CustomerBoxController extends Controller
 				$CustBoxesDate=CustomerBox::model()->with('Box')->findAll(
 					'customer_id=:customerId AND Box.delivery_date_id=:dateId', array(
 						'customerId'=>Yii::app()->user->customer_id,
-						'deliveryDateId'=>$CustDeliveryDate->delivery_date_id
+						'dateId'=>$CustDeliveryDate->delivery_date_id
 					));
 				
 				foreach($CustBoxesDate as $CustBox) {

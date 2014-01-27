@@ -88,14 +88,15 @@ EOD
 						'filter'=>CustomerBox::model()->statusOptions,
 					),
 					array(
-					'class'=>'CButtonColumn',
+					'class'=>'SnapButtonColumn',
 						'header'=>'Actions',
 						'template'=>'{login}{process}{cancel}{set_approved}{set_delivered}',
 						'buttons'=>array(
 							'login' => array
 							(
+								'label'=>'<i class="fi fi-key"></i>',
 								'url'=> 'array("user/loginAs","id"=>$data->Customer->User->id)',
-								'options'=>array('class'=>'text'),
+								'options'=>array('title'=>'Login As'),
 							),
 							'process'=>array
 							(

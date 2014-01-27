@@ -24,6 +24,8 @@ class SupplierPurchase extends CActiveRecord
 	public $item_name_search;
 	public $total; //For aggregate SQL
 	
+	const defaultItemPriceMultiplier = 1.6;
+	
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
@@ -52,7 +54,8 @@ class SupplierPurchase extends CActiveRecord
 		return array(
 			array('id, supplier_product_id', 'numerical', 'integerOnly'=>true),
 			array('propsed_quantity, propsed_price, delivered_quantity, final_price', 'length', 'max'=>7),
-			array('proposed_delivery_date, order_notes, delivery_notes', 'safe'),
+			array('proposed_delivery_date, delivery_date, order_notes, delivery_notes', 'safe'),
+			array('item_sales_price','numerical'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('supplier_name_search, item_name_search, supplier_cert_search, id, supplier_product_id, propsed_quantity, propsed_price, proposed_delivery_date, order_notes, delivered_quantity, final_price, delivery_notes', 'safe', 'on'=>'search'),
@@ -71,6 +74,14 @@ class SupplierPurchase extends CActiveRecord
 			'inventory' => array(self::HAS_ONE, 'Inventory', 'supplier_purchase_id')
 		);
 	}
+	
+	public function beforeSave()
+	{
+		if(empty($this->item_sales_price)) {
+			$this->item_sales_price = $this->wholesale_price * self::defaultItemPriceMultiplier;
+		}
+		return parent::beforeSave();
+	}
 
 	/**
 	 * @return array customized attribute labels (name=>label)
@@ -83,6 +94,7 @@ class SupplierPurchase extends CActiveRecord
 			'propsed_quantity' => 'Proposed Quantity',
 			'propsed_price' => 'Proposed Price',
 			'proposed_delivery_date' => 'Proposed Delivery Date',
+			'delivery_date' => 'Delivery Date',
 			'order_notes' => 'Order Notes',
 			'delivered_quantity' => 'Delivered Quantity',
 			'final_price' => 'Final Price',
@@ -91,6 +103,8 @@ class SupplierPurchase extends CActiveRecord
 			'supplier_name_search'=>'Supplier Name',
 			'item_name_search'=>'Item',
 			'proposed_delivery_date_formatted' => 'Proposed Delivery Date',
+			'delivery_date_formatted' => 'Delivery Date',
+			'item_sales_price' => 'Item Sales Price',
 		);
 	}
 
@@ -110,6 +124,7 @@ class SupplierPurchase extends CActiveRecord
 		$criteria->compare('propsed_quantity',$this->propsed_quantity,true);
 		$criteria->compare('propsed_price',$this->propsed_price,true);
 		$criteria->compare('proposed_delivery_date',$this->proposed_delivery_date,true);
+		$criteria->compare('delivery_date',$this->delivery_date,true);
 		$criteria->compare('order_notes',$this->order_notes,true);
 		$criteria->compare('delivered_quantity',$this->delivered_quantity,true);
 		$criteria->compare('final_price',$this->final_price,true);
@@ -133,4 +148,29 @@ class SupplierPurchase extends CActiveRecord
 	{
 		return Yii::app()->snapFormat->date($this->proposed_delivery_date);
 	}
+	
+	public function getDelivery_date_formatted()
+	{
+		return Yii::app()->snapFormat->date($this->delivery_date);
+	}
+	
+	/**
+	 * 
+	 * @param SupplierPurchase $SP
+	 * @return float price
+	 */
+	public function getWholesale_price()
+	{
+		return round($this->final_price / $this->delivered_quantity);
+	}
+	
+	/**
+	 * @param SupplierPurchase $supplierPurchase
+	 * @return float price
+	 */
+	public function getDefaultItemPrice()
+	{
+		return round($this->getWholesalePrice() * self::defaultItemPriceMultiplier, 2);
+	}
+	
 }

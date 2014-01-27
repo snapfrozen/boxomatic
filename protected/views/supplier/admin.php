@@ -66,7 +66,7 @@ $('.search-form form').submit(function(){
 				'address',
 				'address2',
 				array(
-					'class'=>'CButtonColumn',
+					'class'=>'SnapButtonColumn',
 				),
 			),
 		)); ?>

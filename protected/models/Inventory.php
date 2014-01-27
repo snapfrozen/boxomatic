@@ -6,16 +6,31 @@
  * The followings are the available columns in table 'inventory':
  * @property integer $inventory_id
  * @property integer $supplier_purchase_id
+ * @property integer $customer_delivery_date_item_id
  * @property string $quantity
  * @property string $box_reserve
  */
 class Inventory extends CActiveRecord
 {
-	const defaultItemPriceMultiplier = 1.6;
 	public $sum_quantity; //Aggregate variable
 	public $sum_box_reserve; //Aggregate variable
 	public $supplier_name_search;
 	public $product_name_search;
+	
+	public $showLimitedStockAt = 20;
+	public static $quantityOptions = array(
+		'0.00'=>0,
+		'1.00'=>1,
+		'2.00'=>2,
+		'3.00'=>3,
+		'4.00'=>4,
+		'5.00'=>5,
+		'6.00'=>6,
+		'7.00'=>7,
+		'8.00'=>8,
+		'9.00'=>9,
+		'10.00'=>10
+	);
 	
 	/**
 	 * @return string the associated database table name
@@ -34,7 +49,7 @@ class Inventory extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('supplier_product_id, quantity', 'required'),
-			array('supplier_product_id, supplier_purchase_id', 'numerical', 'integerOnly'=>true),
+			array('customer_delivery_date_item_id, supplier_product_id, supplier_purchase_id', 'numerical', 'integerOnly'=>true),
 			array('quantity, box_reserve', 'length', 'max'=>7),
 			array('notes', 'safe'),
 			// The following rule is used by search().
@@ -64,7 +79,7 @@ class Inventory extends CActiveRecord
 		return array(
 			'inventory_id' => 'Inventory',
 			'supplier_purchase_id' => 'Grower Purchase',
-			'quantity' => 'Quantity',
+			'quantity' => 'In Stock',
 			'box_reserve' => 'Box Reserve',
 			'sum_box_reserve' => 'Box Reserve Quantity',
 			'sum_quantity' => 'Extras Quantity',
@@ -72,6 +87,7 @@ class Inventory extends CActiveRecord
 			'supplier_product_id' => 'Product',
 			'product_name_search' => 'Product',
 			'supplier_name_search' => 'Supplier',
+			'delivery_date_formatted' => 'Delivery Date',
 		);
 	}
 
@@ -92,8 +108,6 @@ class Inventory extends CActiveRecord
 	
 	public function searchIndex()
 	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('inventory_id',$this->inventory_id);
@@ -105,8 +119,9 @@ class Inventory extends CActiveRecord
 		//$criteria->compare('SUM(quantity)',$this->sum_quantity);
 
 		$criteria->with = array('supplierProduct'=>array('with'=>'Supplier'));
-		$criteria->group = 'supplier_product_id';
+		$criteria->group = 'supplier_purchase_id';
 		$criteria->select = '*, SUM(quantity) as sum_quantity, SUM(box_reserve) as sum_box_reserve';
+		$criteria->having = 'sum_quantity != 0';
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -127,5 +142,38 @@ class Inventory extends CActiveRecord
 	public function getTotal_quantity()
 	{
 		return $this->sum_box_reserve + $this->sum_quantity;
+	}
+	
+	/**
+	 * Get the available items for a particular date
+	 * @param type $dateId
+	 */
+	public function getAvailableItems($dateId, $cat)
+	{
+		$criteria=new CDbCriteria;
+		//$criteria->with = array('supplierProduct'=>array('with'=>'Supplier'));
+		$criteria->group = 't.supplier_product_id, supplier_purchase_id';
+		$criteria->select = 't.*, SUM(quantity) as sum_quantity, SUM(box_reserve) as sum_box_reserve';
+		$criteria->with = array('supplierPurchase');
+		if($cat == Category::uncategorisedCategory) {
+			$criteria->addCondition('category_id is null');
+			$criteria->join = 'LEFT JOIN supplier_product_categories spc ON t.supplier_product_id = spc.supplier_product_id';
+		} else {
+			$criteria->addCondition('category_id=:catId');
+			$criteria->join = 'INNER JOIN supplier_product_categories spc ON t.supplier_product_id = spc.supplier_product_id';
+			$criteria->params = array(':catId'=>$cat);
+		}
+		$criteria->having = 'sum_quantity > 0';
+		return $this->findAll($criteria);
+	}
+	
+	public function showQuantity()
+	{
+		return $this->sum_quantity < $this->showLimitedStockAt;
+	}
+	
+	public function getDelivery_date_formatted()
+	{
+		return Yii::app()->snapFormat->date($this->delivery_date);
 	}
 }

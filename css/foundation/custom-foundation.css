@@ -14,6 +14,17 @@ h1, h2, h3, h4, h5, h6 {
 	font-weight: 300;
 }
 
+h2 {font-size:24px;}
+
+/*ul, ol {
+	margin-left:25px;
+}*/
+
+ul label {
+	display:inline;
+	padding-left:10px;
+}
+
 a { color: #e67e22; }
 
 .top-bar {
@@ -23,6 +34,12 @@ a { color: #e67e22; }
 select{
 	padding: 5px;
 }
+
+textArea {
+	height:120px;
+}
+
+/* Foundation Icons */
 
 div.content {
 	padding: 40px 0 60px;
@@ -105,7 +122,8 @@ fieldset legend {
 
 .detail-view th { font-weight: normal; text-align: left; }
 .desktop-hidden { display: none; }
-.button-column { min-width: 80px; }
+.button-column { min-width: 80px; font-size:20px; white-space: nowrap}
+.button-column a {margin:0 3px 0}
 
 #pageSize {
 	width: auto;
@@ -117,7 +135,7 @@ fieldset legend {
 }
 
 .itemValue .stepper-wrap {
-	width: 50%;
+	width: 48%;
 	display: inline-block;
 }
 
@@ -169,3 +187,570 @@ fieldset legend {
 }
 
 .summary {margin-bottom:1em;}
+
+table .button,
+table input {margin-bottom:0 !important}
+
+/* Box packing */
+
+.secondaryNav {
+	margin-top:-40px;
+	height:40px;
+	position:relative;
+	border-bottom:1px solid #ccc;
+	margin-bottom:10px;
+}
+	.secondaryNav h4 {
+		font-size:16px;
+		line-height:16px;
+		margin:0;
+		padding:12px 20px 12px 0;
+		float:left;
+		position:relative;	
+	}
+	.secondaryNav h4:after {
+		content: "";
+		display: block;
+		width: 0;
+		height: 0;
+		border: inset 5px;
+		border-color: rgba(0, 0, 0, .5) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0);
+		border-style: solid inset inset;
+		border-left-style: solid;
+		position:absolute;
+		right:0;
+		top:50%;
+	}
+	
+.dropDown {
+	position:relative;
+}
+	.dropDownPanel {
+		position:absolute;
+		top:40px;
+		left:0;
+		z-index:10;
+		background:#fff;
+		border:1px solid #ccc;
+		padding:20px;
+		box-shadow:5px 2px 5px -3px rgba(0,0,0,.5);
+		left:-9000px;
+	}
+
+/*	.dropDown:hover .dropDownPanel {
+		display:block;
+	}*/
+#inventory .dropDownPanel {
+	width:714px;
+}
+
+/* Extras page */
+.items h3 {
+	font-size:16px;
+	font-weight:bold;
+}
+	.items .image {
+		border:1px solid #ccc;
+		padding:2px;
+		text-align:center;
+		height:168px;
+		margin-bottom:10px;
+	}
+		.items .image p {
+			margin-top:70px;
+		}
+
+.products {
+	border-right:1px solid #ccc;
+	border-left:1px solid #ccc;
+}
+.products .empty {
+	padding:0 0.9375em;
+}
+	.products span {
+		display:block;
+		margin-bottom:10px;
+		line-height:1.2em;
+	}
+.order {
+	border:none;
+}
+	.order .view .row {
+		border-bottom:1px solid #ccc;
+		margin-bottom:20px;
+	}
+		.order .image {
+			height:auto;
+			width:100%;
+			margin:0 10px 10px 0;
+		}
+			.order .image p {
+				margin:0;
+			}
+		.order h3 {
+			margin-top:0;
+			line-height:1em;
+		}
+.each {
+	color:#999; display:inline !important;
+}
+.errorSummary ul {
+	list-style-type:none;
+	color:#C00;
+	border:1px solid #C00;
+	background:#ebb;
+	padding:0 5px;
+}
+
+.categories {
+	list-style-type:none;
+	margin-left:0;
+}
+	.categories li {
+		list-style-type:none;
+	}
+	.categories .selected > a {
+		font-weight:bold;	
+	}
+	
+.button-column a.text {
+	padding:5px;
+	margin:0 3px 3px 0;
+	border:1px solid #e67e22;
+	display:inline-block;
+}
+
+.stepper-wrap {
+	font-size:inherit;
+}
+
+#current-boxes {
+	width:100%;
+	overflow-x:auto;
+	overflow-y:visible;
+	margin-bottom:20px;
+}
+	#current-boxes table {
+		width:auto;
+	}
+		#current-boxes th,
+		#current-boxes td {
+			padding: 0 0.625em;
+		}
+			table input[type="text"],
+			table select {
+				margin:0;
+				padding:2px 5px;
+				vertical-align:top;
+				font-size:11px;
+			}
+			#current-boxes input[type="checkbox"] {
+				margin-top:7px;
+			}
+			#current-boxes td.value,
+			#current-boxes td.total,
+			#current-boxes tr.group td {
+				padding:5px;
+			}
+			#current-boxes .supplierName {
+				width:245px;
+			}
+			#current-boxes .valueCol {
+				width:245px;
+			}
+			#current-boxes .boxCol {
+				width:98px;
+			}
+/*				.boxCol div {
+					display:none;
+				}
+				.boxCol:hover div {
+					display:block;
+				}*/
+			#current-boxes .totalCol {
+				width:40px;
+			}
+			#current-boxes .quantityCol {
+				width:40px;
+			}
+			
+/* Foodbox styles */
+
+.shadow {
+	float:right;
+	padding:5px;
+	text-shadow:-1px -1px 0px rgba(0,0,0,.5), 0 0 4px #000;
+	font-size:14px;
+	font-weight:bold;
+	color:#fff;
+}
+
+.buttons {
+	margin-bottom:1em;
+}
+.button-column .text {
+	display:block;
+}
+
+#content input.bigButton {
+	font-size:1.3em;
+}
+
+.section {
+	margin-bottom:2em;
+}
+
+h2 {overflow:hidden}
+h2 span {
+	float:left;
+	margin-right:.5em;
+}
+.loading {
+	width:24px;
+	height:24px;
+	background:transparent url('../images/layout/ajax-loader.gif') no-repeat top left;
+	float:left;
+	display:none;
+}
+.row.left {
+	padding-right:10px;
+}
+#content .grid-view table.items th {
+	background:#000 url(bg.gif) repeat-x left top;
+}
+#content .grid-view table.items tr.odd {
+	background:#eee;
+}
+#content .grid-view table.items tr:hover {
+	background:#ffebd4;
+}
+#content ul.yiiPager .selected a {
+	background:#DA7C0C;
+}
+#content ul.yiiPager a:link, 
+#content ul.yiiPager a:visited {
+	border:1px solid #b86400;
+	color:#b86400;
+}
+#content ul.yiiPager .selected a {
+	color:#fff;
+}
+
+/* All Orders Page */
+
+.customerBox-order .tabs {
+	width:505px;
+	float:left;
+	margin-right:20px;
+}
+#recentTransactions {
+	float:left;
+	width:375px;
+}
+.customerBox-order .ui-widget-content {background:#fff}
+
+th.sizes {
+	text-align:center;
+	min-width:160px;
+}
+.dirty .price {
+	color:#a00;
+}
+
+.allOrders td.button {
+	padding:8px 0 0 8px;
+	vertical-align:top;
+}
+
+.allOrders table {
+	width:100%;
+}
+	.allOrders .enoughCredit {
+		background:#eeffee;
+	}
+	.allOrders .insufficientCredit {
+		background:#ffeeee;
+	}
+	.allOrders .pastDeadline {
+		background:#eee;
+	}
+	.allOrders .date {
+		color:#888;
+	}
+		.allOrders .date strong {
+			float:left;
+		}
+		.allOrders tr.show td.advanced,
+		.allOrders tr.selector.show td,
+		.allOrders td {
+			padding:8px;
+		}
+		.allOrders td.bottom,
+		.allOrders .bottom td {
+			border-bottom:1px solid #ccc;
+		}
+.allOrders .deliverySelect {
+	border:1px solid transparent;
+	color:#888;
+	background:transparent;
+	width:300px;
+	float:right;
+	margin:0 0 0 15px;
+}
+	body .ui-widget {
+		font-size:1em;
+	}
+	#orders .ui-selectmenu {
+		font-size:1em !important;
+		margin:0;
+		float:right;
+		background:none !important;
+		border:none !important;
+		font-weight:normal !important;
+		height:auto;
+	}
+	#order-in-advance .allOrders .ui-selectmenu {
+		margin-bottom:1em;
+		height:27px;
+	}
+		.ui-selectmenu-open {
+			z-index:100 !important;
+			font-size:1em;
+		}
+		#orders.allOrders .ui-selectmenu-status {
+			padding-top:0;
+			padding-bottom:0;
+			color:#888;
+			line-height:inherit;
+			white-space:nowrap;
+		}
+		#orders.allOrders .ui-selectmenu-icon {
+			top:0;
+			right:0;
+			margin-top:0;
+			display:none;
+		}
+		#orders.allOrders .ui-selectmenu:hover .ui-selectmenu-icon {
+			display:block;
+		}
+
+.allOrders .advanced {
+	float:right;
+	margin-top:1px;
+}
+
+.allOrders .advanced,
+.allOrders .simple {
+	display:none;
+}
+.allOrders div.advanced.show,
+.allOrders div.simple.show {
+	display:block;
+}
+	.allOrders div.advanced div {
+		float:left;
+		margin-right:10px;
+	}
+	.allOrders div.advanced div:last-child {
+		margin:0;
+	}
+		.allOrders div.advanced div span.units {
+			display:block;
+			font-size:10px;
+			padding-left:12px;
+		}
+		
+.allOrders .price {
+	padding-top:10px;
+	vertical-align:top;
+}		
+		
+.allOrders .slider {
+	margin:4px 0px 0 10px;
+	height:12px;
+}
+
+.allOrders .sliderLabels {display:block; margin:0 5px 4px 15px; position:relative; display:block; height:15px;}
+	.allOrders .sliderLabels span {
+		position:absolute; 
+		background:transparent url('../images/layout/slider_tick.gif') no-repeat scroll 50% -2px;
+		width:15px; 
+		height:15px; 
+		text-align:center; 
+		font-weight:normal; 
+		font-size:10px; 
+		margin-left:-8px; 
+		padding-top:5px}
+
+		
+span.btnAdvanced {
+	width:20px;
+	height:20px;
+	margin-top:5px;
+	text-indent:-9000px;
+	background:transparent url('../images/icons/advanced.png') no-repeat top left;
+	float:left;
+	cursor:pointer;
+	display:none;
+}
+span.btnAdvanced.selected {
+	background-position:0 -20px;
+}
+span.btnAdvanced:hover {
+	background-position:0 -40px;
+}
+.pastDeadline span.btnAdvanced {
+	display:none !important;
+}
+
+/* Fill Boxes Page */
+
+td.value {
+	text-align:right;
+}
+td.dirty select,
+td.dirty input,
+td.red {
+	color:#f00;
+}
+
+table th div {
+	position:relative;
+}
+	table th div div {
+		display:none;
+		top:0;
+		position:absolute;
+		padding:10px;
+		background:#fff;
+		border:1px solid #ccc;
+		box-shadow:0 0 5px rgba(0,0,0,.5);
+		z-index:100;
+		white-space:nowrap;
+	}
+	table th:hover div {
+		display:block;
+	}
+		table th div a {
+			text-decoration:none;
+		}
+		table th div a:hover {
+			text-decoration:underline;
+		}
+
+		
+#supplier-item-grid_c3 {
+	width:25%;
+}
+#supplier-item-grid_c2 {
+	width:15%;
+}
+
+table tr.group td {
+	border-bottom:1px solid #ddd;
+	padding-top:10px;
+}
+#current-boxes .selected td,
+.grid-view table.items tr.active td {
+	background:#ffffbb;
+}
+
+.calendar {
+	float:left;
+	margin:0 20px 20px 0;
+	width:240px;
+}
+.ui-datepicker th {
+	background:transparent;
+	color:#111;
+}
+#customerList {
+	padding-left:260px;
+}
+
+#fillBoxForm .grid-view table.items tbody tr:hover {
+	background:transparent;
+}
+
+#fillBoxForm .itemValue {
+	white-space:nowrap;
+}
+
+
+tfoot tr:first-child td {
+	border-top:3px double #ccc;
+}
+tfoot td {
+	font-style:normal;
+}
+tfoot td.total {
+	font-weight:bold;
+	text-align:right;
+}
+#box-item-form {
+	position:relative;
+}
+/*
+	#box-item-form .supplierName {
+		width:100%;
+	}
+*/
+	#box-item-form thead th {
+		vertical-align:bottom;
+	}
+
+/* Customer Boxes */
+#customer-list-grid .button-column a {
+	display:block;
+	white-space:nowrap;
+	margin-bottom:5px;
+}
+
+/* Supplier Map */
+
+.supplier-map #map {
+	display:block;
+	height:500px;
+}
+.infoWindow {
+	min-height:150px;
+	width:300px;
+}
+	.infoWindow h3 a {
+		text-decoration:none;
+	}
+	.infoWindow h3 a:hover {
+		text-decoration:underline;
+	}
+#supplier-search {
+	overflow:hidden;
+}
+	#supplier-search .row {
+		float:left;
+		margin-right:1em;
+		clear:none;
+	}
+	#supplier-search label {
+		width:auto;
+		padding-top:3px;
+	}
+	#supplier-search input {
+		margin:0;
+	}
+	#supplier-search .buttons {
+		padding-left:0;
+	}
+	
+/* Customer Locations */
+
+div.view .update {float:right; margin-left:10px;}
+.f-dropdown.content {
+	left:-9000px;
+}
+
+/* Customer Update */
+ul.tagit {
+	background:#fff;
+	font-size:12px;
+	padding-bottom:0;
+}

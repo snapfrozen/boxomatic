@@ -14,7 +14,7 @@
 				'notes',
 				'disabled',
 				array(
-					'class'=>'CButtonColumn',
+					'class'=>'SnapButtonColumn',
 				),
 			),
 		)); ?>

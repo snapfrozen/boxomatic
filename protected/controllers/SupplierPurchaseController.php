@@ -62,26 +62,7 @@ class SupplierPurchaseController extends Controller
 	public function actionCreate()
 	{
 		$model=new SupplierPurchase;
-		$SupplierProduct=new SupplierProduct;
-
-		if(isset($_POST['SupplierProduct']) && !empty($_POST['SupplierProduct']['name']))
-		{
-			$SupplierProduct->attributes=$_POST['SupplierProduct'];
-			$SupplierProduct->supplier_id=$_POST['supplier_id'];
-			$SupplierProduct->save();
-		}
-
-		if(isset($_POST['SupplierPurchase']))
-		{
-			$model->attributes=$_POST['SupplierPurchase'];
-			
-			if(!empty($SupplierProduct->id)) {
-				$model->supplier_product_id = $SupplierProduct->id;
-			}
-			
-			if($model->save())
-				$this->redirect(array('admin','id'=>$model->id));
-		}
+		$this->_doUpdate($model);
 
 		$this->render('create',array(
 			'model'=>$model,
@@ -96,12 +77,21 @@ class SupplierPurchaseController extends Controller
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
+		$this->_doUpdate($model);
+
+		$this->render('update',array(
+			'model'=>$model,
+		));
+	}
+	
+	private function _doUpdate(&$model)
+	{
 		$SupplierProduct=new SupplierProduct;
 
 		if(isset($_POST['SupplierProduct']) && !empty($_POST['SupplierProduct']['name']))
 		{
-			$SupplierProduct->attributes=$_POST['SupplierProduct'];
-			$SupplierProduct->supplier_id=$_POST['supplier_id'];
+			$SupplierProduct->attributes = $_POST['SupplierProduct'];
+			$SupplierProduct->supplier_id = $_POST['supplier_id'];
 			$SupplierProduct->save();
 		}
 
@@ -114,31 +104,25 @@ class SupplierPurchaseController extends Controller
 			
 			if($model->save()) 
 			{
-				if(isset($_POST['updateInventory'])) 
-				{
-					$inventory = null;
-					if($model->inventory) {
-						$inventory = $model->inventory;
-					} else {
-						$inventory = new Inventory();
-						$inventory->supplier_purchase_id = $model->id;
-					}
-					
-					$inventory->quantity = $model->delivered_quantity;
-					$inventory->supplier_product_id = $model->supplier_product_id;
-					
-					if(!$inventory->save()) {
-						Yii::app()->user->setFlash('error','There was a problem updating inventory');
-						print_r($inventory->errors);exit;
-					}
+				$inventory = null;
+				if($model->inventory) {
+					$inventory = $model->inventory;
+				} else {
+					$inventory = new Inventory();
+					$inventory->supplier_purchase_id = $model->id;
+				}
+
+				$inventory->quantity = $model->delivered_quantity;
+				$inventory->supplier_product_id = $model->supplier_product_id;
+				$inventory->delivery_date = $model->delivery_date;
+
+				if(!$inventory->save()) {
+					Yii::app()->user->setFlash('error','There was a problem updating inventory');
+					print_r($inventory->errors);exit;
 				}
 				$this->redirect(array('admin','id'=>$model->id));
 			}
 		}
-
-		$this->render('update',array(
-			'model'=>$model,
-		));
 	}
 	
 	/**

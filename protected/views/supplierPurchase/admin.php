@@ -48,7 +48,7 @@ $('.search-form form').submit(function(){
 		array(
 			'name' => 'item_name_search',
 			'type'=>'raw',
-			'value' => 'CHtml::value($data,"supplierProduct.item_name_with_unit")',
+			'value' => 'CHtml::value($data,"supplierProduct.name_with_unit")',
 		),
 		array(
 			'name' => 'supplier_name_search',
@@ -65,13 +65,14 @@ $('.search-form form').submit(function(){
 		'delivery_notes',
 		*/
 		array(
-			'class'=>'CButtonColumn',
-			'template'=>'{view}{update}{delete}{duplicate}',
+			'class'=>'SnapButtonColumn',
+			'template'=>'{view}{update}{duplicate}{delete}',
 			'buttons'=>array(
 				'duplicate' => array
 				(
+					'label' => '<i class="fi fi-page-copy"></i>',
+					'options' => array('title'=>'Duplicate'),
 					'url'=> 'array("supplierPurchase/duplicate","id"=>$data->id)',
-					'options'=>array('class'=>'text'),
 				),
 			)
 		),

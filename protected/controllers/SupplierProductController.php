@@ -27,8 +27,12 @@ class SupplierProductController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
+				'actions'=>array('image'),
+				'roles'=>array('customer'),
+			),
+			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','create','update'),
-				'roles'=>array('supplier'),
+				'roles'=>array('supplier','admin'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
 				'actions'=>array('admin','delete'),
@@ -83,19 +87,30 @@ class SupplierProductController extends Controller
 	{
 		$model=$this->loadModel($id);
 
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
 		if(isset($_POST['SupplierProduct']))
 		{
 			$model->attributes=$_POST['SupplierProduct'];
-			if($model->save())
+            $model->image=CUploadedFile::getInstance($model,'image');
+			if(isset($_POST['Categories'])) {
+				$model->Categories=array_keys($_POST['Categories']);
+			}
+
+			if($model->save()) {
 				$this->redirect(array('view','id'=>$model->id));
+			}
 		}
 
 		$this->render('update',array(
 			'model'=>$model,
 		));
+	}
+	
+	public function actionImage($id,$size='small')
+	{
+		$model=$this->loadModel($id);
+		$_GET['src']=$model->image_location;
+		SupplierProduct::setPHPThumbParameters($size);
+		include(Yii::getPathOfAlias('application.external.PHPThumb').'/phpThumb.php');
 	}
 
 	/**

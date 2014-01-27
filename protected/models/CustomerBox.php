@@ -27,6 +27,20 @@ class CustomerBox extends CActiveRecord
 	public $customer_box_price;
 	public $customer_user_id;
 	
+	public static $quantityOptions = array(
+		'0'=>0,
+		'1'=>1,
+		'2'=>2,
+		'3'=>3,
+		'4'=>4,
+		'5'=>5,
+		'6'=>6,
+		'7'=>7,
+		'8'=>8,
+		'9'=>9,
+		'10'=>10
+	);
+	
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.

@@ -30,11 +30,11 @@ $('.delivery-date-picker').datepicker({
 		var date = $(this).datepicker('getDate');
 		
 		//availableDeliveryDates is a global variable found in the boxItem/create page
-		$.each(availableDeliveryDates, function(key,date){
-			var parts = date['date'].split('-');
+		$.each(availableDates, function(key,curDate){
+			var parts = curDate['date'].split('-');
 			var dateObj = new Date(parts[0],parts[1]-1,parts[2]);
 			if (dateObj.getTime() == date.getTime()) {
-				reloadCustomers(curUrl,{date: date['id']});
+				reloadCustomers(curUrl,{date: curDate['id']});
 			}
 		});
 	},
@@ -53,8 +53,8 @@ $('.delivery-date-picker').datepicker({
 		}
 		
 		//availableDeliveryDates is a global variable found in the boxItem/create page
-		$.each(availableDeliveryDates, function(key,date) {
-			var parts = date['date'].split('-');
+		$.each(availableDates, function(key,curDate) {
+			var parts = curDate['date'].split('-');
 			
 			if(date['notes'])
 				notes = date['notes'];

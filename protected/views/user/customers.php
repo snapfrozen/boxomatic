@@ -44,7 +44,7 @@ EOD
 
 	<div class="large-12 columns">
 
-		<?php $dataProvider=$model->search(); ?>
+		<?php $dataProvider=$model->search('customer'); ?>
 		<?php $pageSize=Yii::app()->user->getState('pageSize',10); ?>
 		<?php $this->widget('zii.widgets.grid.CGridView', array(
 			'id'=>'user-grid',
@@ -67,22 +67,32 @@ EOD
 					'name'=>'Customer.balance',
 					'value'=>'$data->Customer ? Yii::app()->snapFormat->currency($data->Customer->balance) : ""',
 				),
-				'last_login_time',
-				array( 'name'=>'customer_id', 'value'=>'empty($data->customer_id) ? "No" : "Yes"'),
-				array( 'name'=>'supplier_id', 'value'=>'empty($data->supplier_id) ? "No" : "Yes"'),
+				//'last_login_time',
+				//array( 'name'=>'customer_id', 'value'=>'empty($data->customer_id) ? "No" : "Yes"'),
+				//array( 'name'=>'supplier_id', 'value'=>'empty($data->supplier_id) ? "No" : "Yes"'),
 				array(
-					'class'=>'CButtonColumn',
+					'name'=>'tag_name_search',
+					'filter'=>Tag::getUsedTags('customers'),
+					'value'=>'CHtml::value($data,"Customer.tag_names")',
+				),
+				array(
+					'class'=>'SnapButtonColumn',
 					'template'=>'{view}{update}{delete}{login}{reset_password}',
 					'buttons'=>array(
 						'login' => array
 						(
+							'label'=>'<i class="fi fi-key"></i>',
 							'url'=> 'array("user/loginAs","id"=>$data->id)',
-							'options'=>array('class'=>'text'),
+							'options'=>array('title'=>'Login As'),
 						),
 						'reset_password' => array
 						(
+							'label'=>'<i class="fi fi-lock"></i>',
 							'url'=> 'array("user/resetPassword","id"=>$data->id)',
-							'options'=>array('confirm'=>'Are you sure you want to reset this user\'s password and send them a welcome email?','class'=>'text'),
+							'options'=>array(
+								'confirm'=>'Are you sure you want to reset this user\'s password and send them a welcome email?',
+								'title'=>'Reset Password',
+							),
 						),
 					),
 				),

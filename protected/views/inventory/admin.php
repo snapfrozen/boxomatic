@@ -38,7 +38,7 @@ $this->menu=array(
 		'box_reserve',
 		'notes',
 		array(
-			'class'=>'CButtonColumn',
+			'class'=>'SnapButtonColumn',
 		),
 	),
 )); ?>

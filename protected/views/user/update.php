@@ -1,3 +1,14 @@
+<?php
+	$baseUrl = Yii::app()->request->baseUrl;
+	$cs = Yii::app()->clientScript;
+	$cs->registerCoreScript('jquery.ui');
+	$cs->registerScriptFile($baseUrl . '/js/vendor/tag-it.min.js', CClientScript::POS_END);
+	$cs->registerCssFile($baseUrl . '/css/jquery.tagit.css');
+	$cs->registerCssFile($baseUrl . '/css/tagit.ui-zendesk.css');
+?>
+<script type="text/javascript">
+	var availableTags = <?php echo json_encode(array_values(Tag::getList())) ?>;
+</script>
 <div class="row">
 	<div class="large-12 columns">
 		<!-- <h1><?php echo $model->full_name; ?></h1> -->
@@ -88,6 +99,9 @@
 			<?php echo $form->labelEx($Customer,'customer_notes'); ?>
 			<?php echo $form->textArea($Customer,'customer_notes',array('rows'=>6, 'cols'=>50)); ?>
 			<?php echo $form->error($Customer,'customer_notes'); ?>
+			
+			<?php echo $form->labelEx($Customer,'tags'); ?>
+			<?php echo $form->hiddenField($Customer, 'tag_names'); ?>
 		</fieldset>
 
 		<?php endif; ?>

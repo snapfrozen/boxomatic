@@ -32,6 +32,7 @@ class User extends SnapActiveRecord
 	public $total_boxes;
 	public $searchAdmin=false;
 	public $search_customer_notes;
+	public $tag_name_search;
 	
 	/**
 	 * Returns the static model of the specified AR class.
@@ -70,7 +71,7 @@ class User extends SnapActiveRecord
 			array('user_address, user_address2, user_email', 'length', 'max'=>150),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('search_customer_notes, id, first_name, last_name, full_name, user_phone, user_mobile, user_address, user_address2, user_email, user_suburb, user_state, user_postcode, last_login_time, update_time, update_user_id, create_time, create_user_id', 'safe', 'on'=>'search'),
+			array('tag_name_search, search_customer_notes, id, first_name, last_name, full_name, user_phone, user_mobile, user_address, user_address2, user_email, user_suburb, user_state, user_postcode, last_login_time, update_time, update_user_id, create_time, create_user_id', 'safe', 'on'=>'search'),
 			// verifyCode needs to be entered correctly
 			array('verifyCode', 'captcha', 'allowEmpty'=>!CCaptcha::checkRequirements(),'on'=>'insert'),
 		);
@@ -86,6 +87,7 @@ class User extends SnapActiveRecord
 		return array(
 			'Customer'=>array(self::BELONGS_TO,'Customer','customer_id'),
 			'Supplier'=>array(self::BELONGS_TO,'Supplier','supplier_id'),
+			//'tags'=>array(self::HAS_MANY,'Tag',array('customer_id','tag_id'),'through'=>'Customer')
 		);
 	}
 
@@ -125,7 +127,7 @@ class User extends SnapActiveRecord
 	 * Retrieves a list of models based on the current search/filter conditions.
 	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
 	 */
-	public function search()
+	public function search($type=null)
 	{
 		$pageSize=isset($_GET['pageSize'])?$_GET['pageSize']:10;
 		Yii::app()->user->setState('pageSize',$pageSize);
@@ -135,6 +137,19 @@ class User extends SnapActiveRecord
 		{
 			$criteria->with='Customer';
 			$criteria->compare('Customer.customer_notes',$this->search_customer_notes,true);
+		}
+		
+		if($type == 'customer')
+		{
+			$criteria->with='Customer';
+			$criteria->addCondition('t.customer_id','is not null');
+		}
+		
+		if(!empty($this->tag_name_search))
+		{
+			$criteria->with=array('Customer.tags');
+			$criteria->together=true;
+			$criteria->compare('tags.id', $this->tag_name_search);
 		}
 
 		$criteria->compare('id',$this->id);

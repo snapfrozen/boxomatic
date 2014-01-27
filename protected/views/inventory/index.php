@@ -15,8 +15,6 @@ $this->menu=array(
 
 <h1>Manage Inventory</h1>
 
-<?php echo CHtml::link('Add new record',array('create'),array('class'=>'button small')) ?>&nbsp;
-
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'inventory-grid',
 	'dataProvider'=>$model->searchIndex(),
@@ -33,7 +31,7 @@ $this->menu=array(
 			'name'=>'supplier_name_search',
 			'value'=>'CHtml::value($data,"supplierProduct.Supplier.name")',
 		),
-		//'grower_purchase_id',
+		'delivery_date_formatted',
 		array(
 			'name' => 'sum_quantity',
 			'filter' => false,
@@ -47,17 +45,29 @@ $this->menu=array(
 			'filter' => false,
 			'type' => 'raw',
 			'value' => '$data->total_quantity'
-		 ),
-		'supplierProduct.wholesale_price',
-		'supplierProduct.price',
+		),
 		array(
-			'class'=>'CButtonColumn',
+			'name' => 'supplierPurchase.item_sales_price',
+			'filter' => false,
+			'type' => 'raw',
+			'value' => 'CHtml::link(Yii::app()->snapFormat->currency(CHtml::value($data,"supplierPurchase.item_sales_price")),array("supplierPurchase/update","id"=>$data->supplier_purchase_id,"#"=>"sales"))'
+		),
+		array(
+			'name' => 'supplierPurchase.wholesale_price',
+			'filter' => false,
+			'type' => 'raw',
+			'value' => 'Yii::app()->snapFormat->currency(CHtml::value($data,"supplierPurchase.wholesale_price"))'
+		),
+		array(
+			'class'=>'SnapButtonColumn',
 			'template'=>'{Adjust Quantities}',
 			'buttons'=>array(
-				'Adjust Quantities'=>array(
-					'url'=> 'array("inventory/create","product"=>$data->supplier_product_id)',
-					'options'=>array('class'=>'text'),
-				)
+				'Adjust Quantities' => array
+				(
+					'label' => '<i class="fi fi-page-edit"></i>',
+					'options' => array('title'=>'Adjust Quantities'),
+					'imageUrl' => false,
+				),
 			)
 		),
 	),

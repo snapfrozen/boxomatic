@@ -216,6 +216,8 @@ class DeliveryDateController extends Controller
 		ORDER BY name;
 		';
 		
+		echo $sql;exit;
+		
 		$connection=Yii::app()->db;
 		$command=$connection->createCommand($sql);
 		$dataReader=$command->query();
@@ -257,7 +259,7 @@ class DeliveryDateController extends Controller
 			$objPHPExcel->getActiveSheet()->getColumnDimension($alpha[$pos])->setAutoSize(true);
 			$pos++;
 		}
-		spl_autoload_unregister(array('YiiBase','autoload'));  
+		//spl_autoload_unregister(array('YiiBase','autoload'));  
 		$objPHPExcel->getActiveSheet()->getStyle("A1:".$alpha[$pos].'1')->applyFromArray(array("font" => array( "bold" => true)));
 		
 		$row=2;
@@ -271,7 +273,7 @@ class DeliveryDateController extends Controller
 			$boxIds = explode(',',$item['box_ids']);
 			$boxItemIds = explode(',',$item['box_item_ids']);
 			$pos=4;
-			spl_autoload_register(array('YiiBase','autoload'));
+			//spl_autoload_register(array('YiiBase','autoload'));
 			
 			foreach($DateBoxes as $Box)
 			{
@@ -285,11 +287,10 @@ class DeliveryDateController extends Controller
 				$objPHPExcel->getActiveSheet()->SetCellValue($alpha[$pos].$row, $quantity);
 				$pos++;
 			}
-			spl_autoload_unregister(array('YiiBase','autoload'));  
+			//spl_autoload_unregister(array('YiiBase','autoload'));  
 			
 			$row++;
 		}
-
 		$objPHPExcel->getActiveSheet()->getColumnDimension("A")->setAutoSize(true);
 		$objPHPExcel->getActiveSheet()->getColumnDimension("B")->setAutoSize(true);
 		$objPHPExcel->getActiveSheet()->getColumnDimension("C")->setAutoSize(true);
@@ -392,13 +393,11 @@ class DeliveryDateController extends Controller
 			$objPHPExcel->getActiveSheet()->getColumnDimension($alpha[$pos])->setAutoSize(true);
 			$pos++;
 		}
-		spl_autoload_unregister(array('YiiBase','autoload'));  
 		$objPHPExcel->getActiveSheet()->getStyle("A1:".$alpha[$pos].'1')->applyFromArray(array("font" => array( "bold" => true)));
 		
 		$row=2;
 		foreach($items as $item)
 		{
-			spl_autoload_register(array('YiiBase','autoload'));
 			$objPHPExcel->getActiveSheet()->SetCellValue('A'.$row, $item['name']);
 			$objPHPExcel->getActiveSheet()->SetCellValue('B'.$row, $item['item_name']);
 			$objPHPExcel->getActiveSheet()->SetCellValue('C'.$row, $item['total']);
@@ -422,7 +421,6 @@ class DeliveryDateController extends Controller
 				$objPHPExcel->getActiveSheet()->SetCellValue($alpha[$pos].$row, $quantity);
 				$pos++;
 			}
-			spl_autoload_unregister(array('YiiBase','autoload'));  
 			$row++;
 		}
 
@@ -500,7 +498,7 @@ class DeliveryDateController extends Controller
 			//$sheet->SetCellValue('E'.$row, $CustBox->Customer->CustomerLocation ? $CustBox->Customer->CustomerLocation->full_address : "");
 			$row++;
 		}
-		spl_autoload_unregister(array('YiiBase','autoload'));  
+		//spl_autoload_unregister(array('YiiBase','autoload'));  
 		$objPHPExcel->getActiveSheet()->getStyle("A1:G1")->applyFromArray(array("font" => array( "bold" => true)));
 		
 		$objPHPExcel->getActiveSheet()->getColumnDimension("A")->setAutoSize(true);
@@ -539,7 +537,7 @@ class DeliveryDateController extends Controller
 			)
 		)
 		)->findAll(array(
-			'condition'=>'delviery_date_id='.$date.' AND (status='.CustomerBox::STATUS_APPROVED.' OR status='.CustomerBox::STATUS_DELIVERED.')',
+			'condition'=>'delivery_date_id='.$date.' AND (status='.CustomerBox::STATUS_APPROVED.' OR status='.CustomerBox::STATUS_DELIVERED.')',
 			'order'=>'User.first_name'
 		));
 		

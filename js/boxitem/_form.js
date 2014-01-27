@@ -1,3 +1,5 @@
+(function($) {
+	
 var $loading=$('span.loading');
 $loading.css({display:'inline-block'});
 $loading.hide();
@@ -16,7 +18,7 @@ function loadSpinners()
 
 	$('input.number, input.decimal, input.currency').stepper({
 		arrow_step : 0.5, 
-		limit : [0,], 
+		limit : [0,]
 	});
 
 	// $('div.sticky').stickyScroll({ container: '#current-boxes' });
@@ -44,7 +46,6 @@ function reloadBoxes(url,data)
 
 $('div#inventory, form#box-item-form').on('click', 'table td:not(.button-column) a', function(){
 	var $a = $(this);
-	console.log($a.attr('href'));
 	reloadBoxes($a.attr('href'),{});
 	return false;
 });
@@ -82,16 +83,17 @@ $('.delivery-date-picker').datepicker({
 		var date = $(this).datepicker('getDate');
 		
 		//availableDates is a global variable found in the boxItem/create page
-		$.each(availableDates, function(key,date){
-			var parts = date['date'].split('-');
+		$.each(availableDates, function(key,curDate){
+			var parts = curDate['date'].split('-');
 			var dateObj = new Date(parts[0],parts[1]-1,parts[2]);
 			if (dateObj.getTime() == date.getTime()) {
-				reloadBoxes(curUrl,{date: date['id']});
+				//reloadBoxes(curUrl,{date: curDate['id']});
+				window.location.href=curUrl+'?date='+curDate['id']
 			}
 		});
 	},
 	beforeShowDay: function(date) {
-		
+
 		var found = false;
 		var dateNotes = null;
 		var oSelDate = null;
@@ -105,11 +107,11 @@ $('.delivery-date-picker').datepicker({
 		}
 		
 		//availableDates is a global variable found in the boxItem/create page
-		$.each(availableDates, function(key,date) {
-			var parts = date['date'].split('-');
+		$.each(availableDates, function(key,curDate) {
+			var parts = curDate['date'].split('-');
 			
-			if(date['notes'])
-				dateNotes = date['notes'];
+			if(curDate['notes'])
+				dateNotes = curDate['notes'];
 			else 
 				dateNotes = null;
 			
@@ -132,3 +134,12 @@ $('.delivery-date-picker').datepicker({
 
 	}
 });
+
+var BOXCOL_WIDTH = 100;
+var TABLE_WIDTH_BALANCE = 600;
+
+var $scrollTable = $('div#current-boxes table');
+var tableWidth = (BOXCOL_WIDTH * $scrollTable.find('.boxCol').length) + TABLE_WIDTH_BALANCE;
+$scrollTable.width(tableWidth);
+
+})(jQuery);

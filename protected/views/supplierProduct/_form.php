@@ -2,6 +2,7 @@
 
 <?php $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'supplier-item-form',
+	'htmlOptions' => array('enctype' => 'multipart/form-data'),
 	'enableAjaxValidation'=>false,
 )); ?>
 
@@ -43,16 +44,6 @@
 		<?php echo $form->error($model,'unit'); ?>
 	</div>
 	<div class="large-6 columns">
-		<?php echo $form->labelEx($model,'price'); ?>
-		<?php echo $form->textField($model,'price'); ?>
-        <?php echo $form->error($model,'price'); ?>
-	</div>
-	<div class="large-6 columns">
-	    <?php echo $form->labelEx($model,'wholesale_price'); ?> 
-        <?php echo $form->textField($model,'wholesale_price'); ?>   
-        <?php echo $form->error($model,'wholesale_price'); ?>
-	</div>
-	<div class="large-6 columns">
 		<?php echo $form->labelEx($model,'available_from'); ?>
 		<?php echo $form->dropDownList($model,'available_from', $model->getMonthList()); ?>
         <?php echo $form->error($model,'available_from'); ?>
@@ -62,12 +53,30 @@
         <?php echo $form->dropDownList($model,'available_to', $model->getMonthList()); ?>   
         <?php echo $form->error($model,'available_to'); ?>
 	</div>
-	
+	<div class="large-4 columns">
+		<?php echo $form->labelEx($model,'image'); ?>
+		<?php echo $form->fileField($model,'image'); ?>
+        <?php echo $form->error($model,'image'); ?>
+		<?php if(!empty($model->image)): ?>
+			<?php echo CHtml::image($this->createUrl('supplierProduct/image',array('id'=>$model->id,'size'=>'medium'))); ?>
+		<?php else: ?>
+			<p>No image</p>
+		<?php endif; ?>
+	</div>
+	<div class="large-8 columns">
+		<?php echo $form->labelEx($model,'description'); ?>
+		<?php echo $form->textArea($model,'description',array('rows'=>10,'cols'=>50)); ?>
+		<?php echo $form->error($model,'description'); ?>
+		
+		<h3>Categories</h3>
+		<ul class="categories">
+			<?php echo Category::model()->getCategoryTreeForm(Category::supplierProductRootID, $model); ?>
+		</ul>
+	</div>
+
 	<?php if(!isset($hideSupplier)): ?>
 	<div class="large-12 columns">
-		<div class="right">
-			<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save', array('class' => 'button')); ?>
-		</div>
+		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save', array('class' => 'button')); ?>
 	</div>
 	<?php endif; ?>
 </fieldset>

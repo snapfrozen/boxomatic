@@ -14,7 +14,7 @@
 				'box_size_markup',
 				'box_size_price',
 				array(
-					'class'=>'CButtonColumn',
+					'class'=>'SnapButtonColumn',
 					'template'=>'{update}',
 				),
 			),

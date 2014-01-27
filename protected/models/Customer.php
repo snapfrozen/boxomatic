@@ -16,6 +16,16 @@ class Customer extends CActiveRecord
 {
 	public $total_orders;
 	public $last_order;
+	
+	public function behaviors()
+	{
+		return array(
+			'activerecord-relation'=>array(
+				'class'=>'ext.active-relation-behavior.EActiveRecordRelationBehavior',
+			)
+		);
+	}
+	
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @return Customer the static model class
@@ -42,7 +52,7 @@ class Customer extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('customer_notes', 'length', 'max'=>500),
-			array('location_id, customer_location_id', 'safe'),
+			array('tag_names, location_id, customer_location_id', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('customer_id, customer_notes', 'safe', 'on'=>'search'),
@@ -71,6 +81,7 @@ class Customer extends CActiveRecord
                 self::STAT, 'CustomerPayment', 'customer_id', 'select' => 'SUM(payment_value)'
             ),
 			'Payments'=>array(self::HAS_MANY, 'CustomerPayment', 'customer_id'),
+			'tags'=>array(self::MANY_MANY, 'Tag', 'customer_tags(customer_id,tag_id)'),
 		);
 	}
 
@@ -251,6 +262,38 @@ class Customer extends CActiveRecord
 		//$criteria->addCondition('DeliveryDate.date > NOW()');
 		
 		return $this->findAll($criteria);
+	}
+	
+	public function getTag_names()
+	{
+		$tags = CHtml::listData($this->tags,'id','name');
+		return implode($tags, ', ');
+	}
+	
+	public function setTag_names($data)
+	{
+		$tagNames = explode(',',$data);
+		$criteria = new CDbCriteria();
+		$criteria->addInCondition("name", $tagNames);
+		
+		$tags = Tag::model()->findAll($criteria);
+		
+		$currentTags = CHtml::listData($tags, 'id', 'name');
+		$newTags = array_diff($tagNames, $currentTags);
+		
+		$newTagIds = array();
+		foreach($newTags as $name)
+		{
+			$Tag = new Tag();
+			$Tag->name = $name;
+			$Tag->save();
+			$newTagIds[] = $Tag->id;
+		}
+		
+		$allTagIds = array_merge(array_keys($currentTags),$newTagIds);
+		$this->tags = $allTagIds;
+		$this->save();
+		Tag::deleteUnusedTags();
 	}
 	
 }

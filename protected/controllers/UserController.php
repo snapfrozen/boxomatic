@@ -135,6 +135,7 @@ class UserController extends Controller
 			$Customer->location_id=$locationId;
 			$Customer->customer_location_id=$custLocationId;
 			$Customer->save();
+			
 			$Customer->attributes=$_POST['Customer'];
 			if(!$Customer->update())
 				$allSaved=false;

@@ -137,33 +137,17 @@ return array(
 		),
 		
 		// uncomment the following to enable URLs in path-format
-		/*
 		'urlManager'=>array(
 			'urlFormat'=>'path',
+			'showScriptName'=>false,
 			'rules'=>array(
+				'extras/order/<date:\d+>'=>'customerDeliveryDateItem/order',
 				'<controller:\w+>/<id:\d+>'=>'<controller>/view',
 				'<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',
 				'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
 			),
 		),
-		*/
-		
-		//'db'=>array(
-		//	'connectionString' => 'sqlite:'.dirname(__FILE__).'/../data/testdrive.db',
-		//),
-		// uncomment the following to use a MySQL database
-	
-		'db'=>array(
-			'connectionString' => 'mysql:host=francis-laptop;dbname=foodbox',
-			'emulatePrepare' => true,
-			'username' => 'root',
-			'password' => 'localdev',
-			'tablePrefix' => '',
-			'charset' => 'utf8',
-//			'enableProfiling' => true, //
-//			'enableParamLogging' => true, //
-		),
-		        
+		 
         'user' => array(
 			// enable cookie-based authentication
 			'allowAutoLogin' => true,
@@ -183,11 +167,11 @@ return array(
 					'class'=>'CFileLogRoute',
 					'levels'=>'error, warning',
 				),
-				array(
-					'class'=>'CWebLogRoute',
-					'categories'=>'system.db.CDbCommand',
-					//'showInFireBug'=>true,
-				),
+//				array(
+//					'class'=>'CWebLogRoute',
+//					'categories'=>'system.db.CDbCommand',
+//					//'showInFireBug'=>true,
+//				),
 				// uncomment the following to show log messages on web pages
 				/*
 				array(

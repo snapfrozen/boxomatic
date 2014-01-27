@@ -151,7 +151,7 @@ class BoxItem extends CActiveRecord
 	{
 		$Item = self::model()->with(array('Box'=>array('with'=>'CustomerBoxes')))->find(array(
 			'select'=>'SUM(quantity * item_quantity * item_value) as total',
-			'condition'=>'date_id = ' . $dateId . ' AND (status='.CustomerBox::STATUS_APPROVED.' OR status='.CustomerBox::STATUS_DELIVERED.')',
+			'condition'=>'delivery_date_id = ' . $dateId . ' AND (status='.CustomerBox::STATUS_APPROVED.' OR status='.CustomerBox::STATUS_DELIVERED.')',
 		));
 		
 		return $Item ? $Item->total : 0;
@@ -164,7 +164,7 @@ class BoxItem extends CActiveRecord
 	{
 		$Item = self::model()->with(array('Box'=>array('with'=>'CustomerBoxes')))->find(array(
 			'select'=>'SUM(quantity * item_quantity * item_value) as total',
-			'condition'=>'date_id = ' . $dateId . ' AND supplier_id = ' . $supplierId,
+			'condition'=>'delivery_date_id = ' . $dateId . ' AND supplier_id = ' . $supplierId,
 		));
 		
 		return $Item ? $Item->total : 0;
@@ -177,7 +177,7 @@ class BoxItem extends CActiveRecord
 	{
 		$Item = self::model()->with(array('Box'=>array('with'=>array('CustomerBoxes','BoxSize') )))->find(array(
 			'select'=>'SUM(quantity * item_quantity * item_value * (box_size_markup/100) ) + SUM(quantity * item_quantity * item_value) as total',
-			'condition'=>'date_id = ' . $dateId . ' AND (status='.CustomerBox::STATUS_APPROVED.' OR status='.CustomerBox::STATUS_DELIVERED.')',
+			'condition'=>'delivery_date_id = ' . $dateId . ' AND (status='.CustomerBox::STATUS_APPROVED.' OR status='.CustomerBox::STATUS_DELIVERED.')',
 		));
 		
 		return $Item ? $Item->total : 0;
@@ -190,7 +190,7 @@ class BoxItem extends CActiveRecord
 	{
 		$Item = Box::model()->with('CustomerBoxes')->find(array(
 			'select'=>'SUM(quantity * box_price) as total',
-			'condition'=>'date_id = ' . $dateId . '',
+			'condition'=>'delivery_date_id = ' . $dateId . '',
 		));
 		
 		return $Item ? $Item->total : 0;

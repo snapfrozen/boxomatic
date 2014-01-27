@@ -2,8 +2,7 @@
 	$controller = Yii::app()->controller->id; //current controller
 	$action = Yii::app()->controller->getAction()->getId(); //current action
 	Yii::app()->clientScript->registerCoreScript('jquery');
-?>
-<!DOCTYPE html>
+?><!DOCTYPE html>
 	<!--[if IE 8]> 				 <html class="no-js lt-ie9" lang="en" > <![endif]-->
 	<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 	<head>
@@ -11,9 +10,10 @@
 		<meta name="viewport" content="width=device-width">
 		<title><?php echo isset($this->pageTitle) ? $this->pageTitle : Yii::app()->name; ?></title>
 		<link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400' rel='stylesheet' type='text/css'>
-		<link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/css/foundation/foundation.css">
+		<link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/css/foundation/foundation.min.css">
 		<link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/css/stepper/jquery.stepper.min.css">
 		<link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/css/foundation/custom-foundation.css">
+		<link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/fonts/foundation-icons.css" />
 		<link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/css/chosen.css">
 		<script src="<?php echo Yii::app()->request->baseUrl; ?>/js/vendor/custom.modernizr.js"></script>
 	</head>
@@ -30,8 +30,12 @@
 			<section class="top-bar-section">
 			 <!-- Left Nav Section -->
 			<ul class="right">
+				<?php if(Yii::app()->user->shadow_id): ?>
+					<li><?php echo CHtml::link('Log back in as ' . Yii::app()->user->shadow_name, array('user/loginAs','id'=>Yii::app()->user->shadow_id),array('class'=>'shadow')); ?></li>
+				<?php endif;?>
 				<li><?php echo CHtml::link('Home',array('site/index')) ?></li>
-				<?php if(Yii::app()->user->customer_id): ?>
+				
+				<?php if(Yii::app()->user->checkAccess('customer')): ?>
 				<li class="divider"></li>
 				<li><?php echo CHtml::link('Profile',array('user/view','id'=>Yii::app()->user->id)) ?></li>
 				<li class="divider"></li>
@@ -42,12 +46,22 @@
 
 				<?php if(Yii::app()->user->checkAccess('admin')): ?>
 				<li class="divider"></li>
-				<li><?php echo CHtml::link('Payments',array('customerPayment/enterPayments')) ?></li>
-				<li class="divider"></li>
 				<li class="has-dropdown">
-					<?php echo CHtml::link('Customers',array('user/customers')) ?>
+					<?php echo CHtml::link('Boxes',array('boxItem/create')) ?>
 					<ul class="dropdown">
-						<li><?php echo CHtml::link('Customer Orders',array('boxItem/customerBoxes')) ?></li>
+						<li><?php echo CHtml::link('Box Packing',array('boxItem/create')) ?></li>
+						<li><?php echo CHtml::link('Box Sizes',array('boxSize/admin')) ?></li>
+						<li><?php echo CHtml::link('Payments',array('week/admin')) ?></li>
+					</ul>
+				</li>
+				
+				<li class="has-dropdown">
+					<?php echo CHtml::link('Customer',array('user/customers')) ?>
+					<ul class="dropdown">
+						<li><?php echo CHtml::link('Manage Customers',array('user/customers')) ?></li>
+						<li><?php echo CHtml::link('Orders',array('boxItem/customerBoxes')) ?></li>
+						<li><?php echo CHtml::link('Payments',array('customerPayment/enterPayments')) ?></li>
+						<li><?php echo CHtml::link('Locations',array('location/admin')) ?></li>
 					</ul>
 				</li>
 				<li class="divider"></li>
@@ -63,13 +77,10 @@
 				<li class="has-dropdown">
 					<?php echo CHtml::link('Inventory',array('inventory/index')) ?>
 					<ul class="dropdown">
+						<li><?php echo CHtml::link('Inventory',array('inventory/index')) ?></li>
 						<li><?php echo CHtml::link('Log',array('inventory/admin')) ?></li>
 					</ul>
 				</li>
-				<li class="divider"></li>
-				<li><?php echo CHtml::link('Locations',array('location/admin')) ?></li>
-				<li class="divider"></li>
-				<li><?php echo CHtml::link('Admin Users',array('user/admin')) ?></li>
 				<li class="divider"></li>
 				<li class="has-dropdown">
 					<a href="#">Reports</a>
@@ -78,6 +89,8 @@
 						<li><?php echo CHtml::link('Box Sales',array('site/salesReport')) ?></li>
 					</ul>
 				</li>
+				<li class="divider"></li>
+				<li><?php echo CHtml::link('Admin Users',array('user/admin')) ?></li>
 				<?php endif; ?>
 
 				<?php if(Yii::app()->user->isGuest): ?>
@@ -132,6 +145,13 @@
 	<script src="<?php echo Yii::app()->request->baseUrl; ?>/js/vendor/jquery.stepper.min.js"></script>	
 	<script src="<?php echo Yii::app()->request->baseUrl; ?>/js/chosen.jquery.min.js"></script>	
 	<script src="<?php echo Yii::app()->request->baseUrl; ?>/js/site-scripts.js"></script>	
+	
+	<?php
+	$jsFile = 'js/' . strtolower($controller) . '/' . strtolower($action) . '.js'; // filename to load
+	if( is_file($jsFile) ) { 
+		Yii::app()->clientScript->registerCoreScript('jquery');
+		Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl . '/' . $jsFile,CClientScript::POS_END);
+	} ?>
 
 	</body>
 </html>
