@@ -65,7 +65,7 @@ $('.search-form form').submit(function(){
 		'delivery_notes',
 		*/
 		array(
-			'class'=>'SnapButtonColumn',
+			'class'=>'application.components.snap.SnapButtonColumn',
 			'template'=>'{view}{update}{duplicate}{delete}',
 			'buttons'=>array(
 				'duplicate' => array

@@ -6,7 +6,7 @@ class SupplierProductController extends Controller
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
 	 * using two-column layout. See 'protected/views/layouts/column2.php'.
 	 */
-	public $layout='//layouts/column2';
+	public $layout='//layouts/column1';
 
 	/**
 	 * @return array action filters
@@ -26,17 +26,17 @@ class SupplierProductController extends Controller
 	public function accessRules()
 	{
 		return array(
-			array('allow',  // allow all users to perform 'index' and 'view' actions
+			array('allow',
 				'actions'=>array('image'),
-				'roles'=>array('customer'),
+				'users'=>array('*'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','create','update'),
-				'roles'=>array('supplier','admin'),
+				'roles'=>array('supplier','Admin'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
 				'actions'=>array('admin','delete'),
-				'roles'=>array('admin'),
+				'roles'=>array('Admin'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -70,7 +70,7 @@ class SupplierProductController extends Controller
 		{
 			$model->attributes=$_POST['SupplierProduct'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('admin'));
 		}
 
 		$this->render('create',array(
@@ -96,7 +96,7 @@ class SupplierProductController extends Controller
 			}
 
 			if($model->save()) {
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('inventory/index'));
 			}
 		}
 
@@ -105,10 +105,14 @@ class SupplierProductController extends Controller
 		));
 	}
 	
-	public function actionImage($id,$size='small')
+	public function actionImage($id=null,$size='small')
 	{
-		$model=$this->loadModel($id);
-		$_GET['src']=$model->image_location;
+		$model=SupplierProduct::model()->findByPk($id);
+		if($model && !empty($model->image)) {
+			$_GET['src']=$model->image_location;
+		} else {
+			$_GET['src']=Yii::app()->basePath . '/'. SupplierProduct::$defaultImageLocation;
+		}
 		SupplierProduct::setPHPThumbParameters($size);
 		include(Yii::getPathOfAlias('application.external.PHPThumb').'/phpThumb.php');
 	}

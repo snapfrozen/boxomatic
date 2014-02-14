@@ -29,7 +29,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
 			'value'=>'Yii::app()->dateFormatter->format("EEE, MMM d",$data->Box->DeliveryDate->date)',
 		),
 		array(
-			'class'=>'SnapButtonColumn',
+			'class'=>'application.components.snap.SnapButtonColumn',
 		),
 	),
 )); 

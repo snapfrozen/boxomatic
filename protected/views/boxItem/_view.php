@@ -8,7 +8,7 @@
 	<?php echo CHtml::link(CHtml::encode($data->Supplier->name), array('supplier/view', 'id'=>$data->Supplier->id)); ?>
 	<br />
 
-	<?php if(Yii::app()->user->checkAccess('admin')): ?>
+	<?php if(Yii::app()->user->checkAccess('Admin')): ?>
 	
 	<b><?php echo CHtml::encode($data->getAttributeLabel('item_value')); ?>:</b>
 	<?php echo CHtml::encode($data->item_value); ?>

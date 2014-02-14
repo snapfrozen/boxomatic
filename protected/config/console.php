@@ -19,16 +19,24 @@ return array(
 	// application components
 	'components'=>array(
 		
-                'db'=>array(
-                    'connectionString' => 'mysql:host=localhost;dbname=fbapp_foodbox',
-                    'emulatePrepare' => true,
-                    'username' => 'fbapp_foodbox',
-                    'password' => 'f00dbox!',
-                    'tablePrefix' => '',
-                    'charset' => 'utf8',
-//                      'enableProfiling' => true, //
-//                      'enableParamLogging' => true, //
-                ),
+		'db'=> array(
+			'connectionString' => 'mysql:host=localhost;dbname=boxomatic',
+			'emulatePrepare' => true,
+			'username' => 'root',
+			'password' => '',
+			'tablePrefix' => '',
+			'charset' => 'utf8',
+			'enableProfiling' => true, //
+			'enableParamLogging' => true, //
+		),
+		
+		'authManager'=>array(
+			'class'=>'CDbAuthManager',
+			'connectionID'=>'db',
+			'itemTable'=>'auth_item',
+			'itemChildTable'=>'auth_item_child',
+			'assignmentTable'=>'auth_assignment',
+		),
 
 		'mail' => array(
  			'class' => 'ext.yii-mail.YiiMail',
@@ -101,8 +109,16 @@ return array(
 			'CASH'=>'Cash',
 			'PAYPAL'=>'PayPal',
 		),
-		'orderDeadlineDays'=>6, //orders must be placed within 7 days of delivery 
-		'deliveryDayOfWeek'=>3, //0 (for Sunday) through 6 (for Saturday)
-		'autoCreateDeliveryDates'=>24   //Amount of weeks to auto create boxes for in advance
+		'orderDeadlineDays' => 6, //orders must be placed within 7 days of delivery 
+		'autoCreateDeliveryDates' => 24,   //Amount of weeks to auto create boxes for in advance
+		'defaultDeliveryDateLocations' => array (
+			'1'=>array(1,2),	//Moday
+			'2'=>array(),		//Tuesday
+			'3'=>array(),		//Wednesday
+			'4'=>array(2,3),	//Thursday
+			'5'=>array(),		//Friday
+			'6'=>array(),		//Saturday
+			'7'=>array(),		//Sunday
+		)
 	),
 );

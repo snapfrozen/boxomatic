@@ -14,7 +14,7 @@
 				'box_size_markup',
 				'box_size_price',
 				array(
-					'class'=>'SnapButtonColumn',
+					'class'=>'application.components.snap.SnapButtonColumn',
 					'template'=>'{update}',
 				),
 			),

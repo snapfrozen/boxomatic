@@ -28,7 +28,7 @@ class LocationController extends Controller
 		return array(
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
 				'actions'=>array('index','view','create','update','admin','delete',),
-				'roles'=>array('admin'),
+				'roles'=>array('Admin'),
 			),
 		);
 	}

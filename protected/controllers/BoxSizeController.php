@@ -27,8 +27,12 @@ class BoxSizeController extends Controller
 	{
 		return array(
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
+				'actions'=>array('image'),
+				'users'=>array('*'),
+			),
+			array('allow', // allow admin user to perform 'admin' and 'delete' actions
 				'actions'=>array('index','view','create','update','admin','delete',),
-				'roles'=>array('admin'),
+				'roles'=>array('Admin'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -85,6 +89,7 @@ class BoxSizeController extends Controller
 		if(isset($_POST['BoxSize']))
 		{
 			$model->attributes=$_POST['BoxSize'];
+			$model->image=CUploadedFile::getInstance($model,'image');
 			if($model->save())
 				$this->redirect(array('admin'));
 		}
@@ -138,6 +143,18 @@ class BoxSizeController extends Controller
 		$this->render('admin',array(
 			'model'=>$model,
 		));
+	}
+	
+	public function actionImage($id=null,$size='small')
+	{
+		$model=BoxSize::model()->findByPk($id);
+		if($model && !empty($model->image)) {
+			$_GET['src']=$model->image_location;
+		} else {
+			$_GET['src']=Yii::app()->basePath . '/'. BoxSize::$defaultImageLocation;
+		}
+		BoxSize::setPHPThumbParameters($size);
+		include(Yii::getPathOfAlias('application.external.PHPThumb').'/phpThumb.php');
 	}
 
 	/**

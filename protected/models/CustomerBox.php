@@ -204,7 +204,7 @@ class CustomerBox extends CActiveRecord
 		$DeliveryDate=$this->Box->DeliveryDate;
 
 		if(	time() > strtotime($DeliveryDate->deadline) && 
-			!Yii::app()->user->checkAccess('admin') && 
+			!Yii::app()->user->checkAccess('Admin') && 
 			!isset(Yii::app()->user->shadow_id) && 
 			Yii::app()->getAuthManager()->checkAccess('admin', Yii::app()->user->shadow_id)) {		
 			
@@ -217,11 +217,16 @@ class CustomerBox extends CActiveRecord
 	{
 		$criteria=new CDbCriteria;
 		$criteria->with='Box';
-		$criteria->select='COUNT(customer_box_id) as quantity';
+		$criteria->select='*, COUNT(customer_box_id) as quantity';
 		$criteria->addCondition("Box.size_id=$sizeId");
 		$criteria->addCondition("Box.delivery_date_id=$dateId");
 		$criteria->addCondition("customer_id=$customerId");
 		$box=self::model()->find($criteria);
+		
+		//If there's no customer_id the box wasn't found. (The aggregate COUNT 
+		//function causes an empty row to be found)
+		if(!$box || !$box->customer_id)
+			$box=null;
 		
 		return $box;
 	}
@@ -263,7 +268,10 @@ class CustomerBox extends CActiveRecord
 			'customer_id'=>$this->customer_id,
 			'delivery_date_id'=>$this->Box->delivery_date_id
 		));
-		return $CustDeliveryDate->delivery_location;
+		if($CustDeliveryDate)
+			return $CustDeliveryDate->delivery_location;
+		else
+			return 'No location set!';
 	}
 	
 	public function getDelivery_address()
@@ -272,7 +280,10 @@ class CustomerBox extends CActiveRecord
 			'customer_id'=>$this->customer_id,
 			'delivery_date_id'=>$this->Box->delivery_date_id
 		));
-		return $CustDeliveryDate->delivery_address;
+		if($CustDeliveryDate)
+			return $CustDeliveryDate->delivery_address;
+		else
+			return 'No location set!';
 	}
 	
 	public function getQrCode()

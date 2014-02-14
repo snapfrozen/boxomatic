@@ -30,6 +30,20 @@ a { color: #e67e22; }
 .top-bar {
 	margin-bottom: 0;
 }
+.cms-bar,
+.cms-bar .top-bar-section li a:not(.button) {
+	background: #333;
+}
+.list-view .view {
+	border-bottom:1px solid #ddd;
+	margin-bottom:10px;
+	padding-bottom:8px;
+}
+.list-view .view:last-child {
+	padding-bottom:0;
+	margin-bottom:0;
+	border:none;
+}
 
 select{
 	padding: 5px;
@@ -37,6 +51,59 @@ select{
 
 textArea {
 	height:120px;
+}
+
+#alert-area {
+	background-color: #f5f5f5;
+}
+	#alert-area .alert-box {
+		margin-bottom:0;
+	}
+.alert-box.warning {
+    background-color: #F08A24;
+    border-color: #DE770F;
+    color: #FFFFFF;
+}
+
+.portlet-content ul {
+	list-style-type:none;
+	margin-bottom:0;
+}
+.panel-heading {
+	font-weight:bold;
+	margin-bottom:10px;
+	display:block;
+}
+
+.section-container .content {
+	min-height:0;
+	border-top:1px solid #ddd;
+	padding:20px 0 0 0;
+}
+.section-container .title {
+	float:left;
+}
+	.section-container .title a {
+		display:block;
+		padding:10px 15px;
+		background:#dfdfdf;
+	}
+	.section-container .active .title a {
+		background:#fff;
+	}
+
+.form .cke,
+.form .checkbox input,
+.form input {
+	margin:0 0 15px 0;
+}
+.form .checkbox input {
+	margin-right:10px;
+}
+
+.checkbox input {
+	float:left;
+	margin:0 10px 0;
 }
 
 /* Foundation Icons */
@@ -79,6 +146,25 @@ footer p a  {
 	font-weight: bold;
 	color: #fff;
 }
+.footer-nav {
+	list-style-type:none;
+	margin:0 auto 10px;
+	overflow:hidden;
+	display:table;
+}
+.footer-nav li {
+	float:left;
+	margin-right:10px;
+	padding-right:10px;
+	border-right:1px solid #fff;
+	font-size:14px;
+}
+.footer-nav li:last-child {
+	border-right:none;
+}
+	.footer-nav a {
+		color:#fff;
+	}
 
 #topUserBtn {
 	padding: 0;
@@ -134,13 +220,8 @@ fieldset legend {
 	min-width: 460px;
 }
 
-.itemValue .stepper-wrap {
-	width: 48%;
-	display: inline-block;
-}
-
 .itemValue select {
-	width: 40%;
+	width: 80px;
 	display: inline-block;
 }
 
@@ -160,7 +241,7 @@ fieldset legend {
 .ui-datepicker {
 	width: auto;
 }
-.pager, .calendar { 
+.pager { 
 	margin-bottom: 20px;
 }
 #CustomerPayment_customer_id_chzn, #new_supplier_chzn, .chzn-container{
@@ -193,22 +274,25 @@ table input {margin-bottom:0 !important}
 
 /* Box packing */
 
-.secondaryNav {
+.container .secondaryNav {
 	margin-top:-40px;
 	height:40px;
 	position:relative;
-	border-bottom:1px solid #ccc;
+	border-bottom:1px solid #ddd;
 	margin-bottom:10px;
 }
 	.secondaryNav h4 {
 		font-size:16px;
 		line-height:16px;
 		margin:0;
-		padding:12px 20px 12px 0;
+		padding:12px 8px 12px 0;
 		float:left;
 		position:relative;	
 	}
-	.secondaryNav h4:after {
+	.dropDown h4 {
+		padding-right:20px;
+	}
+	.dropDown h4:after {
 		content: "";
 		display: block;
 		width: 0;
@@ -221,6 +305,17 @@ table input {margin-bottom:0 !important}
 		right:0;
 		top:50%;
 	}
+	.secondaryNav .chzn-container {
+		margin:8px 0 0 0;
+	}
+	.secondaryNav .location select {
+		margin:6px 0 0 0;
+		float:left;
+		width:200px;
+	}
+	.delivery-date-picker {
+		margin-bottom:10px;
+	}
 	
 .dropDown {
 	position:relative;
@@ -231,11 +326,21 @@ table input {margin-bottom:0 !important}
 		left:0;
 		z-index:10;
 		background:#fff;
-		border:1px solid #ccc;
+		border:1px solid #ddd;
 		padding:20px;
 		box-shadow:5px 2px 5px -3px rgba(0,0,0,.5);
 		left:-9000px;
 	}
+#repeatOrderDropdown {
+	width:690px;
+}
+	#repeatOrderDropdown p {
+		font-size:14px;
+	}
+	#repeatOrderDropdown .button {
+		margin:0 0 0 15px;
+	}
+
 
 /*	.dropDown:hover .dropDownPanel {
 		display:block;
@@ -248,36 +353,50 @@ table input {margin-bottom:0 !important}
 .items h3 {
 	font-size:16px;
 	font-weight:bold;
+	margin:0 0 2px;
 }
+	.items form {
+		margin-bottom:0;
+	}
 	.items .image {
-		border:1px solid #ccc;
+		border:1px solid #ddd;
 		padding:2px;
 		text-align:center;
-		height:168px;
-		margin-bottom:10px;
+		height:76px;
+		margin:4px 0 0 0;
+		float:left;
 	}
 		.items .image p {
 			margin-top:70px;
+			font-size:12px;
+			line-height:12px;
 		}
+	.items .inner {
+		padding-left:96px;
+	}
+	.items .qty .button {
+		width:100%;
+	}
 
 .products {
-	border-right:1px solid #ccc;
-	border-left:1px solid #ccc;
+	border-right:1px solid #ddd;
+	border-left:1px solid #ddd;
 }
 .products .empty {
 	padding:0 0.9375em;
 }
 	.products span {
 		display:block;
-		margin-bottom:10px;
+		margin-bottom:5px;
 		line-height:1.2em;
 	}
 .order {
 	border:none;
 }
-	.order .view .row {
-		border-bottom:1px solid #ccc;
-		margin-bottom:20px;
+	.order .items.row {
+		border-bottom:1px solid #ddd;
+		margin-bottom:10px;
+		padding:8px 0;
 	}
 		.order .image {
 			height:auto;
@@ -291,9 +410,14 @@ table input {margin-bottom:0 !important}
 			margin-top:0;
 			line-height:1em;
 		}
-.each {
-	color:#999; display:inline !important;
-}
+		.order .each,
+		.order .price {
+			font-size:13px;
+		}
+		.each {
+			color:#999; display:inline !important;
+			font-weight:normal;
+		}
 .errorSummary ul {
 	list-style-type:none;
 	color:#C00;
@@ -336,11 +460,21 @@ table input {margin-bottom:0 !important}
 		#current-boxes th,
 		#current-boxes td {
 			padding: 0 0.625em;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
+		#current-boxes .fi {
+			margin-left:5px;
+			display:inline-block;
+		}
+			#current-boxes input.currency {
+				width:50px;
+			}
 			table input[type="text"],
 			table select {
 				margin:0;
-				padding:2px 5px;
+				padding:4px 5px 5px;
 				vertical-align:top;
 				font-size:11px;
 			}
@@ -353,13 +487,16 @@ table input {margin-bottom:0 !important}
 				padding:5px;
 			}
 			#current-boxes .supplierName {
-				width:245px;
+				width:200px;
+			}
+			#current-boxes .packingStation {
+				width:150px;
 			}
 			#current-boxes .valueCol {
-				width:245px;
+				width:180px;
 			}
 			#current-boxes .boxCol {
-				width:98px;
+				width:70px;
 			}
 /*				.boxCol div {
 					display:none;
@@ -438,6 +575,16 @@ h2 span {
 
 /* All Orders Page */
 
+.item-list .item {
+	border-top:1px solid #ddd;
+	padding:5px 0 5px 0;
+}
+
+.item-list .button,
+.item-list p {
+	margin-bottom:0;
+}
+
 .customerBox-order .tabs {
 	width:505px;
 	float:left;
@@ -487,7 +634,7 @@ th.sizes {
 		}
 		.allOrders td.bottom,
 		.allOrders .bottom td {
-			border-bottom:1px solid #ccc;
+			border-bottom:1px solid #ddd;
 		}
 .allOrders .deliverySelect {
 	border:1px solid transparent;
@@ -623,7 +770,7 @@ table th div {
 		position:absolute;
 		padding:10px;
 		background:#fff;
-		border:1px solid #ccc;
+		border:1px solid #ddd;
 		box-shadow:0 0 5px rgba(0,0,0,.5);
 		z-index:100;
 		white-space:nowrap;
@@ -655,9 +802,10 @@ table tr.group td {
 	background:#ffffbb;
 }
 
+
 .calendar {
 	float:left;
-	margin:0 20px 20px 0;
+	margin:0 20px 0 0;
 	width:240px;
 }
 .ui-datepicker th {
@@ -678,7 +826,7 @@ table tr.group td {
 
 
 tfoot tr:first-child td {
-	border-top:3px double #ccc;
+	border-top:3px double #ddd;
 }
 tfoot td {
 	font-style:normal;
@@ -701,7 +849,6 @@ tfoot td.total {
 
 /* Customer Boxes */
 #customer-list-grid .button-column a {
-	display:block;
 	white-space:nowrap;
 	margin-bottom:5px;
 }
@@ -742,7 +889,6 @@ tfoot td.total {
 	}
 	
 /* Customer Locations */
-
 div.view .update {float:right; margin-left:10px;}
 .f-dropdown.content {
 	left:-9000px;
@@ -754,3 +900,86 @@ ul.tagit {
 	font-size:12px;
 	padding-bottom:0;
 }
+
+/* Registration Page */
+.captcha a {
+	display:inline-block;
+	margin-left:10px;
+}
+.captcha img {
+	margin-bottom:10px;
+	border:1px solid #ddd;
+}
+
+/* SnapCMS */
+#admin-nav .snap-pull-right {
+	float:right;
+}
+#admin-nav .snap-processing {
+	color:#C09853;
+}
+#admin-nav .snap-success {
+	color:#00ff00;
+}
+#admin-nav .snap-disabled {
+	color:#BBBBBB;
+}
+#admin-nav .snap-disabled:hover {
+	background:transparent;
+}
+
+.cke_editable_inline:hover {
+	outline:1px dashed #ddd;
+}
+.cke_focus {
+	outline:1px dashed #428BCA !important;
+}
+.nav-stacked {
+	padding-bottom:20px;
+	background:#fff;
+	border:1px solid #ddd;
+}
+.nav-stacked li {
+	border:none;
+	margin:0 0 5px;
+}
+	.sortable .ui-state-highlight,
+	.nav-stacked li a {
+		display: block;
+		padding: 10px 20px;
+		position: relative;
+		border-bottom:1px solid #ddd;
+	}
+		.nav-stacked li li a {
+			padding-left:40px;
+		}
+			.nav-stacked li li li a {
+				padding-left:60px;
+			}
+				.nav-stacked li li li li a {
+					padding-left:80px;
+				}
+					.nav-stacked li li li li li a {
+						padding-left:100px;
+					}
+						.nav-stacked li li li li li li a {
+							padding-left:120px;
+						}
+	.nav-stacked ul {
+		list-style: none outside none;
+		margin: 0;
+		padding:0;
+	}
+	.sortable .ui-state-highlight {
+		display:block;
+		padding:0;
+	}
+	.sortable .ui-sortable-helper {
+		opacity:.75;
+	}
+.sortable .empty {
+	min-height:5px;
+}
+	.sortable li {
+		background:#fff;
+	}

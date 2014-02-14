@@ -97,7 +97,7 @@ class Supplier extends CActiveRecord
 			'name' => 'Supplier Name',
 			'mobile' => 'Mobile',
 			'phone' => 'Phone',
-			'address' => 'Address',
+			'address' => 'Street Address',
 			'address2' => '',
 			'suburb' => 'Suburb',
 			'state' => 'State',

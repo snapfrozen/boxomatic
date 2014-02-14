@@ -35,10 +35,9 @@ $this->menu=array(
 		),
 		//'grower_purchase_id',
 		'quantity',
-		'box_reserve',
 		'notes',
 		array(
-			'class'=>'SnapButtonColumn',
+			'class'=>'application.components.snap.SnapButtonColumn',
 		),
 	),
 )); ?>

@@ -25,31 +25,46 @@ class CronController extends Controller
 		$weeksInAdvance=Yii::app()->params['autoCreateDeliveryDates'];
 		
 		$latestDate=DeliveryDate::getLastEnteredDate();
-		$latestDate=strtotime($latestDate->date);
+		if($latestDate)
+			$latestDate=strtotime($latestDate->date);
+		else
+			$latestDate=time();
+		
 		$targetDate=strtotime('+' . $weeksInAdvance . ' weeks');
-
 		$BoxSizes=BoxSize::model()->findAll();
 		
 		while($latestDate <= $targetDate) 
 		{
-			$latestDateStr=date('Y-m-d',$latestDate);
-			$latestDate=strtotime($latestDateStr . ' +1 week');
-			$newDateStr=date('Y-m-d', $latestDate);			
+//			$dateStr = date('j-n-Y',$latestDate);
+//			$parts = explode('-',$dateStr);
+//			mktime(0,0,0,$parts[1],$parts[0],$parts[2]);
 			
-			$DeliveryDate=new DeliveryDate;
-			$DeliveryDate->date=$newDateStr;
-			$DeliveryDate->save();
-			
-			foreach($BoxSizes as $BoxSize)
+			foreach(Yii::app()->params['deliveryDateLocations'] as $day=>$locationIds)
 			{
-				$Box=new Box;
-				$Box->size_id=$BoxSize->box_size_id;
-				$Box->box_price=$BoxSize->box_size_price;
-				$Box->delivery_date_id=$DeliveryDate->id;
-				$Box->save();
+				if(!empty($locationIds))
+				{
+					$latestDate = strtotime('next '.$day, $latestDate);
+					//var_dump(date('l, d-m-Y',$latestDate));
+					//$latestDateStr=date('Y-m-d',$latestDate);
+					//$latestDate=strtotime($latestDateStr . ' +1 week');
+					$newDateStr = date('Y-m-d', $latestDate);			
+
+					$DeliveryDate=new DeliveryDate;
+					$DeliveryDate->date=$newDateStr;
+					$DeliveryDate->Locations = $locationIds;
+					$DeliveryDate->save();
+
+					foreach($BoxSizes as $BoxSize)
+					{
+						$Box=new Box;
+						$Box->size_id=$BoxSize->id;
+						$Box->box_price=$BoxSize->box_size_price;
+						$Box->delivery_date_id=$DeliveryDate->id;
+						$Box->save();
+					}
+					echo '<p>Created new delivery_date: ' . $DeliveryDate->date . '</p>';
+				}
 			}
-			
-			echo '<p>Created new delivery_date: ' . $DeliveryDate->date . '</p>';
 		}
 		
 		echo '<p><strong>Finished.</strong></p>';

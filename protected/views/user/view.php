@@ -1,19 +1,10 @@
 <div class="row">
 	<div class="large-12 columns">
-		<div class="panel">
-			<?php echo CHtml::link('List',array('user/index'), array('class' => 'button small')); ?>
-			<?php echo CHtml::link('Create',array('user/create'), array('class' => 'button small')); ?>
-			<?php echo CHtml::link('Update',array('user/update', 'id' => $model->id), array('class' => 'button small')); ?>
-			<?php echo CHtml::link('Delete',array('user/delete', 'id' => $model->id), array('class' => 'button small')); ?>
-			<?php echo CHtml::link('Manage',array('user/admin'), array('class' => 'button small')); ?>
-		</div>
-	</div>
-	<div class="large-12 columns">
-		<h2>Welcome<br /><?php echo $model->full_name; ?></h2>
+		<h2>Welcome <?php echo $model->full_name; ?></h2>
 		<table>
 			<tr>
 				<td>Idenification Number</td>
-				<td><?php echo $model->id; ?></td>
+				<td><?php echo $model->bfb_id; ?></td>
 			</tr>
 			<tr>
 				<td>Email Address</td>
@@ -56,7 +47,7 @@
 	<div class="large-12 columns">
 		<?php if($model->Customer): ?>
 
-		<h2>Default<br />delivery location</h2>
+		<h2>Default delivery location</h2>
 
 		<?php $this->widget('zii.widgets.CDetailView', array(
 			'cssFile' => '', 
@@ -68,7 +59,7 @@
 					'name'=>'CustomerLocation.address',
 					'visible'=>isset($model->Customer->CustomerLocation),
 				),
-				'customer_notes',
+				//'customer_notes',
 			),
 		)); ?>
 

@@ -160,7 +160,7 @@ class CustomerPayment extends CActiveRecord
 	public function defaultScope()
 	{
 		//This messes up the unique validation :(
-		if(!Yii::app()->user->checkAccess('admin')) 
+		if(!Yii::app()->user->checkAccess('Admin')) 
 		{
 			return array(
 				'condition' => "customer_id = '" . Yii::app()->user->customer_id . "'",

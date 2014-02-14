@@ -18,7 +18,7 @@ class Category extends CActiveRecord
 	const supplierProductRootID = 1;
 	const boxCategory = 'box';
 	const uncategorisedCategory = 'uncategorised';
-	const productFeatureCategory = 6;
+	const productFeatureCategory = 2;
 	
 	public function behaviors()
 	{
@@ -151,6 +151,9 @@ class Category extends CActiveRecord
 	{
 		$CatCurrent = Category::model()->findByPk($parentId);
 		$output = '';
+		if(!$CatCurrent) {
+			return $output;
+		}
 		foreach($CatCurrent->children as $Cat)
 		{
 			$output .= '<li class="'. ($selected==$Cat->id?'selected':'') .'">';

@@ -22,24 +22,7 @@ class UserIdentity extends CUserIdentity
 		} 
 		else 
 		{
-			if(empty($user->last_login_time))
-			{
-				$user->password=Yii::app()->snap->encrypt($this->password);
-				$user->save(false);
-				
-				$this->_id = $user->id;
-				if(null===$user->last_login_time)
-				{
-					$lastLogin = time();
-				} else {
-					$lastLogin = strtotime($user->last_login_time);
-				}
-				$this->setState('last_login_time', $lastLogin); 
-				$this->setState('customer_id', $user->customer_id); 
-				$this->setState('supplier_id', $user->supplier_id); 
-				$this->errorCode=self::ERROR_NONE;
-			}
-			else if($validatePassword && $user->password!==Yii::app()->snap->encrypt($this->password))
+			if($validatePassword && $user->password!==Yii::app()->snap->encrypt($this->password))
 			{
 				$this->errorCode=self::ERROR_PASSWORD_INVALID;
 			} 
@@ -55,6 +38,8 @@ class UserIdentity extends CUserIdentity
 				$this->setState('last_login_time', $lastLogin); 
 				$this->setState('customer_id', $user->customer_id); 
 				$this->setState('supplier_id', $user->supplier_id); 
+				$this->setState('first_name', $user->first_name);
+				$this->setState('last_name', $user->last_name);
 				$this->errorCode=self::ERROR_NONE;
 			}
 		}

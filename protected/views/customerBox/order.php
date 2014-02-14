@@ -46,7 +46,7 @@
 						echo CHtml::hiddenField('box_size_count', count($BoxSizes));
 
 						foreach($BoxSizes as $BoxSize){
-							echo CHtml::hiddenField('box_size_label_' . $BoxSize->box_size_id, $BoxSize->box_size_name, array('class'=>'boxSizeLabel'));
+							echo CHtml::hiddenField('box_size_label_' . $BoxSize->id, $BoxSize->box_size_name, array('class'=>'boxSizeLabel'));
 						}
 
 						?>
@@ -232,8 +232,8 @@
 										<?php if($boxsize->box_size_name != ''): ?>
 										<div class="large-4 columns">
 											<label for=""><?php echo $boxsize->box_size_name; ?></label>
-											<?php echo CHtml::textField('Recurring[bs_' . $boxsize->box_size_id . ']','0',array('class'=>'number numeric','min'=>0)); ?>
-											<?php echo $form->hiddenField($boxsize,'box_size_price', array('id'=>'bs_value_' . $boxsize->box_size_id)); ?>	
+											<?php echo CHtml::textField('Recurring[bs_' . $boxsize->id . ']','0',array('class'=>'number numeric','min'=>0)); ?>
+											<?php echo $form->hiddenField($boxsize,'box_size_price', array('id'=>'bs_value_' . $boxsize->id)); ?>	
 										</div>
 										<?php endif; ?>
 										<?php endforeach; ?>

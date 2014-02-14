@@ -132,8 +132,16 @@ class Customer extends CActiveRecord
 		$criteria->params = array(':dateId'=>$dateId,':customerId'=>$customerId);
 		$criteria->select = 'SUM((box_price * quantity) + (delivery_cost * quantity)) as date_total';
 		
-		$result = CustomerBox::model()->with('Box')->find($criteria);		
-		return $result ? $result->date_total : '';
+		$boxes = CustomerBox::model()->with('Box')->find($criteria);		
+		$boxTotal = $boxes ? $boxes->date_total : 0;
+		
+		$criteria->with = 'CustomerDeliveryDate';
+		$criteria->select = 'SUM(price * quantity) as date_total';
+		$extras = CustomerDeliveryDateItem::model()->find($criteria);
+		
+		$extrasTotal = $extras ? $extras->date_total : 0;
+		
+		return $boxTotal + $extrasTotal;
 	}
 	
 	public function totalDeliveryByDeliveryDate($dateId)
@@ -187,7 +195,8 @@ class Customer extends CActiveRecord
 		return array_merge($custLocations,$pickupLocations);
 	}
 	
-	public function getDelivery_location_key() {
+	public function getDelivery_location_key() 
+	{
 		if($this->customer_location_id)
 			return $this->customer_location_id.'-'.$this->location_id;
 		else {
@@ -291,7 +300,11 @@ class Customer extends CActiveRecord
 		}
 		
 		$allTagIds = array_merge(array_keys($currentTags),$newTagIds);
-		$this->tags = $allTagIds;
+		if(!empty($allTagIds)) {
+			$this->tags = $allTagIds;
+		} else {
+			$this->tags = null;
+		}
 		$this->save();
 		Tag::deleteUnusedTags();
 	}

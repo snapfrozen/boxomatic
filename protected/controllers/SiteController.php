@@ -2,6 +2,8 @@
 
 class SiteController extends Controller
 {
+	const HOMEPAGE_ID = 4;
+	public $Content = null;
 	
 	/**
 	 * Declares class-based actions.
@@ -39,10 +41,6 @@ class SiteController extends Controller
 				'actions'=>array('index','error','contact','register','login','logout','captcha'),
 				'users'=>array('*'),
 			),
-			array('allow',
-				'actions'=>array('salesReport','creditReport'),
-				'roles'=>array('admin'),
-			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
 			),
@@ -57,7 +55,22 @@ class SiteController extends Controller
 	{
 		// renders the view file 'protected/views/site/index.php'
 		// using the default layout 'protected/views/layouts/main.php'
-		$this->render('index');
+		//$this->render('index');
+		$Content=Content::model()->findByPk(self::HOMEPAGE_ID);
+		$this->Content = $Content;
+		
+		$this->layout = '//layouts/column1';
+		$view = '/content/view';
+		
+		if($this->getLayoutFile('//layouts/content_types/'.$Content->type))
+			$this->layout = '//layouts/content_types/'.$Content->type;
+
+		if($this->getViewFile('/content/content_types/'.$Content->type))
+			$view = '/content/content_types/'.$Content->type;		
+		
+		$this->render($view,array(
+			'Content'=>$Content,
+		));
 	}
 
 	/**
@@ -104,23 +117,17 @@ class SiteController extends Controller
 
 		if(isset($_POST['User']))
 		{
-
 			$model->attributes = $_POST['User'];
 			$model->scenario = 'register';
-			//Password is encrypted afterValidate
-			//$model->password=Yii::app()->snap->encrypt($_POST['User']['password']);
-			//$model->password_repeat=Yii::app()->snap->encrypt($_POST['User']['password_repeat']);
-			if(!$_POST['is_human']){
-				$vars['not_human'] = true;
-				$model->save();
-			} else {
 
-				if($model->save())
+			if($model->save())
+			{
+				$Customer=new Customer();
+				$Customer->attributes=$_POST['Customer'];
+				$Customer->save();
+				
+				if(!$Customer->Location->is_pickup)
 				{
-					$Customer=new Customer();
-					$Customer->attributes=$_POST['Customer'];
-					$Customer->save();
-					
 					$CustLoc=new CustomerLocation;
 					$CustLoc->customer_id=$Customer->customer_id;
 					$CustLoc->location_id=$Customer->location_id;
@@ -130,38 +137,35 @@ class SiteController extends Controller
 					$CustLoc->state=$model->user_state;
 					$CustLoc->postcode=$model->user_postcode;
 					$CustLoc->phone=!empty($model->user_phone)?$model->user_phone:$model->user_mobile;
-					$CustLoc->save();
-					
-					$model->customer_id = $Customer->customer_id;
-					$model->update(array('customer_id'));
-					
-					$Auth = Yii::app()->authManager;
-					$Auth->assign('customer',$model->id);
-					
-					//Send email
-					$message = new YiiMailMessage('Welcome to Bellofoodbox');
-					$message->view = 'welcome';
-					$message->setBody(array('User'=>$model,'newPassword'=>$_POST['User']['password']), 'text/html');
-					$message->addTo('info@bellofoodbox.org.au');
-					$message->addTo($model->user_email);
-					$message->setFrom(array(Yii::app()->params['adminEmail'] => Yii::app()->params['adminEmailFromName']));
-					
-					if(!@Yii::app()->mail->send($message))
-					{
-						$mailError=true;
-					}
-					
-					$identity=new UserIdentity($model->user_email, $_POST['User']['password']);
-					$identity->authenticate();
-
-					Yii::app()->user->login($identity);
-					User::model()->updateByPk($identity->id, array('last_login_time'=>new CDbExpression('NOW()')));
-					
-					$this->redirect(array('customer/welcome'));
+					$CustLoc->save(false);
 				}
-				
-			}
 
+				$model->customer_id = $Customer->customer_id;
+				$model->update(array('customer_id'));
+
+				$Auth = Yii::app()->authManager;
+				$Auth->assign('customer',$model->id);
+
+				//Send email
+				$message = new YiiMailMessage('Welcome to ' . Yii::app()->name);
+				$message->view = 'welcome';
+				$message->setBody(array('User'=>$model,'newPassword'=>$_POST['User']['password']), 'text/html');
+				$message->addTo(Yii::app()->params['adminEmail']);
+				$message->addTo($model->user_email);
+				$message->setFrom(array(Yii::app()->params['adminEmail'] => Yii::app()->params['adminEmailFromName']));
+
+				if(!@Yii::app()->mail->send($message)) {
+					$mailError=true;
+				}
+
+				$identity=new UserIdentity($model->user_email, $_POST['User']['password']);
+				$identity->authenticate();
+
+				Yii::app()->user->login($identity);
+				User::model()->updateByPk($identity->id, array('last_login_time'=>new CDbExpression('NOW()')));
+
+				$this->redirect(array('customer/welcome'));
+			}
 		}
 
 		$model->password='';
@@ -310,140 +314,6 @@ class SiteController extends Controller
 		
 	}
 	 */
-	/**
-	 * Generate Reports
-	 */
-	public function actionCreditReport()
-	{
-		$xAxis=array();
-		$yAxis=array();
-		$series=array();
-		$xAxisName='';
-		$yAxisName='';
-		
-		$sql="SELECT MIN(payment_date) FROM customer_payments WHERE payment_date != '00-00-00 00:00:00'";
-		$connection=Yii::app()->db; 
-		$minDate=$connection->createCommand($sql)->queryScalar();
-		
-		$paymentTotals=array();
-		$days=0;
-		$timestamp=0;
-		
-		while($timestamp < time()) 
-		{
-			$timestamp=strtotime("+ $days days", strtotime($minDate));
-			$timestampJs=$timestamp*1000;
-			$minDate=date('Y-m-d h:i:s',$timestamp);
-			
-			$sql=
-				"SELECT SUM(payment_value) as total
-				FROM customer_payments
-				WHERE payment_date < '$minDate'";
-
-			$row=$connection->createCommand($sql)->queryRow();
-
-			$paymentTotals[]=array($timestampJs, $row['total']);
-			$days+=7;
-		}
-		$series[]=array('name'=>$minDate,'data'=>$paymentTotals);
-		$yAxis=array('title'=>array('text'=>'Total payments'));
-		//print_r($series);
-		//print_r($series2);
-			
-		$this->render('reports_credit',array(
-			'xAxis'=>$xAxis,
-			'yAxis'=>$yAxis,
-			'xAxisName'=>$xAxisName,
-			'yAxisName'=>$yAxisName,
-			'series'=>$series,
-		));
-	}
-
-	/**
-	 * Generate Reports
-	 */
-	public function actionSalesReport()
-	{
-		$xAxis=array();
-		$yAxis=array();
-		$series=array();
-		$xAxisName='';
-		$yAxisName='';
-		$r=Yii::app()->request;
-		if(isset($_POST['boxSales']))
-		{	
-			$xAxisName='DeliveryDate';
-			$yAxisName='Boxes Sold';
-			$dateFrom=$r->getPost($_POST['date_from'],'2012-01-01');
-			$dateTo=$r->getPost($_POST['date_to'],'2020-01-01');
-
-			//All boxes
-			$sql=
-				"SELECT d.date, count(customer_box_id) as total
-				FROM customer_boxes cb
-				JOIN boxes b ON cb.box_id=b.box_id
-				JOIN delivery_dates d ON b.delivery_date_id=d.id
-				WHERE 
-					(
-						cb.status=".CustomerBox::STATUS_APPROVED." OR 
-						cb.status=".CustomerBox::STATUS_DELIVERED."
-					)
-					AND
-					d.date > \"$dateFrom\" AND
-					d.date < \"$dateTo\"
-				GROUP BY d.date
-				ORDER BY d.date ASC";
-			
-			$connection=Yii::app()->db; 
-			$dataReader=$connection->createCommand($sql)->query();
-
-			$allBoxesData=array();
-			foreach($dataReader as $row) {
-				//multiply by 1000 for milliseconds for javascript
-				$allBoxesData[]=array(strtotime($row['date'])*1000, (int)$row['total']);
-			}
-			$series[]=array('name'=>'All Boxes','data'=>$allBoxesData);
-			$yAxis=array('title'=>array('text'=>'Boxes Sold'), 'min'=>0);
-			
-			//Get data for each box size
-			$BoxSizes=BoxSize::model()->findAll();
-			foreach($BoxSizes as $BoxSize)
-			{
-				$sql=
-					"SELECT d.date, count(customer_box_id) as total
-					FROM customer_boxes cb
-					JOIN boxes b ON cb.box_id=b.box_id
-					JOIN delivery_dates d ON b.delivery_date_id=d.id
-					WHERE 
-						b.size_id=$BoxSize->box_size_id AND
-						(
-							cb.status=".CustomerBox::STATUS_APPROVED." OR 
-							cb.status=".CustomerBox::STATUS_DELIVERED."
-						) AND 
-						d.date > \"$dateFrom\" AND
-						d.date < \"$dateTo\"
-					GROUP BY d.date
-					ORDER BY d.date ASC";
-
-				$dataReader=$connection->createCommand($sql)->query();
-
-				$boxesData=array();
-				foreach($dataReader as $row) {
-					//multiply by 1000 for milliseconds for javascript
-					$boxesData[]=array(strtotime($row['date'])*1000, (int)$row['total']);
-				}
-				$series[]=array('name'=>$BoxSize->box_size_name . ' Boxes','data'=>$boxesData);
-			}
-		}
-		
-		$this->render('reports_sales',array(
-			'xAxis'=>$xAxis,
-			'yAxis'=>$yAxis,
-			'xAxisName'=>$xAxisName,
-			'yAxisName'=>$yAxisName,
-			'series'=>$series,
-		));
-	}
 	
 	/**
 	 * Logs out the current user and redirect to homepage.

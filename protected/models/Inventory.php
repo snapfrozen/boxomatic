@@ -8,12 +8,10 @@
  * @property integer $supplier_purchase_id
  * @property integer $customer_delivery_date_item_id
  * @property string $quantity
- * @property string $box_reserve
  */
 class Inventory extends CActiveRecord
 {
 	public $sum_quantity; //Aggregate variable
-	public $sum_box_reserve; //Aggregate variable
 	public $supplier_name_search;
 	public $product_name_search;
 	
@@ -50,11 +48,11 @@ class Inventory extends CActiveRecord
 		return array(
 			array('supplier_product_id, quantity', 'required'),
 			array('customer_delivery_date_item_id, supplier_product_id, supplier_purchase_id', 'numerical', 'integerOnly'=>true),
-			array('quantity, box_reserve', 'length', 'max'=>7),
+			array('quantity', 'length', 'max'=>7),
 			array('notes', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('sum_quantity, sum_box_reserve, inventory_id, supplier_purchase_id, quantity, box_reserve, supplier_name_search, product_name_search', 'safe', 'on'=>'search'),
+			array('sum_quantity, inventory_id, supplier_purchase_id, quantity, supplier_name_search, product_name_search', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -80,10 +78,7 @@ class Inventory extends CActiveRecord
 			'inventory_id' => 'Inventory',
 			'supplier_purchase_id' => 'Grower Purchase',
 			'quantity' => 'In Stock',
-			'box_reserve' => 'Box Reserve',
-			'sum_box_reserve' => 'Box Reserve Quantity',
-			'sum_quantity' => 'Extras Quantity',
-			'total_quantity' => 'Total Quantity',
+			'sum_quantity' => 'Quantity',
 			'supplier_product_id' => 'Product',
 			'product_name_search' => 'Product',
 			'supplier_name_search' => 'Supplier',
@@ -99,7 +94,6 @@ class Inventory extends CActiveRecord
 		$criteria->compare('inventory_id',$this->inventory_id);
 		$criteria->compare('supplier_purchase_id',$this->supplier_purchase_id);
 		$criteria->compare('quantity',$this->quantity,true);
-		$criteria->compare('box_reserve',$this->box_reserve,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -115,12 +109,11 @@ class Inventory extends CActiveRecord
 		$criteria->compare('Supplier.name',$this->supplier_name_search,true);
 		$criteria->compare('supplierProduct.name',$this->product_name_search,true);
 		$criteria->compare('quantity',$this->quantity,true);
-		$criteria->compare('box_reserve',$this->box_reserve,true);
 		//$criteria->compare('SUM(quantity)',$this->sum_quantity);
 
 		$criteria->with = array('supplierProduct'=>array('with'=>'Supplier'));
 		$criteria->group = 'supplier_purchase_id';
-		$criteria->select = '*, SUM(quantity) as sum_quantity, SUM(box_reserve) as sum_box_reserve';
+		$criteria->select = '*, SUM(quantity) as sum_quantity';
 		$criteria->having = 'sum_quantity != 0';
 
 		return new CActiveDataProvider($this, array(
@@ -141,7 +134,7 @@ class Inventory extends CActiveRecord
 	
 	public function getTotal_quantity()
 	{
-		return $this->sum_box_reserve + $this->sum_quantity;
+		return $this->sum_quantity;
 	}
 	
 	/**
@@ -153,8 +146,8 @@ class Inventory extends CActiveRecord
 		$criteria=new CDbCriteria;
 		//$criteria->with = array('supplierProduct'=>array('with'=>'Supplier'));
 		$criteria->group = 't.supplier_product_id, supplier_purchase_id';
-		$criteria->select = 't.*, SUM(quantity) as sum_quantity, SUM(box_reserve) as sum_box_reserve';
-		$criteria->with = array('supplierPurchase');
+		$criteria->select = 't.*, SUM(quantity) as sum_quantity';
+		$criteria->with = array('supplierPurchase','supplierProduct');
 		if($cat == Category::uncategorisedCategory) {
 			$criteria->addCondition('category_id is null');
 			$criteria->join = 'LEFT JOIN supplier_product_categories spc ON t.supplier_product_id = spc.supplier_product_id';
@@ -163,17 +156,20 @@ class Inventory extends CActiveRecord
 			$criteria->join = 'INNER JOIN supplier_product_categories spc ON t.supplier_product_id = spc.supplier_product_id';
 			$criteria->params = array(':catId'=>$cat);
 		}
-		$criteria->having = 'sum_quantity > 0';
+		$criteria->having = 'limited_stock = 0 OR (limited_stock = 1 && sum_quantity > 0)';
 		return $this->findAll($criteria);
 	}
 	
 	public function showQuantity()
 	{
-		return $this->sum_quantity < $this->showLimitedStockAt;
+		return $this->supplierProduct->limited_stock && $this->sum_quantity < $this->showLimitedStockAt;
 	}
 	
 	public function getDelivery_date_formatted()
 	{
-		return Yii::app()->snapFormat->date($this->delivery_date);
+		if($this->supplierPurchase)
+			return Yii::app()->snapFormat->date($this->delivery_date);
+		else
+			return '';
 	}
 }

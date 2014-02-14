@@ -18,6 +18,7 @@
  */
 class CustomerDeliveryDateItem extends CActiveRecord
 {
+	public $date_total; //Aggregate variable
 	/**
 	 * @return string the associated database table name
 	 */
@@ -35,7 +36,7 @@ class CustomerDeliveryDateItem extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('supplier_purchase_id', 'required'),
-			array('id, supplier_id, customer_delivery_date_id, supplier_purchase_id', 'numerical', 'integerOnly'=>true),
+			array('id, packing_station_id, customer_delivery_date_id, supplier_purchase_id', 'numerical', 'integerOnly'=>true),
 			array('quantity, price', 'length', 'max'=>7),
 			array('name', 'length', 'max'=>45),
 			array('unit', 'length', 'max'=>20),
@@ -55,7 +56,7 @@ class CustomerDeliveryDateItem extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'deliveryDate' => array(self::BELONGS_TO, 'CustomerDeliveryDate', 'customer_delivery_date_id'),
+			'CustomerDeliveryDate' => array(self::BELONGS_TO, 'CustomerDeliveryDate', 'customer_delivery_date_id'),
 			'supplierPurchase' => array(self::BELONGS_TO, 'SupplierPurchase', 'supplier_purchase_id'),
 			'inventory' => array(self::HAS_ONE, 'Inventory', 'customer_delivery_date_item_id'),
 		);
@@ -125,7 +126,7 @@ class CustomerDeliveryDateItem extends CActiveRecord
 		//$criteria->with = array('supplierProduct'=>array('with'=>'Supplier'));
 		$criteria->addCondition('supplier_purchase_id=:spid');
 		$criteria->group = 'supplier_purchase_id';
-		$criteria->select = '*, SUM(quantity) as sum_quantity, SUM(box_reserve) as sum_box_reserve';
+		$criteria->select = '*, SUM(quantity) as sum_quantity';
 		//$criteria->having = 'sum_quantity > 0';
 		$criteria->params = array(':spid'=>$this->supplier_purchase_id);
 		
@@ -136,7 +137,7 @@ class CustomerDeliveryDateItem extends CActiveRecord
 			$amount += $this->inventory->quantity;
 		}
 
-		if($amount > $Inventory->sum_quantity) {
+		if($Inventory->supplierProduct->limited_stock && $amount > $Inventory->sum_quantity) {
 			$this->addError($attribute, 'Not enough stock');
 		}
 	}
@@ -144,7 +145,7 @@ class CustomerDeliveryDateItem extends CActiveRecord
 	public static function findCustomerExtras($custId, $date)
 	{
 		$model = self::model();
-		return $model->with('deliveryDate')->findAll('deliveryDate.customer_id=:custId AND delivery_date_id=:date',array(
+		return $model->with('CustomerDeliveryDate')->findAll('CustomerDeliveryDate.customer_id=:custId AND delivery_date_id=:date',array(
 			':custId' => $custId,
 			':date' => $date,
 		));

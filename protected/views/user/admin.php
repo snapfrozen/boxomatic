@@ -28,8 +28,7 @@ EOD
 
 	<div class="large-12 columns">
 		<div class="panel">
-			<a href="index.php?r=user/index" class="button small">List User</a>
-			<a href="index.php?r=user/create" class="button small">Create User</a>
+			<?php echo CHtml::link('Create User',array('user/create'),array('class'=>'button small')) ?>
 			<?php echo CHtml::link('Advanced Search','#',array('class'=>'search-button button small')); ?>
 		</div>
 	</div>
@@ -69,7 +68,7 @@ EOD
 				array( 'name'=>'customer_id', 'value'=>'empty($data->customer_id) ? "No" : "Yes"'),
 				array( 'name'=>'supplier_id', 'value'=>'empty($data->supplier_id) ? "No" : "Yes"'),
 				array(
-					'class'=>'SnapButtonColumn',
+					'class'=>'application.components.snap.SnapButtonColumn',
 					'template'=>'{view}{update}{delete}{login}',
 					'buttons'=>array(
 						'login' => array

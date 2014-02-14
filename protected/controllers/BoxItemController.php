@@ -33,8 +33,9 @@ class BoxItemController extends Controller
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
 				'actions'=>array(
 					'admin','delete','create','update','customerBoxes',
-					'processCustomers','processCustBox','refund','setDelivered','setApproved'),
-				'roles'=>array('admin'),
+					'processCustomers','processCustBox','refund','setDelivered','setApproved',
+					'copyProductName'),
+				'roles'=>array('Admin'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -51,6 +52,14 @@ class BoxItemController extends Controller
 		$this->render('view',array(
 			'model'=>$this->loadModel($id),
 		));
+	}
+	
+	public function actionCopyProductName($id)
+	{
+		$model = $this->loadModel($id);
+		$model->item_name = $model->SupplierProduct->name;
+		$model->save();
+		$this->redirect(Yii::app()->request->urlReferrer);
 	}
 
 	/**
@@ -75,51 +84,39 @@ class BoxItemController extends Controller
 						$BoxItem=new BoxItem;
 					
 					//Delete if boxItem exists and quantity has been set to 0
-					if($BoxItem && isset($boxItem['box_item_id']) && $boxItem['item_quantity']==0) 
-					{
+					if($BoxItem && isset($boxItem['box_item_id']) && $boxItem['item_quantity']==0) {
 						$BoxItem->delete();
 					}
 					
 					if($boxItem['item_quantity']>0) 
 					{
-						$BoxItem->item_name=$boxContents['item_name'];
-						$BoxItem->supplier_id=$boxContents['supplier_id'];
-						$BoxItem->item_unit=$boxContents['item_unit'];
-						$BoxItem->item_value=$boxContents['item_value'];
-						$BoxItem->item_quantity=$boxItem['item_quantity'];
-						$BoxItem->box_id=$boxItem['box_id'];
+						$BoxItem->attributes=$boxContents;
+						
+						$SP = $BoxItem->SupplierProduct;
+						if(!$SP) {
+							$SP = SupplierProduct::model()->findByAttributes(array(
+								'name'=>$boxContents['item_name'],
+								'supplier_id'=>$boxContents['supplier_id'],
+								'unit'=>$boxContents['item_unit'],
+							));
+							if(!$SP) {
+								$SP = new SupplierProduct;
+							}
+							
+							$SP->supplier_id=$boxContents['supplier_id'];
+							$SP->name=$boxContents['item_name'];
+							$SP->value=$boxContents['item_value'];
+							$SP->unit=$boxContents['item_unit'];
+							$SP->packing_station_id=$boxContents['packing_station_id'];
+							$SP->available_from=1;
+							$SP->available_to=12;
+						}
+						$SP->save();
+						
+						$BoxItem->supplier_product_id = $SP->id;
 						$BoxItem->save();
 					}
 				}
-				
-				//Add an item to the inventory selected
-				if(isset($boxContents['add_to_inventory']))
-				{
-					$SupplierProduct=SupplierProduct::model()->findByAttributes(array(
-						'supplier_id'=>$boxContents['supplier_id'],
-						'name'=>$boxContents['item_name'],
-						'unit'=>$boxContents['item_unit'],
-					));
-					
-					//Update the supplier item price already exists
-					if($SupplierProduct)
-					{
-						$SupplierProduct->item_value=$boxContents['item_value'];
-						$SupplierProduct->save();
-					}
-					else
-					{
-						$SupplierProduct=new SupplierProduct;
-						$SupplierProduct->supplier_id=$boxContents['supplier_id'];
-						$SupplierProduct->name=$boxContents['item_name'];
-						$SupplierProduct->value=$boxContents['item_value'];
-						$SupplierProduct->unit=$boxContents['item_unit'];
-						$SupplierProduct->available_from=1;
-						$SupplierProduct->available_to=12;
-						$SupplierProduct->save();
-					}
-				}
-				
 			}			
 		}
 		
@@ -161,7 +158,6 @@ class BoxItemController extends Controller
 					':deliveryDateId'=>$date,
 				)
 			);
-			
 			if($TmpItem) 
 			{
 				$selectedItemId=$TmpItem->box_item_id;
@@ -175,6 +171,7 @@ class BoxItemController extends Controller
 					$BoxItem->supplier_id=$NewItem->supplier_id;
 					$BoxItem->item_unit=$NewItem->unit;
 					$BoxItem->item_value=$NewItem->value;
+					$BoxItem->packing_station_id=$NewItem->packing_station_id; 
 					$BoxItem->item_quantity=1;
 					$BoxItem->box_id=$DeliveryDateBox->box_id;
 					$BoxItem->save();
@@ -233,7 +230,6 @@ class BoxItemController extends Controller
 			$model->attributes=$_POST['BoxItem'];
 			$model->save();				
 		}
-		
 		$this->render('create',array(
 			'model'=>$model,
 			'SupplierProducts'=>$SupplierProducts,

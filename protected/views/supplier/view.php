@@ -4,7 +4,6 @@
 	</div>
 	<div class="large-12 columns">
 		<div class="panel">
-			<?php echo CHtml::link('List',array('supplier/index'), array('class' => 'button small')); ?>
 			<?php echo CHtml::link('Create',array('supplier/create'), array('class' => 'button small')); ?>
 			<?php echo CHtml::link('Update',array('supplier/update', 'id' => $model->id), array('class' => 'button small')); ?>
 			<?php echo CHtml::link('Delete',array('supplier/delete', 'id' => $model->id), array('class' => 'button small')); ?>
@@ -12,7 +11,7 @@
 		</div>
 	</div>
 	<div class="large-12 columns">
-		<?php if(Yii::app()->user->checkAccess('admin')): ?>
+		<?php if(Yii::app()->user->checkAccess('Admin')): ?>
 
 		<?php $this->widget('zii.widgets.CDetailView', array(
 			'data'=>$model,

@@ -37,16 +37,6 @@ $this->menu=array(
 			'filter' => false,
 		),
 		array(
-			'name' => 'sum_box_reserve',
-			'filter' => false,
-		),
-		array(
-			'name' => 'total_quantity',
-			'filter' => false,
-			'type' => 'raw',
-			'value' => '$data->total_quantity'
-		),
-		array(
 			'name' => 'supplierPurchase.item_sales_price',
 			'filter' => false,
 			'type' => 'raw',
@@ -59,14 +49,20 @@ $this->menu=array(
 			'value' => 'Yii::app()->snapFormat->currency(CHtml::value($data,"supplierPurchase.wholesale_price"))'
 		),
 		array(
-			'class'=>'SnapButtonColumn',
+			'name' => 'supplierProduct.limited_stock',
+			'filter' => false,
+			'type' => 'raw',
+			'value' => 'CHtml::value($data,"supplierProduct.limited_stock") ? "Yes" : "No"'
+		),
+		array(
+			'class'=>'application.components.snap.SnapButtonColumn',
 			'template'=>'{Adjust Quantities}',
 			'buttons'=>array(
 				'Adjust Quantities' => array
 				(
 					'label' => '<i class="fi fi-page-edit"></i>',
 					'options' => array('title'=>'Adjust Quantities'),
-					'imageUrl' => false,
+					'url'=> 'array("inventory/create","purchase"=>$data->supplier_purchase_id)',
 				),
 			)
 		),

@@ -161,7 +161,11 @@ class SupplierPurchase extends CActiveRecord
 	 */
 	public function getWholesale_price()
 	{
-		return round($this->final_price / $this->delivered_quantity);
+		$quantity = (float) $this->delivered_quantity;
+		if($quantity)
+			return round($this->final_price / $quantity);
+		else 
+			return 0;
 	}
 	
 	/**

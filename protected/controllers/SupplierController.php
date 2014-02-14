@@ -35,8 +35,8 @@ class SupplierController extends Controller
 				'roles'=>array('supplier'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete','getListItems'),
-				'roles'=>array('admin'),
+				'actions'=>array('admin','delete','getListItems','create','update','map','search'),
+				'roles'=>array('Admin'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -70,7 +70,7 @@ class SupplierController extends Controller
 		{
 			$model->attributes=$_POST['Supplier'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('admin'));
 		}
 
 		$this->render('create',array(
@@ -94,7 +94,7 @@ class SupplierController extends Controller
 		{
 			$model->attributes=$_POST['Supplier'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('admin'));
 		}
 
 		$this->render('update',array(

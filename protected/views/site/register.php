@@ -26,16 +26,6 @@
 	</div>
 	<fieldset>
 		<legend>Registration Form</legend>
-		<?php if($not_human): ?>
-		<div class="row">
-			<div class="large-12 columns">
-				<div data-alert class="alert-box alert">
-				 Please verify that you are human
-				 <a href="#" class="close">&times;</a>
-				</div>
-			</div>
-		</div>
-		<?php endif; ?>
 		<div class="row">
 			<div class="large-6 columns">
 				<?php echo $form->labelEx($model,'first_name'); ?>
@@ -57,18 +47,6 @@
 		</div>
 		<div class="row">
 			<div class="large-6 columns">
-				<?php echo $form->labelEx($model,'password'); ?>
-				<?php echo $form->passwordField($model,'password',array('maxlength'=>255)); ?>
-				<?php echo $form->error($model,'password'); ?>
-			</div>
-			<div class="large-6 columns">
-				<?php echo $form->labelEx($model,'password_repeat'); ?>
-				<?php echo $form->passwordField($model,'password_repeat',array('maxlength'=>255)); ?>
-				<?php echo $form->error($model,'password_repeat'); ?>
-			</div>
-		</div>
-		<div class="row">
-			<div class="large-6 columns">
 				<?php echo $form->labelEx($model,'user_phone'); ?>
 				<?php echo $form->textField($model,'user_phone',array('maxlength'=>45)); ?>
 				<?php echo $form->error($model,'user_phone'); ?>
@@ -80,63 +58,80 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="large-12 columns">
-				<?php echo $form->labelEx($model,'user_address'); ?>
-				<?php echo $form->textArea($model,'user_address',array('maxlength'=>150)); ?>
-				<?php echo $form->error($model,'user_address'); ?>
+			<div class="large-6 columns">
+				<?php echo $form->labelEx($model,'password'); ?>
+				<?php echo $form->passwordField($model,'password',array('maxlength'=>255)); ?>
+				<?php echo $form->error($model,'password'); ?>
 			</div>
-		</div>
-
-		<!-- <div class="row">
-			<div class="large-12 columns">
-				<?php echo $form->labelEx($model,'user_address2'); ?>
-				<?php echo $form->textArea($model,'user_address2',array('maxlength'=>150)); ?>
-				<?php echo $form->error($model,'user_address2'); ?>
+			<div class="large-6 columns">
+				<?php echo $form->labelEx($model,'password_repeat'); ?>
+				<?php echo $form->passwordField($model,'password_repeat',array('maxlength'=>255)); ?>
+				<?php echo $form->error($model,'password_repeat'); ?>
 			</div>
-		</div> -->
-
-		<div class="row">
-			<div class="large-4 columns">
-				<?php echo $form->labelEx($model,'user_state'); ?>
-				<?php echo $form->dropDownList($model,'user_state',Yii::app()->params['states']); ?>
-				<?php echo $form->error($model,'user_state'); ?>
-			</div>
-
-			<div class="large-4 columns">
-				<?php echo $form->labelEx($model,'user_state'); ?>
-				<?php echo $form->dropDownList($model,'user_state',Yii::app()->params['states']); ?>
-				<?php echo $form->error($model,'user_state'); ?>
-			</div>
-
-			<div class="large-4 columns">
-				<?php echo $form->labelEx($model,'user_postcode'); ?>
-				<?php echo $form->textField($model,'user_postcode',array('size'=>45,'maxlength'=>45)); ?>
-				<?php echo $form->error($model,'user_postcode'); ?>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="large-12 columns">
-				<?php $Customer=new Customer; ?>
-				<?php echo $form->labelEx($Customer,'location_id'); ?>
-				<?php echo $form->dropDownList($Customer,'location_id',CHtml::listData(Location::model()->findAll(),'location_id','location_and_delivery')); ?>
-				<?php echo $form->error($Customer,'location_id'); ?>
-			</div>
-		</div>
-
-		<?php /*if(CCaptcha::checkRequirements()): ?>
+		</div>		
+		
+		<hr />
+		
 		<div class="row">
 			<div class="large-6 columns">
-				<?php echo $form->labelEx($model,'verifyCode'); ?>
-				<?php echo $form->textField($model,'verifyCode'); ?>
-				<?php echo $form->error($model,'verifyCode'); ?>
+				<?php $Customer=new Customer; ?>
+				<?php echo $form->labelEx($Customer,'location_id'); ?>
+				<?php echo $form->dropDownList($Customer,'location_id',Location::getDeliveryAndPickupList()); ?>
+				<?php echo $form->error($Customer,'location_id'); ?>
+				<p class="hint"><?php echo Yii::app()->name ?> delivers to the above locations. We can deliver 
+				to your door if you live at one of the areas listed under <b>Delivery</b> or 
+				you can pick up your items from the locations listed under <b>Pickup</b>.</p>
 			</div>
+			<div class="large-6 columns">
+
+				<div class="row">
+					<div class="large-12 columns">
+						<?php echo $form->labelEx($model,'user_address'); ?>
+						<?php echo $form->textField($model,'user_address',array('maxlength'=>150)); ?>
+						<?php echo $form->error($model,'user_address'); ?>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="large-4 columns">
+						<?php echo $form->labelEx($model,'user_suburb'); ?>
+						<?php echo $form->textField($model,'user_suburb',array('size'=>45,'maxlength'=>45)); ?>
+						<?php echo $form->error($model,'user_suburb'); ?>
+					</div>
+
+					<div class="large-4 columns">
+						<?php echo $form->labelEx($model,'user_postcode'); ?>
+						<?php echo $form->textField($model,'user_postcode',array('size'=>45,'maxlength'=>45)); ?>
+						<?php echo $form->error($model,'user_postcode'); ?>
+					</div>
+
+					<div class="large-4 columns">
+						<?php echo $form->labelEx($model,'user_state'); ?>
+						<?php echo $form->dropDownList($model,'user_state',Yii::app()->params['states']); ?>
+						<?php echo $form->error($model,'user_state'); ?>
+					</div>
+				</div>
+				
+			</div>
+		</div>
+		
+		<hr />
+
+		<?php if(CCaptcha::checkRequirements()): ?>
+		<div class="row captcha">
 			<div class="large-6 columns">
 				<?php $this->widget('CCaptcha'); ?>
 				<p>Please enter the letters as they are shown in the image above. Letters are not case-sensitive.</p>
 			</div>
 		</div>
-		<?php endif;*/ ?>
+		<div class="row">
+			<div class="large-6 columns">
+				<?php echo $form->labelEx($model,'verify_code'); ?>
+				<?php echo $form->textField($model,'verify_code'); ?>
+				<?php echo $form->error($model,'verify_code'); ?>
+			</div>
+		</div>
+		<?php endif; ?>
 
 		<div class="row">
 			<div class="large-12 columns">

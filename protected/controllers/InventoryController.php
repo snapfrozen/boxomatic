@@ -6,7 +6,7 @@ class InventoryController extends Controller
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
 	 * using two-column layout. See 'protected/views/layouts/column2.php'.
 	 */
-	public $layout='//layouts/column2';
+	public $layout='//layouts/column1';
 
 	/**
 	 * @return array action filters
@@ -29,7 +29,7 @@ class InventoryController extends Controller
 		return array(
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
 				'actions'=>array('admin','delete','create','update','index','view'),
-				'roles'=>array('admin'),
+				'roles'=>array('Admin'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -52,12 +52,16 @@ class InventoryController extends Controller
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
-	public function actionCreate($product=null)
+	public function actionCreate($purchase=null)
 	{
 		$model=new Inventory;
 		
-		if($product)
-			$model->supplier_product_id = $product;
+		$SP = SupplierPurchase::model()->findByPk($purchase);
+		
+		if($SP) {
+			$model->supplier_product_id = $SP->supplier_product_id;
+			$model->supplier_purchase_id = $SP->id;
+		}
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);

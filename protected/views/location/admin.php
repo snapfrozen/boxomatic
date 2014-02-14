@@ -19,7 +19,7 @@
 				'location_delivery_value',
 				'is_pickup',
 				array(
-					'class'=>'SnapButtonColumn',
+					'class'=>'application.components.snap.SnapButtonColumn',
 				),
 			),
 		)); ?>

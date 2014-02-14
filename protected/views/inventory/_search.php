@@ -30,12 +30,7 @@
 		<?php echo $form->label($model,'price'); ?>
 		<?php echo $form->textField($model,'price',array('size'=>7,'maxlength'=>7)); ?>
 	</div>
-
-	<div class="row">
-		<?php echo $form->label($model,'box_reserve'); ?>
-		<?php echo $form->textField($model,'box_reserve',array('size'=>7,'maxlength'=>7)); ?>
-	</div>
-
+	
 	<div class="row buttons">
 		<?php echo CHtml::submitButton('Search'); ?>
 	</div>

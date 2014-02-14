@@ -13,8 +13,11 @@
  * The followings are the available model relations:
  * @property Boxes[] $boxes
  */
-class BoxSize extends CActiveRecord
+class BoxSize extends ImageActiveRecord
 {
+	static $imageDir = 'data/boxsizes';
+	static $defaultImageLocation = 'data/boxsizes/default.gif';
+	
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
@@ -42,6 +45,9 @@ class BoxSize extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('box_size_name, box_size_value, box_size_markup, box_size_price', 'length', 'max'=>45),
+			array('image_ext', 'length', 'max'=>20),
+			array('image', 'file', 'types'=>'jpg, gif, png', 'allowEmpty'=>true),
+			array('description', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('box_sizes, box_size_name, box_size_value, box_size_markup, box_size_price', 'safe', 'on'=>'search'),

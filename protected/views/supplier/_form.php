@@ -60,13 +60,8 @@
 
 	<div class="large-12 columns">
 		<?php echo $form->labelEx($model,'address'); ?>
-		<?php echo $form->textArea($model,'address'); ?>
+		<?php echo $form->textField($model,'address'); ?>
 		<?php echo $form->error($model,'address'); ?>
-	</div>
-	<div class="large-4 columns">
-		<?php echo $form->labelEx($model,'postcode'); ?>
-		<?php echo $form->textField($model,'postcode'); ?>
-		<?php echo $form->error($model,'postcode'); ?>
 	</div>
 
 	<div class="large-4 columns">
@@ -74,10 +69,16 @@
 		<?php echo $form->textField($model,'suburb'); ?>
 		<?php echo $form->error($model,'suburb'); ?>
 	</div>
+	
+	<div class="large-4 columns">
+		<?php echo $form->labelEx($model,'postcode'); ?>
+		<?php echo $form->textField($model,'postcode'); ?>
+		<?php echo $form->error($model,'postcode'); ?>
+	</div>
 
 	<div class="large-4 columns">
 		<?php echo $form->labelEx($model,'state'); ?>
-		<?php echo $form->textField($model,'state'); ?>
+		<?php echo $form->dropDownList($model,'state',Yii::app()->params['states']); ?>
 		<?php echo $form->error($model,'state'); ?>
 	</div>
 
@@ -141,12 +142,12 @@
 	</div>
 	<div class="large-6 columns">
 		<?php echo $form->labelEx($model,'lattitude'); ?>
-		<?php echo $form->textArea($model,'lattitude'); ?>
+		<?php echo $form->textField($model,'lattitude'); ?>
 		<?php echo $form->error($model,'lattitude'); ?>
 	</div>
 	<div class="large-6 columns">
 		<?php echo $form->labelEx($model,'longitude'); ?>
-		<?php echo $form->textArea($model,'longitude'); ?>
+		<?php echo $form->textField($model,'longitude'); ?>
 		<?php echo $form->error($model,'longitude'); ?>
 	</div>
 </fieldset>

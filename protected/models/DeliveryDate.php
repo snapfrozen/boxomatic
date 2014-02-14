@@ -13,6 +13,15 @@
  */
 class DeliveryDate extends CActiveRecord
 {
+	public function behaviors()
+	{
+		return array(
+			'activerecord-relation'=>array(
+				'class'=>'ext.active-relation-behavior.EActiveRecordRelationBehavior',
+			)
+		);
+	}
+	
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
@@ -68,7 +77,7 @@ class DeliveryDate extends CActiveRecord
 			),
 			'BoxItemsContent' => array(self::HAS_MANY, 'BoxItem', array('box_id'=>'box_id'), 'through'=>'Boxes',
 				'order'=>'Supplier.name ASC, BoxItemsContent.item_name',
-				'select'=>'BoxItem.item_name, BoxItem.supplier_id, BoxItem.item_value, BoxItem.item_unit, GROUP_CONCAT(box_item_id) as box_item_ids',
+				'select'=>'BoxItem.item_name, BoxItem.supplier_id, BoxItem.supplier_product_id, BoxItem.item_value, BoxItem.item_unit, GROUP_CONCAT(box_item_id) as box_item_ids',
 				'group'=>'BoxItemsContent.supplier_id, item_name, item_value, item_unit',
 				'with'=>'Supplier',
 			),
@@ -77,6 +86,7 @@ class DeliveryDate extends CActiveRecord
 				'condition'=>'size_id=:sizeId',
 				'join'=>'JOIN box_items ON ' . $this->getTableAlias(). '.box_id=box_items.box_id'
             ),
+			'Locations' => array(self::MANY_MANY, 'Location', 'delivery_date_locations(delivery_date_id,location_id)')
 		);
 	}
 
@@ -137,10 +147,14 @@ class DeliveryDate extends CActiveRecord
 		return $date;
 	}
 	
-	public static function getFutureDeliveryDates()
+	public function getFutureDeliveryDates()
 	{
 		$deadlineDays=Yii::app()->params['orderDeadlineDays'];
-		$DeliveryDates=DeliveryDate::model()->findAll("date_sub(date, interval $deadlineDays day) > NOW()");
+		$dayOfWeek=date('N',strtotime($this->date))+1;
+		if($dayOfWeek == 8)
+			$dayOfWeek = 1;
+		
+		$DeliveryDates=DeliveryDate::model()->findAll("date_sub(date, interval $deadlineDays day) > NOW() AND DAYOFWEEK(date) = '" . $dayOfWeek . "'");
 		return CHtml::listData($DeliveryDates,'date','formatted_date');
 	}
 	

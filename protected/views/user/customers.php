@@ -76,7 +76,7 @@ EOD
 					'value'=>'CHtml::value($data,"Customer.tag_names")',
 				),
 				array(
-					'class'=>'SnapButtonColumn',
+					'class'=>'application.components.snap.SnapButtonColumn',
 					'template'=>'{view}{update}{delete}{login}{reset_password}',
 					'buttons'=>array(
 						'login' => array

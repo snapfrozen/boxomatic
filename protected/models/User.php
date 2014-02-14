@@ -28,7 +28,7 @@ class User extends SnapActiveRecord
 {
 	public $password_repeat;
 	public $password_current;
-	public $verifyCode;
+	public $verify_code;
 	public $total_boxes;
 	public $searchAdmin=false;
 	public $search_customer_notes;
@@ -60,20 +60,20 @@ class User extends SnapActiveRecord
 		// will receive user inputs.
 		return array(
 			array('password, first_name, last_name','required'),
-			array('user_email','required','on'=>'register'),
+			array('user_email', 'required', 'on'=>'register'),
 			array('customer_id, supplier_id, update_user_id, create_user_id', 'numerical', 'integerOnly'=>true),
 			array('user_email, password', 'length', 'max'=>255),
 			array('user_email', 'unique'),
 			array('user_email', 'email'),
-			array('password', 'compare', 'on'=>'changePassword'),
-			array('password_repeat', 'safe'),
+			array('password', 'compare', 'on'=>'changePassword, register'),
+			array('verify_code, password_repeat', 'safe'),
 			array('first_name, last_name, user_phone, user_mobile, user_suburb, user_state, user_postcode', 'length', 'max'=>45),
 			array('user_address, user_address2, user_email', 'length', 'max'=>150),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('tag_name_search, search_customer_notes, id, first_name, last_name, full_name, user_phone, user_mobile, user_address, user_address2, user_email, user_suburb, user_state, user_postcode, last_login_time, update_time, update_user_id, create_time, create_user_id', 'safe', 'on'=>'search'),
 			// verifyCode needs to be entered correctly
-			array('verifyCode', 'captcha', 'allowEmpty'=>!CCaptcha::checkRequirements(),'on'=>'insert'),
+			array('verify_code', 'captcha', 'allowEmpty'=>!CCaptcha::checkRequirements(), 'on'=>'register'),
 		);
 	}
 
@@ -108,7 +108,7 @@ class User extends SnapActiveRecord
 			'full_name' => 'Full Name',
 			'user_phone' => 'Phone',
 			'user_mobile' => 'Mobile',
-			'user_address' => 'Address',
+			'user_address' => 'Street Address',
 			'user_address2' => '&nbsp;',
 			'user_email' => 'Email',
 			'user_suburb' => 'Suburb',
@@ -190,7 +190,7 @@ class User extends SnapActiveRecord
 	 */
 	public function afterValidate()
 	{
-		if($this->scenario == 'changePassword')
+		if($this->scenario == 'changePassword' || $this->scenario == 'register')
 		{
 			$this->password = Yii::app()->snap->encrypt($this->password);
 			$this->password_repeat = Yii::app()->snap->encrypt($this->password_repeat);
@@ -252,7 +252,7 @@ class User extends SnapActiveRecord
 	
 	public function getBfb_id()
 	{
-		return 'BFB' . $this->id;
+		return 'FG' . $this->id;
 	}
 	
 	public function getFull_name_and_balance()
@@ -271,7 +271,7 @@ class User extends SnapActiveRecord
 		
 		/*
 		//This messes up the unique validation :(
-		if(!Yii::app()->user->checkAccess('admin')) 
+		if(!Yii::app()->user->checkAccess('Admin')) 
 		{
 			return array(
 				'condition' => "id = '" . Yii::app()->user->id . "'",

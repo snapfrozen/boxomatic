@@ -14,9 +14,10 @@
 	<div class="large-12 columns">
 		<div class="panel">
 			<a href="index.php?r=location/index" class="button small">List Locations</a>
-			<a href="index.php?r=location/create" class="button small">Create Location</a>
-			<a href="index.php?r=location/view&id=<?php echo $model->location_id; ?>" class="button small">View Location</a>
-			<a href="index.php?r=location/admin" class="button small">Maanage Locations</a>
+			<?php echo CHtml::link('List Locations',array('location/index'),array('class'=>'button small')) ?>
+			<?php echo CHtml::link('Create Location',array('location/create'),array('class'=>'button small')) ?>
+			<?php echo CHtml::link('View Location',array('location/view','id'=>$model->location_id),array('class'=>'button small')) ?>
+			<?php echo CHtml::link('Maanage Locations',array('location/admin'),array('class'=>'button small')) ?>
 		</div>
 	</div>
 	<div class="large-12 columns">

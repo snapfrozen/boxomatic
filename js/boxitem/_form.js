@@ -7,14 +7,6 @@ $loading.hide();
 function loadSpinners()
 {
 	$('select.chosen').chosen();
-	$('select#new_supplier').change(function(){
-		reloadBoxes(curUrl,{date: $('input#selected_delivery_date_id').val(), supplier:$(this).val()});
-	})
-	/*$('input.number').spinner();
-	$('input.currency, input.decimal').spinner({
-		places:2,
-		step:.05
-	});*/
 
 	$('input.number, input.decimal, input.currency').stepper({
 		arrow_step : 0.5, 
@@ -135,8 +127,8 @@ $('.delivery-date-picker').datepicker({
 	}
 });
 
-var BOXCOL_WIDTH = 100;
-var TABLE_WIDTH_BALANCE = 600;
+var BOXCOL_WIDTH = 70;
+var TABLE_WIDTH_BALANCE = 710;
 
 var $scrollTable = $('div#current-boxes table');
 var tableWidth = (BOXCOL_WIDTH * $scrollTable.find('.boxCol').length) + TABLE_WIDTH_BALANCE;

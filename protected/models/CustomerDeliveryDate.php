@@ -63,6 +63,7 @@ class CustomerDeliveryDate extends CActiveRecord
 			'Customer' => array(self::BELONGS_TO, 'Customer', 'customer_id'),
 			'CustomerLocation' => array(self::BELONGS_TO, 'CustomerLocation', 'customer_location_id'),
 			'Location' => array(self::BELONGS_TO, 'Location', 'location_id'),
+			'Extras' => array(self::HAS_MANY, 'CustomerDeliveryDateItem', 'customer_delivery_date_id')
 		);
 	}
 
@@ -108,7 +109,7 @@ class CustomerDeliveryDate extends CActiveRecord
 		$DeliveryDate=$this->DeliveryDate;
 		
 		if(time() > strtotime($DeliveryDate->deadline) && 
-			!Yii::app()->user->checkAccess('admin') && 
+			!Yii::app()->user->checkAccess('Admin') && 
 			!isset(Yii::app()->user->shadow_id) && 
 			Yii::app()->getAuthManager()->checkAccess('admin', Yii::app()->user->shadow_id))
 			return false;
@@ -137,6 +138,15 @@ class CustomerDeliveryDate extends CActiveRecord
 		}
 		else {
 			return "";
+		}
+	}
+	
+	public function getDelivery_location_key() 
+	{
+		if($this->customer_location_id)
+			return $this->customer_location_id.'-'.$this->location_id;
+		else {
+			return $this->location_id;
 		}
 	}
 }

@@ -113,7 +113,7 @@ EOD
 				'payment_date',
 				'payment_note',
 				array(
-					'class'=>'SnapButtonColumn',
+					'class'=>'application.components.snap.SnapButtonColumn',
 					'template'=>'{view}'
 				),
 			),

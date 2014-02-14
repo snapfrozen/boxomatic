@@ -7,7 +7,7 @@
 // CWebApplication properties can be configured here.
 return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
-	'name'=>'Box-o-Matic',
+	'name'=>'The Food Garden',
 
 	// preloading 'log' component
 	'preload'=>array('log'),
@@ -19,12 +19,21 @@ return array(
 		'application.components.*',
 		'application.components.snap.*',
 		'application.modules.user.models.*',
+		'snapcms.models.*',
+		'snapcms.components.*',
 		'ext.yii-mail.YiiMailMessage',
 		'ext.highcharts.*',
 		'ext.CEditableGrid.*',
 	),
+	
+	'aliases' => array(
+		'snapcms' => 'application.modules.snapcms',
+    ),
 
 	'modules'=>array(
+		'snapcms'=>array(
+			'class' => 'snapcms.SnapCMSModule'
+		),
 		// uncomment the following to enable the Gii tool
 		'gii'=>array(
 			'class'=>'system.gii.GiiModule',
@@ -104,6 +113,7 @@ return array(
 
 		'authManager'=>array(
 			'class'=>'CDbAuthManager',
+			'defaultRoles'=>array('Anonymous'),
 			'connectionID'=>'db',
 			'itemTable'=>'auth_item',
 			'itemChildTable'=>'auth_item_child',
@@ -138,10 +148,13 @@ return array(
 		
 		// uncomment the following to enable URLs in path-format
 		'urlManager'=>array(
+			'class'=>'SnapUrlManager',
 			'urlFormat'=>'path',
 			'showScriptName'=>false,
 			'rules'=>array(
 				'extras/order/<date:\d+>'=>'customerDeliveryDateItem/order',
+				'extras/order'=>'customerDeliveryDateItem/order',
+				//'<path:\w+>'=>'content/view',
 				'<controller:\w+>/<id:\d+>'=>'<controller>/view',
 				'<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',
 				'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
@@ -187,8 +200,8 @@ return array(
 	'params'=>array(
 		// this is used in contact page
 		'googleMapKey'=>'AIzaSyAU7aJq2EcQYJV7BsjZg1lkhR2dYBTZxfU',
-		'adminEmail'=>'info@bellofoodbox.org.au',
-		'adminEmailFromName'=>'Bellofoodbox',
+		'adminEmail'=>'info@foodgarden.com.au',
+		'adminEmailFromName'=>'The Food Garden',
 		'months'=>array(
 			1=>'January',
 			2=>'February',
@@ -225,7 +238,15 @@ return array(
 			'PAYPAL'=>'PayPal',
 		),
 		'orderDeadlineDays'=>4, //orders must be placed within 7 days of delivery 
-		'deliveryDayOfWeek'=>1, //0 (for Sunday) through 6 (for Saturday)
+		'deliveryDateLocations'=>array(
+			'Monday'=>array(1),
+			'Tuesday'=>array(2),
+			'Wednesday'=>array(),
+			'Thursday'=>array(),
+			'Friday'=>array(1,2),
+			'Saturday'=>array(),
+			'Sunday'=>array(),
+		), //0 (for Sunday) through 6 (for Saturday)
 		'autoCreateDeliveryDates'=>24   //Amount of weeks to auto create boxes for in advance
 	),
 );

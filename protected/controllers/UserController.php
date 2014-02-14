@@ -41,16 +41,16 @@ class UserController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','passwordReset','forgottenPassword','captcha'),
+				'actions'=>array('passwordReset','forgottenPassword','captcha'),
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
 				'actions'=>array('update','view','loginAs','changePassword'),
-				'roles'=>array('customer'),
+				'roles'=>array('customer','admin'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete','create','customers','resetPassword'),
-				'roles'=>array('admin'),
+				'actions'=>array('index', 'admin','delete','create','customers','resetPassword'),
+				'roles'=>array('Admin'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -64,8 +64,12 @@ class UserController extends Controller
 	 */
 	public function actionView($id)
 	{
+		$model = $this->loadModel($id);
+		if(!Yii::app()->user->checkAccess('Admin') && $model->id != Yii::app()->user->id) {
+			throw new CHttpException(403,'Access Denied.');
+		}
 		$this->render('view',array(
-			'model'=>$this->loadModel($id),
+			'model'=>$model,
 		));
 	}
 
@@ -91,6 +95,31 @@ class UserController extends Controller
 				if(isset($_POST['role'])) {
 					$model->setRole($_POST['role']);
 				}
+				if(isset($_POST['role']) && $_POST['role'] == 'customer')
+				{
+					if(empty($model->customer_id)) {
+						$Customer=new Customer();
+					} else {
+						$Customer=Customer::model()->findByPk($model->customer_id);
+					}
+					$Customer->attributes=$_POST['Customer'];
+					$Customer->save();
+					
+					$CustLoc=new CustomerLocation;
+					$CustLoc->customer_id=$Customer->customer_id;
+					$CustLoc->location_id=$Customer->location_id;
+					$CustLoc->address=$model->user_address;
+					$CustLoc->address2=$model->user_address2;
+					$CustLoc->suburb=$model->user_suburb;
+					$CustLoc->state=$model->user_state;
+					$CustLoc->postcode=$model->user_postcode;
+					$CustLoc->phone=!empty($model->user_phone)?$model->user_phone:$model->user_mobile;
+					$CustLoc->save();
+					
+					$model->customer_id = $Customer->customer_id;
+					$model->update(array('customer_id'));
+				}
+				
 				$this->redirect(array('view','id'=>$model->id));
 			}
 		}
@@ -118,6 +147,30 @@ class UserController extends Controller
 		
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
+		
+		if(isset($_POST['role']) && $_POST['role'] == 'customer')
+		{
+			if(empty($model->customer_id)) {
+				$Customer=new Customer();
+			} else {
+				$Customer=Customer::model()->findByPk($model->customer_id);
+			}
+			$Customer->save(false);
+
+			$CustLoc=new CustomerLocation;
+			$CustLoc->customer_id=$Customer->customer_id;
+			$CustLoc->location_id=$Customer->location_id;
+			$CustLoc->address=$model->user_address;
+			$CustLoc->address2=$model->user_address2;
+			$CustLoc->suburb=$model->user_suburb;
+			$CustLoc->state=$model->user_state;
+			$CustLoc->postcode=$model->user_postcode;
+			$CustLoc->phone=!empty($model->user_phone)?$model->user_phone:$model->user_mobile;
+			$CustLoc->save();
+
+			$model->customer_id = $Customer->customer_id;
+			$model->update(array('customer_id'));
+		}
 
 		$allSaved=true;
 		if(isset($_POST['Customer']))
@@ -273,7 +326,7 @@ class UserController extends Controller
 	 */
 	public function actionLoginAs($id)
 	{
-		if(Yii::app()->user->shadow_id || Yii::app()->user->checkAccess('admin'))
+		if(Yii::app()->user->shadow_id || Yii::app()->user->checkAccess('Admin'))
 		{
 			$User=User::model()->resetScope()->findByPk((int)$id);
 			$identity=new UserIdentity($User->user_email,'');

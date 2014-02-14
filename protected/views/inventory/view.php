@@ -25,6 +25,5 @@ $this->menu=array(
 		'grower_purchase_id',
 		'quantity',
 		'price',
-		'box_reserve',
 	),
 )); ?>

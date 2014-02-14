@@ -13,10 +13,9 @@ $this->menu=array(
 	</div>
 	<div class="large-12 columns">
 		<div class="panel">
-			<a href="index.php?r=supplier/index" class='button small'>List Supplier</a>
-			<a href="index.php?r=supplier/create" class='button small'>Create Supplier</a>
-			<a href="index.php?r=supplier/view&id=<?php echo $model->id; ?>" class='button small'>View Supplier</a>
-			<a href="index.php?r=supplier/admin" class='button small'>Manage Supplier</a>
+			<?php echo CHtml::link('List Supplier',array('supplier/index'),array('class'=>'button small')) ?>
+			<?php echo CHtml::link('Create Supplier',array('supplier/create'),array('class'=>'button small')) ?>
+			<?php echo CHtml::link('Manage Supplier',array('supplier/admin'),array('class'=>'button small')) ?>
 		</div>
 	</div>
 	<div class="large-12 columns">

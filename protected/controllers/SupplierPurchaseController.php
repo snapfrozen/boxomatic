@@ -28,15 +28,15 @@ class SupplierPurchaseController extends Controller
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','create','update','admin','delete','duplicate','report'),
-				'roles'=>array('admin'),
+				'roles'=>array('Admin'),
 			),
 //			array('allow', // allow authenticated user to perform 'create' and 'update' actions
 //				'actions'=>array('create','update'),
-//				'roles'=>array('admin'),
+//				'roles'=>array('Admin'),
 //			),
 //			array('allow', // allow admin user to perform 'admin' and 'delete' actions
 //				'actions'=>array('admin','delete'),
-//				'roles'=>array('admin'),
+//				'roles'=>array('Admin'),
 //			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -104,21 +104,24 @@ class SupplierPurchaseController extends Controller
 			
 			if($model->save()) 
 			{
-				$inventory = null;
-				if($model->inventory) {
-					$inventory = $model->inventory;
-				} else {
-					$inventory = new Inventory();
-					$inventory->supplier_purchase_id = $model->id;
-				}
+				if(!empty($model->delivery_date))
+				{
+					$inventory = null;
+					if($model->inventory) {
+						$inventory = $model->inventory;
+					} else {
+						$inventory = new Inventory();
+						$inventory->supplier_purchase_id = $model->id;
+					}
 
-				$inventory->quantity = $model->delivered_quantity;
-				$inventory->supplier_product_id = $model->supplier_product_id;
-				$inventory->delivery_date = $model->delivery_date;
+					$inventory->quantity = $model->delivered_quantity;
+					$inventory->supplier_product_id = $model->supplier_product_id;
+					$inventory->delivery_date = $model->delivery_date;
 
-				if(!$inventory->save()) {
-					Yii::app()->user->setFlash('error','There was a problem updating inventory');
-					print_r($inventory->errors);exit;
+					if(!$inventory->save()) {
+						Yii::app()->user->setFlash('error','There was a problem updating inventory');
+						print_r($inventory->errors);exit;
+					}
 				}
 				$this->redirect(array('admin','id'=>$model->id));
 			}

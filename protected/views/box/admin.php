@@ -36,7 +36,7 @@ $('.search-form form').submit(function(){
 		'box_price',
 		'DeliveryDate.date',
 		array(
-			'class'=>'SnapButtonColumn',
+			'class'=>'application.components.snap.SnapButtonColumn',
 		),
 	),
 )); ?>

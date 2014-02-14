@@ -81,7 +81,7 @@
 				</div>
 				<div class="large-4 columns">
 					<?php echo $form->labelEx($model,'user_state'); ?>
-					<?php echo $form->textField($model,'user_state',array('size'=>45,'maxlength'=>45)); ?>
+					<?php echo $form->dropDownList($model,'user_state',Yii::app()->params['states']); ?>
 					<?php echo $form->error($model,'user_state'); ?>
 				</div>
 				<div class="large-4 columns">
@@ -92,7 +92,7 @@
 			</div>
 		</fieldset>
 
-		<?php if($model->Customer && Yii::app()->user->checkAccess('admin')): $Customer=$model->Customer; ?>
+		<?php if($model->Customer && Yii::app()->user->checkAccess('Admin')): $Customer=$model->Customer; ?>
 
 		<fieldset>
 			<legend>Customer Details</legend>
@@ -163,25 +163,33 @@
 		</fieldset>
 		<?php endif; ?>		
 
+		<div class="row">
+			<div class="large-12 columns">
+				<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save', array('class' => 'button')); ?>	
+			</div>
+		</div>
 	</div>
 	<div class="large-4 columns">
 		<?php if($model->Customer): $Customer=$model->Customer; ?>
 		<fieldset>
 			<legend>Delivery Addresses</legend>
-			<div class="large-12 columns">
-				<?php echo $form->label($Customer, 'delivery_location_key');  ?>
-				<?php echo $form->dropDownList($Customer, 'delivery_location_key', $Customer->getDeliveryLocations());  ?>
-				<p>Changing this will update all your order locations</p>
-				<?php echo CHtml::link('Add a location', array('customerLocation/create','custId'=>$model->customer_id), array('class' => 'button small')); ?>
-				<?php $this->widget('zii.widgets.CListView', array(
-					'dataProvider'=>$custLocDataProvider,
-					'itemView'=>'../customerLocation/_view',
-				)); ?>
+			<div class="row">
+				<div class="large-12 columns">
+					<?php echo $form->label($Customer, 'delivery_location_key');  ?>
+					<?php echo $form->dropDownList($Customer, 'delivery_location_key', $Customer->getDeliveryLocations());  ?>
+					<p>Changing this will update all your order locations</p>
+					<?php echo CHtml::link('Add a location', array('customerLocation/create','custId'=>$model->customer_id), array('class' => 'button small')); ?>
+					<?php $this->widget('zii.widgets.CListView', array(
+						'dataProvider'=>$custLocDataProvider,
+						'summaryText' => '',
+						'itemView'=>'../customerLocation/_view',
+					)); ?>
+				</div>
 			</div>
 		</fieldset>
 		<?php endif; ?>
 
-		<?php if(Yii::app()->user->checkAccess('admin')): ?>
+		<?php if(Yii::app()->user->checkAccess('Admin')): ?>
 		<div class="panel callout">
 			<h4>Administration Panel</h4>
 			<?php echo CHtml::label('Role','role') ?>
@@ -189,9 +197,6 @@
 		</div>
 		<?php endif; ?>
 	</div>
-	<div class="large-12 columns">
-		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save', array('class' => 'button')); ?>	
-	</div>
+	
 	<?php $this->endWidget(); ?>
 </div>
-<?php /*echo $this->renderPartial('_form', array('model'=>$model,'custLocDataProvider'=>$custLocDataProvider)); */?>

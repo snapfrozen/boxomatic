@@ -88,7 +88,7 @@ EOD
 						'filter'=>CustomerBox::model()->statusOptions,
 					),
 					array(
-					'class'=>'SnapButtonColumn',
+					'class'=>'application.components.snap.SnapButtonColumn',
 						'header'=>'Actions',
 						'template'=>'{login}{process}{cancel}{set_approved}{set_delivered}',
 						'buttons'=>array(
@@ -107,22 +107,22 @@ EOD
 							(
 								'url'=>'array("boxItem/refund","custBox"=>$data->customer_box_id)',
 								'visible'=>'$data->status==CustomerBox::STATUS_APPROVED',
-								'label'=>'Cancel & Refund',
-								'options'=>array('confirm'=>'Are you sure you want to refund this box?'),
+								'label'=>'<i class="fi fi-minus"></i>',
+								'options'=>array('confirm'=>'Are you sure you want to refund this box?','title'=>'Cancel & Refund'),
 							),
 							'set_approved'=>array
 							(
 								'url'=>'array("boxItem/setApproved","custBox"=>$data->customer_box_id)',
 								'visible'=>'$data->status==CustomerBox::STATUS_DELIVERED',
-								'label'=>'Set Approved',
-								'options'=>array('confirm'=>'Are you sure you want to set this box to Approved?'),
+								'label'=>'<i class="fi fi-check"></i>',
+								'options'=>array('confirm'=>'Are you sure you want to set this box to Approved?','title'=>'Set Approved'),
 							),
 							'set_delivered'=>array
 							(
 								'url'=>'array("boxItem/setDelivered","custBox"=>$data->customer_box_id)',
 								'visible'=>'$data->status==CustomerBox::STATUS_APPROVED',
-								'label'=>'Set Delivered',
-								'options'=>array('confirm'=>'Are you sure you want to set this box to Collected/Delivered?'),
+								'label'=>'<i class="fi fi-shopping-bag"></i>',
+								'options'=>array('confirm'=>'Are you sure you want to set this box to Collected/Delivered?','title'=>'Set Delivered'),
 							)
 						),
 					),

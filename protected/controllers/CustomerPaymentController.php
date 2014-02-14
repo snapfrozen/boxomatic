@@ -28,11 +28,11 @@ class CustomerPaymentController extends Controller
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','create','paypalFailure','paypalSuccess'),
-				'roles'=>array('customer'),
+				'roles'=>array('customer','admin'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
 				'actions'=>array('admin','enterPayments'),
-				'roles'=>array('admin'),
+				'roles'=>array('Admin'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),

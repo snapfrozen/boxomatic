@@ -13,7 +13,17 @@
  */
 class Location extends CActiveRecord
 {
+	public function behaviors()
+	{
+		return array(
+			'activerecord-relation'=>array(
+				'class'=>'ext.active-relation-behavior.EActiveRecordRelationBehavior',
+			)
+		);
+	}
+	
 	public $pickup_label='Pick Up';
+	public $delivery_label='Delivery';
 	
 	/**
 	 * Returns the static model of the specified AR class.
@@ -59,6 +69,7 @@ class Location extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'customers' => array(self::HAS_MANY, 'Customers', 'location_id'),
+			'DeliveryDates' => array(self::MANY_MANY, 'DeliveryDate', 'delivery_date_locations(location_id, delivery_date_id)')
 		);
 	}
 
@@ -97,16 +108,21 @@ class Location extends CActiveRecord
 		
 	public function getLocation_and_delivery()
 	{
-		return $this->location_name . ' (' . $this->location_delivery_value . ')';
+		return $this->location_name . ' (' . Yii::app()->snapFormat->currency($this->location_delivery_value) . ')';
 	}
 	
-	public function getDeliveryList()
+	public static function getDeliveryList()
 	{
-		return CHtml::listData($this->findAll('is_pickup=0'),'location_id','location_name');
+		return CHtml::listData(self::model()->findAll('is_pickup=0'),'location_id','location_and_delivery','delivery_label');
 	}
 	
-	public function getPickupList()
+	public static function getPickupList()
 	{
-		return CHtml::listData($this->findAll('is_pickup=1'),'location_id','location_name','pickup_label');
+		return CHtml::listData(self::model()->findAll('is_pickup=1'),'location_id','location_and_delivery','pickup_label');
+	}
+	
+	public static function getDeliveryAndPickupList()
+	{
+		return array_merge(self::getPickupList(),self::getDeliveryList());
 	}
 }

@@ -36,7 +36,7 @@ class DeliveryDateController extends Controller
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
 				'actions'=>array('admin','delete','generatePackingList','generateCustomerList','generateOrderList','generateCustomerListPdf'),
-				'roles'=>array('admin'),
+				'roles'=>array('Admin'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -182,115 +182,180 @@ class DeliveryDateController extends Controller
 	 */
 	public function actionGeneratePackingList($date)
 	{
-		$sql = '
-		SELECT 
-			SUM(item_quantity) as total, 
-			
-			GROUP_CONCAT(DISTINCT t.box_id ORDER BY t.box_id DESC) AS box_ids,
-			GROUP_CONCAT(DISTINCT `box_item_id` ORDER BY `BoxItems`.box_id DESC) as box_item_ids,
-			
-			`BoxItems`.`box_item_id`,
-			`BoxItems`.`item_name`,
-			`BoxItems`.`item_unit`,
-			`Supplier`.`name`
-			
-		FROM `boxes` `t`  
-
-		LEFT OUTER JOIN `customer_boxes` `CustomerBoxes` 
-			ON (`CustomerBoxes`.`box_id`=`t`.`box_id`)
-		LEFT OUTER JOIN `box_items` `BoxItems` 
-			ON (`BoxItems`.`box_id`=`t`.`box_id`)  
-		LEFT OUTER JOIN `suppliers` `Supplier` 
-			ON (`BoxItems`.`supplier_id`=`Supplier`.`id`)  
-
-		WHERE (
-			delivery_date_id=' . $date . ' 
-			AND customer_box_id is not null
-			AND (
-				CustomerBoxes.status='.CustomerBox::STATUS_APPROVED.' OR
-				CustomerBoxes.status='.CustomerBox::STATUS_DELIVERED.'
-			)
-		) 
-
-		GROUP BY name,item_name 
-		ORDER BY name;
-		';
-		
-		echo $sql;exit;
-		
-		$connection=Yii::app()->db;
-		$command=$connection->createCommand($sql);
-		$dataReader=$command->query();
-		$items=$dataReader->readAll();
-
-		if(empty($items)) {
-			echo 'No customer orders!';
-			exit;
-		}
-		
 		$phpExcelPath = Yii::getPathOfAlias('application.external.PHPExcel');
+		$PackingStations = PackingStation::model()->findAll();
 		
-		$DateBoxes=Box::model()->with('BoxSize')->findAll(array(
-			'condition'=>'delivery_date_id = '.$date,
-			'order'=>'box_size_name DESC'
-		));
+		$lineIndex = 1;
 		
 		//disable Yii's Autoload because it messes with PHPExcel's autoloader
 		spl_autoload_unregister(array('YiiBase','autoload'));  
 		include($phpExcelPath . DIRECTORY_SEPARATOR . 'PHPExcel.php');
-		
 		$objPHPExcel = new PHPExcel();
 		$objPHPExcel->setActiveSheetIndex(0);
-		
-		$objPHPExcel->getActiveSheet()->SetCellValue('A1', 'Supplier');
-		$objPHPExcel->getActiveSheet()->SetCellValue('B1', 'Item');
-		$objPHPExcel->getActiveSheet()->SetCellValue('C1', 'Total Quantity');
-		$objPHPExcel->getActiveSheet()->SetCellValue('D1', 'Unit');
-		
-		$alpha='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-		$boxIds=explode(',',$items[0]['box_ids']);
-		
-		$pos=4;
 		spl_autoload_register(array('YiiBase','autoload'));
-		foreach($DateBoxes as $n=>$Box)
-		{
-			$custCount=$Box->customerCount;
-			$objPHPExcel->getActiveSheet()->SetCellValue($alpha[$pos].'1', $Box->BoxSize->box_size_name . ' (' . $custCount . ')');
-			$objPHPExcel->getActiveSheet()->getColumnDimension($alpha[$pos])->setAutoSize(true);
-			$pos++;
-		}
-		//spl_autoload_unregister(array('YiiBase','autoload'));  
-		$objPHPExcel->getActiveSheet()->getStyle("A1:".$alpha[$pos].'1')->applyFromArray(array("font" => array( "bold" => true)));
 		
-		$row=2;
-		foreach($items as $item)
+		foreach($PackingStations as $PS)
 		{
-			$objPHPExcel->getActiveSheet()->SetCellValue('A'.$row, $item['name']);
-			$objPHPExcel->getActiveSheet()->SetCellValue('B'.$row, $item['item_name']);
-			$objPHPExcel->getActiveSheet()->SetCellValue('C'.$row, $item['total']);
-			$objPHPExcel->getActiveSheet()->SetCellValue('D'.$row, $item['item_unit']);
+			$sql = '
+			SELECT 
+				SUM(item_quantity) as total, 
+
+				GROUP_CONCAT(DISTINCT t.box_id ORDER BY t.box_id DESC) AS box_ids,
+				GROUP_CONCAT(DISTINCT `box_item_id` ORDER BY `BoxItems`.box_id DESC) as box_item_ids,
+
+				`BoxItems`.`box_item_id`,
+				`BoxItems`.`item_name`,
+				`BoxItems`.`item_unit`,
+				`Supplier`.`name`
+				#`PackingStation`.`name` as packing_station
+
+			FROM `boxes` `t`  
+
+			LEFT OUTER JOIN `customer_boxes` `CustomerBoxes` 
+				ON (`CustomerBoxes`.`box_id`=`t`.`box_id`)
+			LEFT OUTER JOIN `box_items` `BoxItems` 
+				ON (`BoxItems`.`box_id`=`t`.`box_id`)  
+			LEFT OUTER JOIN `suppliers` `Supplier` 
+				ON (`BoxItems`.`supplier_id`=`Supplier`.`id`)
+			INNER JOIN `supplier_products` `SupplierProduct`
+				ON (`BoxItems`.`supplier_product_id`=`SupplierProduct`.`id`)
+			INNER JOIN `packing_stations` `PackingStation`
+				ON (`PackingStation`.`id`=`SupplierProduct`.`packing_station_id`)
+
+			WHERE (
+				delivery_date_id=' . $date . ' 
+				AND packing_station_id = ' . $PS->id . '
+				AND customer_box_id is not null
+				AND (
+					CustomerBoxes.status='.CustomerBox::STATUS_APPROVED.' OR
+					CustomerBoxes.status='.CustomerBox::STATUS_DELIVERED.'
+				)
+			) 
+
+			GROUP BY name,item_name 
+			ORDER BY name;
+			';
 			
-			$boxIds = explode(',',$item['box_ids']);
-			$boxItemIds = explode(',',$item['box_item_ids']);
-			$pos=4;
-			//spl_autoload_register(array('YiiBase','autoload'));
+			$connection=Yii::app()->db;
+			$command=$connection->createCommand($sql);
+			$dataReader=$command->query();
+			$items=$dataReader->readAll();
 			
-			foreach($DateBoxes as $Box)
+			$DateBoxes=Box::model()->with('BoxSize')->findAll(array(
+				'condition'=>'delivery_date_id = '.$date,
+				'order'=>'box_size_name DESC'
+			));
+
+			$objPHPExcel->getActiveSheet()->SetCellValue('A'.$lineIndex, $PS->name);
+			$objPHPExcel->getActiveSheet()->getStyle("A$lineIndex")->applyFromArray(array("font" => array( "bold" => true, "size" => 16)));
+			$lineIndex++;
+			
+			$objPHPExcel->getActiveSheet()->SetCellValue('A'.$lineIndex, 'Supplier');
+			$objPHPExcel->getActiveSheet()->SetCellValue('B'.$lineIndex, 'Item');
+			$objPHPExcel->getActiveSheet()->SetCellValue('C'.$lineIndex, 'Total Quantity');
+			$objPHPExcel->getActiveSheet()->SetCellValue('D'.$lineIndex, 'Unit');
+			
+			if(empty($items)) 
 			{
-				$BoxItem=null;
-				$biPos=false;
-				$biPos=array_search($Box->box_id, $boxIds);
+				$objPHPExcel->getActiveSheet()->getStyle("A$lineIndex:D$lineIndex")->applyFromArray(array("font" => array( "bold" => true )));
 				
-				if($biPos !== false)
-					$BoxItem=BoxItem::model()->findByAttributes(array('box_id'=>$Box->box_id, 'box_item_id'=>$boxItemIds[$biPos]));
-				$quantity=($BoxItem && !empty($BoxItem->item_quantity)) ? $BoxItem->item_quantity : '0';
-				$objPHPExcel->getActiveSheet()->SetCellValue($alpha[$pos].$row, $quantity);
-				$pos++;
+				$lineIndex++;
+				$objPHPExcel->getActiveSheet()->SetCellValue('A'.$lineIndex, 'No box items for this packing station.');
+				$lineIndex+=2;
+				//continue;
 			}
-			//spl_autoload_unregister(array('YiiBase','autoload'));  
+			else
+			{
+				//$lineIndex++;
+
+				$alpha='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+				$boxIds=explode(',',$items[0]['box_ids']);
+
+				$pos=4;
+				foreach($DateBoxes as $n=>$Box)
+				{
+					$custCount=$Box->customerCount;
+					$objPHPExcel->getActiveSheet()->SetCellValue($alpha[$pos].$lineIndex, $Box->BoxSize->box_size_name . ' (' . $custCount . ')');
+					$objPHPExcel->getActiveSheet()->getColumnDimension($alpha[$pos])->setAutoSize(true);
+					$pos++;
+				}
+				$objPHPExcel->getActiveSheet()->getStyle("A$lineIndex:".$alpha[$pos].$lineIndex)->applyFromArray(array("font" => array( "bold" => true)));
+				$lineIndex++;
+
+				foreach($items as $item)
+				{
+					$objPHPExcel->getActiveSheet()->SetCellValue('A'.$lineIndex, $item['name']);
+					$objPHPExcel->getActiveSheet()->SetCellValue('B'.$lineIndex, $item['item_name']);
+					$objPHPExcel->getActiveSheet()->SetCellValue('C'.$lineIndex, $item['total']);
+					$objPHPExcel->getActiveSheet()->SetCellValue('D'.$lineIndex, $item['item_unit']);
+
+					$boxIds = explode(',',$item['box_ids']);
+					$boxItemIds = explode(',',$item['box_item_ids']);
+					$pos=4;
+
+					foreach($DateBoxes as $Box)
+					{
+						$BoxItem=null;
+						$biPos=false;
+						$biPos=array_search($Box->box_id, $boxIds);
+
+						if($biPos !== false)
+							$BoxItem=BoxItem::model()->findByAttributes(array('box_id'=>$Box->box_id, 'box_item_id'=>$boxItemIds[$biPos]));
+						$quantity=($BoxItem && !empty($BoxItem->item_quantity)) ? $BoxItem->item_quantity : '0';
+						$objPHPExcel->getActiveSheet()->SetCellValue($alpha[$pos].$lineIndex, $quantity);
+						$pos++;
+					}
+					$lineIndex++;
+				}
+				$lineIndex++;
+			}
 			
-			$row++;
+			//Extras
+			$objPHPExcel->getActiveSheet()->SetCellValue('A'.$lineIndex, 'EXTRAS');
+			$objPHPExcel->getActiveSheet()->getStyle("A$lineIndex")->applyFromArray(array("font" => array( "bold" => true)));
+			$lineIndex++;
+			
+			$CDDs = CustomerDeliveryDate::model()->with('Extras')->findAllByAttributes(array('delivery_date_id'=>$date), 'packing_station_id = ' . $PS->id);
+			
+			if(empty($CDDs)){
+				$objPHPExcel->getActiveSheet()->SetCellValue('A'.$lineIndex++, 'No extras for this packing station');
+			}
+			
+			foreach($CDDs as $CDD) 
+			{
+				//Create a string that show what boxes this customer has ordered.. if any.
+				$orderedBoxes = array();
+				$CustBoxes = CustomerBox::model()->with('Box')->findAllByAttributes(array(
+						'customer_id'=>$CDD->customer_id,
+					),
+					'delivery_date_id='.$date
+				);
+				foreach($CustBoxes as $CustBox) {
+					$orderedBoxes[]=$CustBox->Box->BoxSize->box_size_name;
+				}
+				$orderedString = ' (No Boxes Ordered)';
+				if(!empty($orderedBoxes)) {
+					$orderedString = ' (' . implode(',',$orderedBoxes) . ')';
+				}
+				
+				$User = $CDD->Customer->User;
+				$objPHPExcel->getActiveSheet()->SetCellValue('A'.$lineIndex, $User ? $User->bfb_id . ' - ' . $User->full_name . $orderedString : 'No Customer Name!');
+				$objPHPExcel->getActiveSheet()->getStyle("A$lineIndex")->applyFromArray(array("font" => array( "bold" => true)));
+				$lineIndex++;
+				
+				foreach($CDD->Extras as $Extra)
+				{
+					$objPHPExcel->getActiveSheet()->SetCellValue('A'.$lineIndex, $Extra->supplierPurchase->supplierProduct->Supplier->name);
+					$objPHPExcel->getActiveSheet()->SetCellValue('B'.$lineIndex, $Extra->name);
+					$objPHPExcel->getActiveSheet()->SetCellValue('C'.$lineIndex, $Extra->quantity);
+					$objPHPExcel->getActiveSheet()->SetCellValue('D'.$lineIndex, $Extra->unit);
+					$lineIndex++;
+				}
+				$lineIndex++;
+			}
+			$lineIndex++;
 		}
+		
 		$objPHPExcel->getActiveSheet()->getColumnDimension("A")->setAutoSize(true);
 		$objPHPExcel->getActiveSheet()->getColumnDimension("B")->setAutoSize(true);
 		$objPHPExcel->getActiveSheet()->getColumnDimension("C")->setAutoSize(true);

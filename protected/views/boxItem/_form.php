@@ -49,12 +49,12 @@ EOD
 		</div>
 	</div>
 	<?php if($SelectedDeliveryDate): ?>
-	<div class="large-3 columns">
+	<div class="large-3 columns end">
 		<div id="inventory">
 			<div class="dropDown">
-				<h4 data-dropdown="inventoryDropdown">Inventory</h4>
+				<h4 data-dropdown="inventoryDropdown">Products</h4>
 				<div id="inventoryDropdown" class="dropDownPanel">
-				<?php $dataProvider=$SupplierProducts->search(); ?>
+				<?php $dataProvider=$SupplierProducts->search($SelectedDeliveryDate); ?>
 				<?php $pageSize=Yii::app()->user->getState('pageSize',10); ?>
 				<?php $this->widget('zii.widgets.grid.CGridView', array(
 					'id'=>'supplier-item-grid',
@@ -77,13 +77,23 @@ EOD
 							'type'=>'raw',
 							'value'=>'
 								Yii::app()->request->getQuery("date") ?
-									CHtml::link($data->Supplier->name,array_merge(array("boxItem/create","item"=>$data->id,"date"=>Yii::app()->request->getQuery("date"))))
+									CHtml::link($data->Supplier->name,array_merge(array("boxItem/create","date"=>Yii::app()->request->getQuery("date"),"supplier"=>$data->supplier_id)))
 								:
 									$data->Supplier->name',
 							'cssClassExpression'=>'"supplier-".$data->Supplier->id',
 							//'filter'=>$SupplierProducts
 						),
-						'name',
+						array(
+							'name'=>'name',
+							'type'=>'raw',
+							'value'=>'
+								Yii::app()->request->getQuery("date") ?
+									CHtml::link($data->name,array_merge(array("boxItem/create","item"=>$data->id,"date"=>Yii::app()->request->getQuery("date"))))
+								:
+									$data->name',
+							'cssClassExpression'=>'"item-".$data->Supplier->id',
+							//'filter'=>$SupplierProducts
+						),
 						array(
 							'name'=>'value',
 							'value'=>'Yii::app()->snapFormat->currency($data->value)',
@@ -93,8 +103,16 @@ EOD
 							'value'=>'Yii::app()->snapFormat->getMonthName($data->available_from) . " to " . Yii::app()->snapFormat->getMonthName($data->available_to)',
 							'filter'=>Yii::app()->params["months"],
 						),
+						/*
 						array(
-							'class'=>'SnapButtonColumn',
+							'name'=>'in_inventory',
+							'type'=>'raw',
+							'value'=>'empty($data->Inventory) ? "No" : "Yes"',
+							'filter'=>array(1=>'Yes',0=>'No'),
+						),
+						 */
+						array(
+							'class'=>'application.components.snap.SnapButtonColumn',
 							'template'=>'{update}{delete}',
 							'buttons'=>array(
 								'update'=>array(
@@ -112,19 +130,6 @@ EOD
 		</div>
 	</div>
 	
-	<div class="large-3 columns end">
-		<div class="addSupplier">
-			<div class="dropDown">
-				<h4 data-dropdown="supplierDropdown">Suppliers</h4>
-				<div class="dropDownPanel" id="supplierDropdown">
-					<div class="large-12 columns">
-						<?php echo CHtml::dropDownList('new_supplier',null,CHtml::listData(Supplier::model()->findAll(array('order'=>'name ASC')),'id','name'),array('class'=>'chosen')); ?>
-						<?php echo CHtml::hiddenField('selected_delivery_date_id',$SelectedDeliveryDate->id); ?>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
 	<?php endif; ?>
 
 </div>
@@ -145,6 +150,7 @@ EOD
 			<thead>
 				<tr>
 					<th class="supplierName">Items</th>
+					<th class="packingStation">Packing Station</th>
 					<th class="valueCol">Value</th>
 					<?php
 					$dateBoxCount=0;
@@ -191,7 +197,7 @@ EOD
 				$lastSupplierId=$BoxItemsContent->supplier_id;
 				?>
 				<tr class="group">
-					<td colspan="<?php echo $dateBoxCount+4 ?>">
+					<td colspan="<?php echo $dateBoxCount+5 ?>">
 						<?php echo CHtml::link($BoxItemsContent->Supplier->name, array('boxItem/create','supplier'=>$BoxItemsContent->supplier_id,'date'=>Yii::app()->request->getQuery('date'))); ?>
 						(<strong><?php echo Yii::app()->snapFormat->currency(BoxItem::supplierTotalByDeliveryDate($BoxItemsContent->supplier_id, $SelectedDeliveryDate->id)) ?></strong>)
 					</td>
@@ -202,14 +208,31 @@ EOD
 
 				<tr <?php echo $selectedClass ?>>
 					<td>
-						<?php echo CHtml::checkbox('bc['.$key.'][add_to_inventory]',false,array('title'=>'Add this item to the inventory', 'class' => 'inline')); ?>
 						<?php
 							echo CHtml::hiddenField('bc['.$key.'][supplier_id]',$BoxItemsContent->supplier_id);
 							echo CHtml::hiddenField('bc['.$key.'][date_id]',$SelectedDeliveryDate->id);
-							echo CHtml::textField('bc['.$key.'][item_name]',$BoxItemsContent->item_name, array('class' => 'inline-85'));
-
+							echo CHtml::hiddenField('bc['.$key.'][supplier_product_id]',$BoxItemsContent->supplier_product_id);
+							if(empty($BoxItemsContent->supplier_product_id)) :
+								echo CHtml::textField('bc['.$key.'][item_name]',$BoxItemsContent->item_name, array('class' => 'inline-85'));
+							else:
+								echo CHtml::link($BoxItemsContent->item_name, array('supplierProduct/update','id'=>$BoxItemsContent->supplier_product_id));
+							endif;
 							$totalQuantity=BoxItem::totalQuantity($BoxItemsContent->box_item_ids);
 							$totalValue=$BoxItemsContent->item_value*$totalQuantity;
+							
+							if($BoxItemsContent->SupplierProduct && $BoxItemsContent->item_name != CHtml::value($BoxItemsContent,'SupplierProduct.name')) {
+								echo CHtml::link('<i class="fi fi-page-copy"></i>',array('boxItem/copyProductName','id'=>$BoxItemsContent->box_item_id),array('title'=>'Product name should be: ' . CHtml::value($BoxItemsContent,'SupplierProduct.name')));
+							}
+						?>
+					</td>
+					<td>
+						<?php
+							if(!empty($BoxItemsContent->supplier_product_id)) :
+								echo CHtml::value($BoxItemsContent, 'SupplierProduct.PackingStation.name');
+								echo CHtml::hiddenField('bc['.$key.'][packing_station_id]',CHtml::value($BoxItemsContent, 'SupplierProduct.packing_station_id'));
+							else: 
+								echo CHtml::dropDownList('bc['.$key.'][packing_station_id]',CHtml::value($BoxItemsContent, 'SupplierProduct.packing_station_id'),CHtml::listData(PackingStation::model()->findAll(), 'id', 'name'));
+							endif;
 						?>
 					</td>
 					<td class="itemValue">
@@ -268,7 +291,7 @@ EOD
 			</tbody>
 			<tfoot>
 				<tr>
-					<td class="total" colspan="2">
+					<td class="total" colspan="3">
 						Box Wholesale:
 					</td>
 					<?php 
@@ -289,7 +312,7 @@ EOD
 					<td></td>
 				</tr>
 				<tr>
-					<td class="total" colspan="2">
+					<td class="total" colspan="3">
 						Target Retail:
 					</td>
 					<?php 
@@ -308,7 +331,7 @@ EOD
 					<td></td>
 				</tr>
 				<tr>
-					<td class="total" colspan="2">
+					<td class="total" colspan="3">
 						Box Markup:
 					</td>
 					<?php 
@@ -326,7 +349,7 @@ EOD
 					<td></td>
 				</tr>
 				<tr>
-					<td class="total" colspan="2">
+					<td class="total" colspan="3">
 						Box Retail:
 					</td>
 					<?php 

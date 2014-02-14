@@ -39,12 +39,6 @@ $cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/supplierproduct/_for
 		<?php echo $form->textField($model,'quantity',array('size'=>7,'maxlength'=>7)); ?>
 		<?php echo $form->error($model,'quantity'); ?>
 	</div>
-
-	<div class="large-6 columns">
-		<?php echo $form->labelEx($model,'box_reserve'); ?>
-		<?php echo $form->textField($model,'box_reserve',array('size'=>7,'maxlength'=>7)); ?>
-		<?php echo $form->error($model,'box_reserve'); ?>
-	</div>
 	
 	<div class="large-12 columns">
 		<?php echo $form->labelEx($model,'notes'); ?>

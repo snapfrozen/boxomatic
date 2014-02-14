@@ -6,6 +6,7 @@
  * The followings are the available columns in table 'supplier_products':
  * @property integer $id
  * @property integer $supplier_id
+ * @property integer $packing_station_id
  * @property string $name
  * @property string $value
  * @property string $unit
@@ -17,26 +18,17 @@
  * The followings are the available model relations:
  * @property Supplier $supplier
  */
-class SupplierProduct extends CActiveRecord
+class SupplierProduct extends ImageActiveRecord
 {
-	const imageDir = 'data/products';
-	
-	static $phpThumbSizes = array(
-		'small'=>array(
-			'w'=>168,
-			'h'=>168,
-			'zc'=>1,
-		),
-		//large-4 column
-		'medium'=>array(
-			'w'=>279,
-		),
-	);
+	static $imageDir = 'data/products';
+	static $defaultImageLocation = 'data/products/default.gif';
 	
     /*
      * supplier name search attribute
      */
     public $supplier_search;
+	public $in_inventory;
+	
 	/*
 	 * attribute for searching availablity by month
 	 */
@@ -99,16 +91,17 @@ class SupplierProduct extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('supplier_id', 'numerical', 'integerOnly'=>true),
-			array('image_ext', 'length', 'max'=>20),
-			array('name', 'length', 'max'=>45),
+			array('packing_station_id, supplier_id', 'numerical', 'integerOnly'=>true),
+			array('name', 'length', 'max'=>45, 'min'=>3),
 			array('value', 'length', 'max'=>7),
 			array('unit', 'length', 'max'=>5),
+			array('limited_stock', 'boolean'),
 			array('description, available_from, available_to', 'safe'),
+			array('image_ext', 'length', 'max'=>20),
 			array('image', 'file', 'types'=>'jpg, gif, png', 'allowEmpty'=>true),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, supplier_id, supplier_search, month_available, name, value, unit, available_from, available_to', 'safe', 'on'=>'search'),
+			array('id, in_inventory, supplier_id, supplier_search, month_available, name, value, unit, available_from, available_to', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -122,6 +115,8 @@ class SupplierProduct extends CActiveRecord
 		return array(
 			'Supplier' => array(self::BELONGS_TO, 'Supplier', 'supplier_id'),
 			'Categories' => array(self::MANY_MANY, 'Category', 'supplier_product_categories(supplier_product_id, category_id)'),
+			'PackingStation' => array(self::BELONGS_TO, 'PackingStation', 'packing_station_id'),
+			'Inventory' => array(self::HAS_MANY, 'Inventory', 'supplier_product_id'),
 		);
 	}
 
@@ -140,7 +135,9 @@ class SupplierProduct extends CActiveRecord
 			'available_to' => 'Available To',
 			'supplier_search' => 'Supplier Name',
 			'month_available' => 'Month Available',
+			'limited_stock' => 'Limited Stock',
 			'image' => 'Image',
+			'packing_station_id' => 'Packing Station',
 		);
 	}
 
@@ -148,20 +145,46 @@ class SupplierProduct extends CActiveRecord
 	 * Retrieves a list of models based on the current search/filter conditions.
 	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
 	 */
-	public function search()
+	public function search($DeliveryDate=null)
 	{
 		$pageSize=isset($_GET['pageSize'])?$_GET['pageSize']:10;
 		Yii::app()->user->setState('pageSize',$pageSize);
 		// Warning: Please modify the following code to remove attributes that
 		// should not be searched.
-
+		
+		if(empty($this->month_available) && $DeliveryDate) {
+			$month = date('n',strtotime($DeliveryDate->date));;
+			$this->month_available = $month;
+		}
+		
+			
 		$criteria=new CDbCriteria;
-
-        $criteria->with = array('Supplier'=>array(
-//			'select'=>'IF(id is null, 1, id) as id',
-//			'select'=>'2 AS id',
-//			'joinType'=>'RIGHT JOIN'
-		));
+        $criteria->with = array('Supplier');
+		
+		if($this->in_inventory === "1") 
+		{
+			//FB - Breaks! :( http://www.yiiframework.com/forum/index.php/topic/10533-inner-join-with-complex-on-clause/
+			//$criteria->with []= 'Inventory';
+			//$criteria->addCondition('Inventory.inventory_id IS NOT NULL');
+			
+			$criteria->join ='
+				INNER JOIN Suppliers
+				ON ( t.supplier_id = Suppliers.id)
+				INNER JOIN Inventory
+				ON ( t.id = Inventory.supplier_product_id)
+			';
+		}
+		else if($this->in_inventory === "0")
+		{
+			$criteria->join ='
+				INNER JOIN Suppliers
+				ON ( t.supplier_id = Suppliers.id)
+				LEFT JOIN Inventory
+				ON ( t.id = Inventory.supplier_product_id)
+			';
+			$criteria->addCondition('Inventory.inventory_id IS null');
+		}
+		
 		$criteria->compare('id',$this->id);
 		$criteria->compare('supplier_id',$this->supplier_id);
 		$criteria->compare('Supplier.name', $this->supplier_search, true );
@@ -169,8 +192,7 @@ class SupplierProduct extends CActiveRecord
 		$criteria->compare('value',$this->value,true);
 		$criteria->compare('unit',$this->unit,true);
 		
-		if($this->month_available)
-		{
+		if($this->month_available) {
 			$criteria->addCondition($this->month_available . ' BETWEEN available_from AND available_to');
 		}
 
@@ -213,36 +235,5 @@ class SupplierProduct extends CActiveRecord
 		
 		$items = self::model()->with('Supplier')->findAll($criteria);
 		return CHtml::listData($items,'id','name_with_unit');
-	}
-	
-	/**
-	 * 
-	 */
-	public function getImage_location()
-	{
-		$imageLoc='';
-		if(!empty($this->image))
-			$imageLoc = Yii::app()->basePath . '/'. self::imageDir . '/' . $this->id . '.' . $this->image_ext;
-		return $imageLoc;
-	}
-	
-	/**
-	 * 
-	 */
-	public function getImage_url()
-	{
-		$imageUrl='';
-		if(!empty($this->image))
-			$imageUrl = Yii::app()->baseUrl . self::imageDir . '/' . $this->id . '' . $this->image_ext;
-		return $imageUrl;
-	}
-	
-	public function beforeSave()
-	{
-		if($this->image instanceof CUploadedFile) {
-			$this->setAttribute('image_ext',$this->image->extensionName);
-			$this->image->saveAs($this->image_location);
-		}
-		return parent::beforeSave();
 	}
 }

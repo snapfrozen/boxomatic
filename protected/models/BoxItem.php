@@ -61,6 +61,7 @@ class BoxItem extends CActiveRecord
 		return array(
 			'Box' => array(self::BELONGS_TO, 'Box', 'box_id'),
 			'Supplier' => array(self::BELONGS_TO, 'Supplier', 'supplier_id'),
+			'SupplierProduct' => array(self::BELONGS_TO, 'SupplierProduct', 'supplier_product_id'),
 		);
 	}
 

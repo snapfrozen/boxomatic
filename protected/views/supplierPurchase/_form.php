@@ -89,6 +89,7 @@ $cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/supplierpurchase/_fo
 			));	
 		?>
 		<?php echo $form->error($model,'delivery_date'); ?>
+		<p class="hint"><strong>Delivery Date</strong> must be filled in if the item to be added to inventory.</p>
 
 		<?php echo $form->labelEx($model,'delivery_notes'); ?>
 		<?php echo $form->textArea($model,'delivery_notes',array('rows'=>6, 'cols'=>50)); ?>

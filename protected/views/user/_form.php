@@ -91,7 +91,7 @@
 	</div>
 </fieldset>
 
-<?php if($model->Customer && Yii::app()->user->checkAccess('admin')): $Customer=$model->Customer; ?>
+<?php if($model->Customer && Yii::app()->user->checkAccess('Admin')): $Customer=$model->Customer; ?>
 <fieldset>
 	<legend>Customer Details</legend>
 
@@ -163,7 +163,7 @@
 
 <?php endif; ?>
 
-<?php if(Yii::app()->user->checkAccess('admin')): ?>
+<?php if(Yii::app()->user->checkAccess('Admin')): ?>
 	<div class="panel callout">
 		<?php echo CHtml::label('Role','role') ?>
 		<?php echo CHtml::dropDownList('role',$model->getRole(),CHtml::listData(Yii::app()->authManager->getRoles(),'name','name')) ?>
@@ -176,26 +176,4 @@
 	</div>
 </div>
 
-
-<?php/* if($model->Customer): $Customer=$model->Customer; ?>
-<div class="half padLeft">
-	
-	<h2>Delivery addresses</h2>
-
-	<div class="row">
-		<?php echo $form->label($Customer, 'delivery_location_key');  ?>
-		<?php echo $form->dropDownList($Customer, 'delivery_location_key', $Customer->getDeliveryLocations());  ?>
-		<p class="hint">Changing this will update all your order locations</p>
-	</div>
-		
-	<p><?php echo CHtml::link('Add a location', array('customerLocation/create','custId'=>$model->customer_id)); ?></p>
-	<?php $this->widget('zii.widgets.CListView', array(
-		'dataProvider'=>$custLocDataProvider,
-		'itemView'=>'../customerLocation/_view',
-	)); ?>
-	
-</div>
-<?php endif;*/ ?>
-	
-	
 <?php $this->endWidget(); ?>

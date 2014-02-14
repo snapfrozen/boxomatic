@@ -1,7 +1,7 @@
 
 <div class="row">
 	<div class="large-12 columns">
-		<h1>Manage DeliveryDates</h1>
+		<h1>Manage Delivery Dates</h1>
 	</div>
 	<div class="large-12 columns">
 		<?php $this->widget('zii.widgets.grid.CGridView', array(
@@ -14,7 +14,8 @@
 				'notes',
 				'disabled',
 				array(
-					'class'=>'SnapButtonColumn',
+					'class'=>'application.components.snap.SnapButtonColumn',
+					'template'=>'{update}{delete}'
 				),
 			),
 		)); ?>

@@ -21,7 +21,7 @@
 			array(
 				'name'=>'size_id',
 				'value'=>'$data->BoxSize->box_size_name',
-				'filter'=>CHtml::listData(BoxSize::model()->findAll(), 'box_size_id', 'box_size_name'),
+				'filter'=>CHtml::listData(BoxSize::model()->findAll(), 'id', 'box_size_name'),
 			),
 			array(
 				'name'=>'box_price',

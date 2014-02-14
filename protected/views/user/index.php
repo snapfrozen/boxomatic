@@ -4,8 +4,8 @@
 	</div>
 	<div class="large-12 columns">
 		<div class="panel">
-			<a href="index.php?r=user/create" class="button small">Create User</a>
-			<a href="index.php?r=user/admin" class="button small">Manage User</a>
+			<?php echo CHtml::link('Create User',array('user/create'),array('class'=>'button small')) ?>
+			<?php echo CHtml::link('Manage User',array('user/admin'),array('class'=>'button small')) ?>
 		</div>
 	</div>
 	

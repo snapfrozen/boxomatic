@@ -31,7 +31,7 @@ $('.search-form form').submit(function(){
 		'Customer.User.first_name',
 		'Customer.User.last_name',
 		array(
-			'class'=>'SnapButtonColumn',
+			'class'=>'application.components.snap.SnapButtonColumn',
 		),
 	),
 )); ?>

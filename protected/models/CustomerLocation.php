@@ -82,7 +82,7 @@ class CustomerLocation extends CActiveRecord
 			'customer_location_id' => 'Location',
 			'customer_id' => 'Customer',
 			'location_id' => 'Location',
-			'address' => 'Address',
+			'address' => 'Street Address',
 			'address2' => 'Address2',
 			'suburb' => 'Suburb',
 			'state' => 'State',

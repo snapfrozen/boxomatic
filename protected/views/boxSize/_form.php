@@ -1,5 +1,6 @@
 <?php $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'box-size-form',
+	'htmlOptions' => array('enctype' => 'multipart/form-data'),
 	'enableAjaxValidation'=>false,
 )); ?>
 
@@ -38,6 +39,24 @@
 			<?php echo $form->labelEx($model,'box_size_price'); ?>
 			<?php echo $form->textField($model,'box_size_price',array('size'=>7,'maxlength'=>7)); ?>
 			<?php echo $form->error($model,'box_size_price'); ?>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="large-4 columns">
+			<?php echo $form->labelEx($model,'image'); ?>
+			<?php echo $form->fileField($model,'image'); ?>
+			<?php echo $form->error($model,'image'); ?>
+			<?php if(!empty($model->image)): ?>
+				<?php echo CHtml::image($this->createUrl('boxSize/image',array('id'=>$model->id,'size'=>'medium'))); ?>
+			<?php else: ?>
+				<?php echo CHtml::image($this->createUrl('boxSize/image')); ?>
+			<?php endif; ?>
+		</div>
+		<div class="large-8 columns">
+			<?php echo $form->labelEx($model,'description'); ?>
+			<?php echo $form->textArea($model,'description'); ?>
+			<?php echo $form->error($model,'description'); ?>
 		</div>
 	</div>
 
