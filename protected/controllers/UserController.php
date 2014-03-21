@@ -45,7 +45,7 @@ class UserController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('update','view','loginAs','changePassword'),
+				'actions'=>array('update','view','loginAs','changePassword','dontWant'),
 				'roles'=>array('customer','admin'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -358,6 +358,58 @@ class UserController extends Controller
 			Yii::app()->user->setFlash('error', "Password changed but no email sent");
 
 		$this->redirect(array('user/customers'));
+	}
+	
+	/**
+	 * @param integer $id the ID of the model to be displayed
+	 */
+	public function actionDontWant($id, $cat=null, $product=null, $like=null)
+	{
+		$model = $this->loadModel($id);
+		if(!Yii::app()->user->checkAccess('Admin') && $model->id != Yii::app()->user->id) {
+			throw new CHttpException(403,'Access Denied.');
+		}
+		
+		if(!$cat)
+			$cat = Category::productFeatureCategory;
+		
+		if($product) {
+			$model->DontWant = array_merge($model->DontWant, array($product));
+			$model->save();
+			$model->refresh();
+		}
+		
+		if($like) {
+			$newArr = array();
+			foreach($model->DontWant as $Product) {
+				if($Product->id != $like) {
+					$newArr[] = $Product->id;
+				}
+			}
+			$model->DontWant = $newArr;
+			$model->save();
+			$model->refresh();
+		}
+		
+		$Category = Category::model()->findByPk($cat);
+		if($cat==Category::uncategorisedCategory) {
+			$SupplierProducts = SupplierProduct::getUncategorised();
+		} else {
+			$SupplierProducts = $Category->SupplierProducts;
+		}
+		
+		$dontWantIds = array();
+		foreach($model->DontWant as $SP) {
+			$dontWantIds[$SP->id] = $SP;
+		}
+
+		$this->render('dont_want',array(
+			'model'=>$model,
+			'curCat'=>$cat,
+			'Category'=>$Category,
+			'SupplierProducts'=>$SupplierProducts,
+			'dontWantIds'=>$dontWantIds,
+		));
 	}
 
 	/**

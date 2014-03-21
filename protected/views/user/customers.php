@@ -32,6 +32,7 @@ EOD
 	<div class="large-12 columns">
 		<div class="panel">
 			<?php echo CHtml::link('Create user',array('user/create'), array('class' => 'button small')) ?>
+			<?php echo CHtml::link('Export',array('customer/export'), array('class' => 'button small')) ?>
 			<?php echo CHtml::link('Advanced Search','#',array('class'=>'search-button button small')); ?>
 		</div>
 	</div>

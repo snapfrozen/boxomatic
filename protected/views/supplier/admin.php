@@ -27,6 +27,7 @@ $('.search-form form').submit(function(){
 	<div class="large-12 columns">
 		<div class="panel">
 			<?php echo CHtml::link('Create',array('supplier/create'),array('class'=>'button small')); ?>
+			<?php echo CHtml::link('Export',array('supplier/export'), array('class' => 'button small')) ?>
 			<?php echo CHtml::link('Advanced Search','#',array('class'=>'search-button button small')); ?>
 		</div>
 	</div>

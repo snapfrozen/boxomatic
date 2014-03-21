@@ -35,87 +35,31 @@
 			 </ul>
 			<section class="top-bar-section">
 				<ul class="right">
-					
-				<?php if(Yii::app()->controller->id == 'content' || Yii::app()->controller->id == 'site'): ?>
+
 				<?php $items = Menu::model('main_menu')->menuList; ?>
-					<?php foreach($items as $item):?>
-					<li <?php echo !empty($item['items']) ? 'class="has-dropdown"' : '' ?>>
-						<?php echo CHtml::link($item['label'], $item['url']); ?>
-						<?php if(!empty($item['items'])): ?>
-						<ul class="dropdown">
-							<?php foreach($item['items'] as $childItem):?>
-							<li><?php echo CHtml::link($childItem['label'], $childItem['url']); ?></li>
-							<?php endforeach; ?>
-						</ul>
-						<?php endif;?>
-					</li>
-					<li class="divider"></li>
-					<?php endforeach; ?>
-					
-				<?php else: ?>
-					
+				<?php foreach($items as $item):?>
+				<li <?php echo !empty($item['items']) ? 'class="has-dropdown"' : '' ?>>
+					<?php echo CHtml::link($item['label'], $item['url']); ?>
+					<?php if(!empty($item['items'])): ?>
+					<ul class="dropdown">
+						<?php foreach($item['items'] as $childItem):?>
+						<li><?php echo CHtml::link($childItem['label'], $childItem['url']); ?></li>
+						<?php endforeach; ?>
+					</ul>
+					<?php endif;?>
+				</li>
+				<li class="divider"></li>
+				<?php endforeach; ?>
+
 				<?php if(Yii::app()->user->shadow_id): ?>
 					<li><?php echo CHtml::link('Log back in as ' . Yii::app()->user->shadow_name, array('user/loginAs','id'=>Yii::app()->user->shadow_id),array('class'=>'shadow')); ?></li>
 				<?php endif;?>
-
-				<?php if(Yii::app()->user->checkAccess('Admin')): ?>
-				<li class="divider"></li>
-				<li class="has-dropdown">
-					<?php echo CHtml::link('Boxes',array('/boxItem/create')) ?>
-					<ul class="dropdown">
-						<li><?php echo CHtml::link('Box Packing',array('/boxItem/create')) ?></li>
-						<li><?php echo CHtml::link('Box Sizes',array('/boxSize/admin')) ?></li>
-						<li><?php echo CHtml::link('Packing Stations',array('/packingStation/admin')) ?></li>
-						<li><?php echo CHtml::link('Delivery Dates',array('/deliveryDate/admin')) ?></li>
-					</ul>
-				</li>
-				
-				<li class="has-dropdown">
-					<?php echo CHtml::link('Customer',array('/user/customers')) ?>
-					<ul class="dropdown">
-						<li><?php echo CHtml::link('Manage Customers',array('/user/customers')) ?></li>
-						<li><?php echo CHtml::link('Orders',array('/boxItem/customerBoxes')) ?></li>
-						<li><?php echo CHtml::link('Payments',array('/customerPayment/enterPayments')) ?></li>
-						<li><?php echo CHtml::link('Locations',array('/location/admin')) ?></li>
-					</ul>
-				</li>
-				<li class="divider"></li>
-				<li class="has-dropdown">
-					<?php echo CHtml::link('Supplier',array('/supplier/admin')) ?>
-					<ul class="dropdown">
-						<li><?php echo CHtml::link('Manage Suppliers',array('/supplier/admin')) ?></li>
-						<li><?php echo CHtml::link('Products',array('/supplierProduct/admin')) ?></li>
-						<li><?php echo CHtml::link('Purchases',array('/supplierPurchase/admin')) ?></li>
-						<li><?php echo CHtml::link('Supplier Map',array('/supplier/map')) ?></li>
-					</ul>
-				</li>
-				<li class="divider"></li>
-				<li class="has-dropdown">
-					<?php echo CHtml::link('Inventory',array('/inventory/index')) ?>
-					<ul class="dropdown">
-						<li><?php echo CHtml::link('Inventory',array('/inventory/index')) ?></li>
-						<li><?php echo CHtml::link('Log',array('/inventory/admin')) ?></li>
-					</ul>
-				</li>
-				<li class="divider"></li>
-				<li class="has-dropdown">
-					<a href="#">Reports</a>
-					<ul class="dropdown">
-						<li><?php echo CHtml::link('Credit',array('/report/creditReport')) ?></li>
-						<li><?php echo CHtml::link('Box Sales',array('/report/salesReport')) ?></li>
-					</ul>
-				</li>
-				<li class="divider"></li>
-				<li><?php echo CHtml::link('Admin Users',array('/user/admin')) ?></li>
-				<?php endif; ?>
 
 				<?php if(Yii::app()->user->isGuest): ?>
 				<li class="divder"></li>
 				<li><?php echo CHtml::link('Register',array('/site/register')) ?></li>
 				<?php endif; ?>
-				
-				<?php endif; ?>
-									
+		
 				<li><?php echo CHtml::link('Shop',array('/customerDeliveryDateItem/order')) ?></li>
 				<li class="divider"></li>
 				<?php if(Yii::app()->user->checkAccess('customer')): ?>
@@ -150,15 +94,62 @@
 				<div class="left">
 					<?php $this->renderPartial('application.modules.snapcms.views.layouts._admin_bar'); ?>
 				</div>
-				
+
 				<ul class="right">
-					<li><?php echo CHtml::link('CMS Admin',array('/snapcms/default/index')) ?></li>
-					<li class="divider"></li>
 					<li><?php echo CHtml::link('View Site',array('/site/index')) ?></li>
 					<li class="divider"></li>
 					<li><?php echo CHtml::link('Content',array('/snapcms/content/admin')) ?></li>
 					<li class="divider"></li>
 					<li><?php echo CHtml::link('Menus',array('/snapcms/menu/admin')) ?></li>
+					<li class="divider"></li>
+					<li class="has-dropdown">
+						<?php echo CHtml::link('Boxes',array('/boxItem/create')) ?>
+						<ul class="dropdown">
+							<li><?php echo CHtml::link('Box Packing',array('/boxItem/create')) ?></li>
+							<li><?php echo CHtml::link('Box Sizes',array('/boxSize/admin')) ?></li>
+							<li><?php echo CHtml::link('Packing Stations',array('/packingStation/admin')) ?></li>
+							<li><?php echo CHtml::link('Delivery Dates',array('/deliveryDate/admin')) ?></li>
+						</ul>
+					</li>
+					<li class="divider"></li>
+					<li class="has-dropdown">
+						<?php echo CHtml::link('Customer',array('/user/customers')) ?>
+						<ul class="dropdown">
+							<li><?php echo CHtml::link('Manage Customers',array('/user/customers')) ?></li>
+							<li><?php echo CHtml::link('Orders',array('/boxItem/customerBoxes')) ?></li>
+							<li><?php echo CHtml::link('Payments',array('/customerPayment/enterPayments')) ?></li>
+							<li><?php echo CHtml::link('Locations',array('/location/admin')) ?></li>
+						</ul>
+					</li>
+					<li class="divider"></li>
+					<li class="has-dropdown">
+						<?php echo CHtml::link('Supplier',array('/supplier/admin')) ?>
+						<ul class="dropdown">
+							<li><?php echo CHtml::link('Manage Suppliers',array('/supplier/admin')) ?></li>
+							<li><?php echo CHtml::link('Products',array('/supplierProduct/admin')) ?></li>
+							<li><?php echo CHtml::link('Purchases',array('/supplierPurchase/admin')) ?></li>
+							<li><?php echo CHtml::link('Supplier Map',array('/supplier/map')) ?></li>
+						</ul>
+					</li>
+					<li class="divider"></li>
+					<li class="has-dropdown">
+						<?php echo CHtml::link('Inventory',array('/inventory/index')) ?>
+						<ul class="dropdown">
+							<li><?php echo CHtml::link('Inventory',array('/inventory/index')) ?></li>
+							<li><?php echo CHtml::link('Log',array('/inventory/admin')) ?></li>
+						</ul>
+					</li>
+					<li class="divider"></li>
+					<li class="has-dropdown">
+						<a href="#">Reports</a>
+						<ul class="dropdown">
+							<li><?php echo CHtml::link('Credit',array('/report/creditReport')) ?></li>
+							<li><?php echo CHtml::link('Box Sales',array('/report/salesReport')) ?></li>
+						</ul>
+					</li>
+					<li class="divider"></li>
+					<li><?php echo CHtml::link('Admin Users',array('/user/admin')) ?></li>
+					<li class="divider"></li>
 				</ul>
 			</section>			
 		</nav>

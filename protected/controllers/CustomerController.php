@@ -36,7 +36,7 @@ class CustomerController extends Controller
 				'roles'=>array('customer'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete','index','view'),
+				'actions'=>array('admin','delete','index','view','export'),
 				'roles'=>array('Admin'),
 			),
 			array('deny',  // deny all users
@@ -157,6 +157,40 @@ class CustomerController extends Controller
 		$this->render('admin',array(
 			'model'=>$model,
 		));
+	}
+	
+	/**
+	 * Csv Export
+	 */
+	public function actionExport()
+	{
+		  CsvExport::export(
+				User::model()->with('Customer')->findAll(), // a CActiveRecord array OR any CModel array
+				array(
+					'id' => array('number'), 
+					'customer_id' => array('number'),
+					//'supplier_id' => array('number'),
+					'first_name' => array('text'), 
+					'last_name' => array('text'), 
+					'notes' => array('text'),
+					'user_email' => array('text'),
+					'user_name' => array('text'),
+					'user_phone' => array('text'),
+					'user_mobile' => array('text'),
+					'user_address' => array('text'),
+					'user_address2' => array('text'),
+					'user_suburb' => array('text'),
+					'user_state' => array('text'),
+					'user_postcode' => array('text'),
+					'last_login_time' => array('date'),
+					//'update_time', 
+					//'update_user_id', 
+					//'create_time', 
+				), 
+				true, // boolPrintRows
+				'boxomatic-customers--'.date('Y-m-d').'.csv',
+				','
+		);
 	}
 
 	/**

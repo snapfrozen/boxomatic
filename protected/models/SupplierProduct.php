@@ -236,4 +236,13 @@ class SupplierProduct extends ImageActiveRecord
 		$items = self::model()->with('Supplier')->findAll($criteria);
 		return CHtml::listData($items,'id','name_with_unit');
 	}
+	
+	public static function getUncategorised()
+	{
+		$criteria = new CDbCriteria;
+		$criteria->join = 'LEFT JOIN supplier_product_categories spc ON t.id = spc.supplier_product_id';
+		$criteria->addCondition('category_id IS NULL');
+		
+		return self::model()->findAll($criteria);
+	}
 }

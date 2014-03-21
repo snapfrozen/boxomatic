@@ -812,10 +812,6 @@ table tr.group td {
 	background:transparent;
 	color:#111;
 }
-#customerList {
-	padding-left:260px;
-}
-
 #fillBoxForm .grid-view table.items tbody tr:hover {
 	background:transparent;
 }

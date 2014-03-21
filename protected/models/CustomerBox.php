@@ -22,10 +22,11 @@ class CustomerBox extends CActiveRecord
 	
 	public $date_total=null;		//holds an aggregate total for the date;
 	public $fulfilled_total=null;	//holds an aggregate total for all orders before the deadline
-	public $customer_first_name;
-	public $customer_last_name;
+	public $customer_full_name;
 	public $customer_box_price;
 	public $customer_user_id;
+	public $customer_extras_price;
+	public $search_extras;
 	
 	public static $quantityOptions = array(
 		'0'=>0,
@@ -73,7 +74,7 @@ class CustomerBox extends CActiveRecord
 			array('delivery_cost','numerical'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('customer_user_id, customer_box_price, customer_first_name, customer_last_name, status, customer_box_id, customer_id, box_id, quantity', 'safe', 'on'=>'search'),
+			array('search_extras, customer_user_id, customer_box_price, customer_full_name, status, customer_box_id, customer_id, box_id, quantity', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -101,8 +102,7 @@ class CustomerBox extends CActiveRecord
 			'box_id' => 'Box',
 			'quantity' => 'Quantity',
 			'status' => 'Status',
-			'customer_first_name' => 'First Name',
-			'customer_last_name' => 'Last Name',
+			'customer_full_name' => 'Customer',
 			'customer_box_price' => 'Box Price',
 			'customer_user_id' => 'User ID',
 		);
@@ -149,11 +149,8 @@ class CustomerBox extends CActiveRecord
 				),
 				'Customer.User'
 			);
-			if($this->customer_first_name) {
-				$criteria->compare('User.first_name',$this->customer_first_name,true);
-			}
-			if($this->customer_last_name) {
-				$criteria->compare('User.last_name',$this->customer_last_name,true);
+			if($this->customer_full_name) {
+				$criteria->compare('CONCAT(User.first_name,User.last_name)',$this->customer_full_name,true);
 			}
 			if($this->customer_box_price) {
 				$criteria->compare('Box.box_price',$this->customer_box_price,true);
@@ -240,9 +237,6 @@ class CustomerBox extends CActiveRecord
 		return $box;
 	}
 	
-	/**
-	* @return array issue type names indexed by type IDs
-	*/
 	public function getStatusOptions()
 	{
 		return array(

@@ -97,6 +97,7 @@
 		
 		<?php if($curCat == Category::boxCategory): ?>
 		<h2>Boxes</h2>
+		<p>You may also select items you do not wish to have in your box <?php echo CHtml::link('here',array('user/dontWant','id'=>Yii::app()->user->id)) ?>.</p>
 		<div class="items row list-view">
 			<?php foreach($DeliveryDate->MergedBoxes as $Box): ?>
 

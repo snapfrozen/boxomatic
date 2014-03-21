@@ -16,6 +16,16 @@
  */
 class CustomerDeliveryDate extends CActiveRecord
 {
+	const STATUS_NOT_PROCESSED=0;
+	const STATUS_APPROVED=1;
+	const STATUS_DECLINED=2;
+	const STATUS_DELIVERED=3;
+	
+	public $extras_item_names;
+	//public $extras_total;
+	public $search_full_name;
+	public $customer_user_id;
+	
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
@@ -43,11 +53,11 @@ class CustomerDeliveryDate extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('delivery_date_id, customer_id, location_id', 'required'),
-			array('delivery_date_id, customer_id', 'numerical', 'integerOnly'=>true),
+			array('status, delivery_date_id, customer_id', 'numerical', 'integerOnly'=>true),
 			array('customer_location_id', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, delivery_date_id, customer_id, customer_location_id', 'safe', 'on'=>'search'),
+			array('extras_item_names, search_full_name, status, id, delivery_date_id, customer_id, customer_location_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -77,6 +87,11 @@ class CustomerDeliveryDate extends CActiveRecord
 			'delivery_date_id' => 'DeliveryDate',
 			'customer_id' => 'Customer',
 			'customer_location_id' => 'Customer Location',
+			'status' => 'Status',
+			'customer_user_id' => 'User ID',
+			'search_full_name' => 'Customer',
+			'extras_item_names' => 'Extras',
+			'extras_total' => 'Total',
 		);
 	}
 
@@ -94,11 +109,39 @@ class CustomerDeliveryDate extends CActiveRecord
 		$criteria->compare('id',$this->id);
 		$criteria->compare('delivery_date_id',$this->delivery_date_id);
 		$criteria->compare('customer_id',$this->customer_id);
+		$criteria->compare('status',$this->status);
 		$criteria->compare('customer_location_id',$this->customer_location_id);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
+	}
+	
+	public function extrasSearch($date)
+	{
+		$c = new CDbCriteria;
+		$c->addCondition('t.delivery_date_id = :date');
+		$c->select = 'c.customer_id, GROUP_CONCAT(cddi.name SEPARATOR ", ") as extras_item_names, t.delivery_date_id, t.status';
+		$c->params = array(':date'=>$date);
+		//$c->with doesn't work very well with CActiveDataProvider
+		$c->join = 
+			'INNER JOIN customers c ON t.customer_id = c.customer_id '. 
+			'INNER JOIN customer_delivery_date_items cddi ON cddi.customer_delivery_date_id = t.id';
+		$c->group = 'c.customer_id';
+		
+		$c->compare('CONCAT(u.first_name, u.last_name)',$this->search_full_name,true);
+		$c->compare('status',$this->status);
+		
+		$c->compare('cddi.name',$this->extras_item_names,true);
+		if(!empty($this->search_full_name)) {
+			$c->join = 
+				'INNER JOIN customers c ON t.customer_id = c.customer_id '. 
+				'INNER JOIN customer_delivery_date_items cddi ON cddi.customer_delivery_date_id = t.id '.
+				'INNER JOIN users u ON u.customer_id = t.customer_id';
+			$c->compare('CONCAT(u.first_name, u.last_name)',$this->search_full_name,true);
+		}
+		
+		return new CActiveDataProvider($this,array('criteria'=>$c));
 	}
 	
 	/*
@@ -148,5 +191,47 @@ class CustomerDeliveryDate extends CActiveRecord
 		else {
 			return $this->location_id;
 		}
+	}
+	
+	/**
+	* @return string the status text display for the current extra
+	*/
+	public function getStatus_text()
+	{
+		$statusOptions=$this->statusOptions;
+		return isset($statusOptions[$this->status]) ? $statusOptions[$this->status] : "unknown status ({$this->status})";
+	}
+	
+	public function getStatusOptions()
+	{
+		return array(
+			self::STATUS_NOT_PROCESSED=>'Not Processed',
+			self::STATUS_APPROVED=>'Approved',
+			self::STATUS_DECLINED=>'Declined',
+			self::STATUS_DELIVERED=>'Collected/Delivered',
+		);
+	}
+	
+	public function setDelivered()
+	{
+		if($this->status!=self::STATUS_DELIVERED)
+		{
+			$this->status=self::STATUS_DELIVERED;
+			return $this->save();
+		}
+		return false;
+	}
+	
+	public function getExtras_total()
+	{
+		$criteria=new CDbCriteria;
+		$criteria->select = 'SUM(price * quantity) as date_total';
+		$criteria->with = 'CustomerDeliveryDate';
+		$criteria->condition = 'delivery_date_id=:dateId AND customer_id=:customerId';
+		$criteria->params = array(':dateId'=>$this->delivery_date_id,':customerId'=>$this->customer_id);
+		$extras = CustomerDeliveryDateItem::model()->find($criteria);
+		$extrasTotal = $extras ? $extras->date_total : 0;
+		
+		return $extrasTotal;
 	}
 }

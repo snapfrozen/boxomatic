@@ -132,7 +132,8 @@ class DeliveryDate extends CActiveRecord
 	 */
 	public static function getCurrentDeliveryDateId()
 	{
-		$date=self::model()->find('date > NOW()');
+		$deadlineDays=Yii::app()->params['orderDeadlineDays'];
+		$date=self::model()->find("date_sub(date, interval $deadlineDays day) > NOW()");
 		return $date ? $date->id : false;
 	}
 	

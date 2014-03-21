@@ -1,15 +1,6 @@
 
 <?php
-	/*$$cs=Yii::app()->clientScript;
-	$cs->registerCssFile(Yii::app()->request->baseUrl . '/css/ui-lightness/jquery-ui.css');
-	$cs->registerCssFile(Yii::app()->request->baseUrl . '/css/ui.spinner.css');
-	$cs->registerCssFile(Yii::app()->request->baseUrl . '/css/ui.selectmenu.css');
-
-	$cs->registerCoreScript('jquery.ui');
-	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/ui.touch-punch.min.js', CClientScript::POS_END);
-	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/ui.selectmenu.js', CClientScript::POS_END);
-	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/ui.spinner.min.js', CClientScript::POS_END);*/
-
+	/*$$cs=Yii::app()->clientScript;*/
 	$cs=Yii::app()->clientScript;
 	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/pages/customBox/order.js', CClientScript::POS_END);
 ?>
@@ -34,7 +25,6 @@
 									echo CHtml::link('View all orders',array('order','all'=>'true','#'=>'orders'), array('class' => 'button small'));	
 							?>
 						</div>
-
 						<?php 
 
 						$form=$this->beginWidget('CActiveForm', array(
@@ -50,7 +40,6 @@
 						}
 
 						?>
-
 						<div class="large-12 columns">
 							<ul class="no-bullet">
 								

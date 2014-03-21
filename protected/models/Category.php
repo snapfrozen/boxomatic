@@ -64,7 +64,8 @@ class Category extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'parent' => array(self::BELONGS_TO, 'Category', 'parent'),
-			'children' => array(self::HAS_MANY, 'Category', 'parent','order'=>'name'),
+			'children' => array(self::HAS_MANY, 'Category', 'parent', 'order'=>'name'),
+			'SupplierProducts' => array(self::MANY_MANY, 'SupplierProduct', 'supplier_product_categories(supplier_product_id,category_id)'),
 		);
 	}
 
@@ -147,7 +148,7 @@ class Category extends CActiveRecord
 		return $output;
 	}
 	
-	public static function getCategoryTree($parentId, $route, $selected)
+	public static function getCategoryTree($parentId, $route, $selected = false)
 	{
 		$CatCurrent = Category::model()->findByPk($parentId);
 		$output = '';

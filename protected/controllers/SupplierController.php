@@ -35,7 +35,7 @@ class SupplierController extends Controller
 				'roles'=>array('supplier'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete','getListItems','create','update','map','search'),
+				'actions'=>array('admin','delete','getListItems','create','update','map','search','export'),
 				'roles'=>array('Admin'),
 			),
 			array('deny',  // deny all users
@@ -216,7 +216,48 @@ class SupplierController extends Controller
 			'model'=>$model,
 		));
 	}
-
+	
+	/**
+	 * Csv Export
+	 */
+	public function actionExport()
+	{
+		  CsvExport::export(
+				Supplier::model()->findAll(), // a CActiveRecord array OR any CModel array
+				array(
+					'id' => array('number'), 
+					'name' => array('text'),
+					'company_name' => array('text'),
+					'Ordering' => array('text'),
+					'email' => array('text'),
+					'website' => array('text'),
+					'phone' => array('text'),
+					'mobile' => array('text'), 
+					'address' => array('text'), 
+					'address2' => array('text'), 
+					'postcode' => array('text'), 
+					'suburb' => array('text'), 
+					'state' => array('text'),
+					'distance_kms' => array('text'), 
+					'ABN' => array('text'),
+					'bank_account_name' => array('text'),
+					'bank_bsb' => array('text'),
+					'bank_acc' => array('text'),
+					'certification_status' => array('text'),
+					'order_days' => array('text'), 
+					'produce' => array('text'), 
+					'notes' => array('text'),
+					'payment_details' => array('text'),
+					'lattitude' => array('number'), 
+					'longitude' => array('number'), 
+					'status' => array('number'), 
+				), 
+				true, // boolPrintRows
+				'boxomatic-suppliers--'.date('Y-m-d').'.csv',
+				','
+		);
+	}
+	
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.

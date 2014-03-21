@@ -247,22 +247,25 @@ class BoxItemController extends Controller
 	{
 		$DeliveryDates=DeliveryDate::model()->findAll();
 
-		$SelectedDeliveryDate=null;
-		if($date) {
-			$SelectedDeliveryDate=DeliveryDate::model()->findByPk($date);
-		}
+		$CDD=new CustomerDeliveryDate('search');
+		if(isset($_GET['CustomerDeliveryDate']))
+			$CDD->attributes = $_GET['CustomerDeliveryDate'];
 		
+		$CDDsWithExtras = $CDD->extrasSearch($date);
+		$SelectedDeliveryDate=DeliveryDate::model()->findByPk($date);
+
 		$CustomerBoxes=new CustomerBox('search');
-		
-//		$model=new BoxItem('search');
+		//$model=new BoxItem('search');
 		$CustomerBoxes->unsetAttributes();  // clear any default values
 		if(isset($_GET['CustomerBox']))
 			$CustomerBoxes->attributes=$_GET['CustomerBox'];
-		
+
 		$this->render('customer_boxes',array(
 			'SelectedDeliveryDate'=>$SelectedDeliveryDate,
 			'DeliveryDates'=>$DeliveryDates,
 			'CustomerBoxes'=>$CustomerBoxes,
+			'CDDsWithExtras'=>$CDDsWithExtras,
+			'CDD'=>$CDD,
 		));
 	}
 	
@@ -280,7 +283,7 @@ class BoxItemController extends Controller
 		{
 			$Customer=$CustBox->Customer;
 			$Box=$CustBox->Box;
-			if($Customer->balance >= $Box->box_price+$CustBox->delivery_cost)
+			if($Customer->balance - ($Box->box_price+$CustBox->delivery_cost) > Yii::app()->params['minimumCredit'])
 			{
 				$Payment=new CustomerPayment();
 				$Payment->payment_value= -1*($Box->box_price+$CustBox->delivery_cost); //make price a negative value for payment table
@@ -310,7 +313,7 @@ class BoxItemController extends Controller
 					$message->view = 'customer_box_approved';
 					$message->setBody(array('Customer'=>$Customer, 'CustomerBox' =>$CustBox), 'text/html');
 					$message->addTo($Customer->User->user_email);
-					$message->addTo('info@bellofoodbox.org.au');
+					$message->addTo(Yii::app()->params['adminEmail']);
 					$message->setFrom(array(Yii::app()->params['adminEmail'] => Yii::app()->params['adminEmailFromName']));
 
 					if(!@Yii::app()->mail->send($message))
@@ -333,7 +336,56 @@ class BoxItemController extends Controller
 					$message->view = 'customer_box_declined';
 					$message->setBody(array('Customer'=>$Customer, 'CustomerBox' => $CustBox), 'text/html');
 					$message->addTo($Customer->User->user_email);
-					$message->addTo('info@bellofoodbox.org.au');
+					$message->addTo(Yii::app()->params['adminEmail']);
+					$message->setFrom(array(Yii::app()->params['adminEmail'] => Yii::app()->params['adminEmailFromName']));
+
+					if(!@Yii::app()->mail->send($message))
+					{
+						$mailError=true;
+					}
+				}
+			}
+		}
+		
+		$CDD = new CustomerDeliveryDate();
+		$CDDsWithExtras = $CDD->extrasSearch($date)->getData();
+		
+		foreach($CDDsWithExtras as $CDD)
+		{
+			$Customer = $CDD->Customer;
+			if($Customer->balance - $CDD->extras_total > Yii::app()->params['minimumCredit'])
+			{
+				$Payment=new CustomerPayment();
+				$Payment->payment_value= -1*($CDD->extras_total); //make price a negative value for payment table
+				$Payment->payment_type='DEBIT';
+				$Payment->payment_date=new CDbExpression('NOW()');
+				$Payment->customer_id=$CDD->customer_id;
+				$Payment->staff_id=Yii::app()->user->id;
+				
+				$note='Extras bought on '. $CDD->DeliveryDate->date .' totalling:'. Yii::app()->snapFormat->currency($CDD->extras_total);
+
+				$Payment->payment_note=$note;
+				$Payment->save();
+				
+				$CustDD = CustomerDeliveryDate::model()->findByAttributes(array(
+					'customer_id'=>$Customer->customer_id,
+					'delivery_date_id'=>$date,
+				));
+				$CustDD->status=CustomerBox::STATUS_APPROVED;
+				$CustDD->save();
+			}
+			else 
+			{
+				//Box declined email
+				$validator=new CEmailValidator();
+				if($validator->validateValue($Customer->User->user_email)) 
+				{
+					$date = $Box->DeliveryDate->date;
+					$message = new YiiMailMessage('Your custom order for '.$date.' has been declined');
+					$message->view = 'customer_custom_order_declined';
+					$message->setBody(array('Customer'=>$Customer, 'CDD' => $CDD), 'text/html');
+					$message->addTo($Customer->User->user_email);
+					$message->addTo(Yii::app()->params['adminEmail']);
 					$message->setFrom(array(Yii::app()->params['adminEmail'] => Yii::app()->params['adminEmailFromName']));
 
 					if(!@Yii::app()->mail->send($message))

@@ -34,6 +34,15 @@ class User extends SnapActiveRecord
 	public $search_customer_notes;
 	public $tag_name_search;
 	
+	public function behaviors()
+	{
+		return array(
+			'activerecord-relation'=>array(
+				'class'=>'ext.active-relation-behavior.EActiveRecordRelationBehavior',
+			)
+		);
+	}
+	
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @return User the static model class
@@ -87,6 +96,7 @@ class User extends SnapActiveRecord
 		return array(
 			'Customer'=>array(self::BELONGS_TO,'Customer','customer_id'),
 			'Supplier'=>array(self::BELONGS_TO,'Supplier','supplier_id'),
+			'DontWant'=>array(self::MANY_MANY,'SupplierProduct','user_dontwant_products(user_id,supplier_product_id)'),
 			//'tags'=>array(self::HAS_MANY,'Tag',array('customer_id','tag_id'),'through'=>'Customer')
 		);
 	}
@@ -196,6 +206,37 @@ class User extends SnapActiveRecord
 			$this->password_repeat = Yii::app()->snap->encrypt($this->password_repeat);
 		}
 		return parent::beforeSave();
+	}
+	
+	public function afterSave()
+	{
+		parent::afterSave();
+		
+		//Register to MailChimp on signup
+		Yii::import('application.external.*');
+		if($this->scenario == 'register' && isset($_POST['subscribe']))
+		{
+			$MailChimp = new MailChimp(Yii::app()->params['mailChimpApiKey']);
+			$result = $MailChimp->call('lists/subscribe', array(
+				'id'                => Yii::app()->params['mailChimpListId'],
+				'email'             => array( 'email' => $this->user_email ),
+				'merge_vars'        => array(
+					'MERGE2' => $this->full_name // MERGE name from list settings
+					// there MERGE fields must be set if required in list settings
+				),
+				'double_optin'      => false,
+				'update_existing'   => true,
+				'replace_interests' => false
+			));
+
+			if( $result === false ) {
+				// response wasn't even json
+			}
+			else if( isset($result->status) && $result->status == 'error' ) {
+				// Error info: $result->status, $result->code, $result->name, $result->error
+				Yii::log('Error subscribing user '.$this->id.': '.print_r($result,true), 'error', 'system.web.CActiveRecord');
+			}
+		}
 	}
 	
 	/**

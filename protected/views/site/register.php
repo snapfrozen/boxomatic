@@ -123,6 +123,10 @@
 				<?php $this->widget('CCaptcha'); ?>
 				<p>Please enter the letters as they are shown in the image above. Letters are not case-sensitive.</p>
 			</div>
+			<div class="large-6 columns">
+				<?php echo CHtml::label('Subscribe to our mailing list','register'); ?>
+				<?php echo CHtml::checkbox('register',CHtml::value($_POST,'register',true)); ?>
+			</div>
 		</div>
 		<div class="row">
 			<div class="large-6 columns">

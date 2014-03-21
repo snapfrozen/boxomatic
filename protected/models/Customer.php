@@ -16,6 +16,9 @@ class Customer extends CActiveRecord
 {
 	public $total_orders;
 	public $last_order;
+	public $extras_item_names;
+	public $extras_total;
+	public $search_full_name;
 	
 	public function behaviors()
 	{
@@ -55,7 +58,7 @@ class Customer extends CActiveRecord
 			array('tag_names, location_id, customer_location_id', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('customer_id, customer_notes', 'safe', 'on'=>'search'),
+			array('extras_total, search_full_name, extras_item_names, customer_id, customer_notes', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -69,6 +72,7 @@ class Customer extends CActiveRecord
 		return array(
 			'User' => array(self::HAS_ONE, 'User', 'customer_id'),
 			'CustomerBoxes' => array(self::HAS_MANY, 'CustomerBox', 'customer_id'),
+			'CustomerDeliveryDates' => array(self::HAS_MANY, 'CustomerDeliveryDate', 'customer_id'),
 			'Boxes' => array(self::MANY_MANY, 'Box', 'customer_boxes(customer_id,box_id)'),
 			'Location' => array(self::BELONGS_TO, 'Location', 'location_id'),
 			'CustomerLocations' => array(self::HAS_MANY, 'CustomerLocation', 'customer_id'),
@@ -96,6 +100,7 @@ class Customer extends CActiveRecord
 			'delivery_location_key' => 'Default Delivery Location',
 			'location_id'=>'Location',
 			'customer_location_id'=>'Delivery Location',
+			'extras_item_names'=>'Extras',
 		);
 	}
 
@@ -118,6 +123,31 @@ class Customer extends CActiveRecord
 		));
 	}
 	
+	public function extrasSearch($date)
+	{
+		
+		$c = new CDbCriteria;
+		$c->addCondition('cdd.delivery_date_id = :date');
+		$c->select = 't.customer_id, GROUP_CONCAT(cddi.name SEPARATOR ", ") as extras_item_names';
+		$c->params = array(':date'=>$date);
+		//$c->with doesn't work very well with CActiveDataProvider
+		$c->join = 
+			'INNER JOIN customer_delivery_dates cdd ON cdd.customer_id = t.customer_id '. 
+			'INNER JOIN customer_delivery_date_items cddi ON cddi.customer_delivery_date_id = cdd.id';
+		$c->group = 't.customer_id';
+		
+		$c->compare('cddi.name',$this->extras_item_names,true);
+		if(!empty($this->search_full_name)) {
+			$c->join = 
+			'INNER JOIN customer_delivery_dates cdd ON cdd.customer_id = t.customer_id '. 
+			'INNER JOIN customer_delivery_date_items cddi ON cddi.customer_delivery_date_id = cdd.id '.
+			'INNER JOIN users u ON u.customer_id = t.customer_id';
+			$c->compare('CONCAT(u.first_name, u.last_name)',$this->search_full_name,true);
+		}
+		
+		return new CActiveDataProvider($this,array('criteria'=>$c));
+	}
+	
 	public function getBalance()
 	{
 		return $this->totalPayments;
@@ -125,7 +155,7 @@ class Customer extends CActiveRecord
 	
 	public function totalByDeliveryDate($dateId)
 	{
-		$customerId=Yii::app()->user->customer_id;
+		$customerId=$this->customer_id;
 		
 		$criteria=new CDbCriteria;
 		$criteria->condition = 'delivery_date_id=:dateId AND customer_id=:customerId';
@@ -142,6 +172,21 @@ class Customer extends CActiveRecord
 		$extrasTotal = $extras ? $extras->date_total : 0;
 		
 		return $boxTotal + $extrasTotal;
+	}
+	
+	public function extrasTotalByDeliveryDate($dateId)
+	{
+		$customerId=$this->customer_id;
+		
+		$criteria=new CDbCriteria;
+		$criteria->select = 'SUM(price * quantity) as date_total';
+		$criteria->with = 'CustomerDeliveryDate';
+		$criteria->condition = 'delivery_date_id=:dateId AND customer_id=:customerId';
+		$criteria->params = array(':dateId'=>$dateId,':customerId'=>$customerId);
+		$extras = CustomerDeliveryDateItem::model()->find($criteria);
+		$extrasTotal = $extras ? $extras->date_total : 0;
+		
+		return $extrasTotal;
 	}
 	
 	public function totalDeliveryByDeliveryDate($dateId)
@@ -307,6 +352,10 @@ class Customer extends CActiveRecord
 		}
 		$this->save();
 		Tag::deleteUnusedTags();
+	}
+	
+	public function getFull_name() {
+		return CHtml::value($this,"User.full_name");
 	}
 	
 }

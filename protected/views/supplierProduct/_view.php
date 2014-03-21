@@ -1,13 +1,17 @@
-<div class="large-12 columns">
-	<div class="panel">
-		<ul class='no-bullet'>
-			<li><?php echo CHtml::encode($data->getAttributeLabel('id')); ?> : <?php echo CHtml::link(CHtml::encode($data->id), array('view', 'id'=>$data->id)); ?></li>
-			<li><?php echo CHtml::encode($data->getAttributeLabel('name')); ?> : <?php echo CHtml::encode($data->Supplier->name); ?></li>
-			<li><?php echo CHtml::encode($data->getAttributeLabel('name')); ?> : <?php echo CHtml::encode($data->name); ?></li>
-			<li><?php echo CHtml::encode($data->getAttributeLabel('value')); ?> : $<?php echo CHtml::encode($data->value); ?></li>
-			<li><?php echo CHtml::encode($data->getAttributeLabel('unit')); ?> : <?php echo CHtml::encode($data->unit); ?></li>
-			<li><?php echo CHtml::encode($data->getAttributeLabel('available_from')); ?> : <?php echo CHtml::encode($data->available_from); ?></li>
-			<li><?php echo CHtml::encode($data->getAttributeLabel('available_to')); ?> : <?php echo CHtml::encode($data->available_to); ?></li>
-		</ul>
+<div class="view large-12 columns end">
+	<div class="image">
+	<?php if(!empty($data->image)): ?>
+		<?php echo CHtml::image($this->createUrl('supplierProduct/image',array('id'=>$data->id,'size'=>'tiny'))); ?>
+	<?php else: ?>
+		<?php echo CHtml::image($this->createUrl('supplierProduct/image',array('size'=>'tiny'))); ?>
+	<?php endif; ?>
+	</div>
+	<div class="inner">
+		<div class="row">
+			<div class="large-9 columns">
+				<h3><?php echo CHtml::encode($data->name); ?></h3>
+				<span class="description"><?php echo $data->description; ?></span>
+			</div>
+		</div>
 	</div>
 </div>

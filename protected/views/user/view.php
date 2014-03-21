@@ -40,6 +40,7 @@
 			</tr>
 		</table>
 		<div class="right">
+			<?php echo CHtml::link('Box don\'t like list',array('user/dontWant','id'=>$model->id), array('class' => 'button')) ?>
 			<?php echo CHtml::link('Update',array('user/update','id'=>$model->id), array('class' => 'button')) ?>
 		</div>
 	</div>
