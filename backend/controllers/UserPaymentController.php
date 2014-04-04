@@ -74,13 +74,15 @@ class UserPaymentController extends BoxomaticController
 				$validator=new CEmailValidator();
 				if($validator->validateValue($Customer->User->email)) 
 				{
-					//email payment receipt			    
+					//email payment receipt
+					$adminEmail = SnapUtil::config('boxomatic/adminEmail');
+					$adminEmailFromName = SnapUtil::config('boxomatic/adminEmailFromName');
 					$message = new YiiMailMessage('Payment receipt');
 					$message->view = 'customer_payment_receipt';
 					$message->setBody(array('Customer'=>$Customer, 'UserPayment' => $model), 'text/html');
 					$message->addTo($Customer->User->email);
-					$message->addTo('info@bellofoodbox.org.au');
-					$message->setFrom(array(Yii::app()->params['adminEmail'] => Yii::app()->params['adminEmailFromName']));
+					$message->addTo($adminEmail);
+					$message->setFrom(array($adminEmail => $adminEmailFromName));
 
 					if(!@Yii::app()->mail->send($message))
 					{

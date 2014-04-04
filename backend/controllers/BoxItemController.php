@@ -230,6 +230,7 @@ class BoxItemController extends BoxomaticController
 			$model->attributes=$_POST['BoxItem'];
 			$model->save();				
 		}
+		$this->layout = '//layouts/full_width';
 		$this->render('create',array(
 			'model'=>$model,
 			'SupplierProducts'=>$SupplierProducts,
@@ -283,7 +284,7 @@ class BoxItemController extends BoxomaticController
 		{
 			$Customer=$CustBox->Customer;
 			$Box=$CustBox->Box;
-			if($Customer->balance - ($Box->box_price+$CustBox->delivery_cost) > Yii::app()->params['minimumCredit'])
+			if($Customer->balance - ($Box->box_price+$CustBox->delivery_cost) > SnapUtil::config('boxomatic/minimumCredit'))
 			{
 				$Payment=new UserPayment();
 				$Payment->payment_value= -1*($Box->box_price+$CustBox->delivery_cost); //make price a negative value for payment table
@@ -308,13 +309,15 @@ class BoxItemController extends BoxomaticController
 				$validator=new CEmailValidator();
 				if($validator->validateValue($Customer->User->email)) 
 				{
+					$adminEmail = SnapUtil::config('boxomatic/adminEmail');
+					$adminEmailFromName = SnapUtil::config('boxomatic/adminEmailFromName');
 					$date = $Box->DeliveryDate->date;
 					$message = new YiiMailMessage('Your order for '.$date.' has been approved');
 					$message->view = 'customer_box_approved';
 					$message->setBody(array('Customer'=>$Customer, 'UserBox' =>$CustBox), 'text/html');
 					$message->addTo($Customer->User->email);
-					$message->addTo(SnapUtil::config('boxomatic/adminEmail'));
-					$message->setFrom(array(SnapUtil::config('boxomatic/adminEmail') => SnapUtil::config('boxomatic/adminEmailFromName')));
+					$message->addTo($adminEmail);
+					$message->setFrom(array($adminEmail => $adminEmailFromName));
 
 					if(!@Yii::app()->mail->send($message)) {
 						$mailError=true;
@@ -330,13 +333,15 @@ class BoxItemController extends BoxomaticController
 				$validator=new CEmailValidator();
 				if($validator->validateValue($Customer->User->email)) 
 				{
+					$adminEmail = SnapUtil::config('boxomatic/adminEmail');
+					$adminEmailFromName = SnapUtil::config('boxomatic/adminEmailFromName');
 					$date = $Box->DeliveryDate->date;
 					$message = new YiiMailMessage('Your order for '.$date.' has been declined');
 					$message->view = 'customer_box_declined';
 					$message->setBody(array('Customer'=>$Customer, 'UserBox' => $CustBox), 'text/html');
 					$message->addTo($Customer->User->email);
-					$message->addTo(Yii::app()->params['adminEmail']);
-					$message->setFrom(array(Yii::app()->params['adminEmail'] => Yii::app()->params['adminEmailFromName']));
+					$message->addTo($adminEmail);
+					$message->setFrom(array($adminEmail => $adminEmailFromName));
 
 					if(!@Yii::app()->mail->send($message))
 					{
@@ -352,7 +357,7 @@ class BoxItemController extends BoxomaticController
 		foreach($CDDsWithExtras as $CDD)
 		{
 			$Customer = $CDD->Customer;
-			if($Customer->balance - $CDD->extras_total > Yii::app()->params['minimumCredit'])
+			if($Customer->balance - $CDD->extras_total > SnapUtil::config('boxomatic/minimumCredit'))
 			{
 				$Payment=new UserPayment();
 				$Payment->payment_value= -1*($CDD->extras_total); //make price a negative value for payment table
@@ -379,13 +384,15 @@ class BoxItemController extends BoxomaticController
 				$validator=new CEmailValidator();
 				if($validator->validateValue($Customer->User->email)) 
 				{
+					$adminEmail = SnapUtil::config('boxomatic/adminEmail');
+					$adminEmailFromName = SnapUtil::config('boxomatic/adminEmailFromName');
 					$date = $Box->DeliveryDate->date;
 					$message = new YiiMailMessage('Your custom order for '.$date.' has been declined');
 					$message->view = 'customer_custom_order_declined';
 					$message->setBody(array('Customer'=>$Customer, 'CDD' => $CDD), 'text/html');
 					$message->addTo($Customer->User->email);
-					$message->addTo(Yii::app()->params['adminEmail']);
-					$message->setFrom(array(Yii::app()->params['adminEmail'] => Yii::app()->params['adminEmailFromName']));
+					$message->addTo($adminEmail);
+					$message->setFrom(array($adminEmail => $adminEmailFromName));
 
 					if(!@Yii::app()->mail->send($message))
 					{
@@ -430,13 +437,15 @@ class BoxItemController extends BoxomaticController
 			$validator=new CEmailValidator();
 			if($validator->validateValue($Customer->User->email)) 
 			{
+				$adminEmail = SnapUtil::config('boxomatic/adminEmail');
+				$adminEmailFromName = SnapUtil::config('boxomatic/adminEmailFromName');
 				$date = $CustBox->Box->DeliveryDate->date;
 				$message = new YiiMailMessage('Your order for '.$date.' has been approved');
 				$message->view = 'customer_box_approved';
-				$message->setBody(array('Customer'=>$Customer, 'UserBox' => $CustBox), 'text/html');
+				$message->setBody(array('Customer'=>$Customer, 'UserBox'=>$CustBox), 'text/html');
 				$message->addTo($Customer->User->email);
-				$message->addTo('info@bellofoodbox.org.au');
-				$message->setFrom(array(Yii::app()->params['adminEmail'] => Yii::app()->params['adminEmailFromName']));
+				$message->addTo($adminEmail);
+				$message->setFrom(array($adminEmail => $adminEmailFromName));
 
 				if(!@Yii::app()->mail->send($message))
 				{

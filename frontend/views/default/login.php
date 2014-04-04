@@ -7,7 +7,7 @@ $this->pageTitle=Yii::app()->name . ' - Login';
 		<h1>Login</h1>
 		<p>Please fill out the following form with your login information:</p>
 
-		<?php $form=$this->beginWidget('application.widgets.SnapActiveForm', array(
+		<?php $form=$this->beginWidget('CActiveForm', array(
 			'id'=>'login-form',
 			'enableClientValidation'=>true,
 			'clientOptions'=>array(

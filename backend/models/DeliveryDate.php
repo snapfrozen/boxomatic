@@ -150,7 +150,7 @@ class DeliveryDate extends BoxomaticActiveRecord
 	
 	public function getFutureDeliveryDates()
 	{
-		$deadlineDays=Yii::app()->params['orderDeadlineDays'];
+		$deadlineDays=SnapUtil::config('boxomatic/orderDeadlineDays');
 		$dayOfWeek=date('N',strtotime($this->date))+1;
 		if($dayOfWeek == 8)
 			$dayOfWeek = 1;
@@ -164,7 +164,7 @@ class DeliveryDate extends BoxomaticActiveRecord
 	 */
 	public function getDeadline()
 	{
-		$deadlineDays=Yii::app()->params['orderDeadlineDays'];
+		$deadlineDays=SnapUtil::config('boxomatic/orderDeadlineDays');
 		$deliveryDate=strtotime($this->date);
 		return date('d-m-Y', strtotime('-' . $deadlineDays . ' days', $deliveryDate));
 	}

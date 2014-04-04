@@ -34,8 +34,9 @@ class ReportController extends BoxomaticController
 		$series=array();
 		$xAxisName='';
 		$yAxisName='';
+		$tablePrefix = SnapUtil::config('boxomatic/tablePrefix');
 		
-		$sql="SELECT MIN(payment_date) FROM customer_payments WHERE payment_date != '00-00-00 00:00:00'";
+		$sql="SELECT MIN(payment_date) FROM {$tablePrefix}user_payments WHERE payment_date != '00-00-00 00:00:00'";
 		$connection=Yii::app()->db; 
 		$minDate=$connection->createCommand($sql)->queryScalar();
 		
@@ -51,7 +52,7 @@ class ReportController extends BoxomaticController
 			
 			$sql=
 				"SELECT SUM(payment_value) as total
-				FROM customer_payments
+				FROM {$tablePrefix}user_payments
 				WHERE payment_date < '$minDate'";
 
 			$row=$connection->createCommand($sql)->queryRow();

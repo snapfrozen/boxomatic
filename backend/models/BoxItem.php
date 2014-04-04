@@ -106,7 +106,8 @@ class BoxItem extends BoxomaticActiveRecord
 	 */
 	public function getItem_unit_label()
 	{
-		return Yii::app()->params['itemUnits'][$this->item_unit];
+		
+		return SnapUtil::config('boxomatic/itemUnits.'.$this->item_unit);
 	}
 	
 	public function getWholesale_price()

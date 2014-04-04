@@ -6,7 +6,7 @@
  * The followings are the available columns in table 'inventory':
  * @property integer $inventory_id
  * @property integer $supplier_purchase_id
- * @property integer $customer_order_item_id
+ * @property integer $order_item_id
  * @property string $quantity
  */
 class Inventory extends BoxomaticActiveRecord
@@ -47,7 +47,7 @@ class Inventory extends BoxomaticActiveRecord
 		// will receive user inputs.
 		return array(
 			array('supplier_product_id, quantity', 'required'),
-			array('customer_order_item_id, supplier_product_id, supplier_purchase_id', 'numerical', 'integerOnly'=>true),
+			array('order_item_id, supplier_product_id, supplier_purchase_id', 'numerical', 'integerOnly'=>true),
 			array('quantity', 'length', 'max'=>7),
 			array('notes', 'safe'),
 			// The following rule is used by search().

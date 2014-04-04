@@ -174,7 +174,7 @@ class OrderItemController extends BoxomaticController
 		
 		$customerId = Yii::app()->user->user_id;
 		$Customer = Customer::model()->findByPk($customerId);
-		$deadlineDays=Yii::app()->params['orderDeadlineDays'];
+		$deadlineDays=SnapUtil::config('boxomatic/orderDeadlineDays');
 		
 		if(!$date) {
 			$date = DeliveryDate::getCurrentDeliveryDateId();
@@ -303,7 +303,7 @@ class OrderItemController extends BoxomaticController
 					
 					//give the customer the extra
 					$extra->quantity = $orderedExt->quantity;
-					$extra->customer_delivery_date_id = $CustDD->id;
+					$extra->order_id = $CustDD->id;
 					$extra->supplier_purchase_id = $orderedExt->supplier_purchase_id;
 					$extra->price = $orderedExt->price;
 					$extra->packing_station_id = $orderedExt->packing_station_id;
@@ -383,7 +383,7 @@ class OrderItemController extends BoxomaticController
 				
 				$extra = OrderItem::model()->with('Order')->findByAttributes(array(
 					'supplier_purchase_id'=>$purchaseId,
-					'customer_delivery_date_id'=>$CustDeliveryDate->id
+					'order_id'=>$CustDeliveryDate->id
 				));
 				if(!$extra) $extra = new OrderItem();
 
@@ -392,7 +392,7 @@ class OrderItemController extends BoxomaticController
 				
 				//give the customer the extra
 				$extra->quantity += $quantity;
-				$extra->customer_delivery_date_id = $CustDeliveryDate->id;
+				$extra->order_id = $CustDeliveryDate->id;
 				$extra->supplier_purchase_id = $purchaseId;
 				$extra->price = $Purchase->item_sales_price;
 				$extra->packing_station_id = $SupplierProduct->packing_station_id;
@@ -408,7 +408,7 @@ class OrderItemController extends BoxomaticController
 					$inventory->quantity = -abs($extra->quantity);
 					$inventory->supplier_product_id = $Purchase->supplier_product_id;
 					$inventory->supplier_purchase_id = $purchaseId;
-					$inventory->customer_delivery_date_item_id = $extra->id;
+					$inventory->order_item_id = $extra->id;
 					$inventory->notes = 'Order: '.$extra->id.', Customer: '.$customerId;
 					$inventory->save();
 				}

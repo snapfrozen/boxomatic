@@ -497,6 +497,8 @@ class UserController extends BoxomaticController
 				$User->update_time=new CDbExpression('NOW()');
 				$User->update();
 				
+				$adminEmail = SnapUtil::config('boxomatic/adminEmail');
+				$adminEmailFromName = SnapUtil::config('boxomatic/adminEmailFromName');
 				$message = new YiiMailMessage('FoodBox password renewal');
 				$message->view = 'forgottenPassword';
 
@@ -506,10 +508,9 @@ class UserController extends BoxomaticController
 				$message->setBody(array('User'=>$User,'url'=>$url), 'text/html');
 
 				$message->addTo($User->email);
-				$message->setFrom(array(Yii::app()->params['adminEmail'] => Yii::app()->params['adminEmailFromName']));
+				$message->setFrom(array($adminEmail => $adminEmailFromName));
 				
-				if(!@Yii::app()->mail->send($message))
-				{
+				if(!@Yii::app()->mail->send($message)) {
 					$mailError=true;
 				}
 			}

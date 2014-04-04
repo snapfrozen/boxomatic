@@ -133,14 +133,14 @@ class Customer extends BoxomaticActiveRecord
 		//$c->with doesn't work very well with CActiveDataProvider
 		$c->join = 
 			'INNER JOIN customer_delivery_dates cdd ON cdd.user_id = t.user_id '. 
-			'INNER JOIN customer_delivery_date_items cddi ON cddi.customer_delivery_date_id = cdd.id';
+			'INNER JOIN customer_delivery_date_items cddi ON cddi.order_id = cdd.id';
 		$c->group = 't.user_id';
 		
 		$c->compare('cddi.name',$this->extras_item_names,true);
 		if(!empty($this->search_full_name)) {
 			$c->join = 
 			'INNER JOIN customer_delivery_dates cdd ON cdd.user_id = t.user_id '. 
-			'INNER JOIN customer_delivery_date_items cddi ON cddi.customer_delivery_date_id = cdd.id '.
+			'INNER JOIN customer_delivery_date_items cddi ON cddi.order_id = cdd.id '.
 			'INNER JOIN users u ON u.user_id = t.user_id';
 			$c->compare('CONCAT(u.first_name, u.last_name)',$this->search_full_name,true);
 		}
@@ -217,7 +217,7 @@ class Customer extends BoxomaticActiveRecord
 	
 	public function getFulfilled_order_total()
 	{
-		$deadlineDays=Yii::app()->params['orderDeadlineDays'];
+		$deadlineDays=SnapUtil::config('boxomatic/orderDeadlineDays');
 		
 		$customerId=Yii::app()->user->user_id;
 		$deliveryDateDeadline=date('Y-m-d', strtotime('+' . $deadlineDays . ' days'));
@@ -254,7 +254,7 @@ class Customer extends BoxomaticActiveRecord
 		//Make sure we have a fresh Customer object with now CDbExpressions set for attributes
 		$Customer=self::model()->findByPk($this->user_id);
 		
-		$deadlineDays=Yii::app()->params['orderDeadlineDays'];
+		$deadlineDays=SnapUtil::config('boxomatic/orderDeadlineDays');
 		$CustDeliveryDates=Order::model()->with('DeliveryDate')->findAllByAttributes(array(
 			'user_id'=>$Customer->user_id,
 		),"date_sub(DeliveryDate.date, interval $deadlineDays day) > NOW()");

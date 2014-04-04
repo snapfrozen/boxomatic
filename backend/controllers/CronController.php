@@ -88,14 +88,16 @@ class CronController extends BoxomaticController
 				$User->auto_login_key=$User->generatePassword(50,4);
 				$User->update_time=new CDbExpression('NOW()');
 				$User->update();
-						    
+				
+				$adminEmail = SnapUtil::config('boxomatic/adminEmail');
+				$adminEmailFromName = SnapUtil::config('boxomatic/adminEmailFromName');
 				$message = new YiiMailMessage('Running out of orders');
 				$message->view = 'customer_running_out_of_orders';
 				$message->setBody(array('Customer'=>$Cust,'User'=>$User), 'text/html');
 				$message->addTo($Cust->User->email);
-				$message->addBcc('info@bellofoodbox.org.au');
+				$message->addBcc($adminEmail);
 				//$message->addTo('francis.beresford@gmail.com');
-				$message->setFrom(array(Yii::app()->params['adminEmail'] => Yii::app()->params['adminEmailFromName']));
+				$message->setFrom(array($adminEmail => $adminEmailFromName));
 
 				if(!@Yii::app()->mail->send($message)) {
 					echo '<p style="color:red"><strong>Email failed sending to: ' . $Cust->User->email . '</strong></p>';

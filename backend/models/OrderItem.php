@@ -5,7 +5,7 @@
  *
  * The followings are the available columns in table 'customer_delivery_date_items':
  * @property integer $id
- * @property integer $customer_delivery_date_id
+ * @property integer $order_id
  * @property integer $supplier_purchase_id
  * @property string $quantity
  * @property string $price
@@ -36,7 +36,7 @@ class OrderItem extends BoxomaticActiveRecord
 		// will receive user inputs.
 		return array(
 			array('supplier_purchase_id', 'required'),
-			array('id, packing_station_id, customer_delivery_date_id, supplier_purchase_id', 'numerical', 'integerOnly'=>true),
+			array('id, packing_station_id, order_id, supplier_purchase_id', 'numerical', 'integerOnly'=>true),
 			array('quantity, price', 'length', 'max'=>7),
 			array('name', 'length', 'max'=>45),
 			array('unit', 'length', 'max'=>20),
@@ -44,7 +44,7 @@ class OrderItem extends BoxomaticActiveRecord
 			array('quantity', 'checkStock'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, customer_delivery_date_id, supplier_purchase_id, quantity, price, created, updated', 'safe', 'on'=>'search'),
+			array('id, order_id, supplier_purchase_id, quantity, price, created, updated', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -56,9 +56,9 @@ class OrderItem extends BoxomaticActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'Order' => array(self::BELONGS_TO, 'Order', 'id'),
+			'Order' => array(self::BELONGS_TO, 'Order', 'order_id'),
 			'supplierPurchase' => array(self::BELONGS_TO, 'SupplierPurchase', 'supplier_purchase_id'),
-			'inventory' => array(self::HAS_ONE, 'Inventory', 'customer_order_item_id'),
+			'inventory' => array(self::HAS_ONE, 'Inventory', 'order_item_id'),
 		);
 	}
 
@@ -69,7 +69,7 @@ class OrderItem extends BoxomaticActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'customer_delivery_date_id' => 'Customer Delivery Date',
+			'order_id' => 'Customer Delivery Date',
 			'supplier_purchase_id' => 'Supplier Purchase',
 			'quantity' => 'Quantity',
 			'price' => 'Price',
@@ -97,7 +97,7 @@ class OrderItem extends BoxomaticActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id);
-		$criteria->compare('customer_delivery_date_id',$this->customer_delivery_date_id);
+		$criteria->compare('order_id',$this->order_id);
 		$criteria->compare('supplier_purchase_id',$this->supplier_purchase_id);
 		$criteria->compare('quantity',$this->quantity,true);
 		$criteria->compare('price',$this->price,true);
@@ -142,11 +142,11 @@ class OrderItem extends BoxomaticActiveRecord
 		}
 	}
 	
-	public static function findCustomerExtras($custId, $date)
+	public static function findCustomerExtras($userId, $date)
 	{
 		$model = self::model();
-		return $model->with('Order')->findAll('Order.user_id=:custId AND delivery_date_id=:date',array(
-			':custId' => $custId,
+		return $model->with('Order')->findAll('Order.user_id=:userId AND Order.delivery_date_id=:date',array(
+			':userId' => $userId,
 			':date' => $date,
 		));
 	}

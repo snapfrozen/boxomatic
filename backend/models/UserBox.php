@@ -210,14 +210,14 @@ class UserBox extends BoxomaticActiveRecord
 			return true;
 	}
 	
-	public static function findUserBox($dateId, $sizeId, $customerId)
+	public static function findUserBox($dateId, $sizeId, $userId)
 	{
 		$criteria=new CDbCriteria;
 		$criteria->with='Box';
 		$criteria->select='*, COUNT(user_box_id) as quantity';
 		$criteria->addCondition("Box.size_id=$sizeId");
 		$criteria->addCondition("Box.delivery_date_id=$dateId");
-		$criteria->addCondition("user_id=$customerId");
+		$criteria->addCondition("user_id=$userId");
 		$box=self::model()->find($criteria);
 		
 		//If there's no user_id the box wasn't found. (The aggregate COUNT 

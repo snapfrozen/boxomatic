@@ -102,7 +102,7 @@ class DefaultController extends BoxomaticController
 			if($model->validate())
 			{
 				$headers="From: {$model->email}\r\nReply-To: {$model->email}";
-				mail(Yii::app()->params['adminEmail'],$model->subject,$model->body,$headers);
+				mail(SnapUtil::config('boxomatic/adminEmail'),$model->subject,$model->body,$headers);
 				Yii::app()->user->setFlash('contact','Thank you for contacting us. We will respond to you as soon as possible.');
 				$this->refresh();
 			}
@@ -150,12 +150,14 @@ class DefaultController extends BoxomaticController
 				$Auth->assign('customer',$model->id);
 
 				//Send email
+				$adminEmail = SnapUtil::config('boxomatic/adminEmail');
+				$adminEmailFromName = SnapUtil::config('boxomatic/adminEmailFromName');
 				$message = new YiiMailMessage('Welcome to ' . Yii::app()->name);
 				$message->view = 'welcome';
 				$message->setBody(array('User'=>$model,'newPassword'=>$_POST['User']['password']), 'text/html');
-				$message->addTo(Yii::app()->params['adminEmail']);
+				$message->addTo($adminEmail);
 				$message->addTo($model->email);
-				$message->setFrom(array(Yii::app()->params['adminEmail'] => Yii::app()->params['adminEmailFromName']));
+				$message->setFrom(array($adminEmail => $adminEmailFromName));
 
 				if(!@Yii::app()->mail->send($message)) {
 					$mailError=true;

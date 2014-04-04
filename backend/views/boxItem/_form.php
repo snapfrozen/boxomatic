@@ -24,9 +24,11 @@ EOD
 	'id'=>'box-item-form',
 	'enableAjaxValidation'=>false,
 	'action'=>$this->createUrl('boxItem/create',array('date'=>Yii::app()->request->getQuery('date'))),
+	'htmlOptions'=>array('class'=>'row'),
 )); ?>
 
-<div class="secondaryNav">
+<!--
+<div class="col-lg-2">
 	
 	<div class="large-3 columns">
 		<div class="calendar">
@@ -36,7 +38,6 @@ EOD
 				var availableDates=<?php echo json_encode(SnapUtil::makeArray($DeliveryDates)) ?>;
 			</script>
 			<div class="dropDown">
-				<h4 data-dropdown="calendarDropdown">Date: <strong><?php echo $SelectedDeliveryDate ? SnapFormat::date($SelectedDeliveryDate->date) : 'None Selected'; ?></strong></h4>
 				<div class="dropDownPanel" id="calendarDropdown">
 					<div class="delivery-date-picker"></div>
 					<noscript>
@@ -48,12 +49,16 @@ EOD
 			</div>
 		</div>
 	</div>
+	
 	<?php if($SelectedDeliveryDate): ?>
 	<div class="large-3 columns end">
 		<div id="inventory">
-			<div class="dropDown">
-				<h4 data-dropdown="inventoryDropdown">Products</h4>
-				<div id="inventoryDropdown" class="dropDownPanel">
+			<?php
+			$this->beginWidget('bootstrap.widgets.BsPanel', array(
+				'title'=>'Products',
+				'titleTag'=>'h3',
+			));
+			?>
 				<?php $dataProvider=$SupplierProducts->search($SelectedDeliveryDate); ?>
 				<?php $pageSize=Yii::app()->user->getState('pageSize',10); ?>
 				<?php $this->widget('bootstrap.widgets.BsGridView', array(
@@ -125,28 +130,27 @@ EOD
 						)
 					),
 				)); ?>
-				</div>
-			</div>
+			<?php $this->endWidget(); ?>
 		</div>
 	</div>
 	
 	<?php endif; ?>
 
 </div>
+-->
 
-<div class="large-12 columns">
-	<div class='right'>
-		<?php echo CHtml::submitButton('Update Boxes', array('class' => 'button small')); ?>
-	</div>
-	<h4><span>Boxes</span> <span class="loading"></span></h4>
-	<div class="clear"></div>
-
+<div class="col-lg-9">
 	<div id="current-boxes">
 
 		<?php echo CHtml::hiddenField('curUrl', $this->createUrl('boxItem/create',array('date'=>Yii::app()->request->getQuery('date')))); ?>
 		<?php if($SelectedDeliveryDate): ?>
-
-		<table>
+		<?php
+		$this->beginWidget('bootstrap.widgets.BsPanel', array(
+			'title'=>'<span>Boxes</span> <span class="loading"></span>',
+			'titleTag'=>'h3',
+		));
+		?>
+		<table class="table">
 			<thead>
 				<tr>
 					<th class="supplierName">Items</th>
@@ -371,16 +375,28 @@ EOD
 
 			</tfoot>
 		</table>
-	</div>
-
-	<div class="panel">
-		<?php echo CHtml::link('Generate packing list Spreadsheet',array('deliveryDate/generatePackingList','date'=>$SelectedDeliveryDate->id), array('class' => 'button small')) ?>
-		<?php echo CHtml::link('Generate customer list',array('deliveryDate/generateCustomerList','date'=>$SelectedDeliveryDate->id), array('class' => 'button small')) ?>
-		<?php echo CHtml::link('Generate customer list PDF',array('deliveryDate/generateCustomerListPdf','date'=>$SelectedDeliveryDate->id), array('class' => 'button small')) ?>
-		<?php echo CHtml::link('Generate order list',array('deliveryDate/generateOrderList','date'=>$SelectedDeliveryDate->id), array('class' => 'button small')) ?>
+		<?php $this->endWidget(); ?>
 	</div>
 	<?php endif; ?>
 	
+</div>
+
+<div id="sidebar" class="col-lg-3">
+	<?php $this->beginWidget('bootstrap.widgets.BsPanel', array(
+		'title'=>'Menu',
+		'contentCssClass'=>'',
+		'htmlOptions'=>array(
+			'class'=>'panel sticky',
+		),
+		'type'=>BsHtml::PANEL_TYPE_PRIMARY,
+	)); ?>		
+	<div class="btn-group btn-group-vertical">
+		<?php $this->widget('application.widgets.SnapMenu', array(
+			'items'=>$this->menu,
+			'htmlOptions'=>array('class'=>'nav nav-stacked'),
+		)); ?>			
+	</div>
+	<?php $this->endWidget(); ?>
 </div>
 
 <?php $this->endWidget(); ?>

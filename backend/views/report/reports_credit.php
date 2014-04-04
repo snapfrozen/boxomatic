@@ -1,45 +1,62 @@
+<?php
+$this->breadcrumbs=array(
+	'Box-O-Matic'=>array('/snapcms/boxomatic/index'),
+	'Reports'=>array('reports/index'),
+	'Credit',
+);
+$this->menu=array(
+//	array('icon' => 'glyphicon glyphicon-plus-sign', 'label'=>'Create Box Size', 'url'=>array('boxSize/create')),
+);
+$this->page_heading = 'Credit Report';
+?>
+<div class="form">
+<?php $form=$this->beginWidget('application.widgets.SnapActiveForm', array(
+	'id'=>'login-form',
+	'enableClientValidation'=>false,
+	'clientOptions'=>array(
+		'validateOnSubmit'=>false,
+	),
+	'layout' => BsHtml::FORM_LAYOUT_HORIZONTAL,
+	'htmlOptions' => array('class'=>'row'),
+)); ?>
+	<div class="col-lg-9 clearfix">
+		<div class="form-group">
+			<?php echo BsHtml::label('Date From','date_from',array('class'=>BsHtml::$formLayoutHorizontalLabelClass)) ?>
+			<div class="col-lg-10">
+			<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+				'name'=>'date_from',
+				'options'=>array(
+					'dateFormat'=>'yy-mm-dd'
+				),
+				'htmlOptions'=>array('class'=>'form-control')
+			)); ?>
+			</div>
+		</div>
+		<div class="form-group">
+			<?php echo BsHtml::label('Date To','date_to',array('class'=>BsHtml::$formLayoutHorizontalLabelClass)) ?>
+			<div class="col-lg-10">
+			<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+				'name'=>'date_to',
+				'options'=>array(
+					'dateFormat'=>'yy-mm-dd'
+				),
+				'htmlOptions'=>array('class'=>'form-control')
+			)); ?>
+			</div>
+		</div>
+		<button class="btn btn-primary pull-right" name="yt0" type="submit">
+			<span class="glyphicon glyphicon-search"></span> Search
+		</button>
+	</div>
+<?php $this->endWidget(); ?>
+</div>
+<p>&nbsp;</p>
 <div class="row">
-	<div class="large-12 columns">
-		<h1>Reports</h1>
-	</div>
-	<div class="large-12 columns">
-		<?php $form=$this->beginWidget('application.widgets.SnapActiveForm', array(
-			'id'=>'login-form',
-			'enableClientValidation'=>false,
-			'clientOptions'=>array(
-				'validateOnSubmit'=>false,
-			),
-		)); ?>
-		<fieldset>
-			<legend>Date Filter</legend>
-			<div class="large-6 columns">
-				<?php echo CHtml::label('Date From','date_from') ?>
-				<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-					'name'=>'date_from',
-					'options'=>array(
-						'dateFormat'=>'yy-mm-dd'
-					)
-				)); ?>
-			</div>
-			<div class="large-6 columns">
-				<?php echo CHtml::label('Date To','date_to') ?>
-				<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-					'name'=>'date_to',
-					'options'=>array(
-						'dateFormat'=>'yy-mm-dd'
-					)
-				)); ?>
-			</div>
-		</fieldset>
-		<?php echo CHtml::submitButton('Box Sales',array('name'=>'boxSales', 'class' => 'button')); ?>
-		<?php $this->endWidget(); ?>
-	</div>
-	<div class="large-12 columns">
-		<?php if($series): 
-			
+	<div class="col-lg-9 clearfix">
+		
+		<?php if($series): 		
 		//print_r(CJSON::encode($series[0]['data']));
-			
-		$this->Widget('ext.highcharts.HighchartsWidget', array(
+		$this->Widget('boxomatic.extensions.highcharts.HighchartsWidget', array(
 			'options'=>array(
 				'title' => array('text' => 'Credit in system'),
 				'xAxis' => array(
@@ -55,19 +72,23 @@
 			)
 		));
 		endif; ?>
-	</div>
-	<div class="large-12 columns">
-		<h2>Current credit by user</h2>
-	</div>
-	<div class="large-12 columns">
-		<table>
+		<p>&nbsp;</p>
+		<?php
+		$this->beginWidget('bootstrap.widgets.BsPanel', array(
+			'title'=>'Current credit by user',
+			'titleTag'=>'h2',
+		));
+		?>
+		<table class="table">
 			<thead>
-				<th>id</th>
-				<th>Name</th>
-				<th>Balance</th>
+				<tr>
+					<th>id</th>
+					<th>Name</th>
+					<th>Balance</th>
+				</tr>
 			</thead>
 			<tbody>
-				<?php $Custs=Customer::model()->findAll();
+				<?php $Custs=BoxomaticUser::model()->findAll();
 				$total=0;
 				foreach($Custs as $Cust):
 					$bal=(float)CHtml::value($Cust, 'balance');
@@ -75,8 +96,8 @@
 				?>
 				<?php if($bal!=0): ?>
 				<tr>
-					<td><?php echo CHtml::value($Cust, 'User.id' ); ?></td>
-					<td><?php echo CHtml::value($Cust, 'User.first_name') . ' ' . CHtml::value($Cust, 'User.last_name') ?></td>
+					<td><?php echo CHtml::value($Cust, 'id' ); ?></td>
+					<td><?php echo CHtml::value($Cust, 'full_name') ?></td>
 					<td><?php echo SnapFormat::currency($bal) ?></td>
 				</tr>
 				<?php endif;?>
@@ -90,5 +111,7 @@
 				</tr>
 			</tfoot>
 		</table>
+		<?php $this->endWidget(); ?>
+		
 	</div>
 </div>

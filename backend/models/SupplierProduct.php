@@ -217,7 +217,7 @@ class SupplierProduct extends BoxomaticActiveRecord
 	 */
 	public function getunit_label()
 	{
-		return Yii::app()->params['itemUnits'][$this->unit];
+		return SnapUtil::config('boxomatic/itemUnits.'.$this->item_unit);
 	}
 	
 	public function getName_with_unit()

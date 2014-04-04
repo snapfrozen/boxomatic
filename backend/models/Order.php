@@ -73,7 +73,7 @@ class Order extends BoxomaticActiveRecord
 			'Customer' => array(self::BELONGS_TO, 'Customer', 'user_id'),
 			'UserLocation' => array(self::BELONGS_TO, 'UserLocation', 'customer_location_id'),
 			'Location' => array(self::BELONGS_TO, 'Location', 'location_id'),
-			'Extras' => array(self::HAS_MANY, 'OrderItem', 'customer_delivery_date_id')
+			'Extras' => array(self::HAS_MANY, 'OrderItem', 'order_id')
 		);
 	}
 
@@ -135,7 +135,7 @@ class Order extends BoxomaticActiveRecord
 		$c->compare('oi.name',$this->extras_item_names,true);
 		if(!empty($this->search_full_name)) {
 			$c->join = 
-				'INNER JOIN order_items oi ON oi.customer_delivery_date_id = t.id '.
+				'INNER JOIN order_items oi ON oi.order_id = t.id '.
 				'INNER JOIN users u ON u.id = t.user_id';
 			$c->compare('CONCAT(u.first_name, u.last_name)',$this->search_full_name,true);
 		}

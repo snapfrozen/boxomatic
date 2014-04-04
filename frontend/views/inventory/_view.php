@@ -11,11 +11,7 @@ $extra = isset($updatedExtras[$data->supplier_product_id]) ? $updatedExtras[$dat
 		'enableAjaxValidation'=>false,
 	)); ?>
 		<div class="image">
-		<?php if(!empty($product->image)): ?>
-			<?php //echo $product->getImageTag(array('size'=>'tiny')) ?>
-			<?php //echo CHtml::image($this->createUrl('supplierProduct/image',array('id'=>$product->id,'size'=>'tiny'))); ?>
-			<?php echo CHtml::image($this->createUrl('content/getImage',array('id'=>$product->id,'field'=>'image','modelName'=>'SupplierProduct','w'=>70,'h'=>70,'zc'=>1)),$product->name); ?>
-		<?php endif; ?>
+			<?php echo SnapHtml::image($product, 'image', array('w'=>70,'h'=>70,'zc'=>1)) ?>
 		</div>
 		<div class="inner">
 			<div class="row">

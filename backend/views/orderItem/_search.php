@@ -17,8 +17,8 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->label($model,'customer_delivery_date_id'); ?>
-		<?php echo $form->textField($model,'customer_delivery_date_id'); ?>
+		<?php echo $form->label($model,'order_id'); ?>
+		<?php echo $form->textField($model,'order_id'); ?>
 	</div>
 
 	<div class="row">

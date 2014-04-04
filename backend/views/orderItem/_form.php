@@ -26,9 +26,9 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'customer_delivery_date_id'); ?>
-		<?php echo $form->textField($model,'customer_delivery_date_id'); ?>
-		<?php echo $form->error($model,'customer_delivery_date_id'); ?>
+		<?php echo $form->labelEx($model,'order_id'); ?>
+		<?php echo $form->textField($model,'order_id'); ?>
+		<?php echo $form->error($model,'order_id'); ?>
 	</div>
 
 	<div class="row">

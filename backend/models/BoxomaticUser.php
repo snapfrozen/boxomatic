@@ -216,9 +216,9 @@ class BoxomaticUser extends User
 		Yii::import('application.external.*');
 		if($this->scenario == 'register' && isset($_POST['subscribe']))
 		{
-			$MailChimp = new MailChimp(Yii::app()->params['mailChimpApiKey']);
+			$MailChimp = new MailChimp(SnapUtil::config('boxomatic/mailChimpApiKey'));
 			$result = $MailChimp->call('lists/subscribe', array(
-				'id'                => Yii::app()->params['mailChimpListId'],
+				'id'                => SnapUtil::config('boxomatic/mailChimpListId'),
 				'email'             => array( 'email' => $this->email ),
 				'merge_vars'        => array(
 					'MERGE2' => $this->full_name // MERGE name from list settings
@@ -312,14 +312,14 @@ class BoxomaticUser extends User
 		//$c->with doesn't work very well with CActiveDataProvider
 		$c->join = 
 			'INNER JOIN customer_delivery_dates cdd ON cdd.user_id = t.user_id '. 
-			'INNER JOIN customer_delivery_date_items cddi ON cddi.customer_delivery_date_id = cdd.id';
+			'INNER JOIN customer_delivery_date_items cddi ON cddi.order_id = cdd.id';
 		$c->group = 't.user_id';
 		
 		$c->compare('cddi.name',$this->extras_item_names,true);
 		if(!empty($this->search_full_name)) {
 			$c->join = 
 			'INNER JOIN customer_delivery_dates cdd ON cdd.user_id = t.user_id '. 
-			'INNER JOIN customer_delivery_date_items cddi ON cddi.customer_delivery_date_id = cdd.id '.
+			'INNER JOIN customer_delivery_date_items cddi ON cddi.order_id = cdd.id '.
 			'INNER JOIN users u ON u.user_id = t.user_id';
 			$c->compare('CONCAT(u.first_name, u.last_name)',$this->search_full_name,true);
 		}
@@ -335,7 +335,7 @@ class BoxomaticUser extends User
 	
 	public function totalByDeliveryDate($dateId)
 	{
-		$customerId=$this->user_id;
+		$customerId=$this->id;
 		
 		$criteria=new CDbCriteria;
 		$criteria->condition = 'delivery_date_id=:dateId AND user_id=:customerId';
@@ -397,7 +397,7 @@ class BoxomaticUser extends User
 	
 	public function getFulfilled_order_total()
 	{
-		$deadlineDays=Yii::app()->params['orderDeadlineDays'];
+		$deadlineDays=SnapUtil::config('boxomatic/orderDeadlineDays');
 		
 		$customerId=Yii::app()->user->user_id;
 		$deliveryDateDeadline=date('Y-m-d', strtotime('+' . $deadlineDays . ' days'));
@@ -434,7 +434,7 @@ class BoxomaticUser extends User
 		//Make sure we have a fresh Customer object with now CDbExpressions set for attributes
 		$Customer=self::model()->findByPk($this->user_id);
 		
-		$deadlineDays=Yii::app()->params['orderDeadlineDays'];
+		$deadlineDays=SnapUtil::config('boxomatic/orderDeadlineDays');
 		$CustDeliveryDates=Order::model()->with('DeliveryDate')->findAllByAttributes(array(
 			'user_id'=>$this->id,
 		),"date_sub(DeliveryDate.date, interval $deadlineDays day) > NOW()");
@@ -547,21 +547,14 @@ class BoxomaticUser extends User
 		$message=new YiiMailMessage('Welcome to Bellofoodbox');
 		$message->view = 'welcome';
 		$message->setBody(array('User'=>$this,'newPassword'=>$newPassword), 'text/html');
-		
 		$email=trim($this->email);
 		
-		//REMOVE THIS
-		//$C = new Controller('Site');
-		//$C->renderPartial('../mail/welcome',array('User'=>$this,'newPassword'=>$newPassword));
-		//echo '<br /><br />---------------------------------------<br /><br />';
-		
 		$validator=new CEmailValidator();
-		
 		if($validator->validateValue($email)) 
 		{
-			//$message->addTo('donovan@snapfrozen.com.au');
-			//$message->addTo('leigh@bellofoodbox.org.au');
-			$message->setFrom(array(Yii::app()->params['adminEmail'] => Yii::app()->params['adminEmailFromName']));
+			$adminEmail = SnapUtil::config('boxomatic/adminEmail');
+			$adminEmailFromName = SnapUtil::config('boxomatic/adminEmailFromName');
+			$message->setFrom(array($adminEmail => $adminEmailFromName));
 			$message->addTo($email);
 			if(!@Yii::app()->mail->send($message))
 			{

@@ -1,11 +1,17 @@
 <?php
 	$cs=Yii::app()->clientScript;
-	$cs->registerCssFile(Yii::app()->request->baseUrl . '/css/ui-lightness/jquery-ui.css');
+	$baseUrl = Yii::app()->baseUrl;
+	$themeUrl = $baseUrl . Yii::app()->theme->baseUrl; 
+	$cs->registerCssFile($themeUrl . '/css/ui-lightness/jquery-ui.css');
 	$cs->registerCoreScript('jquery.ui');
-	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/ui.datepicker.min.js', CClientScript::POS_END);
-	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/chosen.jquery.min.js', CClientScript::POS_END);
-	$cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/Orderitem/_form.js',CClientScript::POS_END);
+	$cs->registerScriptFile($themeUrl . '/js/ui.datepicker.min.js', CClientScript::POS_END);
+	$cs->registerScriptFile($themeUrl . '/js/chosen.jquery.min.js', CClientScript::POS_END);
+	$cs->registerScriptFile($themeUrl . '/js/order/_form.js',CClientScript::POS_END);
 ?>
+
+<h1>Shop</h1>
+
+
 <?php if($Customer): ?>
 <div class="secondaryNav row">
 	<?php $form=$this->beginWidget('backend.widgets.SnapActiveForm', array(
@@ -20,8 +26,8 @@
 	
 	<div class="large-4 columns end">
 		<script type="text/javascript">
-			var curUrl="<?php echo $this->createUrl('extras/order'); ?>";
-			var curUrlWithId="<?php echo $this->createUrl('extras/order',array('id'=>$DeliveryDate->id)); ?>";
+			var curUrl="<?php echo $this->createUrl('/shop/default/index'); ?>";
+			var curUrlWithId="<?php echo $this->createUrl('/shop/default/index',array('id'=>$DeliveryDate->id)); ?>";
 			var selectedDate=<?php echo $DeliveryDate ? "'$DeliveryDate->date'" : 'null' ?>;
 			var availableDates=<?php echo json_encode(SnapUtil::makeArray($AllDeliveryDates)) ?>;
 		</script>
@@ -82,22 +88,20 @@
 </div>
 <?php endif; ?>
 
-<h1>Orders</h1>
-
 <div class="row">
 	<div class="large-2 columns leftCol">
 		<h2>Categories</h2>
 		<ul class="categories">
-			<li class="<?php echo ($curCat==Category::boxCategory?'selected':'') ?>"><?php echo CHtml::link('Boxes', array('shop/index','date'=>$DeliveryDate->id,'cat'=>Category::boxCategory)) ?></li>
-			<?php echo Category::model()->getCategoryTree(SnapUtil::config('boxomatic/supplier_product_root_id'), array('shop/index','date'=>$DeliveryDate->id), $curCat); ?>
-			<li class="<?php echo ($curCat==Category::uncategorisedCategory?'selected':'') ?>"><?php echo CHtml::link('Uncategorised', array('shop/index','date'=>$DeliveryDate->id,'cat'=>Category::uncategorisedCategory)) ?></li>
+			<li class="<?php echo ($curCat==Category::boxCategory?'selected':'') ?>"><?php echo CHtml::link('Boxes', array('/shop/default/index','date'=>$DeliveryDate->id,'cat'=>Category::boxCategory)) ?></li>
+			<?php echo Category::model()->getCategoryTree(SnapUtil::config('boxomatic/supplier_product_root_id'), array('/shop/default/index','date'=>$DeliveryDate->id), $curCat); ?>
+			<li class="<?php echo ($curCat==Category::uncategorisedCategory?'selected':'') ?>"><?php echo CHtml::link('Uncategorised', array('/shop/default/index','date'=>$DeliveryDate->id,'cat'=>Category::uncategorisedCategory)) ?></li>
 		</ul>
 	</div>
 	<div class="large-7 columns products">
 		
 		<?php if($curCat == Category::boxCategory): ?>
 		<h2>Boxes</h2>
-		<p>You may also select items you do not wish to have in your box <?php echo CHtml::link('here',array('user/dontWant','id'=>Yii::app()->user->id)) ?>.</p>
+		<p>You may select items you do not wish to have in your box <?php echo CHtml::link('here',array('user/dontWant','id'=>Yii::app()->user->id)) ?>.</p>
 		<div class="items row list-view">
 			<?php foreach($DeliveryDate->MergedBoxes as $Box): ?>
 
@@ -108,11 +112,7 @@
 					'enableAjaxValidation'=>false,
 				)); ?>
 				<div class="image">
-				<?php if(!empty($Box->BoxSize->image)): ?>
-					<?php echo CHtml::image($this->createUrl('boxSize/image',array('id'=>$Box->BoxSize->id,'size'=>'tiny'))); ?>
-				<?php else: ?>
-					<?php echo CHtml::image($this->createUrl('boxSize/image',array('size'=>'tiny'))); ?>
-				<?php endif; ?>
+					<?php echo SnapHtml::image($Box->BoxSize, 'image', array('w'=>70,'h'=>70,'zc'=>1)) ?>
 				</div>
 				<div class="inner">
 					<div class="row">
@@ -168,7 +168,7 @@
 		
 		<div class="items row list-view">
 		<?php foreach($DeliveryDate->MergedBoxes as $Box):
-			$UserBox=UserBox::findUserBox($DeliveryDate->id, $Box->size_id, Yii::app()->user->user_id);
+			$UserBox=UserBox::findUserBox($DeliveryDate->id, $Box->size_id, $Customer->id);
 			if(!$UserBox) 
 				continue;
 			$quantity=$UserBox ? $UserBox->quantity : 0; 
@@ -178,11 +178,7 @@
 				<div class="row">
 					<div class="large-4 columns">
 						<div class="image">
-						<?php if(!empty($Box->BoxSize->image)): ?>
-							<?php echo CHtml::image($this->createUrl('boxSize/image',array('id'=>$Box->BoxSize->id))); ?>
-						<?php else: ?>
-							<?php echo CHtml::image($this->createUrl('boxSize/image')); ?>
-						<?php endif; ?>
+							<?php echo SnapHtml::image($Box->BoxSize, 'image', array('w'=>70,'h'=>70,'zc'=>1)) ?>
 						</div>
 					</div>
 					<div class="large-8 columns">
@@ -212,7 +208,7 @@
 			'summaryText'=>'',
 			'itemsCssClass'=>'items row',
 			'emptyText'=>'',
-			'itemView'=>'../OrderItem/_view',
+			'itemView'=>'../orderItem/_view',
 			'viewData'=>array('form'=>$form,'updatedOrders'=>$updatedOrders,'pastDeadline'=>$pastDeadline),
 		)); ?>
 		<?php else: ?>

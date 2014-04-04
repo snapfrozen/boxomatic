@@ -14,5 +14,4 @@
 		</button>
 		
 	</div>
-
 <?php $this->endWidget(); ?>

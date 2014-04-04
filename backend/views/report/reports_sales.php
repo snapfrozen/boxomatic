@@ -1,58 +1,71 @@
-<div class="row">
-	<div class="large-12 columns">
-		<h1>Reports</h1>
-	</div>
-	<div class="large-12 columns">
-		<?php $form=$this->beginWidget('application.widgets.SnapActiveForm', array(
-			'id'=>'login-form',
-			'enableClientValidation'=>false,
-			'clientOptions'=>array(
-				'validateOnSubmit'=>false,
-			),
-		)); ?>
-		<fieldset>
-			<legend>Date Filter</legend>
-			<div class="large-6 columns">
-				<?php echo CHtml::label('Date From','date_from') ?>
-				<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-					'name'=>'date_from',
-					'options'=>array(
-						'dateFormat'=>'yy-mm-dd'
-					)
-				)); ?>
+<?php
+$this->breadcrumbs=array(
+	'Box-O-Matic'=>array('/snapcms/boxomatic/index'),
+	'Reports'=>array('reports/index'),
+	'Box Sales',
+);
+$this->menu=array(
+//	array('icon' => 'glyphicon glyphicon-plus-sign', 'label'=>'Create Box Size', 'url'=>array('boxSize/create')),
+);
+$this->page_heading = 'Box Sales';
+?>
+
+<?php $form=$this->beginWidget('application.widgets.SnapActiveForm', array(
+	'id'=>'login-form',
+	'enableClientValidation'=>false,
+	'clientOptions'=>array(
+		'validateOnSubmit'=>false,
+	),
+	'layout' => BsHtml::FORM_LAYOUT_HORIZONTAL,
+	'htmlOptions' => array('class'=>'row'),
+)); ?>
+	<div class="col-lg-9 clearfix">
+		<div class="form-group">
+			<?php echo BsHtml::label('Date From','date_from',array('class'=>BsHtml::$formLayoutHorizontalLabelClass)) ?>
+			<div class="col-lg-10">
+			<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+				'name'=>'date_from',
+				'options'=>array(
+					'dateFormat'=>'yy-mm-dd'
+				),
+				'htmlOptions'=>array('class'=>'form-control')
+			)); ?>
 			</div>
-			<div class="large-6 columns">
-				<?php echo CHtml::label('Date To','date_to') ?>
-				<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-					'name'=>'date_to',
-					'options'=>array(
-						'dateFormat'=>'yy-mm-dd'
-					)
-				)); ?>
+		</div>
+		<div class="form-group">
+			<?php echo BsHtml::label('Date To','date_to',array('class'=>BsHtml::$formLayoutHorizontalLabelClass)) ?>
+			<div class="col-lg-10">
+			<?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+				'name'=>'date_to',
+				'options'=>array(
+					'dateFormat'=>'yy-mm-dd'
+				),
+				'htmlOptions'=>array('class'=>'form-control')
+			)); ?>
 			</div>
-		</fieldset>
-		<?php echo CHtml::submitButton('Box Sales',array('name'=>'boxSales', 'class' => 'button')); ?>
-		<?php $this->endWidget(); ?>
+		</div>
+		<button class="btn btn-primary pull-right" name="yt0" type="submit">
+			<span class="glyphicon glyphicon-search"></span> Search
+		</button>
 	</div>
-	
-	<div class="large-12 columns">
-		<?php if($series): 
-		//print_r(CJSON::encode($series[0]['data']));
-		$this->Widget('ext.highcharts.HighchartsWidget', array(
-		'options'=>array(
-			'title' => array('text' => 'Box Sales'),
-			'xAxis' => array(
-				'type' => 'datetime',
-		//					'dateTimeLabelFormats'=>array( // don't display the dummy year
-		//						'month'=>'%e. %b',
-		//						'year'=>'%b'
-		//					),
-				//'categories' => $xAxis,
-			),
-			'yAxis' => $yAxis,
-			'series' => $series
-		)
-		));
-		endif; ?>
-	</div>
+<?php $this->endWidget(); ?>
 </div>
+
+<?php if($series): 
+//print_r(CJSON::encode($series[0]['data']));
+$this->Widget('ext.highcharts.HighchartsWidget', array(
+'options'=>array(
+	'title' => array('text' => 'Box Sales'),
+	'xAxis' => array(
+		'type' => 'datetime',
+//					'dateTimeLabelFormats'=>array( // don't display the dummy year
+//						'month'=>'%e. %b',
+//						'year'=>'%b'
+//					),
+		//'categories' => $xAxis,
+	),
+	'yAxis' => $yAxis,
+	'series' => $series
+)
+));
+endif; ?>

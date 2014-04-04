@@ -196,7 +196,6 @@ return array(
 	),
 
 	// application-level parameters that can be accessed
-	// using Yii::app()->params['paramName']
 	'params'=>array(
 		'minimumCredit'=>-100,
 		// this is used in contact page

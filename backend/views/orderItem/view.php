@@ -22,7 +22,7 @@ $this->menu=array(
 	'data'=>$model,
 	'attributes'=>array(
 		'id',
-		'customer_delivery_date_id',
+		'order_id',
 		'supplier_product_id',
 		'quantity',
 		'price',

@@ -3,7 +3,7 @@
 /**
  * This is the model class for table "user_payments".
  *
- * The followings are the available columns in table 'customer_payments':
+ * The followings are the available columns in table 'user_payments':
  * @property integer $payment_id
  * @property string $payment_value
  * @property string $payment_type

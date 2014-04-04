@@ -221,7 +221,7 @@ class UserBoxController extends BoxomaticController
 		$model=new UserBox();
 		$Customer=Customer::model()->findByPk(Yii::app()->user->user_id);
 		
-		$deadlineDays=Yii::app()->params['orderDeadlineDays'];
+		$deadlineDays=SnapUtil::config('boxomatic/orderDeadlineDays');
 		
 		if(isset($_GET['all']))
 			$DeliveryDates=DeliveryDate::model()->findAll();

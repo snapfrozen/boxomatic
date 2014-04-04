@@ -20,12 +20,18 @@ class FrontendBoxomaticModule extends CWebModule
 		));
 
 		// import the module-level models and components
-		$this->setImport(array(
-		
+		Yii::app()->setImport(array(
+			'boxomatic.extensions.yii-mail.YiiMailMessage',
 		));
 		
 		Yii::app()->setComponents(array(
-
+			'mail' => array(
+				'class' => 'boxomatic.extensions.yii-mail.YiiMail',
+				'transportType' => 'php',
+				'viewPath' => 'boxomatic.views.mail',
+				'logging' => true,
+				'dryRun' => false
+			),
 		));
 
 		parent::init();

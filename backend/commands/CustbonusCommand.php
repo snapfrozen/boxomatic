@@ -55,7 +55,7 @@ EOD;
 				$Customers=Customer::model()->findAllBySql('
 SELECT * FROM customers WHERE customer_id not in (
 	SELECT DISTINCT c.customer_id FROM customers c 
-		JOIN customer_payments cp ON c.customer_id=cp.customer_id
+		JOIN user_payments cp ON c.customer_id=cp.customer_id
 		WHERE payment_date > "'.$isoDate.'" 
 	AND payment_type = \'DEBIT\' 
 	AND payment_value <= -20 )
@@ -97,9 +97,9 @@ SELECT * FROM customers WHERE customer_id not in (
 				$validator=new CEmailValidator();
 				if($validator->validateValue($email)) 
 				{
-					//$message->addTo('donovan@snapfrozen.com.au');
-					//$message->addTo('leigh@bellofoodbox.org.au');
-					$message->setFrom(array(Yii::app()->params['adminEmail'] => Yii::app()->params['adminEmailFromName']));
+					$adminEmail = SnapUtil::config('boxomatic/adminEmail');
+					$adminEmailFromName = SnapUtil::config('boxomatic/adminEmailFromName');
+					$message->setFrom(array($adminEmail => $adminEmailFromName));
 					$message->addTo($email);
 					if(!@Yii::app()->mail->send($message))
 					{
