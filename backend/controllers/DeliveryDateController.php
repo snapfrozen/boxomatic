@@ -182,8 +182,9 @@ class DeliveryDateController extends BoxomaticController
 	 */
 	public function actionGeneratePackingList($date)
 	{
-		$phpExcelPath = Yii::getPathOfAlias('application.external.PHPExcel');
+		$phpExcelPath = Yii::getPathOfAlias('boxomatic.external.PHPExcel');
 		$PackingStations = PackingStation::model()->findAll();
+		$tablePrefix=SnapUtil::config('boxomatic/tablePrefix');
 		
 		$lineIndex = 1;
 		
@@ -209,22 +210,22 @@ class DeliveryDateController extends BoxomaticController
 				`Supplier`.`name`
 				#`PackingStation`.`name` as packing_station
 
-			FROM `boxes` `t`  
+			FROM `'.$tablePrefix.'boxes` `t`  
 
-			LEFT OUTER JOIN `user_boxes` `UserBoxes` 
+			LEFT OUTER JOIN `'.$tablePrefix.'user_boxes` `UserBoxes` 
 				ON (`UserBoxes`.`box_id`=`t`.`box_id`)
-			LEFT OUTER JOIN `box_items` `BoxItems` 
+			LEFT OUTER JOIN `'.$tablePrefix.'box_items` `BoxItems` 
 				ON (`BoxItems`.`box_id`=`t`.`box_id`)  
-			LEFT OUTER JOIN `suppliers` `Supplier` 
+			LEFT OUTER JOIN `'.$tablePrefix.'suppliers` `Supplier` 
 				ON (`BoxItems`.`supplier_id`=`Supplier`.`id`)
-			INNER JOIN `supplier_products` `SupplierProduct`
+			INNER JOIN `'.$tablePrefix.'supplier_products` `SupplierProduct`
 				ON (`BoxItems`.`supplier_product_id`=`SupplierProduct`.`id`)
-			INNER JOIN `packing_stations` `PackingStation`
+			INNER JOIN `'.$tablePrefix.'packing_stations` `PackingStation`
 				ON (`PackingStation`.`id`=`SupplierProduct`.`packing_station_id`)
 
 			WHERE (
 				delivery_date_id=' . $date . ' 
-				AND packing_station_id = ' . $PS->id . '
+				AND BoxItems.packing_station_id = ' . $PS->id . '
 				AND user_box_id is not null
 				AND (
 					UserBoxes.status='.UserBox::STATUS_APPROVED.' OR
@@ -338,7 +339,7 @@ class DeliveryDateController extends BoxomaticController
 					$orderedString = ' (' . implode(',',$orderedBoxes) . ')';
 				}
 				
-				$User = $CDD->Customer->User;
+				$User = $CDD->User;
 				$objPHPExcel->getActiveSheet()->SetCellValue('A'.$lineIndex, $User ? $User->bfb_id . ' - ' . $User->full_name . $orderedString : 'No Customer Name!');
 				$objPHPExcel->getActiveSheet()->getStyle("A$lineIndex")->applyFromArray(array("font" => array( "bold" => true)));
 				$lineIndex++;
@@ -378,6 +379,7 @@ class DeliveryDateController extends BoxomaticController
 	 */
 	public function actionGenerateOrderList($date)
 	{
+		$tablePrefix=SnapUtil::config('boxomatic/tablePrefix');
 		$sql = '
 		SELECT 
 			SUM(item_quantity) as total,
@@ -392,13 +394,13 @@ class DeliveryDateController extends BoxomaticController
 			`BoxItems`.`item_unit`,
 			`Supplier`.`name`
 			
-		FROM `boxes` `t`  
+		FROM `'.$tablePrefix.'boxes` `t`  
 
-		LEFT OUTER JOIN `user_boxes` `UserBoxes` 
+		LEFT OUTER JOIN `'.$tablePrefix.'user_boxes` `UserBoxes` 
 			ON (`UserBoxes`.`box_id`=`t`.`box_id`)
-		LEFT OUTER JOIN `box_items` `BoxItems` 
+		LEFT OUTER JOIN `'.$tablePrefix.'box_items` `BoxItems` 
 			ON (`BoxItems`.`box_id`=`t`.`box_id`)  
-		LEFT OUTER JOIN `suppliers` `Supplier` 
+		LEFT OUTER JOIN `'.$tablePrefix.'suppliers` `Supplier` 
 			ON (`BoxItems`.`supplier_id`=`Supplier`.`id`)  
 
 		WHERE (
@@ -425,7 +427,7 @@ class DeliveryDateController extends BoxomaticController
 			exit;
 		}
 		
-		$phpExcelPath = Yii::getPathOfAlias('application.external.PHPExcel');
+		$phpExcelPath = Yii::getPathOfAlias('boxomatic.external.PHPExcel');
 		
 		$DateBoxes=Box::model()->with('BoxSize')->findAll(array(
 			'condition'=>'delivery_date_id = '.$date,
@@ -518,18 +520,14 @@ class DeliveryDateController extends BoxomaticController
 				'with'=>array(
 					'BoxSize'
 			)),
-			'Customer'=>array(
-				'with'=>array(
-					'User',
-				)
-			)
+			'User'
 		)
 		)->findAll(array(
 			'condition'=>'delivery_date_id='.$date.' AND (status='.UserBox::STATUS_APPROVED.' OR status='.UserBox::STATUS_DELIVERED.')',
 			'order'=>'User.first_name'
 		));
 
-		$phpExcelPath = Yii::getPathOfAlias('application.external.PHPExcel');
+		$phpExcelPath = Yii::getPathOfAlias('boxomatic.external.PHPExcel');
 		
 		//disable Yii's Autoload because it messes with PHPExcel's autoloader
 		spl_autoload_unregister(array('YiiBase','autoload'));  
@@ -554,13 +552,13 @@ class DeliveryDateController extends BoxomaticController
 		foreach($CustBoxes as $CustBox)
 		{
 			$sheet->SetCellValue('A'.$row, $CustBox->Box->BoxSize->box_size_name);
-			$sheet->SetCellValue('B'.$row, $CustBox->Customer->User->first_name);
-			$sheet->SetCellValue('C'.$row, $CustBox->Customer->User->last_name);
-			$sheet->SetCellValue('D'.$row, $CustBox->Customer->User->user_phone);
-			$sheet->SetCellValue('E'.$row, $CustBox->Customer->User->user_mobile);
+			$sheet->SetCellValue('B'.$row, $CustBox->User->first_name);
+			$sheet->SetCellValue('C'.$row, $CustBox->User->last_name);
+			$sheet->SetCellValue('D'.$row, $CustBox->User->user_phone);
+			$sheet->SetCellValue('E'.$row, $CustBox->User->user_mobile);
 			$sheet->SetCellValue('F'.$row, $CustBox->delivery_location);
 			$sheet->SetCellValue('G'.$row, $CustBox->delivery_address);
-			//$sheet->SetCellValue('E'.$row, $CustBox->Customer->UserLocation ? $CustBox->Customer->UserLocation->full_address : "");
+			//$sheet->SetCellValue('E'.$row, $CustBox->UserLocation ? $CustBox->UserLocation->full_address : "");
 			$row++;
 		}
 		//spl_autoload_unregister(array('YiiBase','autoload'));  
@@ -587,26 +585,22 @@ class DeliveryDateController extends BoxomaticController
 	
 	public function actionGenerateCustomerListPdf($date)
 	{
-		$mPDF1=Yii::app()->ePdf->mpdf();
-		$mPDF1->SetTitle('Customer list');
-		
 		$CustBoxes=UserBox::model()->with(array(
 			'Box'=>array(
 				'with'=>array(
 					'BoxSize'
 			)),
-			'Customer'=>array(
-				'with'=>array(
-					'User',
-				)
-			)
+			'User',
 		)
 		)->findAll(array(
 			'condition'=>'delivery_date_id='.$date.' AND (status='.UserBox::STATUS_APPROVED.' OR status='.UserBox::STATUS_DELIVERED.')',
 			'order'=>'User.first_name'
 		));
+
+		$mPDF1=Yii::app()->ePdf->mpdf();
+		$mPDF1->SetTitle('Customer list');
 		
-		$stylesheet = file_get_contents(Yii::getPathOfAlias('webroot.css') . '/pdf.css');
+		$stylesheet = file_get_contents(Yii::getPathOfAlias('web.themes.boxomatic.admin.css') . '/pdf.css');
 		$mPDF1->WriteHTML($stylesheet, 1);
 
 //		$this->renderPartial('customer_list_pdf', array('CustBoxes'=>$CustBoxes));

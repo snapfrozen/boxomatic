@@ -28,6 +28,7 @@ class BoxomaticUser extends User
 	public $searchAdmin=false;
 	public $search_customer_notes;
 	public $tag_name_search;
+	public $dont_want_search;
 	public $total_payments;
 	
 	public function behaviors()
@@ -77,7 +78,7 @@ class BoxomaticUser extends User
 			array('tag_names','safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('tag_name_search, search_customer_notes, id, first_name, last_name, full_name, user_phone, user_mobile, user_address, user_address2, email, user_suburb, user_state, user_postcode, last_login_time', 'safe', 'on'=>'search'),
+			array('dont_want_search, tag_name_search, search_customer_notes, id, first_name, last_name, full_name, user_phone, user_mobile, user_address, user_address2, email, user_suburb, user_state, user_postcode, last_login_time', 'safe', 'on'=>'search'),
 			// verifyCode needs to be entered correctly
 			array('verify_code', 'captcha', 'allowEmpty'=>!CCaptcha::checkRequirements(), 'on'=>'register'),
 		);
@@ -92,7 +93,7 @@ class BoxomaticUser extends User
 		// class name for the relations automatically generated below.
 		return array(
 			'Supplier'=>array(self::HAS_ONE,'Supplier','user_id'),
-			'DontWant'=>array(self::MANY_MANY,'SupplierProduct','user_dontwant_products(user_id,supplier_product_id)'),
+			'DontWant'=>array(self::MANY_MANY,'SupplierProduct', SnapUtil::config('boxomatic/tablePrefix').'user_dontwant_products(user_id,supplier_product_id)'),
 			'Tags'=>array(self::MANY_MANY, 'Tag', SnapUtil::config('boxomatic/tablePrefix').'user_tags(user_id,tag_id)'),
 			'UserLocations' => array(self::HAS_MANY, 'UserLocation', 'user_id'),
 			'UserLocation' => array(self::BELONGS_TO, 'UserLocation', 'user_location_id'),
@@ -147,6 +148,7 @@ class BoxomaticUser extends User
 			'tag_name_search' => 'Tags',
 			'location_id' => 'Location',
 			'user_location_id' => 'Address',
+			'dont_want_search' => 'Doesn\'t Want'
 		);
 	}
 
@@ -156,11 +158,14 @@ class BoxomaticUser extends User
 	 */
 	public function search()
 	{
+		$tablePrefix = SnapUtil::config('boxomatic/tablePrefix');
+		
 		$pageSize=isset($_GET['pageSize'])?$_GET['pageSize']:10;
 		Yii::app()->user->setState('pageSize',$pageSize);
-
+		
+		
 		$criteria=new CDbCriteria;
-		$criteria->compare('notes',$this->search_customer_notes,true);
+		$criteria->select = 't.*';
 		
 		if(!empty($this->tag_name_search))
 		{
@@ -168,7 +173,17 @@ class BoxomaticUser extends User
 			$criteria->together=true;
 			$criteria->compare('Tags.id', $this->tag_name_search);
 		}
+		
+		if(!empty($this->dont_want_search))
+		{
+			$criteria->join = 
+				"INNER JOIN {$tablePrefix}user_dontwant_products udw ON udw.user_id = t.id "
+				. "INNER JOIN {$tablePrefix}supplier_products sp ON sp.id = udw.supplier_product_id ";
+			$criteria->compare('sp.name', $this->dont_want_search, true);
+			$criteria->group = 't.id';
+		}
 
+		$criteria->compare('notes',$this->search_customer_notes,true);
 		$criteria->compare('id',$this->id);
 		$criteria->compare('email',$this->email,true);
 		$criteria->compare('password',$this->password,true);
@@ -568,6 +583,12 @@ class BoxomaticUser extends User
 		
 		return true;
 	 }
+	 
+	public function getDont_want_items()
+	{
+		$items = CHtml::listData($this->DontWant,'id','name');
+		return implode($items, ', ');
+	}
 	 
 	 
 	public function getTag_names()

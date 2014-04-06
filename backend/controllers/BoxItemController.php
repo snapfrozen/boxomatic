@@ -90,10 +90,11 @@ class BoxItemController extends BoxomaticController
 					
 					if($boxItem['item_quantity']>0) 
 					{
-						$BoxItem->attributes=$boxContents;
+						$BoxItem->attributes=$boxItem;
 						
 						$SP = $BoxItem->SupplierProduct;
-						if(!$SP) {
+						if(!$SP) 
+						{
 							$SP = SupplierProduct::model()->findByAttributes(array(
 								'name'=>$boxContents['item_name'],
 								'supplier_id'=>$boxContents['supplier_id'],
@@ -136,7 +137,6 @@ class BoxItemController extends BoxomaticController
 		
 		$SelectedDeliveryDate=DeliveryDate::model()->findByPk($date);
 		$DeliveryDateBoxes=$SelectedDeliveryDate->MergedBoxes;
-		
 		
 		//Item has been selected from inventory, if it doesn't exist in the date
 		//Load it to be added as a new row up the top of the box item list
@@ -230,6 +230,12 @@ class BoxItemController extends BoxomaticController
 			$model->attributes=$_POST['BoxItem'];
 			$model->save();				
 		}
+
+		$Customer=new BoxomaticUser('search');
+		$Customer->unsetAttributes();
+		if(isset($_GET['BoxomaticUser']))
+			$Customer->attributes = $_GET['BoxomaticUser'];
+		
 		$this->layout = '//layouts/full_width';
 		$this->render('create',array(
 			'model'=>$model,
@@ -238,6 +244,7 @@ class BoxItemController extends BoxomaticController
 			'DeliveryDateBoxes'=>$DeliveryDateBoxes,
 			'SelectedDeliveryDate'=>$SelectedDeliveryDate,
 			'selectedItemId'=>$selectedItemId,
+			'Customer'=>$Customer,
 		));
 	}
 	
@@ -249,6 +256,7 @@ class BoxItemController extends BoxomaticController
 		$DeliveryDates=DeliveryDate::model()->findAll();
 
 		$CDD=new Order('search');
+		$CDD->unsetAttributes();
 		if(isset($_GET['Order']))
 			$CDD->attributes = $_GET['Order'];
 		
@@ -256,7 +264,6 @@ class BoxItemController extends BoxomaticController
 		$SelectedDeliveryDate=DeliveryDate::model()->findByPk($date);
 
 		$UserBoxes=new UserBox('search');
-		//$model=new BoxItem('search');
 		$UserBoxes->unsetAttributes();  // clear any default values
 		if(isset($_GET['UserBox']))
 			$UserBoxes->attributes=$_GET['UserBox'];
@@ -282,9 +289,9 @@ class BoxItemController extends BoxomaticController
 		
 		foreach($UserBoxes as $CustBox)
 		{
-			$Customer=$CustBox->Customer;
+			$User=$CustBox->User;
 			$Box=$CustBox->Box;
-			if($Customer->balance - ($Box->box_price+$CustBox->delivery_cost) > SnapUtil::config('boxomatic/minimumCredit'))
+			if($User->balance - ($Box->box_price+$CustBox->delivery_cost) > SnapUtil::config('boxomatic/minimumCredit'))
 			{
 				$Payment=new UserPayment();
 				$Payment->payment_value= -1*($Box->box_price+$CustBox->delivery_cost); //make price a negative value for payment table
@@ -307,15 +314,15 @@ class BoxItemController extends BoxomaticController
 				
 			    //Box approved email
 				$validator=new CEmailValidator();
-				if($validator->validateValue($Customer->User->email)) 
+				if($validator->validateValue($User->email)) 
 				{
 					$adminEmail = SnapUtil::config('boxomatic/adminEmail');
 					$adminEmailFromName = SnapUtil::config('boxomatic/adminEmailFromName');
 					$date = $Box->DeliveryDate->date;
 					$message = new YiiMailMessage('Your order for '.$date.' has been approved');
 					$message->view = 'customer_box_approved';
-					$message->setBody(array('Customer'=>$Customer, 'UserBox' =>$CustBox), 'text/html');
-					$message->addTo($Customer->User->email);
+					$message->setBody(array('Customer'=>$User, 'UserBox' =>$CustBox), 'text/html');
+					$message->addTo($User->email);
 					$message->addTo($adminEmail);
 					$message->setFrom(array($adminEmail => $adminEmailFromName));
 
@@ -331,15 +338,15 @@ class BoxItemController extends BoxomaticController
 				
 				//Box declined email
 				$validator=new CEmailValidator();
-				if($validator->validateValue($Customer->User->email)) 
+				if($validator->validateValue($User->email)) 
 				{
 					$adminEmail = SnapUtil::config('boxomatic/adminEmail');
 					$adminEmailFromName = SnapUtil::config('boxomatic/adminEmailFromName');
 					$date = $Box->DeliveryDate->date;
 					$message = new YiiMailMessage('Your order for '.$date.' has been declined');
 					$message->view = 'customer_box_declined';
-					$message->setBody(array('Customer'=>$Customer, 'UserBox' => $CustBox), 'text/html');
-					$message->addTo($Customer->User->email);
+					$message->setBody(array('Customer'=>$User, 'UserBox' => $CustBox), 'text/html');
+					$message->addTo($User->email);
 					$message->addTo($adminEmail);
 					$message->setFrom(array($adminEmail => $adminEmailFromName));
 
@@ -356,8 +363,8 @@ class BoxItemController extends BoxomaticController
 		
 		foreach($CDDsWithExtras as $CDD)
 		{
-			$Customer = $CDD->Customer;
-			if($Customer->balance - $CDD->extras_total > SnapUtil::config('boxomatic/minimumCredit'))
+			$User = $CDD->User;
+			if($User->balance - $CDD->extras_total > SnapUtil::config('boxomatic/minimumCredit'))
 			{
 				$Payment=new UserPayment();
 				$Payment->payment_value= -1*($CDD->extras_total); //make price a negative value for payment table
@@ -372,7 +379,7 @@ class BoxItemController extends BoxomaticController
 				$Payment->save();
 				
 				$CustDD = Order::model()->findByAttributes(array(
-					'user_id'=>$Customer->user_id,
+					'user_id'=>$User->id,
 					'delivery_date_id'=>$date,
 				));
 				$CustDD->status=UserBox::STATUS_APPROVED;
@@ -382,15 +389,15 @@ class BoxItemController extends BoxomaticController
 			{
 				//Box declined email
 				$validator=new CEmailValidator();
-				if($validator->validateValue($Customer->User->email)) 
+				if($validator->validateValue($User->email)) 
 				{
 					$adminEmail = SnapUtil::config('boxomatic/adminEmail');
 					$adminEmailFromName = SnapUtil::config('boxomatic/adminEmailFromName');
 					$date = $Box->DeliveryDate->date;
 					$message = new YiiMailMessage('Your custom order for '.$date.' has been declined');
 					$message->view = 'customer_custom_order_declined';
-					$message->setBody(array('Customer'=>$Customer, 'CDD' => $CDD), 'text/html');
-					$message->addTo($Customer->User->email);
+					$message->setBody(array('Customer'=>$User, 'CDD' => $CDD), 'text/html');
+					$message->addTo($User->email);
 					$message->addTo($adminEmail);
 					$message->setFrom(array($adminEmail => $adminEmailFromName));
 
@@ -411,8 +418,8 @@ class BoxItemController extends BoxomaticController
 	public function actionProcessCustBox($custBox)
 	{
 		$CustBox=UserBox::model()->findByPk($custBox);
-		$Customer=$CustBox->Customer;
-		if($Customer->balance >= $CustBox->Box->box_price+$CustBox->delivery_cost)
+		$User=$CustBox->User;
+		if($User->balance >= $CustBox->Box->box_price+$CustBox->delivery_cost)
 		{
 			$Payment=new UserPayment();
 			$Payment->payment_value= -1*($CustBox->Box->box_price+$CustBox->delivery_cost); //make price a negative value for payment table
@@ -435,15 +442,15 @@ class BoxItemController extends BoxomaticController
 			
 			//Box approved email
 			$validator=new CEmailValidator();
-			if($validator->validateValue($Customer->User->email)) 
+			if($validator->validateValue($User->email)) 
 			{
 				$adminEmail = SnapUtil::config('boxomatic/adminEmail');
 				$adminEmailFromName = SnapUtil::config('boxomatic/adminEmailFromName');
 				$date = $CustBox->Box->DeliveryDate->date;
 				$message = new YiiMailMessage('Your order for '.$date.' has been approved');
 				$message->view = 'customer_box_approved';
-				$message->setBody(array('Customer'=>$Customer, 'UserBox'=>$CustBox), 'text/html');
-				$message->addTo($Customer->User->email);
+				$message->setBody(array('Customer'=>$User, 'UserBox'=>$CustBox), 'text/html');
+				$message->addTo($User->email);
 				$message->addTo($adminEmail);
 				$message->setFrom(array($adminEmail => $adminEmailFromName));
 

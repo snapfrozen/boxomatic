@@ -289,7 +289,7 @@ class UserBox extends BoxomaticActiveRecord
 		$url='http://'.Yii::app()->request->serverName;
 		$url.=Yii::app()->createUrl('customerBox/setDelivered',array('id'=>$this->user_box_id));
 		
-		Yii::import('ext.qrcode.QRCode');
+		Yii::import('boxomatic.extensions.qrcode.QRCode');
 		$code=new QRCode($url);
 		$code->create($filePath);
 		

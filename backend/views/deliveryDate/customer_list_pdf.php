@@ -17,10 +17,10 @@
  
 				<br /><?php echo CHtml::image($CustBox->getQrCode(), 'QR Image', array('width'=>90,'height'=>90)); ?>
 			</td>
-			<td class="name"><br /><strong><?php echo $CustBox->Box->BoxSize->box_size_name ?>:</strong> <?php echo $CustBox->Customer->User->first_name ?> <?php echo $CustBox->Customer->User->last_name ?></td>
+			<td class="name"><br /><strong><?php echo $CustBox->Box->BoxSize->box_size_name ?>:</strong> <?php echo $CustBox->User->first_name ?> <?php echo $CustBox->User->last_name ?></td>
 			<!-- <td class="phone">
-				<?php if(!empty($CustBox->Customer->User->user_phone)): ?><strong>T:</strong><?php echo $CustBox->Customer->User->user_phone ?><?php endif; ?>
-				<?php if(!empty($CustBox->Customer->User->user_mobile)): ?><strong>M:</strong><?php echo $CustBox->Customer->User->user_mobile ?><?php endif; ?>
+				<?php if(!empty($CustBox->User->user_phone)): ?><strong>T:</strong><?php echo $CustBox->User->user_phone ?><?php endif; ?>
+				<?php if(!empty($CustBox->User->user_mobile)): ?><strong>M:</strong><?php echo $CustBox->User->user_mobile ?><?php endif; ?>
 			</td> -->
 		</tr>
 		<tr>

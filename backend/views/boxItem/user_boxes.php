@@ -19,13 +19,13 @@ $this->page_heading = 'Orders';
 if($SelectedDeliveryDate):
 	$this->page_heading_subtext = 'for '.SnapFormat::date($SelectedDeliveryDate->date);
 	$this->menu = array(
-		array('icon' => 'glyphicon-trash','label'=>'Process Customers', 'url'=>array('boxItem/processCustomers','date'=>$SelectedDeliveryDate->id), 'linkOptions'=>array('confirm'=>'Are you sure you want to process all customers?')),
-		array('icon' => 'glyphicon-trash','label'=>'Pack Boxes', 'url'=>array('boxItem/create','date'=>$SelectedDeliveryDate->id)),
+		array('icon' => 'glyphicon-cog','label'=>'Process Customers', 'url'=>array('boxItem/processCustomers','date'=>$SelectedDeliveryDate->id), 'linkOptions'=>array('confirm'=>'Are you sure you want to process all customers?')),
+		array('icon' => 'glyphicon-ok','label'=>'Pack Boxes', 'url'=>array('boxItem/create','date'=>$SelectedDeliveryDate->id)),
 	);
 else:
 	$this->menu = array(
-		array('icon' => 'glyphicon-trash','label'=>'Process Customers', 'url'=>'javascript:void(0)','linkOptions'=>array('class'=>'text-muted','confirm'=>'Are you sure you want to process all customers?')),
-		array('icon' => 'glyphicon-trash','label'=>'Pack Boxes', 'url'=>'javascript:void(0)','linkOptions'=>array('class'=>'text-muted')),
+		array('icon' => 'glyphicon-refresh','label'=>'Process Customers', 'url'=>'javascript:void(0)','linkOptions'=>array('class'=>'text-muted','confirm'=>'Are you sure you want to process all customers?')),
+		array('icon' => 'glyphicon-ok','label'=>'Pack Boxes', 'url'=>'javascript:void(0)','linkOptions'=>array('class'=>'text-muted')),
 	);
 endif;
 
@@ -94,34 +94,36 @@ EOD
 					'buttons'=>array(
 						'login' => array
 						(
-							'label'=>'<i class="fi fi-key"></i>',
+							'label'=>'<i class="glyphicon glyphicon-user"></i>',
 							'url'=> 'array("user/loginAs","id"=>$data->user_id)',
 							'options'=>array('title'=>'Login As'),
 						),
 						'process'=>array
 						(
+							'label'=>'<i class="glyphicon glyphicon-cog"></i>',
 							'url'=>'array("boxItem/processCustBox","custBox"=>$data->user_box_id)',
 							'visible'=>'$data->status==UserBox::STATUS_DECLINED',
+							'options'=>array('title'=>'Process'),
 						),
 						'cancel'=>array
 						(
 							'url'=>'array("boxItem/refund","custBox"=>$data->user_box_id)',
 							'visible'=>'$data->status==UserBox::STATUS_APPROVED',
-							'label'=>'<i class="fi fi-minus"></i>',
+							'label'=>'<i class="glyphicon glyphicon-remove"></i>',
 							'options'=>array('confirm'=>'Are you sure you want to refund this box?','title'=>'Cancel & Refund'),
 						),
 						'set_approved'=>array
 						(
 							'url'=>'array("boxItem/setApproved","custBox"=>$data->user_box_id)',
 							'visible'=>'$data->status==UserBox::STATUS_DELIVERED',
-							'label'=>'<i class="fi fi-check"></i>',
+							'label'=>'<i class="glyphicon glyphicon-check"></i>',
 							'options'=>array('confirm'=>'Are you sure you want to set this box to Approved?','title'=>'Set Approved'),
 						),
 						'set_delivered'=>array
 						(
 							'url'=>'array("boxItem/setDelivered","custBox"=>$data->user_box_id)',
 							'visible'=>'$data->status==UserBox::STATUS_APPROVED',
-							'label'=>'<i class="fi fi-shopping-bag"></i>',
+							'label'=>'<i class="glyphicon glyphicon-thumbs-up"></i>',
 							'options'=>array('confirm'=>'Are you sure you want to set this box to Collected/Delivered?','title'=>'Set Delivered'),
 						)
 					),
@@ -183,34 +185,36 @@ EOD
 					'buttons'=>array(
 						'login' => array
 						(
-							'label'=>'<i class="fi fi-key"></i>',
+							'label'=>'<i class="glyphicon glyphicon-user"></i>',
 							'url'=> 'array("user/loginAs","id"=>$data->User->id)',
 							'options'=>array('title'=>'Login As'),
 						),
 						'process'=>array
 						(
+							'label'=>'<i class="glyphicon glyphicon-cog"></i>',
 							'url'=>'array("customer/processCustExtras","cdd"=>$data->id)',
 							'visible'=>'$data->status==Order::STATUS_DECLINED',
+							'options'=>array('title'=>'Process'),
 						),
 						'cancel'=>array
 						(
 							'url'=>'array("customer/refundExtras","cdd"=>$data->id)',
 							'visible'=>'$data->status==Order::STATUS_APPROVED',
-							'label'=>'<i class="fi fi-minus"></i>',
+							'label'=>'<i class="glyphicon glyphicon-cancel"></i>',
 							'options'=>array('confirm'=>'Are you sure you want to refund this order?','title'=>'Cancel & Refund'),
 						),
 						'set_approved'=>array
 						(
 							'url'=>'array("customer/setExtrasApproved","cdd"=>$data->id)',
 							'visible'=>'$data->status==Order::STATUS_DELIVERED',
-							'label'=>'<i class="fi fi-check"></i>',
+							'label'=>'<i class="glyphicon glyphicon-check"></i>',
 							'options'=>array('confirm'=>'Are you sure you want to set this box to Approved?','title'=>'Set Approved'),
 						),
 						'set_delivered'=>array
 						(
 							'url'=>'array("customer/setExtrasApproved","cdd"=>$data->id)',
 							'visible'=>'$data->status==Order::STATUS_APPROVED',
-							'label'=>'<i class="fi fi-shopping-bag"></i>',
+							'label'=>'<i class="glyphicon glyphicon-thumbs-up"></i>',
 							'options'=>array('confirm'=>'Are you sure you want to set this box to Collected/Delivered?','title'=>'Set Delivered'),
 						)
 					),

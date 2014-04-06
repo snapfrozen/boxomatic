@@ -45,9 +45,9 @@ class UserController extends BoxomaticController
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('update','view','loginAs','changePassword','dontWant','createLocation'),
-				'roles'=>array('customer','Admin'),
-				//'users'=>array('*'),
+				'actions'=>array('update','view','loginAs','changePassword','dontWant'),
+				//'roles'=>array('customer','Admin'),
+				'users'=>array('*'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
 				'actions'=>array('index', 'admin','delete','create','customers','resetPassword','export'),
@@ -75,65 +75,6 @@ class UserController extends BoxomaticController
 	}
 
 	/**
-	 * Creates a new model.
-	 * If creation is successful, the browser will be redirected to the 'view' page.
-	 */
-	public function actionCreate()
-	{
-		$model=new BoxomaticUser;
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-		
-		if(isset($_POST['BoxomaticUser']))
-		{
-			$model->scenario='changePassword';
-			$model->attributes=$_POST['BoxomaticUser'];
-			if(isset($_POST['BoxomaticUser']['password']))
-				$model->password=$_POST['BoxomaticUser']['password'];
-			if($model->save()) 
-			{
-				if(isset($_POST['role'])) {
-					$model->setRole($_POST['role']);
-				}
-				if(isset($_POST['role']) && $_POST['role'] == 'customer')
-				{
-					if(empty($model->user_id)) {
-						$Customer=new Customer();
-					} else {
-						$Customer=Customer::model()->findByPk($model->user_id);
-					}
-					$Customer->attributes=$_POST['Customer'];
-					$Customer->save();
-					
-					$CustLoc=new UserLocation;
-					$CustLoc->user_id=$Customer->user_id;
-					$CustLoc->location_id=$Customer->location_id;
-					$CustLoc->address=$model->user_address;
-					$CustLoc->address2=$model->user_address2;
-					$CustLoc->suburb=$model->user_suburb;
-					$CustLoc->state=$model->user_state;
-					$CustLoc->postcode=$model->user_postcode;
-					$CustLoc->phone=!empty($model->user_phone)?$model->user_phone:$model->user_mobile;
-					$CustLoc->save();
-					
-					$model->user_id = $Customer->user_id;
-					$model->update(array('user_id'));
-				}
-				
-				$this->redirect(array('view','id'=>$model->id));
-			}
-		}
-		
-		$custLocDataProvider=new CActiveDataProvider('UserLocation');
-
-		$this->render('create',array(
-			'model'=>$model,
-			'custLocDataProvider'=>$custLocDataProvider
-		));
-	}
-
-	/**
 	 * Updates a particular model.
 	 * If update is successful, the browser will be redirected to the 'view' page.
 	 * @param integer $id the ID of the model to be updated
@@ -147,23 +88,16 @@ class UserController extends BoxomaticController
 		
 		if(isset($_POST['role']) && $_POST['role'] == 'customer')
 		{
-			if(empty($model->user_id)) {
-				$Customer=new Customer();
-			} else {
-				$Customer=Customer::model()->findByPk($model->user_id);
-			}
-			$Customer->save(false);
-
-			$CustLoc=new UserLocation;
-			$CustLoc->user_id=$Customer->user_id;
-			$CustLoc->location_id=$Customer->location_id;
-			$CustLoc->address=$model->user_address;
-			$CustLoc->address2=$model->user_address2;
-			$CustLoc->suburb=$model->user_suburb;
-			$CustLoc->state=$model->user_state;
-			$CustLoc->postcode=$model->user_postcode;
-			$CustLoc->phone=!empty($model->user_phone)?$model->user_phone:$model->user_mobile;
-			$CustLoc->save();
+			$UserLoc=new UserLocation;
+			$UserLoc->user_id=$Customer->user_id;
+			$UserLoc->location_id=$Customer->location_id;
+			$UserLoc->address=$model->user_address;
+			$UserLoc->address2=$model->user_address2;
+			$UserLoc->suburb=$model->user_suburb;
+			$UserLoc->state=$model->user_state;
+			$UserLoc->postcode=$model->user_postcode;
+			$UserLoc->phone=!empty($model->user_phone)?$model->user_phone:$model->user_mobile;
+			$UserLoc->save();
 
 			$model->user_id = $Customer->user_id;
 			$model->update(array('user_id'));
@@ -210,12 +144,24 @@ class UserController extends BoxomaticController
 		if(isset($_POST['BoxomaticUser']))
 		{
 			$model->attributes=$_POST['BoxomaticUser'];
+			
+			$locationId=$_POST['BoxomaticUser']['delivery_location_key'];
+			$custLocationId=new CDbExpression('NULL');
+			if(strpos($locationId,'-'))
+			{ //has a customer location
+				$parts=explode('-',$locationId);
+				$locationId=$parts[1];
+				$custLocationId=$parts[0];
+			}
+			$model->location_id=$locationId;
+			$model->user_location_id=$custLocationId;
+			
 			$model->validate();
 			if(!$model->update())
 				$allSaved=false;
 			
 			if($allSaved)
-				$this->redirect(array('customers'));
+				$this->redirect(array('user/update','id'=>$model->id));
 		}
 		
 		$custLocDataProvider=null;
@@ -253,128 +199,6 @@ class UserController extends BoxomaticController
 		$this->render('changePassword',array(
 			'model'=>$model,
 		));
-	}
-	
-	/**
-	 * Csv Export
-	 */
-	public function actionExport()
-	{
-		  CsvExport::export(
-				User::model()->findAll(), // a CActiveRecord array OR any CModel array
-				array(
-					'id' => array('number'), 
-					//'supplier_id' => array('number'),
-					'first_name' => array('text'), 
-					'last_name' => array('text'), 
-					'notes' => array('text'),
-					'email' => array('text'),
-					'user_name' => array('text'),
-					'user_phone' => array('text'),
-					'user_mobile' => array('text'),
-					'user_address' => array('text'),
-					'user_address2' => array('text'),
-					'user_suburb' => array('text'),
-					'user_state' => array('text'),
-					'user_postcode' => array('text'),
-					'last_login_time' => array('date'),
-					//'update_time', 
-					//'update_user_id', 
-					//'create_time', 
-				), 
-				true, // boolPrintRows
-				'boxomatic-customers--'.date('Y-m-d').'.csv',
-				','
-		);
-	}
-
-	/**
-	 * Deletes a particular model.
-	 * If deletion is successful, the browser will be redirected to the 'admin' page.
-	 * @param integer $id the ID of the model to be deleted
-	 */
-	public function actionDelete($id)
-	{
-		if(Yii::app()->request->isPostRequest)
-		{
-			// we only allow deletion via POST request
-			$this->loadModel($id)->delete();
-
-			// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
-			if(!isset($_GET['ajax']))
-				$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
-		}
-		else
-			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
-	}
-
-	/**
-	 * Lists all models.
-	 */
-	public function actionIndex()
-	{
-		$dataProvider=new CActiveDataProvider('BoxomaticUser');
-		$this->render('index',array(
-			'dataProvider'=>$dataProvider,
-		));
-	}
-
-	/**
-	 * Manages all models.
-	 */
-	public function actionAdmin()
-	{
-		$model=new BoxomaticUser('search');
-		$model->unsetAttributes();  // clear any default values
-		$model->searchAdmin=true;
-		if(isset($_GET['BoxomaticUser']))
-			$model->attributes=$_GET['BoxomaticUser'];
-
-		$this->render('admin',array(
-			'model'=>$model,
-		));
-	}
-	
-	/**
-	 * Manages all models.
-	 */
-	public function actionCustomers()
-	{
-		$model=new BoxomaticUser('search');
-		$model->unsetAttributes();  // clear any default values
-		if(isset($_GET['BoxomaticUser']))
-			$model->attributes=$_GET['BoxomaticUser'];
-
-		$this->layout = '//layouts/column2';
-		$this->render('customers',array(
-			'model'=>$model,
-		));
-	}
-	
-	/**
-	 *  Login as a different user
-	 */
-	public function actionLoginAs($id)
-	{
-		if(Yii::app()->user->shadow_id || Yii::app()->user->checkAccess('Admin'))
-		{
-			$User=BoxomaticUser::model()->resetScope()->findByPk((int)$id);
-			$identity=new BoxomaticUserIdentity($User->email,'');
-			$identity->loginAs($id, Yii::app()->user->id);
-			$duration=3600*24*30; // 30 days
-			Yii::app()->user->login($identity, $duration);
-		}
-		else
-		{
-			throw new CHttpException(404,'The requested page does not exist.');
-		}
-		
-		if(Yii::app()->user->shadow_id) {
-			//var_dump($this->createFrontendUrl('/'));exit;
-			$this->redirect('/'.$this->createFrontendUrl('/'));
-		} else {
-			$this->redirect(Yii::app()->user->shadow_referrer);
-		}
 	}
 	
 	/**

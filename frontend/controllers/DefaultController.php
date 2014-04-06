@@ -85,6 +85,10 @@ class DefaultController extends Controller
 		$Order = false;
 		if($User)
 		{
+			if(!$User->location_id) {
+				Yii::app()->user->setFlash('warning', 'Please set your location');
+				$this->redirect(array('/shop/user/update','id'=>$User->id));
+			}
 			$Order = Order::model()->findByAttributes(array(
 				'delivery_date_id' => $date,
 				'user_id' => $userId,

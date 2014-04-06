@@ -5,7 +5,7 @@
 <title>Your order has been approved.</title>
 </head>
 <body style="margin:0;">
-<p>Hi <?php echo $Customer->User->first_name ?>,</p>
+<p>Hi <?php echo $Customer->first_name ?>,</p>
 
 <p><strong>Your Bellofoodbox order for <?php echo $UserBox->Box->DeliveryDate->date ?>, has been APPROVED. 
 And our growers are now busy harvesting all the fresh 
@@ -28,7 +28,7 @@ Box payments are only deducted each week as
 your orders are processed.</p>
 
 <p>When depositing money via bank transfer, please use your Bellofoodbox ID as your reference.<br />
-Your Bellofoodbox ID is: <strong><?php echo $Customer->User->bfb_id; ?></strong>.
+Your Bellofoodbox ID is: <strong><?php echo $Customer->bfb_id; ?></strong>.
 
 <h3>Information for collections</h3>
  

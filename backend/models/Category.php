@@ -63,7 +63,7 @@ class Category extends BoxomaticActiveRecord
 		return array(
 			'parent' => array(self::BELONGS_TO, 'Category', 'parent'),
 			'children' => array(self::HAS_MANY, 'Category', 'parent', 'order'=>'name'),
-			'SupplierProducts' => array(self::MANY_MANY, 'SupplierProduct', 'supplier_product_categories(supplier_product_id,category_id)'),
+			'SupplierProducts' => array(self::MANY_MANY, 'SupplierProduct', SnapUtil::config('boxomatic/tablePrefix').'supplier_product_categories(supplier_product_id,category_id)'),
 		);
 	}
 

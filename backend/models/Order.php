@@ -70,7 +70,7 @@ class Order extends BoxomaticActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'DeliveryDate' => array(self::BELONGS_TO, 'DeliveryDate', 'delivery_date_id'),
-			'Customer' => array(self::BELONGS_TO, 'Customer', 'user_id'),
+			'User' => array(self::BELONGS_TO, 'BoxomaticUser', 'user_id'),
 			'UserLocation' => array(self::BELONGS_TO, 'UserLocation', 'customer_location_id'),
 			'Location' => array(self::BELONGS_TO, 'Location', 'location_id'),
 			'Extras' => array(self::HAS_MANY, 'OrderItem', 'order_id')
