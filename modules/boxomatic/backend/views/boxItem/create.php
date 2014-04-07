@@ -168,20 +168,22 @@ EOD
 								<th class="boxCol">
 									<?php echo $DateBox->customerCount ?><br />
 									<div class="dropdown">
-										<a href="#" data-toggle="dropdown" class="dropdown-toggle"><?php echo $DateBox->BoxSize->box_size_name ?> <b class="caret"></b></a>
+										<a href="#" data-toggle="dropdown" class="dropdown-toggle"><?php echo $DateBox->name ?> <b class="caret"></b></a>
 										<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
 											<?php if($DateBox->customerCount && isset($dateBoxIds[$pos-1])): ?>
-											<li><?php echo CHtml::link('<', array('box/moveBox','from'=>$dateBoxId,'to'=>$dateBoxIds[$pos-1]), array('title'=>'Move a box from this variation')); ?></li>
+											<li><?php echo CHtml::link('<span class="glyphicon glyphicon-arrow-left"></span> Move 1 Box', array('box/moveBox','from'=>$dateBoxId,'to'=>$dateBoxIds[$pos-1]), array('title'=>'Move a box from this variation')); ?></li>
 											<?php endif; ?>
 
-											<li><?php echo CHtml::link('duplicate', array('box/duplicate','id'=>$dateBoxId)); ?></li>
+											<li><?php echo CHtml::link('Create Variation', array('box/duplicate','id'=>$dateBoxId)); ?></li>
+											
+											<li><?php echo CHtml::link('Edit Variation', array('box/update','id'=>$dateBoxId)); ?></li>
 
 											<?php if($DateBox->customerCount && isset($dateBoxIds[$pos+1])): ?>
-											<li><?php echo CHtml::link('>', array('box/moveBox','from'=>$dateBoxId,'to'=>$dateBoxIds[$pos+1]), array('title'=>'Move a box from this variation')); ?></li>
+											<li><?php echo CHtml::link('Move 1 Box <span class="glyphicon glyphicon-arrow-right"></span>', array('box/moveBox','from'=>$dateBoxId,'to'=>$dateBoxIds[$pos+1]), array('title'=>'Move a box from this variation')); ?></li>
 											<?php endif; ?>
 
 											<?php if(!$DateBox->customerCount && count($dateBoxIds) > 1): ?>	
-											<li><?php echo CHtml::link('delete', array('box/delete','id'=>$dateBoxId)); ?></li>
+											<li><?php echo CHtml::link('Delete', array('box/delete','id'=>$dateBoxId)); ?></li>
 											<?php endif; ?>
 										</ul>
 									</div>
@@ -385,7 +387,7 @@ EOD
 					<?php $this->widget('bootstrap.widgets.BsGridView', array(
 						'id'=>'user-grid',
 						'cssFile' => '', 
-						'dataProvider'=>$Customer->search(),
+						'dataProvider'=>$Customer->search($SelectedDeliveryDate),
 						'summaryText'=>'Displaying {start}-{end} of {count} result(s). ' .
 						CHtml::dropDownList(
 							'pageSize',
@@ -396,29 +398,35 @@ EOD
 						'filter'=>$Customer,
 						'columns'=>array(
 							'id',
-							'first_name',
-							'last_name',
+							array(
+								'name'=>'full_name_search',
+								'value'=>'$data->full_name',
+							),
 							'email',
+							/*
 							array(
 								'name'=>'balance',
 								'value'=>'SnapFormat::currency($data->balance)',
 							),
-							//'last_login_time',
-							//array( 'name'=>'user_id', 'value'=>'empty($data->user_id) ? "No" : "Yes"'),
-							//array( 'name'=>'supplier_id', 'value'=>'empty($data->supplier_id) ? "No" : "Yes"'),
+							 */
+							/*
 							array(
 								'name'=>'tag_name_search',
 								'filter'=>Tag::getUsedTags('Users'),
 								'value'=>'CHtml::value($data,"tag_names")',
 							),
+							 */
+							'order_items',
+							'ordered_boxes',
 							array(
 								'name'=>'dont_want_search',
 								//'filter'=>Tag::getUsedTags('Users'),
 								'value'=>'CHtml::value($data,"dont_want_items")',
 							),
+							/*
 							array(
 								'class'=>'bootstrap.widgets.BsButtonColumn',
-								'template'=>'{view}{update}{delete}{login}{reset_password}',
+								'template'=>'{view}{update}',
 								'buttons'=>array(
 									'login' => array
 									(
@@ -437,6 +445,7 @@ EOD
 									),
 								),
 							),
+							 */
 						),
 					)); ?>
 				<?php $this->endWidget(); ?>

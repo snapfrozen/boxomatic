@@ -14,6 +14,7 @@ class BoxItem extends BoxomaticActiveRecord
 {
 	public $total;
 	public $box_item_ids;
+	
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.

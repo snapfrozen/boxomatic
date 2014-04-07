@@ -46,6 +46,7 @@ class Box extends BoxomaticActiveRecord
 		return array(
 			array('size_id, delivery_date_id', 'numerical', 'integerOnly'=>true),
 			array('box_price', 'length', 'max'=>7),
+			array('variation_name', 'length', 'max'=>100),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('box_id, size_id, box_price, delivery_date_id', 'safe', 'on'=>'search'),
@@ -84,6 +85,7 @@ class Box extends BoxomaticActiveRecord
 			'size_id' => 'Size',
 			'box_price' => 'Box Price',
 			'delivery_date_id' => 'DeliveryDate',
+			'variation_name' => 'Variation Name',
 		);
 	}
 
@@ -136,5 +138,10 @@ class Box extends BoxomaticActiveRecord
 		$value = $this->totalValue;
 		$markup = $this->BoxSize->box_size_markup/100;
 		return $value + ($value * $markup);
+	}
+	
+	public function getName()
+	{
+		return (!empty($this->variation_name) ? ' <small>'.$this->variation_name.'</small><br />' : '') . $this->BoxSize->box_size_name;
 	}
 }

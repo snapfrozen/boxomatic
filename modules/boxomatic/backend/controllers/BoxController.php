@@ -6,7 +6,7 @@ class BoxController extends BoxomaticController
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
 	 * using two-column layout. See 'protected/views/layouts/column2.php'.
 	 */
-	public $layout='//layouts/column2';
+	public $layout='//layouts/column1';
 
 	/**
 	 * @return array action filters
@@ -27,11 +27,11 @@ class BoxController extends BoxomaticController
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin'),
+				'actions'=>array('index','view','create','admin'),
 				'roles'=>array('customer'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete','duplicate','moveBox'),
+				'actions'=>array('admin','delete','duplicate','moveBox','update'),
 				'roles'=>array('Admin'),
 			),
 			array('deny',  // deny all users
@@ -93,7 +93,7 @@ class BoxController extends BoxomaticController
 		{
 			$model->attributes=$_POST['Box'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->box_id));
+				$this->redirect(array('boxItem/create','date'=>$model->delivery_date_id));
 		}
 
 		$this->render('update',array(

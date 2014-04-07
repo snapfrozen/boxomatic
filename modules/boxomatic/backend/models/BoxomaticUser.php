@@ -28,8 +28,11 @@ class BoxomaticUser extends User
 	public $searchAdmin=false;
 	public $search_customer_notes;
 	public $tag_name_search;
+	public $full_name_search;
 	public $dont_want_search;
 	public $total_payments;
+	public $order_items;
+	public $ordered_boxes;
 	
 	public function behaviors()
 	{
@@ -78,7 +81,7 @@ class BoxomaticUser extends User
 			array('tag_names','safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('dont_want_search, tag_name_search, search_customer_notes, id, first_name, last_name, full_name, user_phone, user_mobile, user_address, user_address2, email, user_suburb, user_state, user_postcode, last_login_time', 'safe', 'on'=>'search'),
+			array('full_name_search, dont_want_search, tag_name_search, search_customer_notes, id, first_name, last_name, full_name, user_phone, user_mobile, user_address, user_address2, email, user_suburb, user_state, user_postcode, last_login_time', 'safe', 'on'=>'search'),
 			// verifyCode needs to be entered correctly
 			array('verify_code', 'captcha', 'allowEmpty'=>!CCaptcha::checkRequirements(), 'on'=>'register'),
 		);
@@ -99,6 +102,7 @@ class BoxomaticUser extends User
 			'UserLocation' => array(self::BELONGS_TO, 'UserLocation', 'user_location_id'),
 			'Location' => array(self::BELONGS_TO, 'Location', 'location_id'),
 			'Payments'=>array(self::HAS_MANY, 'UserPayment', 'user_id'),
+			'Orders'=>array(self::HAS_MANY, 'Order', 'user_id'),
 			/*
 			'totalPayments'=>array(
                 self::STAT, 'UserPayment', 'user_id', 'select' => 'SUM(payment_value)'
@@ -148,7 +152,10 @@ class BoxomaticUser extends User
 			'tag_name_search' => 'Tags',
 			'location_id' => 'Location',
 			'user_location_id' => 'Address',
-			'dont_want_search' => 'Doesn\'t Want'
+			'dont_want_search' => 'Doesn\'t Want',
+			'order_items' => 'Items',
+			'full_name_search' => 'Full Name',
+			'ordered_boxes' => 'Ordered Boxes',
 		);
 	}
 
@@ -156,7 +163,7 @@ class BoxomaticUser extends User
 	 * Retrieves a list of models based on the current search/filter conditions.
 	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
 	 */
-	public function search()
+	public function search($DeliveryDate=null)
 	{
 		$tablePrefix = SnapUtil::config('boxomatic/tablePrefix');
 		
@@ -166,23 +173,59 @@ class BoxomaticUser extends User
 		
 		$criteria=new CDbCriteria;
 		$criteria->select = 't.*';
+		$criteria->with = array();
+		$criteria->join = '';
 		
 		if(!empty($this->tag_name_search))
 		{
-			$criteria->with=array('Tags');
+			$criteria->with []= 'Tags';
 			$criteria->together=true;
 			$criteria->compare('Tags.id', $this->tag_name_search);
 		}
 		
 		if(!empty($this->dont_want_search))
 		{
-			$criteria->join = 
+			$criteria->join .= 
 				"INNER JOIN {$tablePrefix}user_dontwant_products udw ON udw.user_id = t.id "
 				. "INNER JOIN {$tablePrefix}supplier_products sp ON sp.id = udw.supplier_product_id ";
 			$criteria->compare('sp.name', $this->dont_want_search, true);
 			$criteria->group = 't.id';
 		}
+		
+		if($DeliveryDate)
+		{
+			$c = new CDbCriteria;
+			$c->select = 't.user_id';
+			$c->distinct = true;
+			$c->addCondition('Box.delivery_date_id = :ddId');
+			$c->addCondition('t.status = '.UserBox::STATUS_APPROVED.' OR t.status = '.UserBox::STATUS_DELIVERED);
+			$c->with = 'Box';
+			$c->params = array(
+				':ddId'=>$DeliveryDate->id,
+			);
+			$userIds = array();
+			$results = UserBox::model()->findAll($c);	
+			foreach($results as $r) 
+				$userIds[] = $r->user_id;
 
+			$criteria->select = 't.*, GROUP_CONCAT(DISTINCT OrderItems.name SEPARATOR ", ") as order_items, GROUP_CONCAT(DISTINCT BoxSizes.box_size_name SEPARATOR ", ") as ordered_boxes';
+			$criteria->distinct = true;
+			$criteria->addInCondition('t.id',$userIds);
+			$criteria->join .= 
+				"INNER JOIN {$tablePrefix}orders Orders ON Orders.user_id = t.id "
+				. "INNER JOIN {$tablePrefix}order_items OrderItems ON OrderItems.order_id = Orders.id "
+				. "INNER JOIN {$tablePrefix}user_boxes UserBoxes ON UserBoxes.order_id = Orders.id "
+				. "INNER JOIN {$tablePrefix}boxes Boxes ON UserBoxes.box_id = Boxes.box_id "	
+				. "INNER JOIN {$tablePrefix}box_sizes BoxSizes ON Boxes.size_id = BoxSizes.id ";
+				
+			$criteria->group = 't.id, UserBoxes.order_id';
+				
+			$criteria->addCondition('Orders.delivery_date_id = :ddId');
+			//$criteria->addCondition('Boxes.delivery_date_id = :ddId');
+			$criteria->params[':ddId']=$DeliveryDate->id;
+		}
+
+		$criteria->compare('CONCAT(first_name,last_name)',$this->full_name_search,true);
 		$criteria->compare('notes',$this->search_customer_notes,true);
 		$criteria->compare('id',$this->id);
 		$criteria->compare('email',$this->email,true);

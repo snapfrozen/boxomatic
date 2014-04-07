@@ -24,5 +24,23 @@ return array(
 	),
 	'components'=>array(
 		'db'=>require('../../db.php'),
+		/*
+		'log'=>array(
+			'class'=>'CLogRouter',
+			'routes'=>array(
+				array(
+					'class'=>'CDbLogRoute',
+					'connectionID' => 'db',
+					'levels'=>'error, warning, info',
+					'logTableName'=>'{{log}}'
+				),
+				// uncomment the following to show log messages on web pages
+				array(
+					'class'=>'CWebLogRoute',
+					'categories'=>'system.db.CDbCommand',
+				),
+			),
+		),
+		 */
 	),
 );

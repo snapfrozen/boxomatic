@@ -1,12 +1,15 @@
 <?php
-$this->menu=array(
-	array('label'=>'List Box', 'url'=>array('index')),
-	array('label'=>'Create Box', 'url'=>array('create')),
-	array('label'=>'View Box', 'url'=>array('view', 'id'=>$model->box_id)),
-	array('label'=>'Manage Box', 'url'=>array('admin')),
+$this->breadcrumbs=array(
+	'Box-O-Matic'=>array('/snapcms/boxomatic/index'),
+	'Boxes'=>array('boxes/index'),
+	'Box Packing'=>array('boxItem/create','date'=>$model->delivery_date_id),
+	'Edit Name'
 );
+$this->page_heading = 'Edit Name';
+//$this->page_heading_subtext = 'Box Size';
+$this->menu = array(
+	//array('icon' => 'glyphicon-trash','label'=>'Delete Content', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$Content->id),'confirm'=>'Are you sure you want to delete this item?')),
+)
 ?>
-
-<h1>Update Box <?php echo $model->box_id; ?></h1>
 
 <?php echo $this->renderPartial('_form', array('model'=>$model)); ?>

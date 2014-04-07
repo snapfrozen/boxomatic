@@ -77,7 +77,7 @@ class BoxItemController extends BoxomaticController
 			foreach($_POST['bc'] as $boxContents)
 			{
 				foreach($boxContents['BoxItem'] as $boxItem)
-				{	
+				{
 					if(isset($boxItem['box_item_id']))
 						$BoxItem=BoxItem::model()->findByPk($boxItem['box_item_id']);
 					else 
@@ -91,6 +91,12 @@ class BoxItemController extends BoxomaticController
 					if($boxItem['item_quantity']>0) 
 					{
 						$BoxItem->attributes=$boxItem;
+						$BoxItem->item_value=$boxContents['item_value'];
+						$BoxItem->item_unit=$boxContents['item_unit'];
+						$BoxItem->supplier_product_id=$boxContents['supplier_product_id'];
+						if(isset($boxContents['item_name'])) {
+							$BoxItem->item_name=$boxContents['item_name'];
+						}
 						
 						$SP = $BoxItem->SupplierProduct;
 						if(!$SP) 
@@ -105,7 +111,9 @@ class BoxItemController extends BoxomaticController
 							}
 							
 							$SP->supplier_id=$boxContents['supplier_id'];
-							$SP->name=$boxContents['item_name'];
+							if(isset($boxContents['item_name'])) {
+								$SP->name=$boxContents['item_name'];
+							}
 							$SP->value=$boxContents['item_value'];
 							$SP->unit=$boxContents['item_unit'];
 							$SP->packing_station_id=$boxContents['packing_station_id'];
@@ -171,6 +179,7 @@ class BoxItemController extends BoxomaticController
 					$BoxItem->supplier_id=$NewItem->supplier_id;
 					$BoxItem->item_unit=$NewItem->unit;
 					$BoxItem->item_value=$NewItem->value;
+					$BoxItem->supplier_product_id=$NewItem->id;
 					$BoxItem->packing_station_id=$NewItem->packing_station_id; 
 					$BoxItem->item_quantity=1;
 					$BoxItem->box_id=$DeliveryDateBox->box_id;
@@ -179,6 +188,7 @@ class BoxItemController extends BoxomaticController
 					$selectedItemId=$BoxItem->box_item_id;
 				}
 			}
+			//$this->redirect(array('boxItem/create','date'=>$date));
 		}
 		
 		//User chose to add a new entry by clicking a supplier name
