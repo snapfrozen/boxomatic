@@ -15,7 +15,7 @@
 	</div>
 	<div class="large-8 columns">
 
-		<?php $form=$this->beginWidget('application.widgets.SnapActiveForm', array(
+		<?php $form=$this->beginWidget('CActiveForm', array(
 			'id'=>'forgotten-password-form',
 			'enableClientValidation'=>true,
 			'clientOptions'=>array(
