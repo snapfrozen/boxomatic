@@ -45,9 +45,9 @@ class UserController extends BoxomaticController
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('update','view','loginAs','changePassword','dontWant'),
-				//'roles'=>array('customer','Admin'),
-				'users'=>array('*'),
+				'actions'=>array('update','view','loginAs','changePassword','dontWant','orders','payments','makePayment'),
+				'roles'=>array('customer','Admin'),
+				//'users'=>array('*'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
 				'actions'=>array('index', 'admin','delete','create','customers','resetPassword','export'),
@@ -71,6 +71,75 @@ class UserController extends BoxomaticController
 		}
 		$this->render('view',array(
 			'model'=>$model,
+		));
+	}
+	
+	/**
+	 * Lists all models.
+	 */
+	public function actionPayments()
+	{
+		$id=Yii::app()->user->id;
+		$dataProvider=new CActiveDataProvider('UserPayment',array(
+			'criteria'=>array(
+				'condition'=>'user_id=:userId',
+				'params'=>array(
+					':userId'=>$id,
+				)
+			)
+		));
+		$this->render('payments',array(
+			'dataProvider'=>$dataProvider,
+		));
+	}
+	
+	/**
+	 * Creates a new model.
+	 * If creation is successful, the browser will be redirected to the 'view' page.
+	 */
+	public function actionMakePayment()
+	{
+		$model=new UserPayment;
+
+		// Uncomment the following line if AJAX validation is needed
+		// $this->performAjaxValidation($model);
+		
+		if(isset($_POST['UserPayment']))
+		{
+			$model->attributes=$_POST['UserPayment'];
+			$model->user_id=Yii::app()->user->user_id;
+			$model->payment_date=new CDbExpression('NOW()');
+			
+			if($model->save())
+			{
+				$Customer=$model;
+				$validator=new CEmailValidator();
+				if($validator->validateValue($Customer->email)) 
+				{
+					//email payment receipt
+					$adminEmail = SnapUtil::config('boxomatic/adminEmail');
+					$adminEmailFromName = SnapUtil::config('boxomatic/adminEmailFromName');
+					$message = new YiiMailMessage('Payment receipt');
+					$message->view = 'customer_payment_receipt';
+					$message->setBody(array('Customer'=>$Customer, 'UserPayment' => $model), 'text/html');
+					$message->addTo($Customer->email);
+					$message->addTo($adminEmail);
+					$message->setFrom(array($adminEmail => $adminEmailFromName));
+
+					if(!@Yii::app()->mail->send($message))
+					{
+						$mailError=true;
+					}
+				}
+				$this->redirect(array('view','id'=>$model->payment_id));
+			}
+		}
+
+		$User=BoxomaticUser::model()->findByPk(Yii::app()->user->id);
+		$this->render('make_payment',array(
+			'model'=>$model,
+			'User'=>$User,
+			'Customer'=>$User,
 		));
 	}
 
@@ -104,31 +173,6 @@ class UserController extends BoxomaticController
 		}
 
 		$allSaved=true;
-		/*
-		if(isset($_POST['Customer']))
-		{
-			$Customer=$model->Customer;
-			$locationId=$_POST['Customer']['delivery_location_key'];
-			$custLocationId=new CDbExpression('NULL');
-			if(strpos($locationId,'-'))
-			{ //has a customer location
-				$parts=explode('-',$locationId);
-				$locationId=$parts[1];
-				$custLocationId=$parts[0];
-			}
-
-			$Customer->location_id=$locationId;
-			$Customer->customer_location_id=$custLocationId;
-			$Customer->save();
-			
-			$Customer->attributes=$_POST['Customer'];
-			if(!$Customer->update())
-				$allSaved=false;
-				
-			$Customer->updateOrderDeliveryLocations();
-		}
-		 */
-		
 		if(isset($_POST['Supplier']))
 		{
 			$Supplier=$model->Supplier;
@@ -206,13 +250,38 @@ class UserController extends BoxomaticController
 	 */
 	public function actionResetPassword($id)
 	{
-		$User=BoxomaticUser::model()->findByPk($id);
+		$User=$this->loadModel($id);
 		if($User->resetPasswordAndSendWelcomeEmail())
 			Yii::app()->user->setFlash('success', "Password changed and email sent");
 		else
 			Yii::app()->user->setFlash('error', "Password changed but no email sent");
 
 		$this->redirect(array('user/customers'));
+	}
+	
+	public function actionOrders($id,$fromToday=true)
+	{
+		$User=$this->loadModel($id);
+		
+		$c = new CDbCriteria;
+		$c->with='DeliveryDate';
+		$c->addCondition('user_id=:userId');
+		if($fromToday==true) {
+			$c->addCondition('DeliveryDate.date >= NOW()');
+		}
+		$c->order='DeliveryDate.date ASC';
+		$c->params = array(
+			':userId'=>$id,
+		);
+		
+		$ordersDP = new CActiveDataProvider('Order',array(
+			'criteria'=>$c
+		));
+		
+		$this->render('orders',array(
+			'User'=>$User,
+			'ordersDP'=>$ordersDP,
+		));
 	}
 	
 	/**

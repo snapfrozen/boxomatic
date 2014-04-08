@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Bellofoodbox password retrieval</title>
+<title><?php echo Yii::app()->name ?> password retrieval</title>
 </head>
 <body style="margin:0;">
 	<p>Hi <?php echo $User->full_name ?>,</p>
@@ -14,7 +14,7 @@ Box-O-Matic, Box Processing System</p>
 
 <p>Thank you for your generous support and being part of this wonderful project.</p>
 
-<p>Email: <a href="mailto:info@bellofoodbox.org.au">info@bellofoodbox.org.au</a></p>
+<p>Email: <a href="mailto:<?php echo SnapUtil::config('boxomatic/adminEmail') ?>"><?php echo SnapUtil::config('boxomatic/adminEmail') ?></a></p>
 
 </body>
 </html>

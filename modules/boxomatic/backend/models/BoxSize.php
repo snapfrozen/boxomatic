@@ -102,7 +102,7 @@ class BoxSize extends BoxomaticActiveRecord
 	
 	public function beforeSave()
 	{	
-		$dataDir = Yii::getPathOfAlias('backend.data');
+		$dataDir = Yii::getPathOfAlias('frontend.data');
 		
 		$field='image';
 		$uploadFile=CUploadedFile::getInstance($this,$field);

@@ -602,7 +602,7 @@ class BoxomaticUser extends User
 		$this->password=SnapFormt::doHash($newPassword);
 		$this->save(false);
 
-		$message=new YiiMailMessage('Welcome to Bellofoodbox');
+		$message=new YiiMailMessage('Welcome to '.Yii::app()->name);
 		$message->view = 'welcome';
 		$message->setBody(array('User'=>$this,'newPassword'=>$newPassword), 'text/html');
 		$email=trim($this->email);

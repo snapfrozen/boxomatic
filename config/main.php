@@ -1,4 +1,5 @@
 <?php
+//Can we "calculate" this?
 define('SNAP_FRONTEND_URL', '');
 define('SNAP_BACKEND_URL', '/admin');
 
@@ -12,7 +13,7 @@ Yii::setPathOfAlias('vendor','../vendor');
 // CWebApplication properties can be configured here.
 return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
-	'name'=>'My Website',
+	'name'=>'Food Garden',
 	'id'=>'snapcms',
 	'theme'=>'boxomatic',
 

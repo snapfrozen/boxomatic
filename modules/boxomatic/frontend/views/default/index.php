@@ -11,7 +11,6 @@
 
 <h1>Shop</h1>
 
-
 <?php if($Customer): ?>
 <div class="secondaryNav row">
 	<?php $form=$this->beginWidget('backend.widgets.SnapActiveForm', array(
@@ -124,7 +123,7 @@
 
 						<div class="large-3 columns qty">
 							<?php echo CHtml::dropDownList('boxes['.$Box->box_id.']',1,UserBox::$quantityOptions); ?>
-								<?php echo CHtml::submitButton('Add',array('class'=>'button tiny')); ?>
+							<?php echo CHtml::submitButton('Add',array('class'=>'button tiny')); ?>
 						</div>
 					</div>
 				</div>

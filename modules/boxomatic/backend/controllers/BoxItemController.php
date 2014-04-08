@@ -67,7 +67,8 @@ class BoxItemController extends BoxomaticController
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
 	public function actionCreate($date=null,$item=null,$supplier=null)
-	{	
+	{
+		Yii::app()->user->setReturnUrl($this->createUrl('create',array('date'=>$date,'item'=>$item,'supplier'=>$supplier)));
 		$model=new BoxItem;
 		$SelectedDeliveryDate=null;
 		$NewItem=null;
@@ -264,6 +265,9 @@ class BoxItemController extends BoxomaticController
 	public function actionUserBoxes($date=null)
 	{
 		$DeliveryDates=DeliveryDate::model()->findAll();
+		if(!$date) {
+			$date = DeliveryDate::getCurrentDeliveryDateId();
+		}
 
 		$CDD=new Order('search');
 		$CDD->unsetAttributes();

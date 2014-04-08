@@ -72,8 +72,8 @@ return array(
 	'params'=>array(
 		// this is used in contact page
 		'googleMapKey'=>'AIzaSyAU7aJq2EcQYJV7BsjZg1lkhR2dYBTZxfU',
-		'adminEmail'=>'info@bellofoodbox.org.au',
-		'adminEmailFromName'=>'Bellofoodbox',
+		'adminEmail'=>'francis@snapfrozen.com.au',
+		'adminEmailFromName'=>'The Food Garden',
 		'months'=>array(
 			1=>'January',
 			2=>'February',

@@ -4,7 +4,7 @@ return array(
 	'minimumCredit'=>-100,
 	// this is used in contact page
 	'googleMapKey'=>'AIzaSyAU7aJq2EcQYJV7BsjZg1lkhR2dYBTZxfU',
-	'adminEmail'=>'info@foodgarden.com.au',
+	'adminEmail'=>'francis@snapfrozen.com.au',
 	'adminEmailFromName'=>'The Food Garden',
 	'mailChimpApiKey'=>'0560b57c64ce08accd22aebbfae2102d-us3',
 	'mailChimpListId'=>'ff830a357f',

@@ -7,9 +7,9 @@
 <body style="margin:0;">
 <p>Hi <?php echo $Customer->first_name ?>,</p>
 
-<p>Thank you for your Payment to Bellofoodbox.</p>
+<p>Thank you for your Payment to <?php echo Yii::app()->name ?>.</p>
 
-<h3>Bellofoodbox payment details</h3>
+<h3><?php echo Yii::app()->name ?> payment details</h3>
 
 <p>Name: <?php echo $Customer->first_name ?> <?php echo $Customer->last_name ?><br />
 Date: <?php echo $UserPayment->payment_date ?><br />
@@ -22,31 +22,31 @@ Method: <?php echo $UserPayment->payment_type ?></p>
 Details confirming any box orders will be sent 
 in a separate email detailing pick up location and date.</p>
 
-<h3>Managing your Bellofoodbox account</h3>
+<h3>Managing your <?php echo Yii::app()->name ?> account</h3>
 
 <p>You can check your account status, add credit and view previous 
 orders at: 
 
-<a href="http://app.foodbox.org.au">app.foodbox.org.au/</a></p>
+<a href="<?php echo $this->createAbsoluteUrl('/') ?>"><?php echo $this->createAbsoluteUrl('/') ?>/</a></p>
 
 <p>You are welcome to top up your account 
 credit by making additional payments at anytime. 
 Box payments are only deducted each week as 
 your orders are processed.</p>
 
-<p>When depositing money via bank transfer, please use your Bellofoodbox ID as your reference.<br />
-Your Bellofoodbox ID is: <strong><?php echo $Customer->bfb_id; ?></strong>.
+<p>When depositing money via bank transfer, please use your <?php echo Yii::app()->name ?> ID as your reference.<br />
+Your <?php echo Yii::app()->name ?> ID is: <strong><?php echo $Customer->bfb_id; ?></strong>.
 
 <p>
 --<br />
 Kind regards,<br />
 Box-o-Matic, Box Processing System</p>
 
-<p>Bellofoodbox is run by Bellingen Greengrocers and encourages sustainable agricultural practices and supports local economy and community, distributing local, seasonal, affordable, healthy, fresh food that is accessible to Bellingen, Dorrigo, Urunga, Valla and Coffs Harbour areas.</p>
+<p><?php echo Yii::app()->name ?> is run by Bellingen Greengrocers and encourages sustainable agricultural practices and supports local economy and community, distributing local, seasonal, affordable, healthy, fresh food that is accessible to Bellingen, Dorrigo, Urunga, Valla and Coffs Harbour areas.</p>
 
 <p>Thank you for your generous support and being part of this wonderful project.</p>
 
-<p>Email: <a href="mailto:info@bellofoodbox.org.au">info@bellofoodbox.org.au</a></p>
+<p>Email: <a href="mailto:<?php echo SnapUtil::config('boxomatic/adminEmail') ?>"><?php echo SnapUtil::config('boxomatic/adminEmail') ?></a></p>
 
 </body>
 </html>

@@ -13,11 +13,11 @@ $this->breadcrumbs=array(
 	'Customers'=>array('user/customers'),
 	'Orders',
 );
-$this->page_heading = 'Orders';
+//$this->page_heading = 'Orders';
 
 
 if($SelectedDeliveryDate):
-	$this->page_heading_subtext = 'for '.SnapFormat::date($SelectedDeliveryDate->date);
+//	$this->page_heading_subtext = 'for '.SnapFormat::date($SelectedDeliveryDate->date);
 	$this->menu = array(
 		array('icon' => 'glyphicon-cog','label'=>'Process Customers', 'url'=>array('boxItem/processCustomers','date'=>$SelectedDeliveryDate->id), 'linkOptions'=>array('confirm'=>'Are you sure you want to process all customers?')),
 		array('icon' => 'glyphicon-ok','label'=>'Pack Boxes', 'url'=>array('boxItem/create','date'=>$SelectedDeliveryDate->id)),
@@ -42,6 +42,26 @@ Yii::app()->clientScript->registerScript('initPageSize',<<<EOD
 EOD
 ,CClientScript::POS_READY);
 ?>
+<div id="calendar-dropdown" class="page-header dropdown">
+	<h1>Orders	<small class="dropdown-toggle" data-toggle="dropdown" data-target="#calendar-dropdown"><?php echo 'for '.SnapFormat::date($SelectedDeliveryDate->date) ?> <b class="caret"></b></small></h1>
+	<div class="dropdown-menu" aria-labelledby="dLabel" role="menu">
+		<li>
+			<div class="calendar">
+				<script type="text/javascript">
+					var curUrl="<?php echo $this->createUrl('boxItem/userBoxes'); ?>";
+					var selectedDate=<?php echo $SelectedDeliveryDate ? "'$SelectedDeliveryDate->date'" : 'null' ?>;
+					var availableDates=<?php echo json_encode(SnapUtil::makeArray($DeliveryDates)) ?>;
+				</script>
+				<div class="delivery-date-picker"></div>
+				<noscript>
+				<?php foreach($DeliveryDates as $DeliveryDate): ?>
+					<?php echo CHtml::link($DeliveryDate->date, array('boxItem/userBoxes','date'=>$DeliveryDate->id)) ?>, 
+				<?php endforeach; ?>
+				</noscript>
+			</div>
+		</li>
+	</div>
+</div>
 
 <div class="row">
 	<div id="customerList" class="col-md-9">
@@ -241,17 +261,6 @@ EOD
 				));
 				$this->endWidget();
 			?>
-			<script type="text/javascript">
-				var curUrl="<?php echo $this->createUrl('boxItem/userBoxes'); ?>";
-				var selectedDate=<?php echo $SelectedDeliveryDate ? "'$SelectedDeliveryDate->date'" : 'null' ?>;
-				var availableDates=<?php echo json_encode(SnapUtil::makeArray($DeliveryDates)) ?>;
-			</script>
-			<div class="delivery-date-picker"></div>
-			<noscript>
-			<?php foreach($DeliveryDates as $DeliveryDate): ?>
-				<?php echo CHtml::link($DeliveryDate->date, array('boxItem/userBoxes','date'=>$DeliveryDate->id)) ?>, 
-			<?php endforeach; ?>
-			</noscript>
 		</div>
 	</div>
 </div>

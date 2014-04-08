@@ -167,10 +167,9 @@ class SiteController extends Controller
 		$model = $modelName::model()->findByPk($id);
 		$base = Yii::getPathOfAlias('frontend.data');
 		
-		if(empty($model->$field)) {
+		$filePath=dirname(Yii::app()->request->scriptFile).'/'.$base.'/'.strtolower($modelName).'/'.$field.'_'.$id;
+		if(empty($model->$field) || !file_exists($filePath)) {
 			$filePath=dirname(Yii::app()->request->scriptFile).'/'.$base.'/default.jpg';
-		} else {
-			$filePath=dirname(Yii::app()->request->scriptFile).'/'.$base.'/'.strtolower($modelName).'/'.$field.'_'.$id;
 		}
 
 		$image = $model->$field;

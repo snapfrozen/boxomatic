@@ -123,6 +123,7 @@ class InventoryController extends BoxomaticController
 	 */
 	public function actionIndex()
 	{
+		Yii::app()->user->setReturnUrl($this->createUrl('index'));
 		$model=new Inventory('search');
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['Inventory'])) {

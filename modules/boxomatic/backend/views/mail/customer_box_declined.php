@@ -7,23 +7,23 @@
 <body style="margin:0;">
 <p>Hi <?php echo $Customer->User->first_name ?>,</p>
 
-<p>Unfortunately your Bellofoodbox order for 
+<p>Unfortunately your <?php echo Yii::app()->name ?> order for 
 pick up on <?php echo $UserBox->Box->DeliveryDate->date ?> has been DECLINED, as you 
-have insufficient Bellofoodbox credit.</p>
+have insufficient <?php echo Yii::app()->name ?> credit.</p>
 
 <p>Please contact us immediately if you feel this is an error.</p>
 
 <h3>Topping up your account</h3>
 
-<p>Please top up your Bellofoodbox account to 
-ensure you receive a delicious Bellofoodbox, 
+<p>Please top up your <?php echo Yii::app()->name ?> account to 
+ensure you receive a delicious <?php echo Yii::app()->name ?>, 
 full of beautiful fresh, local produce <strong>next week</strong>.</p>
 
 <ul>
-  <li><strong>Online:</strong> You can top up your balance directly using PayPal at <a href="http://app.foodbox.org.au/">app.foodbox.org.au</a></li>
+  <li><strong>Online:</strong> You can top up your balance directly using PayPal at <a href="<?php echo $this->createAbsoluteUrl('/') ?>"><?php echo $this->createAbsoluteUrl('/') ?></a></li>
   <li><strong>Direct Deposit:</strong> BSB: 082469, ACC: 144056759, ACC Name: Bellingen Green Grocers Pty Ltd.<br />
-  When depositing money via bank transfer, please use your Bellofoodbox ID as your reference.<br />
-  Your Bellofoodbox ID is: <strong><?php echo $Customer->User->bfb_id; ?></strong>.</li>
+  When depositing money via bank transfer, please use your <?php echo Yii::app()->name ?> ID as your reference.<br />
+  Your <?php echo Yii::app()->name ?> ID is: <strong><?php echo $Customer->User->bfb_id; ?></strong>.</li>
   <li><strong>Cash:</strong> In store at Bellingen Greengrocers, Cnr Hyde & Church Sts, Bellingen, until the Wednesday before your order.</p></li>
 </ul>
 
@@ -35,7 +35,7 @@ Box-O-Matic, Box Processing System</p>
 
 <p>Thank you for your generous support and being part of this wonderful project.</p>
 
-<p>Email: <a href="mailto:info@bellofoodbox.org.au">info@bellofoodbox.org.au</a></p>
+<p>Email: <a href="<?php echo SnapUtil::config('boxomatic/adminEmail') ?>"><?php echo SnapUtil::config('boxomatic/adminEmail') ?></a></p>
 </body>
 </html>
 

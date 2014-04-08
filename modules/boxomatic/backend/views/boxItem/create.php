@@ -12,9 +12,11 @@ $this->menu=array(
 	array('icon' => 'glyphicon glyphicon-export', 'label'=>'Order list', 'url'=>array('deliveryDate/generateOrderList','date'=>$SelectedDeliveryDate->id)),
 );
 
-$dateLabel = $SelectedDeliveryDate ? SnapFormat::date($SelectedDeliveryDate->date) : 'None Selected';
-$this->page_heading = 'Box Packing';
-$this->page_heading_subtext = $dateLabel;
+$dateLabel = $SelectedDeliveryDate ? 'for '.SnapFormat::date($SelectedDeliveryDate->date) : 'None Selected';
+
+//Custom header below
+//$this->page_heading = 'Box Packing';
+//$this->page_heading_subtext = $dateLabel;
 
 $baseUrl = $this->createFrontendUrl('/').'/themes/boxomatic/admin';
 $cs=Yii::app()->clientScript;
@@ -34,6 +36,21 @@ Yii::app()->clientScript->registerScript('initPageSize',<<<EOD
 EOD
 ,CClientScript::POS_READY);
 ?>
+<div id="calendar-dropdown" class="page-header dropdown">
+	<h1>Box Packing	<small class="dropdown-toggle" data-toggle="dropdown" data-target="#calendar-dropdown"><?php echo $dateLabel ?> <b class="caret"></b></small></h1>
+	<div class="dropdown-menu" aria-labelledby="dLabel" role="menu">
+		<li>
+			<div class="calendar">
+				<script type="text/javascript">
+					var curUrl="<?php echo $this->createUrl('boxItem/create'); ?>";
+					var selectedDate=<?php echo $SelectedDeliveryDate ? "'$SelectedDeliveryDate->date'" : 'null' ?>;
+					var availableDates=<?php echo json_encode(SnapUtil::makeArray($DeliveryDates)) ?>;
+				</script>
+				<div class="delivery-date-picker"></div>
+			</div>
+		</li>
+	</div>
+</div>
 
 <?php $form=$this->beginWidget('application.widgets.SnapActiveForm', array(
 	'id'=>'box-item-form',
@@ -41,8 +58,6 @@ EOD
 	'action'=>$this->createUrl('boxItem/create',array('date'=>Yii::app()->request->getQuery('date'))),
 	'htmlOptions'=>array('class'=>'row'),
 )); ?>
-
-
 <div id="supplier-list" class="col-lg-0 has-pullout">
 	<?php if($SelectedDeliveryDate): ?>
 	<div class="large-3 columns end">
@@ -223,7 +238,8 @@ EOD
 									if(empty($BoxItemsContent->supplier_product_id)) :
 										echo CHtml::textField('bc['.$key.'][item_name]',$BoxItemsContent->item_name, array('class' => 'inline-85'));
 									else:
-										echo CHtml::link($BoxItemsContent->item_name, array('supplierProduct/update','id'=>$BoxItemsContent->supplier_product_id));
+										//echo CHtml::link($BoxItemsContent->item_name, array('supplierProduct/update','id'=>$BoxItemsContent->supplier_product_id));
+										echo $BoxItemsContent->item_name;
 									endif;
 									$totalQuantity=BoxItem::totalQuantity($BoxItemsContent->box_item_ids);
 									$totalValue=$BoxItemsContent->item_value*$totalQuantity;
@@ -473,15 +489,6 @@ EOD
 			)); ?>			
 		</div>
 		<?php $this->endWidget(); ?>
-
-		<div class="calendar">
-			<script type="text/javascript">
-				var curUrl="<?php echo $this->createUrl('boxItem/create'); ?>";
-				var selectedDate=<?php echo $SelectedDeliveryDate ? "'$SelectedDeliveryDate->date'" : 'null' ?>;
-				var availableDates=<?php echo json_encode(SnapUtil::makeArray($DeliveryDates)) ?>;
-			</script>
-			<div class="delivery-date-picker"></div>
-		</div>
 	</div>
 </div>
 

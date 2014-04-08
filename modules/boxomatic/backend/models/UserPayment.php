@@ -157,6 +157,7 @@ class UserPayment extends BoxomaticActiveRecord
 	*/
 	
 	//This was messing up the CustbonusCommand email
+	/*
 	public function defaultScope()
 	{
 		//This messes up the unique validation :(
@@ -171,4 +172,5 @@ class UserPayment extends BoxomaticActiveRecord
 			return parent::defaultScope();
 		}
 	}
+	 */
 }
