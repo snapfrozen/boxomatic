@@ -3,7 +3,7 @@
 		<h1><?php echo $model->full_name; ?></h1>
 	</div>
 
-	<?php $form=$this->beginWidget('application.widgets.SnapActiveForm', array(
+	<?php $form=$this->beginWidget('CActiveForm', array(
 		'id'=>'user-form',
 		'enableAjaxValidation'=>false, 
 		'htmlOptions' => array('class' => 'custom' )

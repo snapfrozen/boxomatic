@@ -11,7 +11,7 @@
 </div>
 <?php else: ?>
 <?php 
-	$form=$this->beginWidget('backend.widgets.SnapActiveForm', array(
+	$form=$this->beginWidget('CActiveForm', array(
 		'id'=>'registration-form',
 		'enableClientValidation'=>false,
 		// 'htmlOptions' => array('class' => 'custom'),

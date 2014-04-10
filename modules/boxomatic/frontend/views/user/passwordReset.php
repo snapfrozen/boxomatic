@@ -13,7 +13,7 @@
 		
 		<p>Hi <?php echo $model->first_name; ?> please enter a new password.</p>
 		
-		<?php $form=$this->beginWidget('application.widgets.SnapActiveForm', array(
+		<?php $form=$this->beginWidget('CActiveForm', array(
 			'id'=>'password-reset-form',
 			'enableAjaxValidation'=>false,
 		)); ?>
