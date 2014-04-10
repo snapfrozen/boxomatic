@@ -11,8 +11,8 @@ return array (
 	'site'=>array(
 		'default_menu'=>'main_menu',
 		'homepage_id'=>1,
-		'title'=>'My Website',
-		'tag_line'=>'It\'s freakin awesome!',
+		'title'=>'The Food Garden',
+		'tag_line'=>'It\'s freakin awesome',
 		'admin_email'=>'webmaster@example.com',
 	),
 );
