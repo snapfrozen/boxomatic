@@ -13,7 +13,7 @@
 
 <?php if($Customer): ?>
 <div class="secondaryNav row">
-	<?php $form=$this->beginWidget('backend.widgets.SnapActiveForm', array(
+	<?php $form=$this->beginWidget('CActiveForm', array(
 		'id'=>'recurring-form',
 		'enableAjaxValidation'=>false,
 	)); ?>
@@ -106,7 +106,7 @@
 
 			<?php if($Box->BoxSize->box_size_name): ?>
 			<div class="large-12 columns view">
-				<?php $form=$this->beginWidget('backend.widgets.SnapActiveForm', array(
+				<?php $form=$this->beginWidget('CActiveForm', array(
 					'id'=>'box-form-'.$Box->box_id,
 					'enableAjaxValidation'=>false,
 				)); ?>
@@ -157,7 +157,7 @@
 		<?php endif; ?>
 	</div>
 	
-	<?php $form=$this->beginWidget('backend.widgets.SnapActiveForm', array(
+	<?php $form=$this->beginWidget('CActiveForm', array(
 		'id'=>'extras-form',
 		'enableAjaxValidation'=>false,
 	)); ?>

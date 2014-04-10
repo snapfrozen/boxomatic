@@ -1,4 +1,11 @@
 <?php
+define('SNAP_FRONTEND_URL', '');
+define('SNAP_BACKEND_URL', '/admin');
+
+// uncomment the following to define a path alias
+Yii::setPathOfAlias('backend','../backend');
+Yii::setPathOfAlias('frontend','../frontend');
+Yii::setPathOfAlias('vendor','../vendor');
 
 // This is the configuration for yiic console application.
 // Any writable CConsoleApplication properties can be configured here.
@@ -10,6 +17,8 @@ return array(
 	'preload'=>array('log'),
 	
 	'import'=>array(
+		'backend.models.*',
+		'backend.components.*',
 		'application.models.*',
 		'application.components.*',
 		'bootstrap.components.*',

@@ -27,24 +27,17 @@ return array(
 		'backend.models.*',
 		'backend.components.*',
 		//Import these if you are using the bootstrap module
-		'bootstrap.components.*',
-		'bootstrap.helpers.*',
-		'bootstrap.behaviors.*',
 		'boxomatic.models.*',
 		'boxomatic.components.*',
 	),
 	
 	'aliases' => array(
 		//If you are using the bootstrap module
-		'bootstrap' => 'vendor.drmabuse.yii-bootstrap-3-module',
+		'foundation' => 'frontend.modules.foundation',
 		'boxomatic' => 'frontend.modules.boxomatic.backend',
     ),
 
 	'modules'=>array(
-		//If you are using the bootstrap module
-		'bootstrap' => array(
-			'class' => 'bootstrap.BootStrapModule'
-		),
 		'shop' => array(
 			'class' => 'application.modules.boxomatic.frontend.FrontendBoxomaticModule'
 		),

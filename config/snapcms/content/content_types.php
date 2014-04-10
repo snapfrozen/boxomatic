@@ -7,16 +7,19 @@ return array(
 		'show_in_cms' => false,
 		'auto_add_to_menu' => array(),
 		'fields' => array(
-			'content' => 'text',
+			'content_1' => 'text',
 			'content_2' => 'text',
+			'content_3' => 'text',
+			'content_4' => 'text',
+			'content_5' => 'text',
 			'meta_keywords' => 'string',
 			'meta_description' => 'string',
 		),
 		'rules' => array (
-			array('content, content_2', 'safe'),
+			array('content_1, content_2, content_3, content_4, content_5', 'safe'),
 		),
 		'groups' => array (
-			'Content' => array('content', 'content_2'),
+			'Content' => array('content_1', 'content_2', 'content_3', 'content_4', 'content_5'),
 			'SEO' => array('meta_keywords','meta_description'),
 		),
 		'input_types' => array (

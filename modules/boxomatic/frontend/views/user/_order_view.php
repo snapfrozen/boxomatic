@@ -9,4 +9,5 @@
 			<?php echo $data->getAttributeLabel('status'); ?>:
 			<?php echo CHtml::encode($data->status_text); ?>
 		</li>
+	</ul>
 </div>

@@ -15,6 +15,7 @@
 
 		<?php echo $form->textFieldControlGroup($model,'value',array('size'=>7,'maxlength'=>7)); ?>
 		<?php echo $form->dropDownListControlGroup($model,'unit', $model->getUnitList()); ?>
+		<?php echo $form->textFieldControlGroup($model,'quantity_options',array('help'=>'A comma separated list of values. Leave blank to allow the user to define any quantity they like.')); ?>
 
 		<?php echo $form->dropDownListControlGroup($model,'available_from', $model->getMonthList()); ?>
 		<?php echo $form->dropDownListControlGroup($model,'available_to', $model->getMonthList()); ?>

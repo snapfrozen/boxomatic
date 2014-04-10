@@ -19,7 +19,7 @@ $extra = isset($updatedOrders[$data->id]) ? $updatedOrders[$data->id] : false;
 			<?php if(!$pastDeadline): ?>
 				<div class="row">
 					<div class="large-6 columns">
-						<?php echo $form->dropDownList($data, 'quantity', Inventory::$quantityOptions, array('name'=>'extras['.$data->id.']')); ?>
+						<?php echo $product->getQuantityInput($data, $form, 'extras['.$data->id.']'); ?>
 					</div>
 					<div class="large-6 columns">
 						<?php echo CHtml::submitButton('Update',array('class'=>'button tiny')); ?>

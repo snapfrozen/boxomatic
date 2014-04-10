@@ -6,7 +6,7 @@ $product = $purchase->supplierProduct;
 $extra = isset($updatedExtras[$data->supplier_product_id]) ? $updatedExtras[$data->supplier_product_id] : false;
 ?>
 <div class="view large-12 columns end">
-	<?php $form=$this->beginWidget('backend.widgets.SnapActiveForm', array(
+	<?php $form=$this->beginWidget('CActiveForm', array(
 		'id'=>'extras-form-'.$data->inventory_id,
 		'enableAjaxValidation'=>false,
 	)); ?>
@@ -29,7 +29,8 @@ $extra = isset($updatedExtras[$data->supplier_product_id]) ? $updatedExtras[$dat
 			
 				<?php if(!$pastDeadline): ?>
 				<div class="large-3 columns qty">
-					<?php echo CHtml::dropDownList('supplier_purchases['.$purchase->id.']',1,Inventory::$quantityOptions); ?>
+					<?php //echo CHtml::dropDownList('supplier_purchases['.$purchase->id.']',1,Inventory::$quantityOptions); ?>
+					<?php echo $product->getQuantityInput($data, $form, 'supplier_purchases['.$purchase->id.']'); ?>
 					<?php echo CHtml::submitButton('Add',array('class'=>'button tiny')); ?>
 				</div>
 				<?php endif; ?>

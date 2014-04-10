@@ -14,6 +14,7 @@
  * @property string $available_to
  * @property string $price
  * @property string $wholesale_price
+ * @property string $quantity_options
  *
  * The followings are the available model relations:
  * @property Supplier $supplier
@@ -98,6 +99,7 @@ class SupplierProduct extends BoxomaticActiveRecord
 			array('limited_stock', 'boolean'),
 			array('description, available_from, available_to', 'safe'),
 			array('image_ext', 'length', 'max'=>20),
+			array('quantity_options', 'length', 'max'=>255),
 			array('image', 'file', 'types'=>'jpg, gif, png', 'allowEmpty'=>true),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
@@ -138,6 +140,7 @@ class SupplierProduct extends BoxomaticActiveRecord
 			'limited_stock' => 'Limited Stock',
 			'image' => 'Image',
 			'packing_station_id' => 'Packing Station',
+			'quantity_options' => 'Quantity Options',
 		);
 	}
 
@@ -266,5 +269,22 @@ class SupplierProduct extends BoxomaticActiveRecord
 			Yii::app()->user->setFlash('danger','problem saving image for field: '.$field);
 		
 		return parent::beforeSave();
+	}
+	
+	public function getQuantityInput($OrderItem, $form, $name)
+	{
+		if(!empty($this->quantity_options))
+		{
+			$op = explode(',',$this->quantity_options);
+			$options = array();
+			foreach($op as $value) {
+				$options[number_format($value,2)] = $value;
+			}
+			return $form->dropDownList($OrderItem, 'quantity', $options, array('name'=>$name));
+		}
+		else
+		{
+			return $form->textField($OrderItem, 'quantity', array('name'=>$name));
+		}
 	}
 }

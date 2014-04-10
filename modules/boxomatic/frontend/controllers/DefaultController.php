@@ -293,7 +293,7 @@ class DefaultController extends Controller
 				$SupplierProduct = $Purchase->supplierProduct;
 				
 				//give the customer the extra
-				$OrderItem->quantity += $quantity;
+				$OrderItem->quantity = $quantity;
 				$OrderItem->order_id = $Order->id;
 				$OrderItem->supplier_purchase_id = $purchaseId;
 				$OrderItem->price = $Purchase->item_sales_price;
