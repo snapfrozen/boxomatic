@@ -5,7 +5,7 @@
 <title>Oh No! Your order has been declined.</title>
 </head>
 <body style="margin:0;">
-<p>Hi <?php echo $Customer->User->first_name ?>,</p>
+<p>Hi <?php echo $Customer->first_name ?>,</p>
 
 <p>Unfortunately your <?php echo Yii::app()->name ?> order for 
 pick up on <?php echo $UserBox->Box->DeliveryDate->date ?> has been DECLINED, as you 
@@ -23,7 +23,7 @@ full of beautiful fresh, local produce <strong>next week</strong>.</p>
   <li><strong>Online:</strong> You can top up your balance directly using PayPal at <a href="<?php echo $this->createAbsoluteUrl('/') ?>"><?php echo $this->createAbsoluteUrl('/') ?></a></li>
   <li><strong>Direct Deposit:</strong> BSB: 082469, ACC: 144056759, ACC Name: Bellingen Green Grocers Pty Ltd.<br />
   When depositing money via bank transfer, please use your <?php echo Yii::app()->name ?> ID as your reference.<br />
-  Your <?php echo Yii::app()->name ?> ID is: <strong><?php echo $Customer->User->bfb_id; ?></strong>.</li>
+  Your <?php echo Yii::app()->name ?> ID is: <strong><?php echo $Customer->bfb_id; ?></strong>.</li>
   <li><strong>Cash:</strong> In store at Bellingen Greengrocers, Cnr Hyde & Church Sts, Bellingen, until the Wednesday before your order.</p></li>
 </ul>
 

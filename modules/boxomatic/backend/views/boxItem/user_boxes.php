@@ -212,7 +212,7 @@ EOD
 						'process'=>array
 						(
 							'label'=>'<i class="glyphicon glyphicon-cog"></i>',
-							'url'=>'array("customer/processCustExtras","cdd"=>$data->id)',
+							'url'=>'array("boxItem/processCustExtras","cdd"=>$data->id)',
 							'visible'=>'$data->status==Order::STATUS_DECLINED',
 							'options'=>array('title'=>'Process'),
 						),

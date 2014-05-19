@@ -34,7 +34,7 @@ class BoxItemController extends BoxomaticController
 				'actions'=>array(
 					'admin','delete','create','update','userBoxes',
 					'processCustomers','processCustBox','refund','setDelivered','setApproved',
-					'copyProductName'),
+					'processCustExtras', 'copyProductName'),
 				'roles'=>array('Admin'),
 			),
 			array('deny',  // deny all users
@@ -411,8 +411,8 @@ class BoxItemController extends BoxomaticController
 				{
 					$adminEmail = SnapUtil::config('boxomatic/adminEmail');
 					$adminEmailFromName = SnapUtil::config('boxomatic/adminEmailFromName');
-					$date = $Box->DeliveryDate->date;
-					$message = new YiiMailMessage('Your custom order for '.$date.' has been declined');
+					$dateStr = $CDD->DeliveryDate->date;
+					$message = new YiiMailMessage('Your custom order for '.$dateStr.' has been declined');
 					$message->view = 'customer_custom_order_declined';
 					$message->setBody(array('Customer'=>$User, 'CDD' => $CDD), 'text/html');
 					$message->addTo($User->email);
@@ -487,6 +487,37 @@ class BoxItemController extends BoxomaticController
 			Yii::app()->user->setFlash('error', "Insufficient funds!");
 		}
 		$this->redirect(array('userBoxes','date'=>$CustBox->Box->delivery_date_id));
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public function actionProcessCustExtras($cdd)
+	{
+		$CDD=Order::model()->findByPk($cdd);
+		$User = $CDD->User;
+		if($User->balance - $CDD->extras_total > SnapUtil::config('boxomatic/minimumCredit'))
+		{
+			$Payment=new UserPayment();
+			$Payment->payment_value= -1*($CDD->extras_total); //make price a negative value for payment table
+			$Payment->payment_type='DEBIT';
+			$Payment->payment_date=new CDbExpression('NOW()');
+			$Payment->user_id=$CDD->user_id;
+			$Payment->staff_id=Yii::app()->user->id;
+
+			$note='Extras bought on '. $CDD->DeliveryDate->date .' totalling:'. SnapFormat::currency($CDD->extras_total);
+
+			$Payment->payment_note=$note;
+			$Payment->save();
+			$CDD->status=Order::STATUS_APPROVED;
+			$CDD->save();
+		}
+		else
+		{
+			Yii::app()->user->setFlash('danger','Not enough credit.');
+		}
+		$this->redirect(array('userBoxes','date'=>$CDD->delivery_date_id));
 	}
 	
 	/**
