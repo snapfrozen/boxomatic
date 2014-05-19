@@ -5,7 +5,7 @@
 <title>Oh No! Your order has been declined.</title>
 </head>
 <body style="margin:0;">
-<p>Hi <?php echo $Customer->User->first_name ?>,</p>
+<p>Hi <?php echo $Customer->first_name ?>,</p>
 
 <p>Unfortunately your <?php echo Yii::app()->name ?> order for 
 pick up on <?php echo $CDD->DeliveryDate->date ?> has been DECLINED, as you 

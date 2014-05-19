@@ -53,7 +53,7 @@ class Order extends BoxomaticActiveRecord
 		// will receive user inputs.
 		return array(
 			array('delivery_date_id, user_id, location_id', 'required'),
-			array('status, delivery_date_id, user_id', 'numerical', 'integerOnly'=>true),
+			array('status, location_id, delivery_date_id, user_id', 'numerical', 'integerOnly'=>true),
 			array('customer_location_id', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
@@ -122,7 +122,7 @@ class Order extends BoxomaticActiveRecord
 		$tablePrefix = SnapUtil::config('boxomatic/tablePrefix');
 		$c = new CDbCriteria;
 		$c->addCondition('t.delivery_date_id = :date');
-		$c->select = 't.user_id, GROUP_CONCAT(oi.name SEPARATOR ", ") as extras_item_names, t.delivery_date_id, t.status';
+		$c->select = 't.user_id, GROUP_CONCAT(oi.name SEPARATOR ", ") as extras_item_names, t.delivery_date_id, t.status, t.location_id, t.customer_location_id, t.id';
 		$c->params = array(':date'=>$date);
 		//$c->with doesn't work very well with CActiveDataProvider
 		$c->join = 

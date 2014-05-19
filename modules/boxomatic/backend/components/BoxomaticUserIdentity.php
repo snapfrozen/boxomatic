@@ -36,7 +36,7 @@ class BoxomaticUserIdentity extends CUserIdentity
 					$lastLogin = strtotime($user->last_login_time);
 				}
 				$this->setState('last_login_time', $lastLogin); 
-				$this->setState('user_id', $user->id); 
+				$this->setState('id', $user->id); 
 				$this->setState('supplier_id', CHtml::value($user, 'Supplier.id')); 
 				$this->setState('first_name', $user->first_name);
 				$this->setState('last_name', $user->last_name);
@@ -72,7 +72,7 @@ class BoxomaticUserIdentity extends CUserIdentity
 		}
 		
 		$this->setState('last_login_time', $lastLogin); 
-		$this->setState('user_id', $user->id); 
+		$this->setState('id', $user->id); 
 		$this->setState('supplier_id', CHtml::value($user, 'Supplier.id')); 
 		
 		$this->errorCode=self::ERROR_NONE;

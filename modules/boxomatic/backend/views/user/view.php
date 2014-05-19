@@ -46,19 +46,19 @@
 	</div>
 
 	<div class="large-12 columns">
-		<?php if($model->Customer): ?>
+		<?php if($model): ?>
 
 		<h2>Default delivery location</h2>
 
 		<?php $this->widget('zii.widgets.CDetailView', array(
 			'cssFile' => '', 
-			'data'=>$model->Customer,
+			'data'=>$model,
 			'attributes'=>array(
 				'Location.location_name',
 				'Location.location_delivery_value',
 				array(
 					'name'=>'UserLocation.address',
-					'visible'=>isset($model->Customer->UserLocation),
+					'visible'=>isset($model->UserLocation),
 				),
 				//'customer_notes',
 			),

@@ -26,40 +26,40 @@ class BoxomaticController extends Controller
 	 * @var array context menu items. This property will be assigned to {@link CMenu::items}.
 	 */
 	public $secondary_menu=array(
-		array('label'=>'Boxes','url'=>array('boxItem/create'),
+		array('label'=>'Boxes','url'=>array('/snapcms/boxomatic/boxItem/create'),
 			'items'=>array(
-				array('label'=>'Box Packing','url'=>array('boxItem/create')),
-				array('label'=>'Box Sizes','url'=>array('boxSize/admin')),
-				array('label'=>'Packing Stations','url'=>array('packingStation/admin')),
-				array('label'=>'Delivery Dates','url'=>array('deliveryDate/admin')),
+				array('label'=>'Box Packing','url'=>array('/snapcms/boxomatic/boxItem/create')),
+				array('label'=>'Box Sizes','url'=>array('/snapcms/boxomatic/boxSize/admin')),
+				array('label'=>'Packing Stations','url'=>array('/snapcms/boxomatic/packingStation/admin')),
+				array('label'=>'Delivery Dates','url'=>array('/snapcms/boxomatic/deliveryDate/admin')),
 			)
 		),
-		array('label'=>'Customers','url'=>array('/user/customers'),
+		array('label'=>'Customers','url'=>array('/snapcms/boxomatic/user/customers'),
 			'items'=>array(
-				array('label'=>'Customers','url'=>array('user/customers')),
-				array('label'=>'Orders','url'=>array('boxItem/userBoxes')),
-				array('label'=>'Payments','url'=>array('userPayment/enterPayments')),
-				array('label'=>'Location','url'=>array('location/admin')),
+				array('label'=>'Customers','url'=>array('/snapcms/boxomatic/user/customers')),
+				array('label'=>'Orders','url'=>array('/snapcms/boxomatic/boxItem/userBoxes')),
+				array('label'=>'Payments','url'=>array('/snapcms/boxomatic/userPayment/enterPayments')),
+				array('label'=>'Location','url'=>array('/snapcms/boxomatic/location/admin')),
 			)
 		),
-		array('label'=>'Suppliers','url'=>array('supplier/admin'),
+		array('label'=>'Suppliers','url'=>array('/snapcms/boxomatic/supplier/admin'),
 			'items'=>array(
-				array('label'=>'Suppliers','url'=>array('supplier/admin')),
-				array('label'=>'Products','url'=>array('supplierProduct/admin')),
-				array('label'=>'Orders','url'=>array('supplierPurchase/admin')),
-				array('label'=>'Supplier Map','url'=>array('supplier/map')),
+				array('label'=>'Suppliers','url'=>array('/snapcms/boxomatic/supplier/admin')),
+				array('label'=>'Products','url'=>array('/snapcms/boxomatic/supplierProduct/admin')),
+				array('label'=>'Orders','url'=>array('/snapcms/boxomatic/supplierPurchase/admin')),
+				array('label'=>'Supplier Map','url'=>array('/snapcms/boxomatic/supplier/map')),
 			)
 		),
-		array('label'=>'Inventory','url'=>array('inventory/index'),
+		array('label'=>'Inventory','url'=>array('/snapcms/boxomatic/inventory/index'),
 			'items'=>array(
-				array('label'=>'Inventory','url'=>array('inventory/index')),
-				array('label'=>'Log','url'=>array('inventory/admin')),
+				array('label'=>'Inventory','url'=>array('/snapcms/boxomatic/inventory/index')),
+				array('label'=>'Log','url'=>array('/snapcms/boxomatic/inventory/admin')),
 			)
 		),
 		array('label'=>'Reports','url'=>'#',
 			'items'=>array(
-				array('label'=>'Credit','url'=>array('report/creditReport')),
-				array('label'=>'Box Sales','url'=>array('report/salesReport')),
+				array('label'=>'Credit','url'=>array('/snapcms/boxomatic/report/creditReport')),
+				array('label'=>'Box Sales','url'=>array('/snapcms/boxomatic/report/salesReport')),
 			)
 		),
 	);

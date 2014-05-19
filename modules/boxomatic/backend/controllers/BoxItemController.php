@@ -391,13 +391,17 @@ class BoxItemController extends BoxomaticController
 
 				$Payment->payment_note=$note;
 				$Payment->save();
-				
+				/*
 				$CustDD = Order::model()->findByAttributes(array(
 					'user_id'=>$User->id,
 					'delivery_date_id'=>$date,
 				));
-				$CustDD->status=UserBox::STATUS_APPROVED;
+				var_dump($CDD->attributes);exit;
+				$CustDD->status=Order::STATUS_APPROVED;
 				$CustDD->save();
+				*/
+				$CDD->status=Order::STATUS_APPROVED;
+				$CDD->save();
 			}
 			else 
 			{
@@ -420,6 +424,8 @@ class BoxItemController extends BoxomaticController
 						$mailError=true;
 					}
 				}
+				$CDD->status=Order::STATUS_DECLINED;
+				$CDD->save();
 			}
 		}
 		
