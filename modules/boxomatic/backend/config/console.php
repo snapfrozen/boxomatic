@@ -73,7 +73,7 @@ return array(
 		// this is used in contact page
 		'googleMapKey'=>'AIzaSyAU7aJq2EcQYJV7BsjZg1lkhR2dYBTZxfU',
 		'adminEmail'=>'francis@snapfrozen.com.au',
-		'adminEmailFromName'=>'The Food Garden',
+		'adminEmailFromName'=>'Box-o-Matic',
 		'months'=>array(
 			1=>'January',
 			2=>'February',

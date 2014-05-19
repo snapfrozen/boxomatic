@@ -11,7 +11,7 @@ return array (
 	'site'=>array(
 		'default_menu'=>'main_menu',
 		'homepage_id'=>1,
-		'title'=>'The Food Garden',
+		'title'=>'Box-o-Matic',
 		'tag_line'=>'It\'s freakin awesome',
 		'admin_email'=>'webmaster@example.com',
 	),
