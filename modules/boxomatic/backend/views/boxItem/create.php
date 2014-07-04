@@ -160,7 +160,7 @@ EOD
 				<a data-toggle="tab" href="#boxes">Boxes <span class="loading"></span></a>
 			</li>
 			<li>
-				<a data-toggle="tab" href="#customers">Customers</a>
+				<a data-toggle="tab" href="#customers">Box Customers</a>
 			</li>
 		</ul>
 		<div class="tab-content">
