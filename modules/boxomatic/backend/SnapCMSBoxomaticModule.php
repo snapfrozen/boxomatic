@@ -44,14 +44,6 @@ class SnapCMSBoxomaticModule extends SnapCMSModule
 					),
 				),
 			),
-			'registration' => array(),
-			'profile' => array(
-				'privacySettingTable' => 'privacysetting',
-				'profileFieldTable' => 'profile_field',
-				'profileTable' => 'profile',
-				'profileCommentTable' => 'profile_comment',
-				'profileVisitTable' => 'profile_visit', 
-			),
 		));
 
 		// import the module-level models and components

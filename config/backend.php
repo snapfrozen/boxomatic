@@ -13,7 +13,7 @@ return array(
 	// application components
 	'modules'=>array(
 		'snapcms' => array(
-			'class' => 'application.modules.snapcms.SnapCMSModule',
+			'class' => 'backend.components.SnapCMSModule',
 			'modules' => array (
 				//Example module
 				'boxomatic' => array (
