@@ -69,9 +69,9 @@ class BoxoCart extends CComponent
         
         //Remove if the new quantity is 0
         if($qty <= 0) {
-            unset($this->{$fieldName}[$id]);
-        } else if(isset($this->{$fieldName}[$id])) {
-            $this->{$fieldName}[$id] = $qty;
+            unset($this->{$fieldName}[$this->_delivery_date_id][$id]);
+        } else if(isset($this->{$fieldName}[$this->_delivery_date_id][$id])) {
+            $this->{$fieldName}[$this->_delivery_date_id][$id] = $qty;
         }
         $this->_user->setState('boxocart.'.$modelName, $this->$fieldName);
         return $this;
@@ -88,7 +88,7 @@ class BoxoCart extends CComponent
         
         //Remove if the new quantity is 0
         if($this->{$fieldName}[$this->_delivery_date_id][$id] <= 0) {
-            unset($this->{$fieldName}[$id]);
+            unset($this->{$fieldName}[$this->_delivery_date_id][$id]);
         }
         
         $this->_user->setState('boxocart.'.$modelName, $this->$fieldName);
