@@ -2,17 +2,20 @@
 
 class BoxoCart extends CComponent
 {
-    protected $_location_id = null;
-    protected $_user = null;
-    protected $_SupplierProduct = null;
-    protected $_UserBox = null;
+    protected $_location_id;
+    protected $_delivery_date_id;
+    protected $_user;
+    protected $_SupplierProduct;
+    protected $_UserBox;
+    protected $_Orders;
     
     public function __construct()
     {
         $this->_user = Yii::app()->user;
         $User = isset($this->_user->id) ? BoxomaticUser::model()->findByPk($this->_user->id) : false;
         
-        $this->_location_id = $this->_user->getState('boxocart.location_id', $User ? $User->location_id : array());
+        $this->_location_id = $this->_user->getState('boxocart.location_id', $User ? $User->location_id : null);
+        $this->_delivery_date_id = $this->_user->getState('boxocart.delivery_date_id', $User ? $User->location_id : null);
         $this->_SupplierProduct = $this->_user->getState('boxocart.SupplierProduct', array());
         $this->_UserBox = $this->_user->getState('boxocart.UserBox', array());
     }
@@ -26,6 +29,12 @@ class BoxoCart extends CComponent
     public function getLocation_id()
     {
         return $this->_location_id;
+    }
+    
+    public function setDelivery_date_id($id)
+    {
+        $this->_user->setState('boxocart.delivery_date_id', $id);
+        $this->_delivery_date_id = $id;
     }
     
     public function addItems($data)
@@ -71,14 +80,14 @@ class BoxoCart extends CComponent
     public function addItem($modelName, $id, $qty)
     {
         $fieldName = '_'.$modelName;
-        if(isset($this->{$fieldName}[$id])) {
-            $this->{$fieldName}[$id] += $qty;
+        if(isset($this->{$fieldName}[$this->_delivery_date_id][$id])) {
+            $this->{$fieldName}[$this->_delivery_date_id][$id] += $qty;
         } else {
-            $this->{$fieldName}[$id] = $qty;
+            $this->{$fieldName}[$this->_delivery_date_id][$id] = $qty;
         }
         
         //Remove if the new quantity is 0
-        if($this->{$fieldName}[$id] <= 0) {
+        if($this->{$fieldName}[$this->_delivery_date_id][$id] <= 0) {
             unset($this->{$fieldName}[$id]);
         }
         
@@ -89,7 +98,11 @@ class BoxoCart extends CComponent
     public function getProducts()
     {
         $order = array();
-        foreach($this->_SupplierProduct as $id => $qty) 
+        if(!isset($this->_SupplierProduct[$this->_delivery_date_id])) {
+            return $order;
+        }
+        
+        foreach($this->_SupplierProduct[$this->_delivery_date_id] as $id => $qty) 
         {
             $OI = new OrderItem;
             $OI->supplier_product_id = $id;
@@ -103,7 +116,11 @@ class BoxoCart extends CComponent
     public function getUserBoxes()
     {
         $order = array();
-        foreach($this->_UserBox as $id => $qty) 
+        if(!isset($this->_UserBox[$this->_delivery_date_id])) {
+            return $order;
+        }
+        
+        foreach($this->_UserBox[$this->_delivery_date_id] as $id => $qty) 
         {
             $UB = new UserBox;
             $UB->quantity = $qty;
@@ -130,5 +147,42 @@ class BoxoCart extends CComponent
     public function getLocation()
     {
         return Location::model()->findByPk($this->_location_id);
+    }
+    
+    public function getDeliveryDate()
+    {
+        return DeliveryDate::model()->findByPk($this->_delivery_date_id);
+    }
+    
+    /**
+     * @param type $DDs Array of DeliveryDate objects
+     */
+    public function repeatCurrentOrder($DDs)
+    {
+        $SPs = isset($this->_SupplierProduct[$this->_delivery_date_id]) ? $this->_SupplierProduct[$this->_delivery_date_id] : array();
+        $UBs = isset($this->_UserBox[$this->_delivery_date_id]) ? $this->_UserBox[$this->_delivery_date_id] : array();
+        foreach($DDs as $DD)
+        {
+            foreach($SPs as $id => $qty) {
+                $this->_SupplierProduct[$DD->id][$id] = $qty;
+            }
+            foreach($UBs as $id => $qty) {
+                $this->_UserBox[$DD->id][$id] = $qty;
+            }
+        }
+
+        $this->_user->setState('boxocart.SupplierProduct', $this->_SupplierProduct);
+        $this->_user->setState('boxocart.UserBox', $this->_UserBox);
+    }
+    
+    public function getDeliveryDates()
+    {
+        $ddIds = array_keys($this->_SupplierProduct);
+        $ddIds = array_merge($ddIds, array_keys($this->_UserBox));
+        $DDs = array();
+        foreach($ddIds as $id) {
+            $DDs[$id] = DeliveryDate::model()->findByPk($id);
+        }
+        return $DDs;
     }
 }

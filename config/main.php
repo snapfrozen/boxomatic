@@ -35,7 +35,7 @@ return array(
     'aliases' => array(
         //If you are using the bootstrap module,
         'bootstrap' => 'vendor.drmabuse.yii-bootstrap-3-module',
-        'boxomatic' => 'frontend.modules.boxomatic.backend',
+        'boxomatic' => 'frontend.modules.boxomatic',
     ),
     'modules' => array(
 //        'shop' => array(

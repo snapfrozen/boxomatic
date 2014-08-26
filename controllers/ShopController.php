@@ -69,7 +69,7 @@ class ShopController extends Controller
         }
         
         $BoxoCart = new BoxoCart;
-        if(isset($_POST['BoxoCart'])) {
+        if(isset($_POST['BoxoCart']['location_id'])) {
             $BoxoCart->location_id = $_POST['BoxoCart']['location_id'];
             $this->refresh();
         }
@@ -232,7 +232,13 @@ class ShopController extends Controller
         $Location = $BoxoCart->Location;
         if($Location) 
         {
-            $DeliveryDate = $BoxoCart->Location->getNextDeliveryDate();
+            if(!$BoxoCart->DeliveryDate) {
+                $DeliveryDate = $BoxoCart->Location->getNextDeliveryDate();
+            } else {
+                $DeliveryDate = $BoxoCart->DeliveryDate;
+            }
+            $BoxoCart->delivery_date_id = $DeliveryDate->id;
+            
             $products = SupplierProduct::getAvailableItems($DeliveryDate->id, $cat);
             $dpProducts = new CActiveDataProvider('SupplierProduct');
             $dpProducts->setData($products);
@@ -269,6 +275,36 @@ class ShopController extends Controller
             $this->redirect('/shop/register');
         }
         
+        $userId = Yii::app()->user->id;
+        $User = BoxomaticUser::model()->findByPk($userId);
+        if (!$User->Location)
+        {
+            Yii::app()->user->setFlash('warning', 'Please set your location');
+            $this->redirect(array('/user/update', 'id' => $User->id));
+        }
+        
+        $DeliveryDates = DeliveryDate::model()->with('Boxes')->findAll(array(
+            'condition' => 'DATE_SUB(date, INTERVAL -1 week) > NOW() AND date < DATE_ADD(NOW(), INTERVAL 1 MONTH)',
+                //'limit'=>$show
+        ));
+        
+        $BoxoCart = new BoxoCart;
+        if(isset($_GET['set-date'])) {
+            $BoxoCart->delivery_date_id = $_GET['set-date'];
+        }
+        $DeliveryDate = $BoxoCart->DeliveryDate;
+        
+        $AllDeliveryDates = DeliveryDate::model()->with('Locations')->findAll('Locations.location_id = :locationId',array(
+            ':locationId' => $User->location_id,
+        ));
+        
+        if (isset($_POST['btn_recurring'])) //recurring order button pressed
+        {           
+            $DDs = $BoxoCart->Location->getFutureDeliveryDates($DeliveryDate, (int) $_POST['months_advance'], $_POST['every']);
+            $BoxoCart->repeatCurrentOrder($DDs);
+        }
+        
+        /*
         if (isset($_POST['btn_recurring'])) //recurring order button pressed
         {
             $monthsAdvance = (int) $_POST['months_advance'];
@@ -389,14 +425,9 @@ class ShopController extends Controller
                 }
             }
         }
+         */
         
-        $userId = Yii::app()->user->id;
-        $User = BoxomaticUser::model()->findByPk($userId);
-        if (!$User->Location)
-        {
-            Yii::app()->user->setFlash('warning', 'Please set your location');
-            $this->redirect(array('/user/update', 'id' => $User->id));
-        }
+        
         
         /*
         $Order = Order::model()->findByAttributes(array(
@@ -416,17 +447,7 @@ class ShopController extends Controller
          */        
         
         
-        $DeliveryDates = DeliveryDate::model()->with('Boxes')->findAll(array(
-            'condition' => 'DATE_SUB(date, INTERVAL -1 week) > NOW() AND date < DATE_ADD(NOW(), INTERVAL 1 MONTH)',
-                //'limit'=>$show
-        ));
         
-        $DeliveryDate = $User->Location->getNextDeliveryDate();
-        $BoxoCart = new BoxoCart;
-        
-        $AllDeliveryDates = DeliveryDate::model()->with('Locations')->findAll('Locations.location_id = :locationId',array(
-            ':locationId' => $User->location_id,
-        ));
         
         $this->render('checkout', array(
             'BoxoCart' => $BoxoCart,

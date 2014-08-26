@@ -112,12 +112,19 @@
 		margin-bottom:10px;
 		padding-bottom:10px;
 	}
+		.order .available-until {
+			margin-bottom:0;
+		}
+/*		.order h2 {
+			margin-top:0;
+		}*/
 	.available-until {
 		font-size:10px;
 		color:#999;
 		margin-bottom:10px;
 		display:block;
 	}
+	
 
 .location-list .box {
 	border:1px solid #ddd;

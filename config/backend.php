@@ -8,7 +8,7 @@ return array(
 		'boxomatic.components.*',
 	),
 	'aliases' => array(
-		'boxomatic' => 'frontend.modules.boxomatic.backend',
+		'boxomatic' => 'frontend.modules.boxomatic',
 	),
 	// application components
 	'modules'=>array(
