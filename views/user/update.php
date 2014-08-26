@@ -1,9 +1,9 @@
 <?php
-$this->breadcrumbs=array(
-	'Box-O-Matic'=>array('/snapcms/boxomatic/index'),
-	'Customers'=>array('user/customers'),
-	$model->full_name,
-);
+//$this->breadcrumbs=array(
+//	'Box-O-Matic'=>array('/snapcms/boxomatic/index'),
+//	'Customers'=>array('user/customers'),
+//	$model->full_name,
+//);
 $this->page_heading = 'Update';
 $this->page_heading_subtext = 'Customer';
 

@@ -4,7 +4,7 @@ $Box = $data->Box;
 <div class="view inner">
     <div class="row">
         <div class="col-xs-3">
-            <?php echo CHtml::dropDownList('Order[UserBox][' . $Box->box_id . ']', $data->quantity, UserBox::$quantityOptions); ?>
+            <?php echo CHtml::numberField('Order[UserBox][' . $Box->box_id . ']', $data->quantity); ?>
             <!-- <?php echo SnapHtml::activeImage($Box->BoxSize, 'image', array('w' => 70, 'h' => 70, 'zc' => 1),$Box->BoxSize->box_size_name) ?> -->
         </div>
         <div class="col-xs-5">

@@ -21,10 +21,13 @@
 
         <?php echo $form->dropDownListControlGroup($model, 'available_from', $model->getMonthList()); ?>
         <?php echo $form->dropDownListControlGroup($model, 'available_to', $model->getMonthList()); ?>
-        <?php echo $form->checkBoxControlGroup($model, 'limited_stock'); ?>
 
         <?php echo $form->imageField($model, 'image'); ?>
         <?php echo $form->textAreaControlGroup($model, 'description'); ?>
+        <?php echo $form->textFieldControlGroup($model, 'item_sales_price'); ?>
+        
+        <?php echo $form->dateFieldControlGroup($model, 'customer_available_from', array(), array('yearRange'=>date('Y').':2050')); ?>
+        <?php echo $form->dateFieldControlGroup($model, 'customer_available_to', array(), array('yearRange'=>date('Y').':2050')); ?>
 
         <div class="row">
             <div class="col-md-offset-2 col-md-10">

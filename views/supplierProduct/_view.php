@@ -8,8 +8,12 @@
     ?>
         <h3><?php echo CHtml::encode($data->name); ?></h3>
         
+        <span class="available-until">
+            Available until: <?php echo SnapFormat::date($data->customer_available_to); ?>
+        </span>
+        
         <div class="image">
-            <?php echo SnapHtml::activeImage($data, 'image', array('w' => 70, 'h' => 70, 'zc' => 1), $data->name, true) ?>
+            <?php echo SnapHtml::activeImage($data, 'image', array('w' => 190, 'h' => 100, 'zc' => 1), $data->name, true) ?>
         </div>
         
         <?php if(!empty($data->description)): ?>
@@ -23,7 +27,7 @@
 
         <?php //echo CHtml::dropDownList('supplier_purchases['.$purchase->id.']',1,Inventory::$quantityOptions); ?>
         <?php echo $data->getQuantityInput($form, null, 1); ?>
-        <?php echo CHtml::submitButton('Add', array('class' => 'btn btn-default btn-sm', 'name' => 'add_to_cart')); ?>
+        <?php echo CHtml::submitButton('Add to cart', array('class' => 'btn btn-default btn-xs', 'name' => 'add_to_cart')); ?>
     <?php $this->endWidget(); ?>
     </div>
 </div>

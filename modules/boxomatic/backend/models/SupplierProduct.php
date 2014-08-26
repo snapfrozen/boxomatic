@@ -88,7 +88,7 @@ class SupplierProduct extends BoxomaticActiveRecord
             array('unit', 'length', 'max' => 5),
             array('limited_stock', 'boolean'),
             array('description, available_from, available_to', 'safe'),
-            array('customer_available_from, customer_available_to', 'date'),
+            array('customer_available_from, customer_available_to', 'date', 'format' => self::dateFormat),
             array('image_ext', 'length', 'max' => 20),
             array('quantity_options', 'length', 'max' => 255),
             array('image', 'file', 'types' => 'jpg, gif, png', 'allowEmpty' => true),
@@ -133,6 +133,18 @@ class SupplierProduct extends BoxomaticActiveRecord
             'packing_station_id' => 'Packing Station',
             'quantity_options' => 'Quantity Options',
         );
+    }
+    
+    public function afterFind()
+    {
+        if(empty($this->customer_available_from)) {
+            $this->customer_available_from = date('Y').'-01-01';
+        }
+        if(empty($this->customer_available_to)) {
+            $this->customer_available_to = date('Y').'-12-31';
+        }
+        //var_dump($this->customer_available_to);
+        parent::afterFind();
     }
 
 
@@ -251,15 +263,6 @@ class SupplierProduct extends BoxomaticActiveRecord
         return CHtml::listData($items, 'id', 'name_with_unit');
     }
 
-    public static function getUncategorised()
-    {
-        $criteria = new CDbCriteria;
-        $criteria->join = 'LEFT JOIN supplier_product_categories spc ON t.id = spc.supplier_product_id';
-        $criteria->addCondition('category_id IS NULL');
-
-        return self::model()->findAll($criteria);
-    }
-
     public function beforeSave()
     {
         $dataDir = Yii::getPathOfAlias('frontend.data');
@@ -312,14 +315,16 @@ class SupplierProduct extends BoxomaticActiveRecord
             ':date' => $DeliveryDate->date,
         );
         
-        if($catId) {
+        if($catId == Category::uncategorisedCategory) {
+            $c->join = 'LEFT JOIN boxo_supplier_product_categories spc ON t.id = spc.supplier_product_id';
+            $c->addCondition('category_id IS NULL');
+        } else if($catId) {
             $c->with = "Categories";
             $c->addCondition("category_id = :catId");
             $c->params[':catId'] = $catId;
         }
         
-        
-        return self::model()->find($c);
+        return self::model()->findAll($c);
     }
 
 }

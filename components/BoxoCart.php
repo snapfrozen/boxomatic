@@ -10,7 +10,9 @@ class BoxoCart extends CComponent
     public function __construct()
     {
         $this->_user = Yii::app()->user;
-        $this->_location_id = $this->_user->getState('boxocart.location_id', array());
+        $User = isset($this->_user->id) ? BoxomaticUser::model()->findByPk($this->_user->id) : false;
+        
+        $this->_location_id = $this->_user->getState('boxocart.location_id', $User ? $User->location_id : array());
         $this->_SupplierProduct = $this->_user->getState('boxocart.SupplierProduct', array());
         $this->_UserBox = $this->_user->getState('boxocart.UserBox', array());
     }
@@ -119,6 +121,14 @@ class BoxoCart extends CComponent
         foreach($this->products as $OI) {
             $total += $OI->total;
         }
+        foreach($this->userBoxes as $UB) {
+            $total += $UB->total_price;
+        }
         return $total;
+    }
+    
+    public function getLocation()
+    {
+        return Location::model()->findByPk($this->_location_id);
     }
 }

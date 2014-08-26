@@ -46,7 +46,7 @@ class ShopController extends Controller
                 'users' => array('*'),
             ),
             array('allow',
-                'actions' => array('index', 'contact', 'login', 'shop', 'captcha', 'register'),
+                'actions' => array('index', 'contact', 'login', 'shop', 'captcha', 'register', 'checkout', 'changeLocation'),
                 'roles' => array('View Content'),
             ),
             array('allow',
@@ -62,85 +62,39 @@ class ShopController extends Controller
     /**
      * Manages all models.
      */
-    public function actionIndex($date = null, $cat = null, $show = 5, $location = null)
+    public function actionIndex($cat = null)
     {
-        if (!$cat)
-        {
+        if (!$cat) {
             $cat = SnapUtil::config('boxomatic/supplier_product_feature_category');
-        }
-        if (!$date)
-        {
-            $date = DeliveryDate::getCurrentDeliveryDateId();
         }
         
         $BoxoCart = new BoxoCart;
-        if(isset($_POST['BoxoCart']))
-        {
+        if(isset($_POST['BoxoCart'])) {
             $BoxoCart->location_id = $_POST['BoxoCart']['location_id'];
+            $this->refresh();
         }
         
         if(isset($_POST['Order']) && isset($_POST['add_to_cart']))
         {
             if($BoxoCart->addItems($_POST['Order'])) {
-                Yii::app()->user->setFlash('success', 'Item added to cart');
+                Yii::app()->user->setFlash('success', 'Item added to cart.');
             }
+            $this->refresh();
         }
         
         if(isset($_POST['Order']) && isset($_POST['update_cart']))
         {
             if($BoxoCart->updateItems($_POST['Order'])) {
-                Yii::app()->user->setFlash('success', 'Item added to cart');
+                Yii::app()->user->setFlash('success', 'Cart updated.');
             }
+            $this->refresh();
         }
 
         $userId = Yii::app()->user->id;
         $User = BoxomaticUser::model()->findByPk($userId);
-
-        $deadlineDays = SnapUtil::config('boxomatic/orderDeadlineDays');
-        $updatedExtras = array();
-        $updatedOrders = array();
         $Category = Category::model()->findByPk($cat);
 
-        $DeliveryDate = DeliveryDate::model()->findByPk($date);
-        $AllDeliveryDates = false;
-        $pastDeadline = false;
-        $Order = false;
-        if ($User)
-        {
-            if (!$User->location_id)
-            {
-                Yii::app()->user->setFlash('warning', 'Please set your location');
-                $this->redirect(array('/shop/user/update', 'id' => $User->id));
-            }
-            $Order = Order::model()->findByAttributes(array(
-                'delivery_date_id' => $date,
-                'user_id' => $userId,
-            ));
-            if (!$Order)
-            {
-                $Order = new Order;
-                $Order->delivery_date_id = $date;
-                $Order->user_id = $userId;
-                $Order->location_id = $User->location_id;
-                $Order->save();
-            }
-            $AllDeliveryDates = DeliveryDate::model()->with('Locations')->findAll("Locations.location_id = " . $Order->location_id);
-            $deadline = strtotime('+' . $deadlineDays . ' days');
-
-
-            $pastDeadline = strtotime($DeliveryDate->date) < $deadline;
-            if ($pastDeadline)
-            {
-                Yii::app()->user->setFlash('warning', 'Order deadline has passed, order cannot be changed.');
-            }
-        }
-
-        if (!$User && (isset($_POST['supplier_purchases']) || isset($_POST['boxes']) ))
-        {
-            Yii::app()->user->setFlash('error', 'You must register to make an order.');
-            $this->redirect(array('default/register'));
-        }
-
+        /*
         if ($location)
         {
             $locationId = $location;
@@ -156,8 +110,165 @@ class ShopController extends Controller
             $Order->customer_location_id = $custLocationId;
             $Order->save();
             $Order->refresh();
+        } 
+        
+        if (isset($_POST['extras']))
+        {
+            foreach ($_POST['extras'] as $id => $quantity)
+            {
+                $model = OrderItem::model()->findByPk($id);
+                if ($model->Order->user_id == Yii::app()->user->id)
+                {
+                    $inventory = $model->inventory;
+                    if ($quantity == 0)
+                    {
+                        $model->delete();
+                        if ($inventory)
+                        {
+                            $inventory->delete();
+                        }
+                    } else
+                    {
+                        $model->quantity = $quantity;
+                        $model->save();
+                        $updatedOrders[$model->id] = $model;
+                    }
+                }
+            }
         }
 
+        if (isset($_POST['supplier_purchases']))
+        {
+            foreach ($_POST['supplier_purchases'] as $purchaseId => $quantity)
+            {
+                if ($quantity == 0)
+                    continue;
+
+                $OrderItem = OrderItem::model()->with('Order')->findByAttributes(array(
+                    'supplier_purchase_id' => $purchaseId,
+                    'order_id' => $Order->id
+                ));
+                if (!$OrderItem)
+                {
+                    $OrderItem = new OrderItem();
+                }
+
+                $Purchase = SupplierPurchase::model()->findByPk($purchaseId);
+                $SupplierProduct = $Purchase->supplierProduct;
+
+                //give the customer the extra
+                $OrderItem->quantity = $quantity;
+                $OrderItem->order_id = $Order->id;
+                $OrderItem->supplier_purchase_id = $purchaseId;
+                $OrderItem->price = $Purchase->item_sales_price;
+                $OrderItem->packing_station_id = $SupplierProduct->packing_station_id;
+                $OrderItem->name = $SupplierProduct->name;
+                $OrderItem->unit = $SupplierProduct->unit;
+                $updatedExtras[$OrderItem->supplier_purchase_id] = $OrderItem;
+                $OrderItem->save();
+            }
+        }
+         
+
+        if (isset($_POST['boxes']))
+        {
+            $Order = Order::model()->findByAttributes(array(
+                'delivery_date_id' => $DeliveryDate->id,
+                'user_id' => $userId,
+            ));
+
+            if (!$Order)
+            {
+                $Order = new Order;
+                $Order->delivery_date_id = $DD->id;
+                $Order->user_id = $userId;
+                $Order->location_id = $User->location_id;
+                $Order->save();
+            }
+
+            foreach ($_POST['boxes'] as $boxId => $quantity)
+            {
+                $Box = Box::model()->findByPk($boxId);
+
+                $CustBoxes = UserBox::model()->with('Box')->findAll(array(
+                    'condition' => 'user_id=:customerId AND size_id=:sizeId AND delivery_date_id=:deliveryDateId',
+                    'params' => array(':customerId' => $userId, ':sizeId' => $Box->size_id, ':deliveryDateId' => $Box->delivery_date_id)
+                ));
+
+                $curQuantity = count($CustBoxes);
+                $diff = $quantity - $curQuantity;
+
+                if ($diff > 0)
+                {
+                    //Create extra customer box rows
+                    for ($i = 0; $i < $diff; $i++)
+                    {
+                        $CustBox = new UserBox;
+                        $CustBox->user_id = $userId;
+                        $CustBox->box_id = $boxId;
+                        $CustBox->quantity = 1;
+                        $CustBox->delivery_cost = $User->Location->location_delivery_value;
+                        $CustBox->order_id = $Order->id;
+                        $CustBox->save();
+                    }
+                }
+
+                if ($diff < 0)
+                {
+                    //Remove any boxes the customer no longer wants;
+                    $diff = abs($diff);
+                    for ($i = 0; $i < $diff; $i++)
+                    {
+                        $CustBoxes[$i]->delete();
+                    }
+                }
+            }
+        }
+         * 
+         */
+        
+        $DeliveryDate = false;
+        $dpProducts = false;
+        $Location = $BoxoCart->Location;
+        if($Location) 
+        {
+            $DeliveryDate = $BoxoCart->Location->getNextDeliveryDate();
+            $products = SupplierProduct::getAvailableItems($DeliveryDate->id, $cat);
+            $dpProducts = new CActiveDataProvider('SupplierProduct');
+            $dpProducts->setData($products);
+        }
+
+        $this->render('index', array(
+            'dpProducts' => $dpProducts,
+            'DeliveryDate' => $DeliveryDate,
+            'Category' => $Category,
+            'Customer' => $User,
+            'curCat' => $cat,
+            'BoxoCart' => $BoxoCart,
+            'Location' => $Location,
+        ));
+    }
+    
+    public function actionChangeLocation()
+    {
+        $user = Yii::app()->user;
+        if($user->isGuest)
+        {
+            $BoxoCart = new BoxoCart;
+            $BoxoCart->setLocation_id(null);
+            $this->redirect('/shop/index');
+        }
+        else {
+            $this->redirect(array('/user/update', 'id'=>$user->id));
+        }
+    }
+    
+    public function actionCheckout()
+    {
+        if(Yii::app()->user->isGuest) {
+            $this->redirect('/shop/register');
+        }
+        
         if (isset($_POST['btn_recurring'])) //recurring order button pressed
         {
             $monthsAdvance = (int) $_POST['months_advance'];
@@ -278,151 +389,50 @@ class ShopController extends Controller
                 }
             }
         }
-
+        
+        $userId = Yii::app()->user->id;
+        $User = BoxomaticUser::model()->findByPk($userId);
+        if (!$User->Location)
+        {
+            Yii::app()->user->setFlash('warning', 'Please set your location');
+            $this->redirect(array('/user/update', 'id' => $User->id));
+        }
+        
         /*
-        if (isset($_POST['extras']))
+        $Order = Order::model()->findByAttributes(array(
+            'delivery_date_id' => $date,
+            'user_id' => $userId,
+        ));
+        if (!$Order)
         {
-            foreach ($_POST['extras'] as $id => $quantity)
-            {
-                $model = OrderItem::model()->findByPk($id);
-                if ($model->Order->user_id == Yii::app()->user->id)
-                {
-                    $inventory = $model->inventory;
-                    if ($quantity == 0)
-                    {
-                        $model->delete();
-                        if ($inventory)
-                        {
-                            $inventory->delete();
-                        }
-                    } else
-                    {
-                        $model->quantity = $quantity;
-                        $model->save();
-                        $updatedOrders[$model->id] = $model;
-                    }
-                }
-            }
+            $Order = new Order;
+            $Order->delivery_date_id = $date;
+            $Order->user_id = $userId;
+            $Order->location_id = $User->location_id;
+            $Order->save();
         }
-
-        if (isset($_POST['supplier_purchases']))
-        {
-            foreach ($_POST['supplier_purchases'] as $purchaseId => $quantity)
-            {
-                if ($quantity == 0)
-                    continue;
-
-                $OrderItem = OrderItem::model()->with('Order')->findByAttributes(array(
-                    'supplier_purchase_id' => $purchaseId,
-                    'order_id' => $Order->id
-                ));
-                if (!$OrderItem)
-                {
-                    $OrderItem = new OrderItem();
-                }
-
-                $Purchase = SupplierPurchase::model()->findByPk($purchaseId);
-                $SupplierProduct = $Purchase->supplierProduct;
-
-                //give the customer the extra
-                $OrderItem->quantity = $quantity;
-                $OrderItem->order_id = $Order->id;
-                $OrderItem->supplier_purchase_id = $purchaseId;
-                $OrderItem->price = $Purchase->item_sales_price;
-                $OrderItem->packing_station_id = $SupplierProduct->packing_station_id;
-                $OrderItem->name = $SupplierProduct->name;
-                $OrderItem->unit = $SupplierProduct->unit;
-                $updatedExtras[$OrderItem->supplier_purchase_id] = $OrderItem;
-                $OrderItem->save();
-            }
-        }
-         
-
-        if (isset($_POST['boxes']))
-        {
-            $Order = Order::model()->findByAttributes(array(
-                'delivery_date_id' => $DeliveryDate->id,
-                'user_id' => $userId,
-            ));
-
-            if (!$Order)
-            {
-                $Order = new Order;
-                $Order->delivery_date_id = $DD->id;
-                $Order->user_id = $userId;
-                $Order->location_id = $User->location_id;
-                $Order->save();
-            }
-
-            foreach ($_POST['boxes'] as $boxId => $quantity)
-            {
-                $Box = Box::model()->findByPk($boxId);
-
-                $CustBoxes = UserBox::model()->with('Box')->findAll(array(
-                    'condition' => 'user_id=:customerId AND size_id=:sizeId AND delivery_date_id=:deliveryDateId',
-                    'params' => array(':customerId' => $userId, ':sizeId' => $Box->size_id, ':deliveryDateId' => $Box->delivery_date_id)
-                ));
-
-                $curQuantity = count($CustBoxes);
-                $diff = $quantity - $curQuantity;
-
-                if ($diff > 0)
-                {
-                    //Create extra customer box rows
-                    for ($i = 0; $i < $diff; $i++)
-                    {
-                        $CustBox = new UserBox;
-                        $CustBox->user_id = $userId;
-                        $CustBox->box_id = $boxId;
-                        $CustBox->quantity = 1;
-                        $CustBox->delivery_cost = $User->Location->location_delivery_value;
-                        $CustBox->order_id = $Order->id;
-                        $CustBox->save();
-                    }
-                }
-
-                if ($diff < 0)
-                {
-                    //Remove any boxes the customer no longer wants;
-                    $diff = abs($diff);
-                    for ($i = 0; $i < $diff; $i++)
-                    {
-                        $CustBoxes[$i]->delete();
-                    }
-                }
-            }
-        }
-         * 
-         */
-
-        $products = SupplierProduct::getAvailableItems($date, $cat);
-        $dpProducts = new CActiveDataProvider('SupplierProduct');
-        $dpProducts->setData($products);
-
-        $orderedExtras = OrderItem::findCustomerExtras($userId, $date);
-        $dpOrderedExtras = new CActiveDataProvider('OrderItem');
-        $dpOrderedExtras->setData($BoxoCart->products);
-
+        $AllDeliveryDates = DeliveryDate::model()->with('Locations')->findAll("Locations.location_id = " . $Order->location_id);
+        $deadline = strtotime('+' . $deadlineDays . ' days');
+         */        
+        
+        
         $DeliveryDates = DeliveryDate::model()->with('Boxes')->findAll(array(
             'condition' => 'DATE_SUB(date, INTERVAL -1 week) > NOW() AND date < DATE_ADD(NOW(), INTERVAL 1 MONTH)',
                 //'limit'=>$show
         ));
-
-        $this->render('index', array(
-            'pastDeadline' => $pastDeadline,
-            'dpProducts' => $dpProducts,
-            'orderedExtras' => $dpOrderedExtras,
-            'updatedExtras' => $updatedExtras,
-            'updatedOrders' => $updatedOrders,
-            'DeliveryDate' => $DeliveryDate,
-            'DeliveryDates' => $DeliveryDates,
-            'AllDeliveryDates' => $AllDeliveryDates,
-            'model' => new OrderItem,
-            'Category' => $Category,
-            'Customer' => $User,
-            'CustDeliveryDate' => $Order,
-            'curCat' => $cat,
+        
+        $DeliveryDate = $User->Location->getNextDeliveryDate();
+        $BoxoCart = new BoxoCart;
+        
+        $AllDeliveryDates = DeliveryDate::model()->with('Locations')->findAll('Locations.location_id = :locationId',array(
+            ':locationId' => $User->location_id,
+        ));
+        
+        $this->render('checkout', array(
             'BoxoCart' => $BoxoCart,
+            'DeliveryDate' => $DeliveryDate,
+            'Customer' => $User,
+            'AllDeliveryDates' => $AllDeliveryDates,
         ));
     }
 
