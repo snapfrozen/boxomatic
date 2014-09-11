@@ -132,8 +132,13 @@ class BoxoCart extends CComponent
         return $order;
     }
     
-    public function getTotal()
+    public function getTotal($dateId=null)
     {
+        $curDate = $this->_delivery_date_id;
+        if($dateId) {
+            $this->_delivery_date_id = $dateId;
+        }
+        
         $total = 0;
         foreach($this->products as $OI) {
             $total += $OI->total;
@@ -141,6 +146,8 @@ class BoxoCart extends CComponent
         foreach($this->userBoxes as $UB) {
             $total += $UB->total_price;
         }
+        
+        $this->_delivery_date_id = $curDate;
         return $total;
     }
     
@@ -161,10 +168,21 @@ class BoxoCart extends CComponent
     {
         $SPs = isset($this->_SupplierProduct[$this->_delivery_date_id]) ? $this->_SupplierProduct[$this->_delivery_date_id] : array();
         $UBs = isset($this->_UserBox[$this->_delivery_date_id]) ? $this->_UserBox[$this->_delivery_date_id] : array();
+        
+        $allOk = true;
         foreach($DDs as $DD)
         {
-            foreach($SPs as $id => $qty) {
-                $this->_SupplierProduct[$DD->id][$id] = $qty;
+            foreach($SPs as $id => $qty) 
+            {    
+                $Product = SupplierProduct::model()->findByPk($id);
+                $availTo = strtotime($Product->customer_available_to);
+                $availFrom = strtotime($Product->customer_available_from);
+                $curDate = strtotime($DD->date);
+                if($curDate < $availTo && $curDate > $availFrom) {
+                    $this->_SupplierProduct[$DD->id][$id] = $qty;
+                } else {
+                    $allOk = false;
+                }
             }
             foreach($UBs as $id => $qty) {
                 $this->_UserBox[$DD->id][$id] = $qty;
@@ -173,6 +191,8 @@ class BoxoCart extends CComponent
 
         $this->_user->setState('boxocart.SupplierProduct', $this->_SupplierProduct);
         $this->_user->setState('boxocart.UserBox', $this->_UserBox);
+        
+        return $allOk;
     }
     
     public function getDeliveryDates()
@@ -184,5 +204,26 @@ class BoxoCart extends CComponent
             $DDs[$id] = DeliveryDate::model()->findByPk($id);
         }
         return $DDs;
+    }
+    
+    public function getNextTotal()
+    {
+        $nextId = $this->Location->getNextDeliveryDate()->id;
+        return $this->getTotal($nextId);
+    }
+    
+    public function getAllTotal($num=null)
+    {
+        $total = 0;
+        $dds = $this->getDeliveryDates();
+        
+        if($num) {
+            $dds = array_slice($dds, 0, $num);
+        }
+        
+        foreach($dds as $ddId) {
+            $total += $this->getTotal($ddId->id);
+        }
+        return $total;
     }
 }

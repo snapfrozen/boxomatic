@@ -6,5 +6,5 @@
 
 $(document).ready(function(){
 	var $alerts = $('div#main-alerts .alert');
-	$alerts.delay(3000).fadeOut();
+	$alerts.delay(9000).fadeOut();
 });

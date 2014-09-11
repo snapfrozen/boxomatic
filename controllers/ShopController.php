@@ -299,9 +299,13 @@ class ShopController extends Controller
         ));
         
         if (isset($_POST['btn_recurring'])) //recurring order button pressed
-        {           
-            $DDs = $BoxoCart->Location->getFutureDeliveryDates($DeliveryDate, (int) $_POST['months_advance'], $_POST['every']);
-            $BoxoCart->repeatCurrentOrder($DDs);
+        {
+            $NextDD = $BoxoCart->Location->getNextDeliveryDate();
+            $DDs = $BoxoCart->Location->getFutureDeliveryDates($NextDD, (int) $_POST['months_advance'], $_POST['every']);
+            $allOk = $BoxoCart->repeatCurrentOrder($DDs);
+            if(!$allOk) {
+                Yii::app()->user->setFlash('warning', '<strong>Warning:</strong> One or more of the products are not available on the given dates and have been removed.');
+            }
         }
         
         /*

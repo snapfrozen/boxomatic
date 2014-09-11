@@ -47,17 +47,17 @@ $form = $this->beginWidget('CActiveForm', array(
     
     <div class="row">
         <div class="col-md-2">
-            <h3>Order Date</h3>
+            <h3>Order date</h3>
             <ul class="nav nav-pills nav-stacked">
                 <?php foreach($BoxoCart->getDeliveryDates() as $DD): ?>
                 <li <?php echo $DD->id == $DeliveryDate->id ? 'class="active"' : '' ?>>
-                    <?php echo CHtml::link(SnapFormat::date($DD->date), array('shop/checkout','set-date'=>$DD->id)); ?>
+                    <?php echo CHtml::link(SnapFormat::date($DD->date) . '<br /><small>Total: ' . SnapFormat::currency($BoxoCart->getTotal($DD->id)) . '</small>', array('shop/checkout','set-date'=>$DD->id)); ?>
                 </li>
                 <?php endforeach; ?>
             </ul>
         </div>
         <div class="col-md-7 products order">
-            <h2>Cart</h2>
+            <h2>Cart <small class="pull-right"><?php echo CHtml::link('Update this order', array('/shop/index')) ?></small></h2>
             <div id="checkout-cart" class="items list-view">
             <?php foreach($BoxoCart->userBoxes as $UserBox): ?>
                 <?php echo $this->renderPartial('../userBox/_view_checkout',array(
@@ -104,12 +104,6 @@ $form = $this->beginWidget('CActiveForm', array(
                             'prompt' => '- Select -',
                         )); ?>
                     </div>
-                    <div class="col-md-3">
-                        <?php echo BsHtml::dropDownListControlGroup('pay_now', 1, array('now' => 'Pay all now', 'later' => 'Pay for next delivery only'), array(
-                            'label' => 'Pay now?',
-                            'prompt' => '- Select -',
-                        )); ?>
-                    </div>
                     <div class="col-md-2">
                         <div class="form-group no-label">
                             <?php echo CHtml::submitButton('Update order', array('name' => 'btn_recurring', 'class' => 'btn btn-default', 'id' => 'btn-recurring')); ?>
@@ -118,8 +112,11 @@ $form = $this->beginWidget('CActiveForm', array(
                 </div>
                 
             </div>
-            
-            <?php echo CHtml::submitButton('Purchase', array('name' => 'purchase', 'class' => 'btn btn-primary', 'id' => 'btn-recurring')); ?>
+            <div class="btn-group-vertical">
+                <?php echo CHtml::submitButton('Pay ' . SnapFormat::currency($BoxoCart->getNextTotal()) . ' now (next order)', array('name' => 'purchase', 'class' => 'btn btn-primary', 'id' => 'btn-recurring')); ?>
+                <?php echo CHtml::submitButton('Pay ' . SnapFormat::currency($BoxoCart->getAllTotal(3)) . ' now (next 3 orders)', array('name' => 'purchase', 'class' => 'btn btn-primary', 'id' => 'btn-recurring')); ?>
+                <?php echo CHtml::submitButton('Pay ' . SnapFormat::currency($BoxoCart->getAllTotal()) . ' now (all orders)', array('name' => 'purchase', 'class' => 'btn btn-success', 'id' => 'btn-recurring')); ?>
+            </div>
         </div>
         
         <div class="col-md-3">
