@@ -6,7 +6,7 @@
  * The followings are the available columns in table 'customer_delivery_date_items':
  * @property integer $id
  * @property integer $order_id
- * @property integer $supplier_purchase_id
+ * @property integer $supplier_product_id
  * @property string $quantity
  * @property string $price
  * @property string $created
@@ -38,13 +38,13 @@ class OrderItem extends BoxomaticActiveRecord
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('supplier_purchase_id', 'required'),
-            array('id, packing_station_id, order_id, supplier_purchase_id', 'numerical', 'integerOnly' => true),
+            array('supplier_product_id', 'required'),
+            array('id, packing_station_id, order_id, supplier_product_id', 'numerical', 'integerOnly' => true),
             array('quantity, price', 'length', 'max' => 7),
             array('name', 'length', 'max' => 45),
             array('unit', 'length', 'max' => 20),
             array('created, updated', 'safe'),
-            array('quantity', 'checkStock'),
+            //array('quantity', 'checkStock'),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
             array('id, order_id, supplier_product_id, quantity, price, created, updated', 'safe', 'on' => 'search'),
@@ -73,7 +73,7 @@ class OrderItem extends BoxomaticActiveRecord
         return array(
             'id' => 'ID',
             'order_id' => 'Customer Delivery Date',
-            'supplier_purchase_id' => 'Supplier Product',
+            'supplier_product_id' => 'Supplier Product',
             'quantity' => 'Quantity',
             'price' => 'Price',
             'created' => 'Created',
@@ -101,7 +101,7 @@ class OrderItem extends BoxomaticActiveRecord
 
         $criteria->compare('id', $this->id);
         $criteria->compare('order_id', $this->order_id);
-        $criteria->compare('supplier_purchase_id', $this->supplier_purchase_id);
+        $criteria->compare('supplier_product_id', $this->supplier_product_id);
         $criteria->compare('quantity', $this->quantity, true);
         $criteria->compare('price', $this->price, true);
         $criteria->compare('created', $this->created, true);
@@ -123,6 +123,7 @@ class OrderItem extends BoxomaticActiveRecord
         return parent::model($className);
     }
 
+    /*
     public function checkStock($attribute, $params)
     {
         $criteria = new CDbCriteria;
@@ -146,6 +147,7 @@ class OrderItem extends BoxomaticActiveRecord
             $this->addError($attribute, 'Not enough stock');
         }
     }
+     */
 
     public static function findCustomerExtras($userId, $date)
     {

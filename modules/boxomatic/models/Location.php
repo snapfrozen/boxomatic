@@ -141,7 +141,7 @@ class Location extends BoxomaticActiveRecord
         return DeliveryDate::model()->find($c);
     }
     
-    public function getFutureDeliveryDates($FromDate, $monthsAdvance, $every)
+    public function getFutureDeliveryDates($FromDate, $advance, $every=null, $intervalType='MONTH')
     {
         $deadlineDays = SnapUtil::config('boxomatic/orderDeadlineDays');
         $startingFrom = $FromDate->date;
@@ -151,13 +151,13 @@ class Location extends BoxomaticActiveRecord
         $c = new CDbCriteria;
         $c->with = 'Locations';
         $c->addCondition('date >= :startingFrom');
-        $c->addCondition('date <=  DATE_ADD(:startingFrom, interval :monthsAdvance MONTH)');
+        $c->addCondition('date <=  DATE_ADD(:startingFrom, interval :advance '.$intervalType.')');
         $c->addCondition('DAYOFWEEK(date) = :dayOfWeek');
         $c->addCondition('date_sub(date, interval :deadlineDays day) > NOW()');
         $c->addCondition('Locations.location_id = :locationId');
         $c->params = array(
             ':startingFrom' => $startingFrom,
-            ':monthsAdvance' => $monthsAdvance,
+            ':advance' => $advance,
             ':dayOfWeek' => $dayOfWeek,
             ':deadlineDays' => $deadlineDays,
             ':locationId' => $this->location_id,
@@ -165,6 +165,7 @@ class Location extends BoxomaticActiveRecord
         
         $DDs = DeliveryDate::model()->findAll($c);
         
+        //FB - This will break if more than 2 deliveries in one week..
         if($every == 'fortnight')
         {
             foreach (range(1, count($DDs), 2) as $key) {
@@ -172,6 +173,7 @@ class Location extends BoxomaticActiveRecord
             }
             $DDs = array_merge($DDs); //reset the keys
         }
+        
         return $DDs;
     }
 

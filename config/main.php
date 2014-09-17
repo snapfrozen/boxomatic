@@ -38,9 +38,22 @@ return array(
         'boxomatic' => 'frontend.modules.boxomatic',
     ),
     'modules' => array(
-//        'shop' => array(
-//            'class' => 'application.modules.boxomatic.frontend.FrontendBoxomaticModule'
-//        ),
+        'payPal' => array(
+            'env' => '',
+            'account' => array(
+                'username' => 'franci_1351410774_biz_api1.gmail.com',
+                'password' => '1351410806',
+                'signature' => 'AJiMIo7kJww9KwPUOMqbTR3uuBvSAAUP0yxOYb6SRjZ.nQYBpmatKaZC',
+                'email' => 'franci_1351410774_biz@gmail.com',
+                'identityToken' => null,
+            ),
+            'components' => array(
+                'buttonManager' => array(
+                    //'class'=>'payPal.components.PPDbButtonManager'
+                    'class' => 'payPal.components.PPPhpButtonManager',
+                ),
+            ),
+        ),
         // uncomment the following to enable the Gii tool
         'gii' => array(
             'class' => 'system.gii.GiiModule',

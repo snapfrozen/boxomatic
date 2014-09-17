@@ -4,9 +4,9 @@
 $product = $data->SupplierProduct;
 //$extra = isset($updatedOrders[$data->id]) ? $updatedOrders[$data->id] : false;
 ?>
-<div class="view inner">
+<div class="view inner <?php echo $BoxoCart->productRemoved($product->id) ? 'text-danger' : ''?> <?php echo $BoxoCart->productAdded($product->id) ? 'text-success' : ''?>">
     <div class="row">
-        <div class="col-xs-1">
+        <div class="col-xs-1 quantity">
             <?php echo $data->quantity ?>
         </div>
         <?php /* if(isset($showImage)): ?>

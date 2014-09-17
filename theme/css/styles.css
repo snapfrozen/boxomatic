@@ -27,7 +27,9 @@
 	.current-user {
 		margin-top:20px;
 	}
-		
+.panel-default > .panel-heading {
+	display:block;
+}
 	
 .alert h3 {
 	margin-top:0;
@@ -100,6 +102,11 @@
 	border-bottom:1px solid #eee;
 	overflow:hidden;
 }
+.list-view .inner:last-child {
+	border-bottom:none;
+	margin-bottom:0;
+	padding-bottom:0;
+}
 	.list-view input[type="number"] {
 		width:50px;
 	}
@@ -111,13 +118,12 @@
 	.order .inner {
 		margin-bottom:10px;
 		padding-bottom:10px;
+		clear:both;
 	}
 		.order .available-until {
 			margin-bottom:0;
 		}
-/*		.order h2 {
-			margin-top:0;
-		}*/
+		
 	.available-until {
 		font-size:10px;
 		color:#999;
@@ -145,14 +151,39 @@
 }
 
 /* Checkout */
+	#checkout-cart h3 {
+		display:inline;
+	}
+	#checkout-cart .price {
+		display:inline;
+	}
+	#checkout-cart .view.text-danger h3,
+	#checkout-cart .view.text-danger .item-price, 
+	#checkout-cart .view.text-danger .price,
+	#checkout-cart .view.text-danger .quantity {
+		text-decoration: line-through;
+	}
+.buttons {
+	margin-bottom:15px;
+}
+.current-price {
+	margin-left:10px;
+}
 
-#checkout-cart h3 {
-	display:inline;
+.nav-pills.with-button > li > a {
+	margin-left:35px;
 }
-#checkout-cart .price {
-	display:inline;
-	color:#666;
+.nav-pills.with-button .remove {
+	float:right;
+	position:absolute;
+	top:10px;
+	left:0;
+	padding:10px;
+	margin-left:0;
+	background:transparent !important;
+	color:#f00 !important;
 }
+
 
 /* Registration Page */
 #content .captcha img {

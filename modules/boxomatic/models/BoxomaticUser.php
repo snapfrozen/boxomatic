@@ -111,17 +111,34 @@ class BoxomaticUser extends User
                  */
         );
     }
+    
+    public function getFutureOrders($days=28) 
+    {
+        $startingFrom = date('Y-m-d');
+        
+        $c = new CDbCriteria;
+        $c->addCondition('user_id = :userId');
+        $c->addCondition('date >= :startingFrom');
+        $c->addCondition('date <= DATE_ADD(:startingFrom, interval :days DAY)');
+        $c->with = 'DeliveryDate';
+        $c->params = array(
+            ':userId' => $this->id,
+            ':startingFrom' => $startingFrom,
+            ':days' => $days,
+        );
+        return Order::model()->findAll($c);
+    }
 
     public function getTotalPayments()
     {
-        $criteria = new CDbCriteria;
-        $criteria->with = array('Payments');
-        $criteria->select = 'SUM(payment_value) as total_payments';
-        $criteria->addCondition('t.id=:userId');
-        $criteria->params = array(
+        $c = new CDbCriteria;
+        $c->with = array('Payments');
+        $c->select = 'SUM(payment_value) as total_payments';
+        $c->addCondition('t.id=:userId');
+        $c->params = array(
             ':userId' => $this->id,
         );
-        $model = self::model()->find($criteria);
+        $model = self::model()->find($c);
         return $model ? $model->total_payments : 0;
     }
 

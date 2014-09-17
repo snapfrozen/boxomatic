@@ -2,12 +2,14 @@
 
 class BoxoCart extends CComponent
 {
+    public $delivery_date_id;
     protected $_location_id;
-    protected $_delivery_date_id;
     protected $_user;
-    protected $_SupplierProduct;
-    protected $_UserBox;
-    protected $_Orders;
+    protected $_SupplierProduct = array();
+    protected $_UserBox = array();
+    protected $_SupplierProduct_Before = array();   //Cart status before changes were made
+    protected $_UserBox_Before = array();           //Cart status before changes were made
+    //protected $_Orders;
     
     public function __construct()
     {
@@ -15,9 +17,16 @@ class BoxoCart extends CComponent
         $User = isset($this->_user->id) ? BoxomaticUser::model()->findByPk($this->_user->id) : false;
         
         $this->_location_id = $this->_user->getState('boxocart.location_id', $User ? $User->location_id : null);
-        $this->_delivery_date_id = $this->_user->getState('boxocart.delivery_date_id', $User ? $User->location_id : null);
-        $this->_SupplierProduct = $this->_user->getState('boxocart.SupplierProduct', array());
-        $this->_UserBox = $this->_user->getState('boxocart.UserBox', array());
+        $this->delivery_date_id = $this->_user->getState('boxocart.delivery_date_id', null);
+        $this->_SupplierProduct = $this->_user->getState('boxocart.SupplierProduct', $this->_SupplierProduct, array());
+        $this->_UserBox = $this->_user->getState('boxocart.UserBox', $this->_UserBox, array());
+        $this->_SupplierProduct_Before = $this->_user->getState('boxocart.SupplierProduct_Before', $this->_SupplierProduct_Before, array());
+        $this->_UserBox_Before = $this->_user->getState('boxocart.UserBox_Before', $this->_UserBox_Before, array());
+    }
+    
+    public function getCustomer()
+    {
+        return $this->_user ? BoxomaticUser::model()->findByPk($this->_user->id) : null;
     }
     
     public function setLocation_id($id)
@@ -34,7 +43,7 @@ class BoxoCart extends CComponent
     public function setDelivery_date_id($id)
     {
         $this->_user->setState('boxocart.delivery_date_id', $id);
-        $this->_delivery_date_id = $id;
+        $this->delivery_date_id = $id;
     }
     
     public function addItems($data)
@@ -69,9 +78,9 @@ class BoxoCart extends CComponent
         
         //Remove if the new quantity is 0
         if($qty <= 0) {
-            unset($this->{$fieldName}[$this->_delivery_date_id][$id]);
-        } else if(isset($this->{$fieldName}[$this->_delivery_date_id][$id])) {
-            $this->{$fieldName}[$this->_delivery_date_id][$id] = $qty;
+            unset($this->{$fieldName}[$this->delivery_date_id][$id]);
+        } else if(isset($this->{$fieldName}[$this->delivery_date_id][$id])) {
+            $this->{$fieldName}[$this->delivery_date_id][$id] = $qty;
         }
         $this->_user->setState('boxocart.'.$modelName, $this->$fieldName);
         return $this;
@@ -80,74 +89,122 @@ class BoxoCart extends CComponent
     public function addItem($modelName, $id, $qty)
     {
         $fieldName = '_'.$modelName;
-        if(isset($this->{$fieldName}[$this->_delivery_date_id][$id])) {
-            $this->{$fieldName}[$this->_delivery_date_id][$id] += $qty;
+        if(isset($this->{$fieldName}[$this->delivery_date_id][$id])) {
+            $this->{$fieldName}[$this->delivery_date_id][$id] += $qty;
         } else {
-            $this->{$fieldName}[$this->_delivery_date_id][$id] = $qty;
+            $this->{$fieldName}[$this->delivery_date_id][$id] = $qty;
         }
         
         //Remove if the new quantity is 0
-        if($this->{$fieldName}[$this->_delivery_date_id][$id] <= 0) {
-            unset($this->{$fieldName}[$this->_delivery_date_id][$id]);
+        if($this->{$fieldName}[$this->delivery_date_id][$id] <= 0) {
+            unset($this->{$fieldName}[$this->delivery_date_id][$id]);
         }
         
         $this->_user->setState('boxocart.'.$modelName, $this->$fieldName);
         return $this;
     }
     
-    public function getProducts()
+    public function getProducts($which='after')
     {
         $order = array();
-        if(!isset($this->_SupplierProduct[$this->_delivery_date_id])) {
+
+        $products = array();
+        if(($which=='after' || $which=='both') && isset($this->_SupplierProduct[$this->delivery_date_id])) 
+        {
+            $products = $this->_SupplierProduct[$this->delivery_date_id];
+        } 
+        else if($which=='before' && isset($this->_SupplierProduct_Before[$this->delivery_date_id])) 
+        {
+            $products = $this->_SupplierProduct_Before[$this->delivery_date_id];
+        }  
+        
+        if ($which=='both' && isset($this->_SupplierProduct_Before[$this->delivery_date_id])) 
+        {    
+            foreach($this->_SupplierProduct_Before[$this->delivery_date_id] as $pid => $qty)
+            {
+                if(!isset($products[$pid])) {
+                    $products[$pid] = $qty;
+                }
+            }
+        }
+        
+        if(empty($products)) {
             return $order;
         }
         
-        foreach($this->_SupplierProduct[$this->_delivery_date_id] as $id => $qty) 
+        foreach($products as $id => $qty) 
         {
             $OI = new OrderItem;
             $OI->supplier_product_id = $id;
+            $SP = $OI->SupplierProduct;
+            
             $OI->quantity = $qty;
-            $OI->price = $OI->SupplierProduct->item_sales_price;
+            $OI->price = $SP->item_sales_price;
+            $OI->name = $SP->name;
+            $OI->unit = $SP->unit;
+            $OI->packing_station_id = $SP->packing_station_id;
             $order[] = $OI;
         }
         return $order;
     }
     
-    public function getUserBoxes()
+    public function getUserBoxes($which='after')
     {
         $order = array();
-        if(!isset($this->_UserBox[$this->_delivery_date_id])) {
+
+        $boxes = array();
+        if(($which=='after' || $which=='both') && isset($this->_UserBox[$this->delivery_date_id])) 
+        {
+            $boxes = $this->_UserBox[$this->delivery_date_id];
+        } 
+        else if($which=='before' && isset($this->_UserBox_Before[$this->delivery_date_id])) 
+        {
+            $boxes = $this->_UserBox_Before[$this->delivery_date_id];
+        }  
+        
+        if ($which=='both' && isset($this->_UserBox_Before[$this->delivery_date_id])) 
+        {    
+            foreach($this->_UserBox_Before[$this->delivery_date_id] as $pid => $qty)
+            {
+                if(!isset($products[$pid])) {
+                    $boxes[$pid] = $qty;
+                }
+            }
+        }
+        
+        if(empty($boxes)) {
             return $order;
         }
         
-        foreach($this->_UserBox[$this->_delivery_date_id] as $id => $qty) 
+        foreach($boxes as $id => $qty) 
         {
             $UB = new UserBox;
             $UB->quantity = $qty;
             $UB->box_id = $id;
             $UB->price = $UB->Box->box_price;
+            $UB->user_id = $this->_user->id;
             //$UB->location_id = $this->_location_id;
             $order[] = $UB;
         }
         return $order;
     }
     
-    public function getTotal($dateId=null)
+    public function getTotal($dateId=null, $which='after')
     {
-        $curDate = $this->_delivery_date_id;
+        $curDate = $this->delivery_date_id;
         if($dateId) {
-            $this->_delivery_date_id = $dateId;
+            $this->delivery_date_id = $dateId;
         }
         
         $total = 0;
-        foreach($this->products as $OI) {
+        foreach($this->getProducts($which) as $OI) {
             $total += $OI->total;
         }
-        foreach($this->userBoxes as $UB) {
+        foreach($this->getUserBoxes($which) as $UB) {
             $total += $UB->total_price;
         }
         
-        $this->_delivery_date_id = $curDate;
+        $this->delivery_date_id = $curDate;
         return $total;
     }
     
@@ -158,16 +215,35 @@ class BoxoCart extends CComponent
     
     public function getDeliveryDate()
     {
-        return DeliveryDate::model()->findByPk($this->_delivery_date_id);
+        return DeliveryDate::model()->findByPk($this->delivery_date_id);
     }
+    
+        
+    public function getDeliveryDates($combined=false)
+    {
+        $ddIds = array_keys($this->_SupplierProduct);
+        $ddIds = array_merge($ddIds, array_keys($this->_UserBox));
+        if($combined) {
+            $ddIds = array_merge($ddIds, array_keys($this->_SupplierProduct_Before));
+            $ddIds = array_merge($ddIds, array_keys($this->_UserBox_Before));
+        }
+        sort($ddIds);
+        
+        $DDs = array();
+        foreach($ddIds as $id) {
+            $DDs[$id] = DeliveryDate::model()->findByPk($id);
+        }
+        return $DDs;
+    }
+    
     
     /**
      * @param type $DDs Array of DeliveryDate objects
      */
     public function repeatCurrentOrder($DDs)
     {
-        $SPs = isset($this->_SupplierProduct[$this->_delivery_date_id]) ? $this->_SupplierProduct[$this->_delivery_date_id] : array();
-        $UBs = isset($this->_UserBox[$this->_delivery_date_id]) ? $this->_UserBox[$this->_delivery_date_id] : array();
+        $SPs = isset($this->_SupplierProduct[$this->delivery_date_id]) ? $this->_SupplierProduct[$this->delivery_date_id] : array();
+        $UBs = isset($this->_UserBox[$this->delivery_date_id]) ? $this->_UserBox[$this->delivery_date_id] : array();
         
         $allOk = true;
         foreach($DDs as $DD)
@@ -194,36 +270,212 @@ class BoxoCart extends CComponent
         
         return $allOk;
     }
+
+    public function getNextTotal($days=null)
+    {
+        $NextDate = $this->Location->getNextDeliveryDate();
+        
+        //Work out how many days difference from today and the next order
+        $today = date('Y-m-d');
+        $diff = (strtotime($NextDate->date) - strtotime($today)) / (60*60*24);
+        $days -= $diff;
+        
+        $total = 0;
+        if($days)
+        {
+            $DDs = $this->Location->getFutureDeliveryDates($NextDate,$days,null,'DAY');
+            foreach($DDs as $DD) {
+                $total += $this->getTotal($DD->id);
+            }
+        } else {
+            $total += $this->getTotal($NextDate->id);
+        }
+        
+        if($this->_user) {
+            $Customer = BoxomaticUser::model()->findByPk($this->_user->id);
+            $total -= $Customer->balance;
+            if($total < 0)
+                $total = 0;
+        }
+        
+        return $total;
+    }
     
-    public function getDeliveryDates()
+    public function getAllTotal()
+    {
+        $DDs = $this->getDeliveryDates();
+        
+        $total = 0;
+        foreach($DDs as $ddId) {
+            $total += $this->getTotal($ddId->id);
+        }
+        
+        if($this->_user) {
+            $Customer = BoxomaticUser::model()->findByPk($this->_user->id);
+            $total -= $Customer->balance;
+            if($total < 0)
+                $total = 0;
+        }
+        
+        return $total;
+    }
+    
+    public function removeOrder($id)
+    {
+        unset($this->_SupplierProduct[$id]);
+        unset($this->_UserBox[$id]);
+        $this->_user->setState('boxocart.SupplierProduct', $this->_SupplierProduct);
+        $this->_user->setState('boxocart.UserBox', $this->_UserBox);
+        return true;
+    }
+    
+    public function emptyCart()
+    {
+        unset($this->_SupplierProduct);
+        unset($this->_UserBox);
+        $this->_user->setState('boxocart.SupplierProduct', $this->_SupplierProduct);
+        $this->_user->setState('boxocart.UserBox', $this->_UserBox);
+        return true;
+    }
+    
+    public function confirmOrder()
+    {
+        $userId = $this->_user->id;
+        $locationId = $this->_location_id;
+        
+        foreach($this->deliveryDates as $DD) {
+            $Order = $this->_getOrder($userId, $DD->id, $locationId);
+            $Order->clearOrder();
+        }
+                
+        foreach($this->_UserBox as $ddId => $UBs)
+        {
+            $this->delivery_date_id = $ddId;
+            $Order = $this->_getOrder($userId, $ddId, $locationId);
+            
+            foreach($this->getUserBoxes() as $UB)
+            {
+                $UB->order_id = $Order->id;
+                $UB->save();
+            }
+        }
+        
+        foreach($this->_SupplierProduct as $ddId => $SPs) 
+        {
+            $this->delivery_date_id = $ddId;
+            $Order = $this->_getOrder($userId, $ddId, $locationId);
+            
+            foreach($this->getProducts() as $OrderItem) 
+            { 
+                //give the customer the extra
+                $OrderItem->order_id = $Order->id;
+                $OrderItem->save();
+            }
+        }
+        //$this->emptyCart()
+        
+        return true;
+    }
+    
+    protected function _getOrder($userId, $ddId, $locationId)
+    {
+        //Create an order for this date if it doesn't already exist
+        $Order = Order::model()->findByAttributes(array(
+            'delivery_date_id' => $ddId,
+            'user_id' => $userId,
+        ));
+        if (!$Order)
+        {
+            $Order = new Order;
+            $Order->delivery_date_id = $ddId;
+            $Order->user_id = $userId;
+            $Order->location_id = $locationId;
+            $Order->save();
+        }
+        return $Order;
+    }
+    
+    public function populateCart()
+    {
+        $Customer = BoxomaticUser::model()->findByPk($this->_user->id);
+        if($Customer) 
+        {
+            foreach($Customer->getFutureOrders() as $Order) 
+            {
+                foreach($Order->Extras as $OI) {
+                    $this->_SupplierProduct[$Order->delivery_date_id][$OI->supplier_product_id] = $OI->quantity;
+                    $this->_SupplierProduct_Before[$Order->delivery_date_id][$OI->supplier_product_id] = $OI->quantity;
+                }
+                
+                foreach($Order->UserBoxes as $UB) {
+                    //var_dump($UB->attributes);exit;
+                    $this->_UserBox[$Order->delivery_date_id][$UB->box_id] = $UB->quantity;
+                    $this->_UserBox_Before[$Order->delivery_date_id][$UB->box_id] = $UB->quantity;
+                }
+            }
+        }
+        
+        $this->_user->setState('boxocart.SupplierProduct', $this->_SupplierProduct);
+        $this->_user->setState('boxocart.UserBox', $this->_UserBox);
+        $this->_user->setState('boxocart.SupplierProduct_Before', $this->_SupplierProduct_Before);
+        $this->_user->setState('boxocart.UserBox_Before', $this->_UserBox_Before);
+    }
+    
+    public function getDaysToLastDate()
+    {
+        $DDs = $this->getDeliveryDates();
+        $lastDate = 0;
+        foreach($DDs as $DD) {
+            $curDate = strtotime($DD->date);
+            if($curDate > $lastDate)
+                $lastDate = $curDate;
+        }
+        $days = ($lastDate - time())/(60*60*24);
+        return floor($days);
+    }
+    
+    public function currentOrderExists()
+    {
+        $ddIds = array_keys($this->_SupplierProduct_Before);
+        $ddIds = array_merge($ddIds, array_keys($this->_UserBox_Before));
+        return in_array($this->delivery_date_id, $ddIds);
+    }
+    
+    public function currentOrderRemoved()
     {
         $ddIds = array_keys($this->_SupplierProduct);
         $ddIds = array_merge($ddIds, array_keys($this->_UserBox));
-        $DDs = array();
-        foreach($ddIds as $id) {
-            $DDs[$id] = DeliveryDate::model()->findByPk($id);
-        }
-        return $DDs;
+        return in_array($this->delivery_date_id, $ddIds);
     }
     
-    public function getNextTotal()
+    public function productRemoved($prodId) 
     {
-        $nextId = $this->Location->getNextDeliveryDate()->id;
-        return $this->getTotal($nextId);
+        return !isset($this->_SupplierProduct[$this->delivery_date_id][$prodId]);
     }
     
-    public function getAllTotal($num=null)
+    public function productAdded($prodId) 
     {
-        $total = 0;
-        $dds = $this->getDeliveryDates();
+        return isset($this->_SupplierProduct[$this->delivery_date_id][$prodId]) && !isset($this->_SupplierProduct_Before[$this->delivery_date_id][$prodId]);
+    }
+    
+    public function boxRemoved($boxId) 
+    {
+        return !isset($this->_UserBox[$this->delivery_date_id][$boxId]);
+    }
+    
+    public function getTotalLabel($ddId)
+    {
+        $before = $this->getTotal($ddId, 'before');
+        $after = $this->getTotal($ddId, 'after');
         
-        if($num) {
-            $dds = array_slice($dds, 0, $num);
+        $output = '';
+        if($this->currentOrderRemoved()) {
+            $output .= '<span class="current-price">'.SnapFormat::currency($after).'</span>';
         }
         
-        foreach($dds as $ddId) {
-            $total += $this->getTotal($ddId->id);
+        if($before !== 0 && $after !== $before) {
+            $output = ' <s class="strikethrough text-danger">'.SnapFormat::currency($before).'</s>' . $output;
         }
-        return $total;
+        return $output;
     }
 }

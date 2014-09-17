@@ -53,10 +53,10 @@ $form = $this->beginWidget('bootstrap.widgets.BsActiveForm', array(
 
 <?php else: ?>
 
-<div class="alert alert-info">
-    This order is for delivery on <strong><?php echo SnapFormat::date($DeliveryDate->date, 'long') ?></strong> at <strong><?php echo $Location->location_name ?></strong>
-    (<?php echo CHtml::link('Change Location', array('shop/changeLocation')); ?>)
-</div>
+<?php echo $this->renderPartial('_ordering_on',array(
+    'DeliveryDate' => $DeliveryDate,
+    'Location' => $Location,
+)) ?>
 
 <div class="row">
     <div class="col-md-2">
@@ -164,8 +164,7 @@ $form = $this->beginWidget('bootstrap.widgets.BsActiveForm', array(
         <?php else: ?>
         <p>Nothing in cart.</p>
         <?php endif; ?>
-        
-        
+
     </div>
 <?php $this->endWidget(); ?>
 </div>

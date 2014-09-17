@@ -1,9 +1,9 @@
 <?php 
 $Box = $data->Box;
 ?>
-<div class="view inner">
+<div class="view inner <?php echo $BoxoCart->boxRemoved($data->box_id) ? 'text-danger' : ''?>"">
     <div class="row">
-        <div class="col-xs-1">
+        <div class="col-xs-1 quantity">
             <?php echo $data->quantity ?>
         </div>
         <div class="col-xs-5">
