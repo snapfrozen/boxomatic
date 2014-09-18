@@ -129,6 +129,7 @@ class ShopController extends Controller
     {
         $BoxoCart = new BoxoCart;
         $BoxoCart->confirmOrder();
+        $this->redirect(array('/shop/checkout'));
     }
     
     public function actionChangeLocation()
@@ -138,7 +139,7 @@ class ShopController extends Controller
         {
             $BoxoCart = new BoxoCart;
             $BoxoCart->setLocation_id(null);
-            $this->redirect('/shop/index');
+            $this->redirect(array('/shop/index'));
         }
         else {
             $this->redirect(array('/user/update', 'id'=>$user->id));

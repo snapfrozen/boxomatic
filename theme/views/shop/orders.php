@@ -45,7 +45,7 @@ $form = $this->beginWidget('CActiveForm', array(
             <h3>Your upcoming orders</h3>
 
             <ul class="nav nav-pills nav-stacked">
-                <?php foreach($Customer->getFutureOrders() as $Order): ?>
+                <?php foreach($Customer->getFutureOrders(365) as $Order): ?>
                 <li>
                     <?php echo CHtml::link(SnapFormat::date($Order->DeliveryDate->date) . '<br /><small>Total: ' . SnapFormat::currency($Order->total) . '</small>', array('customer/viewOrder','id'=>$Order->id)); ?>
                 </li>

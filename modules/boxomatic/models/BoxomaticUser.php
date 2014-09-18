@@ -693,5 +693,16 @@ class BoxomaticUser extends User
         $this->save();
         Tag::deleteUnusedTags();
     }
+    
+    public function clearEmptyOrders()
+    {
+        foreach($this->Orders as $Order)
+        {
+            if(empty($Order->Extras) && empty($Order->UserBoxes)) {
+                $Order->delete();
+            }
+        }
+        return true;
+    }
 
 }

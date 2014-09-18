@@ -151,17 +151,25 @@
 }
 
 /* Checkout */
+#checkout-cart .row.before {
+	margin-top:10px;
+}
 	#checkout-cart h3 {
 		display:inline;
 	}
 	#checkout-cart .price {
 		display:inline;
 	}
-	#checkout-cart .view.text-danger h3,
-	#checkout-cart .view.text-danger .item-price, 
-	#checkout-cart .view.text-danger .price,
-	#checkout-cart .view.text-danger .quantity {
+	#checkout-cart .total,
+	#checkout-cart .quantity {
+		display:block;
+	}
+	#checkout-cart .text-danger h3,
+	#checkout-cart .text-danger .item-price, 
+	#checkout-cart .text-danger .price,
+	#checkout-cart .text-danger .quantity {
 		text-decoration: line-through;
+		color:#aaa;
 	}
 .buttons {
 	margin-bottom:15px;

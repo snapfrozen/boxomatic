@@ -19,6 +19,36 @@ $form = $this->beginWidget('CActiveForm', array(
 <div class="row">
     <div class="col-md-8 col-md-offset-2 products order">
         <h1>Your Orders</h1>
+        
+        <div class="dropDownPanel" id="repeatOrderDropdown">
+            <div class="row">
+                <div class="col-md-4">
+                    <?php echo BsHtml::dropDownListControlGroup('months_advance', null, array(1 => '1 Month', 3 => '3 Months', 6 => '6 Months'), array(
+                        'label' => 'Order in advance for',
+                        'prompt' => 'Don\'t order in advance'
+                    )); ?>
+                </div>
+                <!--
+                <div class="col-md-3">
+                    <?php echo BsHtml::dropDownListControlGroup('starting_from', 1, $DeliveryDate->getFutureDeliveryDates(), array(
+                        'label' => 'Starting from',
+                    )); ?>
+                </div>
+                -->
+                <div class="col-md-3">
+                    <?php echo BsHtml::dropDownListControlGroup('every', 1, array('week' => 'week', 'fortnight' => 'fortnight'), array(
+                        'label' => 'Every',
+                        'prompt' => '- Select -',
+                    )); ?>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group no-label">
+                        <?php echo CHtml::submitButton('Update order', array('name' => 'btn_recurring', 'class' => 'btn btn-default', 'id' => 'btn-recurring')); ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <div id="checkout-cart" class="items list-view panel-group">
         <?php foreach($BoxoCart->getDeliveryDates(true) as $DD): ?>
             <?php $BoxoCart->delivery_date_id = $DD->id; ?>
@@ -51,6 +81,7 @@ $form = $this->beginWidget('CActiveForm', array(
                             <?php echo $this->renderPartial('../userBox/_view_checkout',array(
                                 'data' => $UserBox,
                                 'BoxoCart' => $BoxoCart,
+                                'ddId' => $DD->id,
                             )) ?>
                         <?php endforeach; ?>
 
@@ -58,6 +89,7 @@ $form = $this->beginWidget('CActiveForm', array(
                             <?php echo $this->renderPartial('../orderItem/_view_checkout',array(
                                 'data' => $SP,
                                 'BoxoCart' => $BoxoCart,
+                                'ddId' => $DD->id,
                             )) ?>
                         <?php endforeach; ?>
                     </div>
@@ -65,46 +97,16 @@ $form = $this->beginWidget('CActiveForm', array(
             </div>
         <?php endforeach; ?>
         </div>
-
-        <div class="dropDownPanel" id="repeatOrderDropdown">
-            <div class="row">
-                <div class="col-md-4">
-                    <?php echo BsHtml::dropDownListControlGroup('months_advance', null, array(1 => '1 Month', 3 => '3 Months', 6 => '6 Months'), array(
-                        'label' => 'Order in advance for',
-                        'prompt' => 'Don\'t order in advance'
-                    )); ?>
-                </div>
-                <!--
-                <div class="col-md-3">
-                    <?php echo BsHtml::dropDownListControlGroup('starting_from', 1, $DeliveryDate->getFutureDeliveryDates(), array(
-                        'label' => 'Starting from',
-                    )); ?>
-                </div>
-                -->
-                <div class="col-md-3">
-                    <?php echo BsHtml::dropDownListControlGroup('every', 1, array('week' => 'week', 'fortnight' => 'fortnight'), array(
-                        'label' => 'Every',
-                        'prompt' => '- Select -',
-                    )); ?>
-                </div>
-                <div class="col-md-2">
-                    <div class="form-group no-label">
-                        <?php echo CHtml::submitButton('Update order', array('name' => 'btn_recurring', 'class' => 'btn btn-default', 'id' => 'btn-recurring')); ?>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
         
         <p>Your Balance: <strong><?php echo SnapFormat::currency($Customer->balance) ?></strong></p>
         
         <div class="btn-group">
             <?php $minDays = SnapUtil::config('boxomatic/minimumAdvancePayment');?>
-            
             <?php $daysToLastDate = $BoxoCart->getDaysToLastDate(); ?>
             
-            <?php if($daysToLastDate > $minDays): ?>
+            <?php if($BoxoCart->getNextTotal($minDays) == 0): ?>
+                <?php echo CHtml::link('Confirm changes', array('shop/confirmOrder'),array('class' => 'btn btn-success')); ?>
+            <?php elseif($daysToLastDate > $minDays): ?>
                 <?php echo CHtml::submitButton('Pay ' . SnapFormat::currency($BoxoCart->getNextTotal($minDays)) . ' now', array('name' => 'purchase', 'class' => 'btn btn-primary', 'id' => 'btn-recurring')); ?>
             <?php endif; ?>
             

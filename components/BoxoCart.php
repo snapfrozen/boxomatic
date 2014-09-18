@@ -166,7 +166,7 @@ class BoxoCart extends CComponent
         {    
             foreach($this->_UserBox_Before[$this->delivery_date_id] as $pid => $qty)
             {
-                if(!isset($products[$pid])) {
+                if(!isset($boxes[$pid])) {
                     $boxes[$pid] = $qty;
                 }
             }
@@ -331,10 +331,14 @@ class BoxoCart extends CComponent
     
     public function emptyCart()
     {
-        unset($this->_SupplierProduct);
-        unset($this->_UserBox);
+        $this->_SupplierProduct = array();
+        $this->_UserBox = array();
+        $this->_SupplierProduct_Before = array();
+        $this->_UserBox_Before = array();
         $this->_user->setState('boxocart.SupplierProduct', $this->_SupplierProduct);
         $this->_user->setState('boxocart.UserBox', $this->_UserBox);
+        $this->_user->setState('boxocart.SupplierProduct_Before', $this->_SupplierProduct_Before);
+        $this->_user->setState('boxocart.UserBox_Before', $this->_UserBox_Before);
         return true;
     }
     
@@ -343,7 +347,7 @@ class BoxoCart extends CComponent
         $userId = $this->_user->id;
         $locationId = $this->_location_id;
         
-        foreach($this->deliveryDates as $DD) {
+        foreach($this->getDeliveryDates(true) as $DD) {
             $Order = $this->_getOrder($userId, $DD->id, $locationId);
             $Order->clearOrder();
         }
@@ -352,8 +356,9 @@ class BoxoCart extends CComponent
         {
             $this->delivery_date_id = $ddId;
             $Order = $this->_getOrder($userId, $ddId, $locationId);
-            
-            foreach($this->getUserBoxes() as $UB)
+            $Order->save();
+   
+            foreach($this->getUserBoxes('after') as $UB)
             {
                 $UB->order_id = $Order->id;
                 $UB->save();
@@ -365,14 +370,17 @@ class BoxoCart extends CComponent
             $this->delivery_date_id = $ddId;
             $Order = $this->_getOrder($userId, $ddId, $locationId);
             
-            foreach($this->getProducts() as $OrderItem) 
+            foreach($this->getProducts('after') as $OrderItem) 
             { 
                 //give the customer the extra
                 $OrderItem->order_id = $Order->id;
                 $OrderItem->save();
             }
         }
-        //$this->emptyCart()
+        
+        $this->emptyCart();
+        $this->populateCart();
+        $this->Customer->clearEmptyOrders();
         
         return true;
     }
@@ -400,7 +408,7 @@ class BoxoCart extends CComponent
         $Customer = BoxomaticUser::model()->findByPk($this->_user->id);
         if($Customer) 
         {
-            foreach($Customer->getFutureOrders() as $Order) 
+            foreach($Customer->getFutureOrders(365) as $Order) 
             {
                 foreach($Order->Extras as $OI) {
                     $this->_SupplierProduct[$Order->delivery_date_id][$OI->supplier_product_id] = $OI->quantity;
@@ -463,6 +471,11 @@ class BoxoCart extends CComponent
         return !isset($this->_UserBox[$this->delivery_date_id][$boxId]);
     }
     
+    public function boxAdded($boxId) 
+    {
+        return isset($this->_UserBox[$this->delivery_date_id][$boxId]) && !isset($this->_UserBox_Before[$this->delivery_date_id][$boxId]);
+    }
+    
     public function getTotalLabel($ddId)
     {
         $before = $this->getTotal($ddId, 'before');
@@ -474,8 +487,71 @@ class BoxoCart extends CComponent
         }
         
         if($before !== 0 && $after !== $before) {
-            $output = ' <s class="strikethrough text-danger">'.SnapFormat::currency($before).'</s>' . $output;
+            $output = ' <s class="text-danger">'.SnapFormat::currency($before).'</s>' . $output;
         }
         return $output;
+    }
+    
+    public function productChanged($ddId, $OrderItem)
+    {
+        $prodId = $OrderItem->supplier_product_id;
+        $before = false;
+        $after = false;
+        if(isset($this->_SupplierProduct_Before[$ddId][$prodId])) {
+            $before = (float) $this->_SupplierProduct_Before[$ddId][$prodId];
+        }
+        if(isset($this->_SupplierProduct[$ddId][$prodId])) {
+            $after = (float) $this->_SupplierProduct[$ddId][$prodId];
+        }
+        
+        return $before !== false && $after !== false && $before != $after;
+    }
+    
+    public function getProductBefore($ddId, $OrderItem)
+    {
+        $OI = false;
+        $prodId = $OrderItem->supplier_product_id;
+        if(isset($this->_SupplierProduct_Before[$ddId][$prodId])) 
+        {
+            $OI = new OrderItem;
+            $OI->supplier_product_id = $prodId;
+            $SP = $OI->SupplierProduct;
+            $OI->quantity = $this->_SupplierProduct_Before[$ddId][$prodId];
+            $OI->price = $SP->item_sales_price;
+            $OI->name = $SP->name;
+            $OI->unit = $SP->unit;
+            $OI->packing_station_id = $SP->packing_station_id;
+        }
+        return $OI;
+    }
+    
+    public function boxChanged($ddId, $UserBox)
+    {
+        $boxId = $UserBox->box_id;
+
+        $before = false;
+        $after = false;
+        if(isset($this->_UserBox_Before[$ddId][$boxId])) {
+            $before = (float) $this->_UserBox_Before[$ddId][$boxId];
+        }
+        if(isset($this->_UserBox[$ddId][$boxId])) {
+            $after = (float) $this->_UserBox[$ddId][$boxId];
+        }
+        return $before !== false && $after !== false && $before != $after;
+    }
+    
+    public function getBoxBefore($ddId, $UserBox)
+    {
+        $UB = false;
+        $boxId = $UserBox->box_id;
+        if(isset($this->_UserBox_Before[$ddId][$boxId])) 
+        {
+            $UB = new UserBox;
+            $UB->quantity = $this->_UserBox_Before[$ddId][$boxId];
+            $UB->box_id = $UserBox->box_id;
+            $UB->price = $UB->Box->box_price;
+            $UB->user_id = $this->_user->id;
+        }
+        return $UB;
     }
 }
