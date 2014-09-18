@@ -12,7 +12,7 @@ $product = $data->SupplierProduct;
         <div class="col-xs-5">
             <h3><?php echo CHtml::encode($product->name); ?></h3>
             <span class="price item-price">
-                <?php echo SnapFormat::currency($product->item_sales_price) ?>
+                <?php echo SnapFormat::currency($data->price) ?>
                 (<?php echo $product->unit_label ?>)
             </span>
             <span class="available-until">
@@ -34,7 +34,7 @@ $product = $data->SupplierProduct;
         <div class="col-xs-5">
             <h3><?php echo CHtml::encode($product->name); ?></h3>
             <span class="price item-price">
-                <?php echo SnapFormat::currency($product->item_sales_price) ?>
+                <?php echo SnapFormat::currency($data->price) ?>
                 (<?php echo $product->unit_label ?>)
             </span>
             <span class="available-until">

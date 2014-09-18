@@ -30,6 +30,7 @@ return array(
         'boxomatic.components.*',
         'bootstrap.helpers.*',
         'bootstrap.behaviors.*',
+        'boxomatic.extensions.yii-mail.YiiMailMessage',
         'frontend.components.*',
     ),
     'aliases' => array(
@@ -68,6 +69,13 @@ return array(
     ),
     // application components
     'components' => array(
+        'mail' => array(
+            'class' => 'boxomatic.extensions.yii-mail.YiiMail',
+            'transportType' => 'php',
+            'viewPath' => 'application.views.mail',
+            //'logging' => true,
+            //'dryRun' => false
+        ),
         'authManager' => array(
             'class' => 'SnapAuthManager',
             'connectionID' => 'db',

@@ -4,12 +4,6 @@ $baseUrl = Yii::app()->baseUrl;
 $themeUrl = $baseUrl . Yii::app()->theme->baseUrl;
 ?>
 
-<?php echo $this->renderPartial('_ordering_on',array(
-    'DeliveryDate' => $DeliveryDate,
-    'Location' => $BoxoCart->Location,
-)); ?>
-
-
 <?php
 $form = $this->beginWidget('CActiveForm', array(
     'id' => 'checkout-form',
@@ -28,13 +22,6 @@ $form = $this->beginWidget('CActiveForm', array(
                         'prompt' => 'Don\'t order in advance'
                     )); ?>
                 </div>
-                <!--
-                <div class="col-md-3">
-                    <?php echo BsHtml::dropDownListControlGroup('starting_from', 1, $DeliveryDate->getFutureDeliveryDates(), array(
-                        'label' => 'Starting from',
-                    )); ?>
-                </div>
-                -->
                 <div class="col-md-3">
                     <?php echo BsHtml::dropDownListControlGroup('every', 1, array('week' => 'week', 'fortnight' => 'fortnight'), array(
                         'label' => 'Every',

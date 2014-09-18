@@ -47,6 +47,12 @@ $cs
                 </p>
             </div>
             <?php
+            $items = Menu::model('main_menu', $user->checkAccess('Update Menu'))->getMenuList();
+            $items []= array(
+                'label' => 'Your Orders',
+                'url' => array('shop/checkout'),
+                'visible' => Yii::app()->user->checkAccess('customer'),
+            );
             $this->widget('bootstrap.widgets.BsNavbar', array(
                 'collapse' => true,
                 'brandLabel' => false,
@@ -57,7 +63,7 @@ $cs
                         'class' => 'bootstrap.widgets.BsNav',
                         'type' => 'navbar',
                         'activateParents' => true,
-                        'items' => Menu::model('main_menu', $user->checkAccess('Update Menu'))->getMenuList()
+                        'items' => $items,
                     ),
                 )
             ));

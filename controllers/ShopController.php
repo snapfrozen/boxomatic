@@ -176,7 +176,12 @@ class ShopController extends Controller
         if(isset($_GET['set-date'])) {
             $BoxoCart->setDelivery_date_id($_GET['set-date']);
         }
-        $DeliveryDate = $BoxoCart->DeliveryDate;
+        
+        if(!$BoxoCart->DeliveryDate) {
+            $DeliveryDate = $BoxoCart->Location->getNextDeliveryDate();
+        } else {
+            $DeliveryDate = $BoxoCart->DeliveryDate;
+        } 
         
         $AllDeliveryDates = DeliveryDate::model()->with('Locations')->findAll('Locations.location_id = :locationId',array(
             ':locationId' => $User->location_id,
@@ -266,42 +271,43 @@ class ShopController extends Controller
 
     public function actionRegister()
     {
-        $model = new BoxomaticUser;
+        $BoxoCart = new BoxoCart;
+        $Customer = new BoxomaticUser;
         $vars = array();
 
         if (isset($_POST['BoxomaticUser']))
         {
-            $model->attributes = $_POST['BoxomaticUser'];
-            $model->scenario = 'register';
+            $Customer->attributes = $_POST['BoxomaticUser'];
+            $Customer->scenario = 'register';
 
-            if ($model->save())
+            if ($Customer->save())
             {
-                if (!$model->Location->is_pickup)
+                if (!$Customer->Location->is_pickup)
                 {
                     $UserLoc = new UserLocation;
-                    $UserLoc->user_id = $model->id;
-                    $UserLoc->location_id = $model->location_id;
-                    $UserLoc->address = $model->user_address;
-                    $UserLoc->address2 = $model->user_address2;
-                    $UserLoc->suburb = $model->user_suburb;
-                    $UserLoc->state = $model->user_state;
-                    $UserLoc->postcode = $model->user_postcode;
-                    $UserLoc->phone = !empty($model->user_phone) ? $model->user_phone : $model->user_mobile;
+                    $UserLoc->user_id = $Customer->id;
+                    $UserLoc->location_id = $Customer->location_id;
+                    $UserLoc->address = $Customer->user_address;
+                    $UserLoc->address2 = $Customer->user_address2;
+                    $UserLoc->suburb = $Customer->user_suburb;
+                    $UserLoc->state = $Customer->user_state;
+                    $UserLoc->postcode = $Customer->user_postcode;
+                    $UserLoc->phone = !empty($Customer->user_phone) ? $Customer->user_phone : $Customer->user_mobile;
                     $UserLoc->save(false);
-                    $model->user_location_id = $UserLoc->customer_location_id;
+                    $Customer->user_location_id = $UserLoc->customer_location_id;
                 }
 
                 $Auth = Yii::app()->authManager;
-                $Auth->assign('customer', $model->id);
+                $Auth->assign('customer', $Customer->id);
 
                 $adminEmail = SnapUtil::config('boxomatic/adminEmail');
                 $adminEmailFromName = SnapUtil::config('boxomatic/adminEmailFromName');
                 //Send email
                 $message = new YiiMailMessage('Welcome to ' . Yii::app()->name);
                 $message->view = 'welcome';
-                $message->setBody(array('User' => $model, 'newPassword' => $_POST['BoxomaticUser']['password']), 'text/html');
+                $message->setBody(array('User' => $Customer, 'newPassword' => $_POST['BoxomaticUser']['password']), 'text/html');
                 $message->addTo($adminEmail);
-                $message->addTo($model->email);
+                $message->addTo($Customer->email);
                 $message->setFrom(array($adminEmail => $adminEmailFromName));
 
                 if (!@Yii::app()->mail->send($message))
@@ -309,21 +315,25 @@ class ShopController extends Controller
                     $mailError = true;
                 }
 
-                $identity = new UserIdentity($model->email, $_POST['BoxomaticUser']['password']);
+                $identity = new UserIdentity($Customer->email, $_POST['BoxomaticUser']['password']);
                 $identity->authenticate();
 
                 Yii::app()->user->login($identity);
                 BoxomaticUser::model()->updateByPk($identity->id, array('last_login_time' => new CDbExpression('NOW()')));
 
-                $this->redirect(array('default/welcome'));
+                $this->redirect(array('shop/checkout'));
             }
         }
+        else
+        {
+            $Customer->location_id = $BoxoCart->location_id;
+        }
 
-        $model->password = '';
-        $model->password_repeat = '';
-        $vars['model'] = $model;
+        $Customer->password = '';
+        $Customer->password_repeat = '';
+        $vars['model'] = $Customer;
 
-        // $this->render('register',array('model'=>$model));
+        // $this->render('register',array('model'=>$Customer));
         $this->render('register', $vars);
     }
 

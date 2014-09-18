@@ -131,7 +131,7 @@ $form = $this->beginWidget('bootstrap.widgets.BsActiveForm', array(
     ));
     ?>
     <div class="col-md-3 products order">
-        <h2>Cart<?php echo !$cartEmpty ? ' '.CHtml::link('Checkout',array('shop/checkout'), array('class'=>'btn btn-sm btn-success pull-right')) : '' ?></h2>
+        <h2>Cart</h2>
         
         <?php if(!$cartEmpty): ?>
         <div class="items list-view">
@@ -159,7 +159,9 @@ $form = $this->beginWidget('bootstrap.widgets.BsActiveForm', array(
                 </div>
             </div>
         </div>
-        <?php echo CHtml::submitButton('Update Cart', array('class' => 'btn btn-sm btn-default pull-right', 'name' => 'update_cart')); ?>
+        <?php echo CHtml::submitButton('Update Cart', array('class' => 'btn btn-sm btn-default pull-left', 'name' => 'update_cart')); ?>
+        <?php echo !$cartEmpty ? CHtml::link('Checkout',array('shop/checkout'), array('class'=>'btn btn-sm btn-success pull-right')) : '' ?>
+        
         
         <?php else: ?>
         <p>Nothing in cart.</p>
