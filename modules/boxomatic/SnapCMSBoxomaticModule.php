@@ -18,6 +18,7 @@ class SnapCMSBoxomaticModule extends SnapCMSModule
         // this method is called when the module is being created
         // you may place code here to customize the module or the application
         Yii::app()->setModules(array(
+            /*
             'gii' => array(
                 'class' => 'system.gii.GiiModule',
                 'password' => 'francis',
@@ -29,6 +30,7 @@ class SnapCMSBoxomaticModule extends SnapCMSModule
                 // If removed, Gii defaults to localhost only. Edit carefully to taste.
                 'ipFilters' => array('127.0.0.1', '::1'),
             ),
+             */
             'payPal' => array(
                 'class' => 'frontend.modules.payPal.PayPalModule',
                 'env' => '',

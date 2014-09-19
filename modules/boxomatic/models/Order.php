@@ -154,8 +154,8 @@ class Order extends BoxomaticActiveRecord
 
         if (time() > strtotime($DeliveryDate->deadline) &&
                 !Yii::app()->user->checkAccess('Admin') &&
-                !isset(Yii::app()->user->shadow_id) &&
-                Yii::app()->getAuthManager()->checkAccess('admin', Yii::app()->user->shadow_id))
+                !isset(Yii::app()->user->shadow_id))
+                //Yii::app()->getAuthManager()->checkAccess('Admin', Yii::app()->user->shadow_id))
             return false;
         else
             return true;

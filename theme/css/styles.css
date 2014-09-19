@@ -157,6 +157,9 @@
 	#checkout-cart h3 {
 		display:inline;
 	}
+	#checkout-cart .selected .panel-heading h3 {
+		font-weight:bold;
+	}
 	#checkout-cart .price {
 		display:inline;
 	}
@@ -164,13 +167,13 @@
 	#checkout-cart .quantity {
 		display:block;
 	}
-	#checkout-cart .text-danger h3,
-	#checkout-cart .text-danger .item-price, 
-	#checkout-cart .text-danger .price,
-	#checkout-cart .text-danger .quantity {
-		text-decoration: line-through;
-		color:#aaa;
-	}
+		#checkout-cart .text-danger h3,
+		#checkout-cart .text-danger .item-price, 
+		#checkout-cart .text-danger .price,
+		#checkout-cart .text-danger .quantity {
+			text-decoration: line-through;
+			color:#aaa;
+		}
 .buttons {
 	margin-bottom:15px;
 }

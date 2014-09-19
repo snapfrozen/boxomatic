@@ -39,7 +39,7 @@ $form = $this->beginWidget('CActiveForm', array(
         <div id="checkout-cart" class="items list-view panel-group">
         <?php foreach($BoxoCart->getDeliveryDates(true) as $DD): ?>
             <?php $BoxoCart->delivery_date_id = $DD->id; ?>
-            <div class="panel panel-default <?php echo $BoxoCart->currentOrderExists() ? '' : 'panel-success' ?> <?php echo $BoxoCart->currentOrderRemoved() ? '' : 'panel-danger' ?>">
+            <div class="panel panel-default <?php echo $BoxoCart->currentOrderExists() ? '' : 'panel-success' ?> <?php echo $BoxoCart->currentOrderRemoved() ? '' : 'panel-danger' ?> <?php echo $DD->id == $DeliveryDate->id ? 'selected' : '' ?>">
                 <a class="panel-heading" data-toggle="collapse" data-parent="#checkout-cart" href="#collapse-<?php echo $DD->id ?>">
                     <h3>
                         <?php echo SnapFormat::date($BoxoCart->DeliveryDate->date, 'full') ?>

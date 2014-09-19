@@ -132,17 +132,32 @@ class BoxoCart extends CComponent
             return $order;
         }
         
+        $Order = $this->_getOrder($this->_user->id, $this->delivery_date_id, $this->_location_id);
+        $Order = $Order->id ? $Order : false; //We don't to create a new order
         foreach($products as $id => $qty) 
         {
-            $OI = new OrderItem;
-            $OI->supplier_product_id = $id;
+            $OI = null;
+            if($Order)
+            {
+                $OI = OrderItem::model()->findByAttributes(array(
+                    'supplier_product_id' => $id,
+                    'order_id' => $Order->id,
+                ));
+            }
+            if(!$OI) {
+                $OI = new OrderItem;
+                $OI->supplier_product_id = $id;
+            }
             $SP = $OI->SupplierProduct;
-            
             $OI->quantity = $qty;
-            $OI->price = $SP->item_sales_price;
-            $OI->name = $SP->name;
-            $OI->unit = $SP->unit;
-            $OI->packing_station_id = $SP->packing_station_id;
+            //Only update price etc if it hasn't been set yet.
+            if(empty($OI->name))
+            {
+                $OI->price = $SP->item_sales_price;
+                $OI->name = $SP->name;
+                $OI->unit = $SP->unit;
+                $OI->packing_station_id = $SP->packing_station_id;
+            }
             $order[] = $OI;
         }
         return $order;
@@ -248,6 +263,11 @@ class BoxoCart extends CComponent
         $allOk = true;
         foreach($DDs as $DD)
         {
+            //Clear the current order
+            unset($this->_SupplierProduct[$DD->id]);
+            unset($this->_UserBox[$DD->id]);
+            
+            //Repopulate the order
             foreach($SPs as $id => $qty) 
             {    
                 $Product = SupplierProduct::model()->findByPk($id);
@@ -369,12 +389,18 @@ class BoxoCart extends CComponent
         {
             $this->delivery_date_id = $ddId;
             $Order = $this->_getOrder($userId, $ddId, $locationId);
-            
-            foreach($this->getProducts('after') as $OrderItem) 
-            { 
-                //give the customer the extra
-                $OrderItem->order_id = $Order->id;
-                $OrderItem->save();
+            if($Order->save()) 
+            {
+                foreach($this->getProducts('after') as $OrderItem) 
+                { 
+                    //give the customer the extra
+                    $OrderItem->order_id = $Order->id;
+                    $OrderItem->save();
+                }
+            }
+            else
+            {
+                Yii::app()->user->setFlash('danger','<strong>Error.</strong> Could not save order. This usually happens when the order deadline has passed.');
             }
         }
         
@@ -398,7 +424,7 @@ class BoxoCart extends CComponent
             $Order->delivery_date_id = $ddId;
             $Order->user_id = $userId;
             $Order->location_id = $locationId;
-            $Order->save();
+            //$Order->save();
         }
         return $Order;
     }

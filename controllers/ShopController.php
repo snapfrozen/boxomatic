@@ -50,7 +50,7 @@ class ShopController extends Controller
                 'roles' => array('View Content'),
             ),
             array('allow',
-                'actions' => array('welcome', 'removeOrder', 'confirmOrder', 'orders'),
+                'actions' => array('welcome', 'removeOrder', 'confirmOrder'),
                 'roles' => array('customer'),
             ),
             array('deny', // deny all users
@@ -243,30 +243,6 @@ class ShopController extends Controller
             }
         }
         $this->render('contact', array('model' => $model));
-    }
-    
-    public function actionOrders()
-    {
-        $BoxoCart = new BoxoCart;
-        
-        $Location = $BoxoCart->Location;
-        $DeliveryDate = false;
-        if($Location) 
-        {
-            if(!$BoxoCart->DeliveryDate) {
-                $DeliveryDate = $BoxoCart->Location->getNextDeliveryDate();
-            } else {
-                $DeliveryDate = $BoxoCart->DeliveryDate;
-            }
-            $BoxoCart->delivery_date_id = $DeliveryDate->id;
-        }
-        
-        $this->render('orders', array(
-            'BoxoCart' => $BoxoCart,
-            'DeliveryDate' => $DeliveryDate,
-            'Location' => $Location,
-            'Customer' => $BoxoCart->Customer,
-        ));
     }
 
     public function actionRegister()
