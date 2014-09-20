@@ -127,7 +127,7 @@ class Location extends BoxomaticActiveRecord
         return array_merge(self::getPickupList(), self::getDeliveryList());
     }
     
-    public function getNextDeliveryDate()
+    public function getNextDeliveryDate($dayOfWeek=null, $afterDays=null)
     {
         $deadlineDays = SnapUtil::config('boxomatic/orderDeadlineDays');
         $c = new CDbCriteria;
@@ -138,9 +138,23 @@ class Location extends BoxomaticActiveRecord
             ':deadlineDays' => $deadlineDays,
             ':locationId' => $this->location_id, 
         );
+        
+        if($dayOfWeek) {
+            $c->addCondition('DAYOFWEEK(date) = :dayOfWeek');
+            $c->params[':dayOfWeek'] = $dayOfWeek + 1; //+1 for PHP -> MySQL
+        }
+        
+        
+        if($afterDays) {
+            $c->params[':deadlineDays'] = $afterDays;
+        }
+        
         return DeliveryDate::model()->find($c);
     }
     
+    /**
+     * This function only returns delivery days on the given day of week of the $FromDate 
+     */
     public function getFutureDeliveryDates($FromDate, $advance, $every=null, $intervalType='MONTH')
     {
         $deadlineDays = SnapUtil::config('boxomatic/orderDeadlineDays');
@@ -175,6 +189,18 @@ class Location extends BoxomaticActiveRecord
         }
         
         return $DDs;
+    }
+    
+    public function getDeliveryDays()
+    {
+        $days = SnapUtil::config('boxomatic/deliveryDateLocations');
+        $deliveryDays = array();
+        foreach($days as $day => $locationIds) {
+            if(in_array($this->location_id, $locationIds)) {
+                $deliveryDays[date('N', strtotime($day))] = $day;
+            }
+        }
+        return $deliveryDays;
     }
 
 }

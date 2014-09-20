@@ -40,7 +40,7 @@ return array(
     ),
     'modules' => array(
         'payPal' => array(
-            'env' => '',
+            'env' => 'sandbox', // 'sandbox' or '' for live 
             'account' => array(
                 'username' => 'franci_1351410774_biz_api1.gmail.com',
                 'password' => '1351410806',

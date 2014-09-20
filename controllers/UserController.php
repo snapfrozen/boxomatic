@@ -152,32 +152,32 @@ class UserController extends BoxomaticController
      */
     public function actionUpdate($id)
     {
-        $model = $this->loadModel($id);
+        $Customer = $this->loadModel($id);
 
         // Uncomment the following line if AJAX validation is needed
-        // $this->performAjaxValidation($model);
+        // $this->performAjaxValidation($Customer);
 
         if (isset($_POST['role']) && $_POST['role'] == 'customer')
         {
             $UserLoc = new UserLocation;
             $UserLoc->user_id = $Customer->user_id;
             $UserLoc->location_id = $Customer->location_id;
-            $UserLoc->address = $model->user_address;
-            $UserLoc->address2 = $model->user_address2;
-            $UserLoc->suburb = $model->user_suburb;
-            $UserLoc->state = $model->user_state;
-            $UserLoc->postcode = $model->user_postcode;
-            $UserLoc->phone = !empty($model->user_phone) ? $model->user_phone : $model->user_mobile;
+            $UserLoc->address = $Customer->user_address;
+            $UserLoc->address2 = $Customer->user_address2;
+            $UserLoc->suburb = $Customer->user_suburb;
+            $UserLoc->state = $Customer->user_state;
+            $UserLoc->postcode = $Customer->user_postcode;
+            $UserLoc->phone = !empty($Customer->user_phone) ? $Customer->user_phone : $Customer->user_mobile;
             $UserLoc->save();
 
-            $model->user_id = $Customer->user_id;
-            $model->update(array('user_id'));
+            $Customer->user_id = $Customer->user_id;
+            $Customer->update(array('user_id'));
         }
 
         $allSaved = true;
         if (isset($_POST['Supplier']))
         {
-            $Supplier = $model->Supplier;
+            $Supplier = $Customer->Supplier;
             $Supplier->attributes = $_POST['Supplier'];
             if (!$Supplier->update())
                 $allSaved = false;
@@ -185,12 +185,15 @@ class UserController extends BoxomaticController
 
         if (isset($_POST['role']))
         {
-            $model->setRole($_POST['role']);
+            $Customer->setRole($_POST['role']);
         }
 
         if (isset($_POST['BoxomaticUser']))
         {
-            $model->attributes = $_POST['BoxomaticUser'];
+            $oldLocation = $Customer->location_id;
+            $oldDeliveryDay = $Customer->delivery_day;
+            
+            $Customer->attributes = $_POST['BoxomaticUser'];
 
             $locationId = $_POST['BoxomaticUser']['delivery_location_key'];
             $custLocationId = new CDbExpression('NULL');
@@ -200,26 +203,47 @@ class UserController extends BoxomaticController
                 $locationId = $parts[1];
                 $custLocationId = $parts[0];
             }
-            $model->location_id = $locationId;
-            $model->user_location_id = $custLocationId;
-
-            $model->validate();
-            if (!$model->update())
+            $Customer->location_id = $locationId;
+            $Customer->user_location_id = $custLocationId;
+            
+            $Customer->validate();
+            if (!$Customer->update())
                 $allSaved = false;
+            
+            //Update the cart to prevent ordering on an unavailable day
+            $BoxoCart = new BoxoCart;
+            $BoxoCart->delivery_day = $Customer->delivery_day;
+            $BoxoCart->setLocation_id($Customer->location_id);
+            $BoxoCart->setDelivery_date_id($BoxoCart->getNextDeliveryDate()->id);
+            
+            //The frontend system currently doesn't handle ordering from multiple locations
+            //so delete all orders if changing location
+            if($Customer->location_id != $oldLocation || $Customer->delivery_day != $oldDeliveryDay) 
+            {
+                $deleted = false;
+                foreach($Customer->getFutureOrders() as $Order) {
+                    $Order->delete();
+                    $deleted = true;
+                }
+                $BoxoCart->emptyCart();
+                if($deleted) {
+                    Yii::app()->user->setFlash('warning', 'All future orders removed.');
+                }
+            }
 
             if ($allSaved)
-                $this->redirect(array('user/update', 'id' => $model->id));
+                $this->redirect(array('user/update', 'id' => $Customer->id));
         }
 
         $custLocDataProvider = null;
         $custLocDataProvider = new CActiveDataProvider('UserLocation', array(
             'criteria' => array(
-                'condition' => 'user_id=' . $model->id
+                'condition' => 'user_id=' . $Customer->id
             )
         ));
 
         $this->render('update', array(
-            'model' => $model,
+            'model' => $Customer,
             'custLocDataProvider' => $custLocDataProvider
         ));
     }

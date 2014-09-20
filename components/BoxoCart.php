@@ -3,18 +3,24 @@
 class BoxoCart extends CComponent
 {
     public $delivery_date_id;
+    public $delivery_day = null;
+    public $Customer = null;
+    
     protected $_location_id;
     protected $_user;
     protected $_SupplierProduct = array();
     protected $_UserBox = array();
     protected $_SupplierProduct_Before = array();   //Cart status before changes were made
     protected $_UserBox_Before = array();           //Cart status before changes were made
+    
     //protected $_Orders;
     
     public function __construct()
     {
         $this->_user = Yii::app()->user;
         $User = isset($this->_user->id) ? BoxomaticUser::model()->findByPk($this->_user->id) : false;
+        $this->Customer = $User;
+        $this->delivery_day = $User->delivery_day;
         
         $this->_location_id = $this->_user->getState('boxocart.location_id', $User ? $User->location_id : null);
         $this->delivery_date_id = $this->_user->getState('boxocart.delivery_date_id', null);
@@ -22,11 +28,6 @@ class BoxoCart extends CComponent
         $this->_UserBox = $this->_user->getState('boxocart.UserBox', $this->_UserBox, array());
         $this->_SupplierProduct_Before = $this->_user->getState('boxocart.SupplierProduct_Before', $this->_SupplierProduct_Before, array());
         $this->_UserBox_Before = $this->_user->getState('boxocart.UserBox_Before', $this->_UserBox_Before, array());
-    }
-    
-    public function getCustomer()
-    {
-        return $this->_user ? BoxomaticUser::model()->findByPk($this->_user->id) : null;
     }
     
     public function setLocation_id($id)
@@ -233,6 +234,18 @@ class BoxoCart extends CComponent
         return DeliveryDate::model()->findByPk($this->delivery_date_id);
     }
     
+    /**
+     * @todo: currently everything is stored by date_id but this breaks down if 
+     * someone wants to order for two different locations on the same day.
+     */
+    public function getOrders()
+    {
+        $Orders = [];
+        foreach($this->Customer->getFutureOrders() as $Order) 
+        {
+            
+        }
+    }
         
     public function getDeliveryDates($combined=false)
     {
@@ -280,8 +293,21 @@ class BoxoCart extends CComponent
                     $allOk = false;
                 }
             }
-            foreach($UBs as $id => $qty) {
-                $this->_UserBox[$DD->id][$id] = $qty;
+            foreach($UBs as $id => $qty) 
+            {
+                //Find the equivalent box type for the current date
+                $CopyBox = Box::model()->findByAttributes(array(
+                    'box_id' => $id,
+                ));
+                $NewBox = Box::model()->findByAttributes(array(
+                    'size_id' => $CopyBox->size_id,
+                    'delivery_date_id' => $DD->id,
+                ));
+                if($NewBox) {
+                    $this->_UserBox[$DD->id][$NewBox->box_id] = $qty;
+                } else {
+                    Yii::app()->user->setFlash('warning','A box has been removed from your future orders.');
+                }
             }
         }
 
@@ -312,8 +338,7 @@ class BoxoCart extends CComponent
         }
         
         if($this->_user) {
-            $Customer = BoxomaticUser::model()->findByPk($this->_user->id);
-            $total -= $Customer->balance;
+            $total -= $this->Customer->balance;
             if($total < 0)
                 $total = 0;
         }
@@ -331,8 +356,7 @@ class BoxoCart extends CComponent
         }
         
         if($this->_user) {
-            $Customer = BoxomaticUser::model()->findByPk($this->_user->id);
-            $total -= $Customer->balance;
+            $total -= $this->Customer->balance;
             if($total < 0)
                 $total = 0;
         }
@@ -431,10 +455,10 @@ class BoxoCart extends CComponent
     
     public function populateCart()
     {
-        $Customer = BoxomaticUser::model()->findByPk($this->_user->id);
+        $Customer = $this->Customer;
         if($Customer) 
         {
-            foreach($Customer->getFutureOrders(365) as $Order) 
+            foreach($Customer->getFutureOrders() as $Order) 
             {
                 foreach($Order->Extras as $OI) {
                     $this->_SupplierProduct[$Order->delivery_date_id][$OI->supplier_product_id] = $OI->quantity;
@@ -579,5 +603,16 @@ class BoxoCart extends CComponent
             $UB->user_id = $this->_user->id;
         }
         return $UB;
+    }
+    
+    public function getNextDeliveryDate()
+    {
+        return $this->Location->getNextDeliveryDate($this->delivery_day);
+    }
+    
+    public function getOrderDate($days)
+    {
+        $NextDate = $this->Location->getNextDeliveryDate($this->delivery_day, $days);
+        return $NextDate ? SnapFormat::date($NextDate->date,'full') : 'Error!';
     }
 }

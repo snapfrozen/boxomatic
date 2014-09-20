@@ -48,7 +48,7 @@ return array(
     ),
     'orderDeadlineDays' => 4, //orders must be placed within 7 days of delivery 
     'minimumAdvancePayment' => 7, //in days
-    'deliveryDateLocations' => array(
+    'deliveryDateLocations' => array( //Would be nice to move this to the admin interface eventually
         'Monday' => array(1),
         'Tuesday' => array(2),
         'Wednesday' => array(),

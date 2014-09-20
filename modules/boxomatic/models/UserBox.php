@@ -151,16 +151,13 @@ class UserBox extends BoxomaticActiveRecord
                 ),
                 'User'
             );
-            if ($this->customer_full_name)
-            {
+            if ($this->customer_full_name) {
                 $criteria->compare('CONCAT(User.first_name,User.last_name)', $this->customer_full_name, true);
             }
-            if ($this->customer_box_price)
-            {
+            if ($this->customer_box_price) {
                 $criteria->compare('Box.box_price', $this->customer_box_price, true);
             }
-            if ($this->customer_user_id)
-            {
+            if ($this->customer_user_id) {
                 $criteria->compare('User.id', $this->customer_user_id, true);
             }
         }

@@ -15,7 +15,6 @@ $cartEmpty = empty($BoxoCart->userBoxes) && empty($BoxoCart->products);
 <h1 class="sr-only">Shop</h1>
 
 <?php if(!$BoxoCart->location_id): ?>
-
 <?php
 $form = $this->beginWidget('bootstrap.widgets.BsActiveForm', array(
     'id' => 'location-form',

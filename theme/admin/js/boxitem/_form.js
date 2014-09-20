@@ -68,19 +68,19 @@ function reloadBoxes(url,data)
 	});
 }
 
+/*
 $('form#box-item-form').on('click', 'table td:not(.button-column) a', function(){
-	console.log('yes');
 	var $a = $(this);
 	reloadBoxes($a.attr('href'),{});
 	return false;
 });
+*/
 
 $('form#box-item-form').on('change', 'input, select', function(){
 	$(this).parents('td').addClass('dirty');
 });
 
 $('div#sidebar').on('click', 'a#update-boxes', function() {
-
 	var $form = $('form#box-item-form');
 	$loading.show();
 	var ajaxUpdate = ['current-boxes','supplier-item-grid'];

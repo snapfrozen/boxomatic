@@ -100,10 +100,11 @@ class ShopController extends Controller
         $DeliveryDate = false;
         $dpProducts = false;
         $Location = $BoxoCart->Location;
+        
         if($Location) 
         {
             if(!$BoxoCart->DeliveryDate) {
-                $DeliveryDate = $BoxoCart->Location->getNextDeliveryDate();
+                $DeliveryDate = $BoxoCart->getNextDeliveryDate();
             } else {
                 $DeliveryDate = $BoxoCart->DeliveryDate;
             }
@@ -112,7 +113,7 @@ class ShopController extends Controller
             $products = SupplierProduct::getAvailableItems($DeliveryDate->id, $cat);
             $dpProducts = new CActiveDataProvider('SupplierProduct');
             $dpProducts->setData($products);
-        }
+        };
 
         $this->render('index', array(
             'dpProducts' => $dpProducts,
@@ -128,7 +129,16 @@ class ShopController extends Controller
     public function actionConfirmOrder()
     {
         $BoxoCart = new BoxoCart;
-        $BoxoCart->confirmOrder();
+        $minDays = SnapUtil::config('boxomatic/minimumAdvancePayment');
+        $nextTotal = $BoxoCart->getNextTotal($minDays);
+        if($nextTotal !== 0) {
+            Yii::app()->user->setFlash('danger', 'You must add at least <strong>'. SnapFormat::currency($nextTotal) .'</strong> to your account to do this.');
+        } 
+        else {
+            $BoxoCart = new BoxoCart;
+            $BoxoCart->confirmOrder();
+            Yii::app()->user->setFlash('success','Your order has been updated.');
+        }
         $this->redirect(array('/shop/checkout'));
     }
     
@@ -189,7 +199,7 @@ class ShopController extends Controller
         
         if (isset($_POST['btn_recurring'])) //recurring order button pressed
         {
-            $NextDD = $BoxoCart->Location->getNextDeliveryDate();
+            $NextDD = $BoxoCart->getNextDeliveryDate();
             $DDs = $BoxoCart->Location->getFutureDeliveryDates($NextDD, (int) $_POST['months_advance'], $_POST['every']);
             $allOk = $BoxoCart->repeatCurrentOrder($DDs);
             if(!$allOk) {

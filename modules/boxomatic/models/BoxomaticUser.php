@@ -71,7 +71,7 @@ class BoxomaticUser extends User
         return array(
             array('password, first_name, last_name', 'required'),
             array('email', 'required', 'on' => 'register'),
-            array('location_id, user_location_id, id', 'numerical', 'integerOnly' => true),
+            array('delivery_day, location_id, user_location_id, id', 'numerical', 'integerOnly' => true),
             array('email, password', 'length', 'max' => 255),
             array('email', 'unique'),
             array('email', 'email'),
@@ -112,7 +112,7 @@ class BoxomaticUser extends User
         );
     }
     
-    public function getFutureOrders($days=28) 
+    public function getFutureOrders($days=365) 
     {
         $startingFrom = date('Y-m-d');
         
@@ -174,6 +174,7 @@ class BoxomaticUser extends User
             'order_items' => 'Items',
             'full_name_search' => 'Full Name',
             'ordered_boxes' => 'Ordered Boxes',
+            'delivery_day' => 'Delivery Day',
         );
     }
 
@@ -280,6 +281,22 @@ class BoxomaticUser extends User
         {
             $this->password = SnapUtil::doHash($this->password);
             $this->password_repeat = SnapUtil::doHash($this->password_repeat);
+        }
+        return parent::afterValidate();
+    }
+    
+    public function beforeSave()
+    {
+        //If the delivery_day is not available for the Location, set it to null
+        if($this->Location) {
+            $dds = $this->Location->getDeliveryDays();
+            if(!in_array($this->delivery_day, array_keys($dds))) {
+                $this->delivery_day = null;
+            }
+        }
+        //Set the delivery day to the next available delivery day by default
+        if(empty($this->delivery_day) && $this->Location) {
+            $this->delivery_day = date('N',strtotime($this->Location->getNextDeliveryDate()->date));
         }
         return parent::beforeSave();
     }
