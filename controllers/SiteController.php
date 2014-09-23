@@ -155,7 +155,7 @@ class SiteController extends Controller
                 $BoxoCart = new BoxoCart;
                 $BoxoCart->populateCart();
                 //$this->redirect(Yii::app()->user->returnUrl);
-                $this->redirect(array('shop/index'));
+                $this->redirect(array('shop/checkout'));
             }
         }
         // display the login form
