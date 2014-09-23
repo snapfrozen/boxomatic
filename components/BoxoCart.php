@@ -242,7 +242,7 @@ class BoxoCart extends CComponent
      */
     public function getOrders()
     {
-        $Orders = [];
+        $Orders = array();
         foreach($this->Customer->getFutureOrders() as $Order) 
         {
             
