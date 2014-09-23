@@ -85,10 +85,13 @@ class ShopController extends Controller
             $this->refresh();
         }
         
-        if(isset($_POST['Order']) && isset($_POST['update_cart']))
+        if(isset($_POST['Order']) && (isset($_POST['update_cart']) || isset($_POST['checkout'])))
         {
             if($BoxoCart->updateItems($_POST['Order'])) {
                 Yii::app()->user->setFlash('success', 'Cart updated.');
+            }
+            if(isset($_POST['checkout'])) {
+                $this->redirect(array('shop/checkout'));
             }
             $this->refresh();
         }

@@ -249,6 +249,9 @@ class BoxoCart extends CComponent
         }
     }
         
+    /**
+     * WARNING - This function assumes that the date_id is always in sync with the "date" in delivery_dates table (in regards to order)
+     */
     public function getDeliveryDates($combined=false)
     {
         $ddIds = array_keys($this->_SupplierProduct);
@@ -321,24 +324,24 @@ class BoxoCart extends CComponent
 
     public function getNextTotal($days=null)
     {
-        $NextDate = $this->Location->getNextDeliveryDate();
-        
-        //Work out how many days difference from today and the next order
-        $today = date('Y-m-d');
-        $diff = (strtotime($NextDate->date) - strtotime($today)) / (60*60*24);
-        $days -= $diff;
+        $NextDate = $this->getNextDeliveryDate($days);
+        return $this->getTotalForDate($NextDate);
+    }
+    
+    public function getTotalForDate($Date)
+    {       
+        $DDs = $this->getDeliveryDates();
         
         $total = 0;
-        if($days)
+        foreach($DDs as $DD) 
         {
-            $DDs = $this->Location->getFutureDeliveryDates($NextDate,$days,null,'DAY');
-            foreach($DDs as $DD) {
-                $total += $this->getTotal($DD->id);
+            $total += $this->getTotal($DD->id);
+            //Assumes date_ids and actual dates are in the same order
+            if($Date->id == $DD->id) {
+                break;
             }
-        } else {
-            $total += $this->getTotal($NextDate->id);
         }
-        
+
         if($this->_user) {
             $total -= $this->Customer->balance;
             if($total < 0)
@@ -346,6 +349,26 @@ class BoxoCart extends CComponent
         }
         
         return $total;
+    }
+    
+        
+    public function getPaidUntilDate()
+    {
+        $DDs = $this->getDeliveryDates();
+        
+        $balance = $this->Customer->balance;
+        $lastDate = null;
+        foreach($DDs as $DD) 
+        {
+            $balance -= $this->getTotal($DD->id);
+            //Assumes date_ids and actual dates are in the same order
+            if($balance <= 0) {
+                return $lastDate;
+            }
+            $lastDate = $DD;
+        }
+        
+        return $DD;
     }
     
     public function getAllTotal()
@@ -616,9 +639,11 @@ class BoxoCart extends CComponent
         return $UB;
     }
     
-    public function getNextDeliveryDate()
+    public function getNextDeliveryDate($days=null)
     {
-        return $this->Location->getNextDeliveryDate($this->delivery_day);
+        $minDays = SnapUtil::config('boxomatic/minimumAdvancePayment');
+        $days = $days ? $days : $minDays;
+        return $this->Location->getNextDeliveryDate($this->delivery_day, $days);
     }
     
     public function getLastDeliveryDate()
@@ -629,9 +654,9 @@ class BoxoCart extends CComponent
     
     public function getOrderDate($days)
     {
-        $minDays = SnapUtil::config('boxomatic/minimumAdvancePayment');
+        //$minDays = SnapUtil::config('boxomatic/minimumAdvancePayment');
         $days -= 7; // minus 1 week
-        $NextDate = $this->Location->getNextDeliveryDate($this->delivery_day, $days);
+        $NextDate = $this->getNextDeliveryDate($days);
         return $NextDate ? SnapFormat::date($NextDate->date,'full') : 'Error!';
     }
 }

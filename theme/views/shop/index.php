@@ -159,7 +159,7 @@ $form = $this->beginWidget('bootstrap.widgets.BsActiveForm', array(
             </div>
         </div>
         <?php echo CHtml::submitButton('Update Cart', array('class' => 'btn btn-sm btn-default pull-left', 'name' => 'update_cart')); ?>
-        <?php echo !$cartEmpty ? CHtml::link('Checkout',array('shop/checkout'), array('class'=>'btn btn-sm btn-success pull-right')) : '' ?>
+        <?php echo !$cartEmpty ? CHtml::submitButton('Checkout', array('class'=>'btn btn-sm btn-success pull-right', 'name' => 'checkout')) : '' ?>
         
         
         <?php else: ?>

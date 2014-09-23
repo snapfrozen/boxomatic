@@ -154,9 +154,23 @@
 #checkout-cart .row.before {
 	margin-top:10px;
 }
+#checkout-cart .panel-heading {
+	padding-right:10px;
+}
 	#checkout-cart h3 {
 		display:inline;
 	}
+		#checkout-cart .glyphicon {
+			width:18px;
+			display:inline-block;
+			height:18px;
+			float:right;
+			margin-left:5px;
+			margin-top:-2px;
+		}
+		#checkout-cart .glyphicon-ok {
+			color:#009900;
+		}
 	#checkout-cart .selected .panel-heading h3 {
 		font-weight:bold;
 	}

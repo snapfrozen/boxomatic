@@ -21,7 +21,10 @@ $daysToLastDate = $BoxoCart->getDaysToLastDate();
                 <a class="panel-heading" data-toggle="collapse" data-parent="#checkout-cart" href="#collapse-<?php echo $DD->id ?>">
                     <h3>
                         <?php echo SnapFormat::date($BoxoCart->DeliveryDate->date, 'full') ?>
-                        <span class="pull-right"><?php echo $BoxoCart->getTotalLabel($DD->id) ?></span>
+                        <span class="pull-right">
+                            <?php echo $BoxoCart->getTotalLabel($DD->id) ?>
+                            <span class="glyphicon <?php echo $BoxoCart->getTotalForDate($DD) == 0 ? 'glyphicon-ok' : '' ?>"></span>
+                        </span>
                     </h3>
                 </a>
                 <div id="collapse-<?php echo $DD->id ?>" class="panel-collapse collapse <?php echo $DD->id == $DeliveryDate->id ? 'in' : '' ?>">
@@ -33,7 +36,7 @@ $daysToLastDate = $BoxoCart->getDaysToLastDate();
                             </div>
                             <div class="col-md-6">
                                 <div class="buttons pull-right">
-                                    <?php echo CHtml::link('Update this order', array('/shop/index','set-date'=>$DD->id),array('class'=>'btn btn-info')) ?>
+                                    <?php echo CHtml::link('Edit this order', array('/shop/index','set-date'=>$DD->id),array('class'=>'btn btn-info')) ?>
                                     
                                     <?php if(!$BoxoCart->currentOrderRemoved()): ?>
                                     <?php echo CHtml::link('Delete this order', array('shop/removeOrder','id'=>$DD->id), array(
@@ -66,7 +69,7 @@ $daysToLastDate = $BoxoCart->getDaysToLastDate();
             <?php endforeach; ?>
             <div class="panel panel-warning">
                 <a class="panel-heading" data-toggle="collapse" data-parent="#checkout-cart" href="#repeat-order">
-                    <h3>Order in advance</h3>
+                    <h3>Extend your order(s)</h3>
                 </a>
                 <div id="repeat-order" class="panel-collapse collapse">
                     <div class="panel-body">
@@ -104,17 +107,6 @@ $daysToLastDate = $BoxoCart->getDaysToLastDate();
             </div>
         </div>
         
-        <div class="row clearfix">
-            <div class="col-md-12">
-                <?php if($BoxoCart->getNextTotal($minDays) == 0): ?>
-                    <?php echo CHtml::link('Confirm changes', array('shop/confirmOrder'),array(
-                        'class' => 'btn btn-success pull-right'
-                    )); ?>
-                <?php endif; ?>
-            </div>
-        </div>
-        
-        
         <!-- 
         <div class="row clearfix">
             <div class="col-md-12">
@@ -125,57 +117,56 @@ $daysToLastDate = $BoxoCart->getDaysToLastDate();
         </div>
         -->
         
+        
         <div class="row">
             <div class="col-md-9">
                 <h2>Payment</h2>
                 <p class="alert alert-info">Your current balance is: <strong><?php echo SnapFormat::currency($Customer->balance) ?></strong></p>
                 <form name="order" action="https://www.<?php echo $Paypal->env == '' ? '' : $Paypal->env.'.' ?>paypal.com/cgi-bin/webscr" method="post">
-                
-                
-                
-                    <?php if($daysToLastDate > $minDays && $BoxoCart->getNextTotal($minDays) != 0): ?>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" name="amount" value="<?php echo $BoxoCart->getNextTotal($minDays) ?>"/>
-                            Pay until <strong><?php echo $BoxoCart->getOrderDate($minDays) ?></strong>
-                            <span class="pull-right"><?php echo SnapFormat::currency($BoxoCart->getNextTotal($minDays)) ?></span>
-                        </label>
-                    </div>
-                    <?php endif; ?>
                     
-                    <?php if($BoxoCart->getNextTotal($minDays * 2) !== 0): ?>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" name="amount" value="<?php echo $BoxoCart->getNextTotal($minDays * 2) ?>"/>
-                            Pay until <strong><?php echo $BoxoCart->getOrderDate($minDays * 2) ?></strong>
-                            <span class="pull-right"><?php echo SnapFormat::currency($BoxoCart->getNextTotal($minDays * 2)) ?></span>
-                        </label>
+                    <div class="form-group row">
+                        <label for="payment-amount" class="col-md-4">Pay until</label>
+                        <div class="col-md-8">
+                            <select id="payment-amount" name="amount" class="form-control">
+                            <?php if($BoxoCart->getNextTotal($minDays) == 0): ?>
+                                <option value="0">
+                                    <?php echo SnapFormat::date($BoxoCart->getPaidUntilDate()->date, 'full'); ?> (No payment required)
+                                </option>
+                            <?php endif; ?>
+                            <?php foreach($BoxoCart->getDeliveryDates(true) as $DD): 
+                                if($BoxoCart->getTotalForDate($DD) == 0) continue;
+                                ?>
+                                <option value="<?php echo $BoxoCart->getTotalForDate($DD) ?>"><?php echo SnapFormat::date($DD->date, 'full') ?> (<?php echo SnapFormat::currency($BoxoCart->getTotalForDate($DD)) ?>)</option>
+                            <?php endforeach; ?>
+                            </select>
+                        </div>
                     </div>
-                    <?php endif; ?>
-                    
-                    <?php if($BoxoCart->getAllTotal() !== 0): ?>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" name="amount" value="<?php echo $BoxoCart->getAllTotal() ?>"/>
-                            Pay for all your orders
-                            <span class="pull-right"><?php echo SnapFormat::currency($BoxoCart->getAllTotal()) ?></span>
-                        </label>
-                    </div>
-                    <?php endif; ?>
-                    
-                    <?php if($BoxoCart->getAllTotal() !== 0): ?>
-                    <div class="radio form-inline clearfix">
-                        <label>
-                            <input type="radio" name="amount" value="<?php echo $BoxoCart->getAllTotal() ?>"/>
-                            Add store credit
-                        </label>
-                        <input type="text" name="amount" class="form-control pull-right"/>
-                    </div>
-                    <?php endif; ?>
                     
                     <div class="form-group">
-                        <input type="submit" value="Make Payment" class="btn btn-primary pull-right" />
+                        <?php echo CHtml::link('Confirm Purchase', array('shop/confirmOrder'), array('class'=>'btn btn-primary pull-right','id'=>'btn-confirm-purchase','style'=>'display:none')) ?>
+                        <input type="submit" value="Confirm Purchase" class="btn btn-primary pull-right" id="btn-purchase-paypal" style="display:none" />
                     </div>
+                    <script type="text/javascript">
+                        (function($) {
+                            var $btnPaypal = $('input#btn-purchase-paypal');
+                            var $btnConfirmPurchase = $('a#btn-confirm-purchase');
+                            var $select = $('select#payment-amount');
+
+                            var checkPaymentButton = function() {
+                                $btnPaypal.hide();
+                                $btnConfirmPurchase.hide();
+                                if($select.val() == 0) {
+                                    $btnConfirmPurchase.show();
+                                } else {
+                                    $btnPaypal.show();
+                                }
+                            }
+
+                            $select.change(checkPaymentButton);
+
+                            checkPaymentButton();
+                        })(jQuery);
+                    </script>
 
                     <input type="hidden" name="cmd" value="_ext-enter" />
 
