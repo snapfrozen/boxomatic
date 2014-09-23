@@ -50,7 +50,7 @@ class ShopController extends Controller
                 'roles' => array('View Content'),
             ),
             array('allow',
-                'actions' => array('welcome', 'removeOrder', 'confirmOrder'),
+                'actions' => array('welcome', 'removeOrder', 'confirmOrder', 'revertChanges'),
                 'roles' => array('customer'),
             ),
             array('deny', // deny all users
@@ -156,10 +156,19 @@ class ShopController extends Controller
         }
     }
     
-    public function actionRemoveOrder($id) {
+    public function actionRemoveOrder($id) 
+    {
         $BoxoCart = new BoxoCart;
         $BoxoCart->removeOrder($id);
         Yii::app()->user->setFlash('success', 'Order removed.');
+        $this->redirect(array('/shop/checkout'));
+    }
+    
+    public function actionRevertChanges() 
+    {
+        $BoxoCart = new BoxoCart;
+        $BoxoCart->revertChanges();
+        Yii::app()->user->setFlash('success', 'Changes reverted.');
         $this->redirect(array('/shop/checkout'));
     }
     
@@ -199,7 +208,7 @@ class ShopController extends Controller
         
         if (isset($_POST['btn_recurring'])) //recurring order button pressed
         {
-            $NextDD = $BoxoCart->getNextDeliveryDate();
+            $NextDD = $BoxoCart->getLastDeliveryDate();
             $DDs = $BoxoCart->Location->getFutureDeliveryDates($NextDD, (int) $_POST['months_advance'], $_POST['every']);
             $allOk = $BoxoCart->repeatCurrentOrder($DDs);
             if(!$allOk) {

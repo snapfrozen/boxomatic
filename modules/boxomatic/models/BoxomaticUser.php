@@ -114,7 +114,8 @@ class BoxomaticUser extends User
     
     public function getFutureOrders($days=365) 
     {
-        $startingFrom = date('Y-m-d');
+        $deadlineDays = SnapUtil::config('boxomatic/orderDeadlineDays');
+        $startingFrom = date('Y-m-d', strtotime('+' . $deadlineDays . ' days'));
         
         $c = new CDbCriteria;
         $c->addCondition('user_id = :userId');

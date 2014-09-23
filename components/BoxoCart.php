@@ -20,10 +20,12 @@ class BoxoCart extends CComponent
         $this->_user = Yii::app()->user;
         $User = isset($this->_user->id) ? BoxomaticUser::model()->findByPk($this->_user->id) : false;
         $this->Customer = $User;
-        $this->delivery_day = $User->delivery_day;
+        if($User) {
+            $this->delivery_day = $User->delivery_day;
+        }
         
-        $this->_location_id = $this->_user->getState('boxocart.location_id', $User ? $User->location_id : null);
         $this->delivery_date_id = $this->_user->getState('boxocart.delivery_date_id', null);
+        $this->_location_id = $this->_user->getState('boxocart.location_id', $User ? $User->location_id : null);
         $this->_SupplierProduct = $this->_user->getState('boxocart.SupplierProduct', $this->_SupplierProduct, array());
         $this->_UserBox = $this->_user->getState('boxocart.UserBox', $this->_UserBox, array());
         $this->_SupplierProduct_Before = $this->_user->getState('boxocart.SupplierProduct_Before', $this->_SupplierProduct_Before, array());
@@ -373,6 +375,15 @@ class BoxoCart extends CComponent
         return true;
     }
     
+    public function revertChanges()
+    {
+        $this->_SupplierProduct = $this->_SupplierProduct_Before;
+        $this->_UserBox = $this->_UserBox_Before;
+        $this->_user->setState('boxocart.SupplierProduct', $this->_SupplierProduct);
+        $this->_user->setState('boxocart.UserBox', $this->_UserBox);
+        return true;
+    }
+    
     public function emptyCart()
     {
         $this->_SupplierProduct = array();
@@ -503,7 +514,7 @@ class BoxoCart extends CComponent
     {
         $ddIds = array_keys($this->_SupplierProduct);
         $ddIds = array_merge($ddIds, array_keys($this->_UserBox));
-        return in_array($this->delivery_date_id, $ddIds);
+        return !in_array($this->delivery_date_id, $ddIds);
     }
     
     public function productRemoved($prodId) 
@@ -532,7 +543,7 @@ class BoxoCart extends CComponent
         $after = $this->getTotal($ddId, 'after');
         
         $output = '';
-        if($this->currentOrderRemoved()) {
+        if(!$this->currentOrderRemoved()) {
             $output .= '<span class="current-price">'.SnapFormat::currency($after).'</span>';
         }
         
@@ -610,8 +621,16 @@ class BoxoCart extends CComponent
         return $this->Location->getNextDeliveryDate($this->delivery_day);
     }
     
+    public function getLastDeliveryDate()
+    {
+        $dds = $this->getDeliveryDates();
+        return array_pop($dds);
+    }
+    
     public function getOrderDate($days)
     {
+        $minDays = SnapUtil::config('boxomatic/minimumAdvancePayment');
+        $days -= 7; // minus 1 week
         $NextDate = $this->Location->getNextDeliveryDate($this->delivery_day, $days);
         return $NextDate ? SnapFormat::date($NextDate->date,'full') : 'Error!';
     }

@@ -27,7 +27,7 @@
 	.current-user {
 		margin-top:20px;
 	}
-.panel-default > .panel-heading {
+.panel > .panel-heading {
 	display:block;
 }
 	
