@@ -263,5 +263,16 @@ class Order extends BoxomaticActiveRecord
         }
         return true;
     }
+    
+    public static function getPastOrders($userId)
+    {
+        return self::model()->with('DeliveryDate')->findAll(array(
+            'condition' => 'user_id = :userId && DeliveryDate.date < NOW()',
+            'order' => 'DeliveryDate.date DESC',
+            'params' => array (
+                ':userId' => $userId,
+            )
+        ));
+    }
 
 }

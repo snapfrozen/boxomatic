@@ -15,6 +15,9 @@ class UserPayment extends BoxomaticActiveRecord
 	public $customer_first_name;
 	public $customer_last_name;
 	public $customer_user_id;
+    
+    public $total; //aggregate field
+    
 	static public $currency = "AUD";
 	
 	/**
@@ -151,6 +154,17 @@ class UserPayment extends BoxomaticActiveRecord
 			),
 		));
 	}
+    
+    public function getBalance_at_date()
+    {
+        $c = new CDbCriteria;
+        $c->compare('payment_date','<='.$this->payment_date);
+        $c->compare('user_id',$this->user_id);
+        $c->select = 'SUM(payment_value) as total';
+
+        $Payment = self::model()->find($c);
+        return $Payment->total;
+    }
 	
 	/**
 	* Only allow admins to access all user information

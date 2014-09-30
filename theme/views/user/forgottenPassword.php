@@ -1,21 +1,19 @@
 <div class="row">
-	<div class="large-12 columns">
-		<h1>Forgotten Password</h1>
-		<?php if($mailError): ?>
-		<div class="alert-box alert">
+    <div class="col-md-6 col-md-offset-3">
+        <h1>Forgotten Password</h1>
+        <?php if($mailError): ?>
+		<div class="alert alert-danger alert-dismissable">
 			Problem sending mail.
-			<a href="#" class="close">&times;</a>
+			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 		</div>
 		<?php elseif($User): ?>
-		<div class="alert-box">
+		<div class="alert alert-success alert-dismissable">
 			We have sent you a password renewal email to your email address.
-			<a href="#" class="close">&times;</a>
+			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 		</div>
 		<?php endif; ?>
-	</div>
-	<div class="large-8 columns">
-
-		<?php $form=$this->beginWidget('CActiveForm', array(
+        
+        <?php $form=$this->beginWidget('bootstrap.widgets.BsActiveForm', array(
 			'id'=>'forgotten-password-form',
 			'enableClientValidation'=>true,
 			'clientOptions'=>array(
@@ -23,22 +21,12 @@
 			),
 		)); ?>
 
-		<fieldset>
-			<legend>Password Retrieval Form</legend>
-			<div class="large-12 columns">
-				<?php echo $form->labelEx($model,'username'); ?>
-				<?php echo $form->textField($model,'username'); ?>
-				<?php echo $form->error($model,'username'); ?>
-			</div>
-			<div class="large-12 columns">
-				<p>Enter your username or your email address to start the password renewal process</p>
-			</div>
-			<div class="large-12 columns">
-				<?php echo CHtml::submitButton('Next', array('class' => 'button')); ?>
-			</div>
-		</fieldset>
-
+		<?php echo $form->textFieldControlGroup($model, 'username', array(
+            'help' => 'Enter your email address to start the password renewal process'
+        )); ?>
+		<div class="form-group">
+            <?php echo BsHtml::submitButton('Next &gt;'); ?>
+        </div>
 		<?php $this->endWidget(); ?>
-	</div>
-	<div class="large-4 columns">&nbsp;</div>
+    </div>
 </div>

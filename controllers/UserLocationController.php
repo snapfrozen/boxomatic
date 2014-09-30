@@ -32,7 +32,7 @@ class UserLocationController extends BoxomaticController
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
 				'actions'=>array('create','update'),
-				'users'=>array('@'),
+				'roles'=>array('customer'),
 			),
 			array('allow',
 				'actions'=>array('admin','delete'),
@@ -87,9 +87,9 @@ class UserLocationController extends BoxomaticController
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+        if($model->user_id !== Yii::app()->user->id) {
+            throw new CHttpException(403,'You are not authorized to perform this action.');
+        }
 
 		if(isset($_POST['UserLocation']))
 		{
@@ -112,6 +112,10 @@ class UserLocationController extends BoxomaticController
 	public function actionDelete($id)
 	{
 		$model=$this->loadModel($id);
+        if($model->user_id !== Yii::app()->user->id) {
+            throw new CHttpException(403,'You are not authorized to perform this action.');
+        }
+        
 		$userId=$model->user_id;
 		$model->status=0;
 		$model->save();

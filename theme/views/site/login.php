@@ -24,7 +24,10 @@ $this->breadcrumbs = array(
         <?php echo $form->textFieldControlGroup($model, 'username'); ?>
         <?php echo $form->passwordFieldControlGroup($model, 'password'); ?>
         <?php echo $form->checkBoxControlGroup($model, 'rememberMe'); ?>
-        <?php echo BsHtml::submitButton('Login'); ?>
+        <div class="form-group">
+            <?php echo BsHtml::submitButton('Login'); ?>
+        </div>
         <?php $this->endWidget(); ?>
+        <p><?php echo CHtml::link('Forgotten your password?', array('user/forgottenPassword')) ?></p>
     </div>
 </div>

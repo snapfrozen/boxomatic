@@ -10,7 +10,9 @@ $daysToLastDate = $BoxoCart->getDaysToLastDate();
 
 <div class="row">
     <div class="col-md-8 col-md-offset-2 products order">
-        <h1>Your Orders</h1>
+        <div class="page-header">
+            <h1>Your Orders</h1>
+        </div>
 
         <div id="checkout-cart" class="items list-view panel-group">
             <?php

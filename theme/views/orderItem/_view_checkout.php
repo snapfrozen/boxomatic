@@ -2,9 +2,10 @@
 /* @var $this OrderItemController */
 /* @var $data OrderItem */
 $product = $data->SupplierProduct;
+$BoxoCart = isset($BoxoCart) ? $BoxoCart : null;
 //$extra = isset($updatedOrders[$data->id]) ? $updatedOrders[$data->id] : false;
 ?>
-<div class="view inner <?php echo $BoxoCart->productRemoved($product->id) ? 'text-danger' : ''?> <?php echo $BoxoCart->productAdded($product->id) ? 'text-success' : ''?>">
+<div class="view inner <?php echo $BoxoCart && $BoxoCart->productRemoved($product->id) ? 'text-danger' : ''?> <?php echo $BoxoCart && $BoxoCart->productAdded($product->id) ? 'text-success' : ''?>">
     <div class="row">
         <div class="col-xs-1 quantity">
             <?php echo (float) $data->quantity ?>
@@ -24,7 +25,7 @@ $product = $data->SupplierProduct;
         </div>
     </div>
     
-    <?php if($BoxoCart->productChanged($ddId, $data)): 
+    <?php if($BoxoCart && $BoxoCart->productChanged($ddId, $data)): 
         $before = $BoxoCart->getProductBefore($ddId, $data);
     ?>
     <div class="row text-danger before">

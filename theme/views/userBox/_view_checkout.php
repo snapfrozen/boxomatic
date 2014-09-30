@@ -1,7 +1,8 @@
 <?php 
 $Box = $data->Box;
+$BoxoCart = isset($BoxoCart) ? $BoxoCart : null;
 ?>
-<div class="view inner <?php echo $BoxoCart->boxRemoved($data->box_id) ? 'text-danger' : ''?> <?php echo $BoxoCart->boxAdded($data->box_id) ? 'text-success' : ''?>">
+<div class="view inner <?php echo $BoxoCart && $BoxoCart->boxRemoved($data->box_id) ? 'text-danger' : ''?> <?php echo $BoxoCart && $BoxoCart->boxAdded($data->box_id) ? 'text-success' : ''?>">
     <div class="row">
         <div class="col-xs-1 quantity">
             <?php echo $data->quantity ?>
@@ -16,7 +17,7 @@ $Box = $data->Box;
             <span class="price sub-total"><?php echo CHtml::encode(SnapFormat::currency($data->total_price)); ?></span>
         </div>
     </div>
-    <?php if($BoxoCart->boxChanged($ddId, $data)): 
+    <?php if($BoxoCart && $BoxoCart->boxChanged($ddId, $data)): 
         $before = $BoxoCart->getBoxBefore($ddId, $data);
     ?>
     <div class="row text-danger before">

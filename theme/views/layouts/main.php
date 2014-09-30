@@ -53,6 +53,16 @@ $cs
                 'url' => array('shop/checkout'),
                 'visible' => Yii::app()->user->checkAccess('customer'),
             );
+            $items []= array(
+                'label' => 'Past Orders',
+                'url' => array('user/pastOrders'),
+                'visible' => Yii::app()->user->checkAccess('customer'),
+            );
+            $items []= array(
+                'label' => 'Transactions',
+                'url' => array('user/payments'),
+                'visible' => Yii::app()->user->checkAccess('customer'),
+            );
             $this->widget('bootstrap.widgets.BsNavbar', array(
                 'collapse' => true,
                 'brandLabel' => false,

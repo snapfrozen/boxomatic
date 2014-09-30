@@ -1,16 +1,15 @@
 <?php
 $this->breadcrumbs=array(
-	'Box-O-Matic'=>array('/snapcms/boxomatic/index'),
-	'Customers'=>array('user/customers'),
-	$model->User->full_name=>array('user/update','id'=>Yii::app()->request->getParam('custId')),
-	'Update Location'
+	$model->User->full_name=>array('user/update','id'=>$model->user_id),
+	'Add a Location'
 );
 $this->page_heading = 'Update Location';
-//$this->page_heading_subtext = 'Box Size';
-
-$this->menu = array(
-//	array('icon' => 'glyphicon-eye-open','label'=>'View Page', 'url'=>$this->createFrontendUrl("/content/view/",array("id"=>$Content->id))),	
-//	array('icon' => 'glyphicon-trash','label'=>'Delete Content', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$Content->id),'confirm'=>'Are you sure you want to delete this item?')),
-)
 ?>
-<?php echo $this->renderPartial('_form', array('model'=>$model)); ?>
+<div class="row">
+    <div class="col-md-8 col-md-offset-2">
+        <div class="page-header">
+            <h1>Update Location</h1>
+        </div>
+        <?php echo $this->renderPartial('_form', array('model'=>$model)); ?>
+    </div>
+</div>

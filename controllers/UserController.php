@@ -46,7 +46,7 @@ class UserController extends BoxomaticController
                 'users' => array('*'),
             ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
-                'actions' => array('update', 'view', 'loginAs', 'changePassword', 'dontWant', 'orders', 'payments', 'makePayment'),
+                'actions' => array('update', 'view', 'loginAs', 'changePassword', 'dontWant', 'orders', 'payments', 'makePayment','pastOrders'),
                 'roles' => array('customer', 'Admin'),
             //'users'=>array('*'),
             ),
@@ -85,13 +85,32 @@ class UserController extends BoxomaticController
         $dataProvider = new CActiveDataProvider('UserPayment', array(
             'criteria' => array(
                 'condition' => 'user_id=:userId',
+                'order' => 'payment_date DESC',
                 'params' => array(
                     ':userId' => $id,
                 )
-            )
+            ),
+            'pagination'=>array(
+                'pageSize'=>10,
+            ),
         ));
         $this->render('payments', array(
             'dataProvider' => $dataProvider,
+        ));
+    }
+    
+    /**
+     * Page for customers to view their past orders.
+     */
+    public function actionPastOrders()
+    {
+        $userId = Yii::app()->user->id;
+        $User = BoxomaticUser::model()->findByPk($userId);
+        $Orders = Order::getPastOrders($userId);
+        
+        $this->render('past_orders', array(
+            'Customer' => $User,
+            'Orders' => $Orders,
         ));
     }
 
@@ -153,9 +172,10 @@ class UserController extends BoxomaticController
     public function actionUpdate($id)
     {
         $Customer = $this->loadModel($id);
-
-        // Uncomment the following line if AJAX validation is needed
-        // $this->performAjaxValidation($Customer);
+        
+        if($Customer->id !== Yii::app()->user->id) {
+            throw new CHttpException(403,'You are not authorized to perform this action.');
+        }
 
         if (isset($_POST['role']) && $_POST['role'] == 'customer')
         {
