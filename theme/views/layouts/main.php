@@ -47,22 +47,22 @@ $cs
                 </p>
             </div>
             <?php
-            $items = Menu::model('main_menu', $user->checkAccess('Update Menu'))->getMenuList();
+            $items = [];
             $items []= array(
-                'label' => 'Your Orders',
+                'label' => 'Shop',
+                'url' => array('shop/index'),
+            );
+            $items []= array(
+                'label' => 'Orders',
                 'url' => array('shop/checkout'),
                 'visible' => Yii::app()->user->checkAccess('customer'),
             );
             $items []= array(
-                'label' => 'Past Orders',
-                'url' => array('user/pastOrders'),
-                'visible' => Yii::app()->user->checkAccess('customer'),
-            );
-            $items []= array(
-                'label' => 'Transactions',
+                'label' => 'Payments',
                 'url' => array('user/payments'),
                 'visible' => Yii::app()->user->checkAccess('customer'),
             );
+            //$items = Menu::model('main_menu', $user->checkAccess('Update Menu'))->getMenuList();
             $this->widget('bootstrap.widgets.BsNavbar', array(
                 'collapse' => true,
                 'brandLabel' => false,
@@ -100,7 +100,7 @@ $cs
         <?php echo $content; ?>
 
         <div class="footer">
-            <p>&copy; Company 2014</p>
+            <p>&copy; Snapfrozen 2014</p>
         </div>
     </div>
 

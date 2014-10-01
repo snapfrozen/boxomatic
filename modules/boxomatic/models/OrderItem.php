@@ -61,7 +61,6 @@ class OrderItem extends BoxomaticActiveRecord
         return array(
             'Order' => array(self::BELONGS_TO, 'Order', 'order_id'),
             'SupplierProduct' => array(self::BELONGS_TO, 'SupplierProduct', 'supplier_product_id'),
-            'inventory' => array(self::HAS_ONE, 'Inventory', 'order_item_id'),
         );
     }
 
@@ -122,32 +121,6 @@ class OrderItem extends BoxomaticActiveRecord
     {
         return parent::model($className);
     }
-
-    /*
-    public function checkStock($attribute, $params)
-    {
-        $criteria = new CDbCriteria;
-        //$criteria->with = array('supplierProduct'=>array('with'=>'Supplier'));
-        $criteria->addCondition('supplier_purchase_id=:spid');
-        $criteria->group = 'supplier_purchase_id';
-        $criteria->select = '*, SUM(quantity) as sum_quantity';
-        //$criteria->having = 'sum_quantity > 0';
-        $criteria->params = array(':spid' => $this->supplier_purchase_id);
-
-        $Inventory = Inventory::model()->find($criteria);
-
-        $amount = $this->$attribute;
-        if ($this->inventory)
-        {
-            $amount += $this->inventory->quantity;
-        }
-
-        if ($Inventory->supplierProduct->limited_stock && $amount > $Inventory->sum_quantity)
-        {
-            $this->addError($attribute, 'Not enough stock');
-        }
-    }
-     */
 
     public static function findCustomerExtras($userId, $date)
     {

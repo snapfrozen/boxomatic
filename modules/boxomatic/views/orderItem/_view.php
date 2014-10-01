@@ -19,7 +19,7 @@ $extra = isset($updatedOrders[$data->id]) ? $updatedOrders[$data->id] : false;
 			</div>
 		</div>
 		<div class="large-8 columns">
-			<h3><?php echo CHtml::encode($product->name); ?><br /><span class="each"><?php echo SnapFormat::currency($purchase->item_sales_price) ?> ea.<span></h3>
+			<h3><?php echo CHtml::encode($product->name); ?><br /><span class="each"><?php echo SnapFormat::currency($product->item_sales_price) ?> ea.<span></h3>
 			<?php if(!$pastDeadline): ?>
 				<div class="row">
 					<div class="large-6 columns">

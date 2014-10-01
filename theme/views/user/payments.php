@@ -1,6 +1,6 @@
 <?php $Payment = new UserPayment; //Needed for attribute labels ?>
 <div class="page-header">
-    <h1>Transactions</h1>
+    <h1>Payments</h1>
 </div>
 <div class="row">
     <div class="col-sm-2">

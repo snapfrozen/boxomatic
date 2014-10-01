@@ -199,12 +199,6 @@ class ShopController extends Controller
             $BoxoCart->setDelivery_date_id($_GET['set-date']);
         }
         
-        if(!$BoxoCart->DeliveryDate) {
-            $DeliveryDate = $BoxoCart->Location->getNextDeliveryDate();
-        } else {
-            $DeliveryDate = $BoxoCart->DeliveryDate;
-        } 
-        
         $AllDeliveryDates = DeliveryDate::model()->with('Locations')->findAll('Locations.location_id = :locationId',array(
             ':locationId' => $User->location_id,
         ));
@@ -221,7 +215,7 @@ class ShopController extends Controller
         
         $this->render('checkout', array(
             'BoxoCart' => $BoxoCart,
-            'DeliveryDate' => $DeliveryDate,
+            'DeliveryDate' => $BoxoCart->DeliveryDate,
             'Customer' => $User,
             'AllDeliveryDates' => $AllDeliveryDates,
         ));

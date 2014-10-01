@@ -2,13 +2,13 @@
 $this->breadcrumbs=array(
 	'Box-O-Matic'=>array('/snapcms/boxomatic/index'),
 	'Suppliers'=>array('supplier/admin'),
-	'Supplier Products',
+	'Products',
 );
 $this->menu=array(
 	array('icon' => 'glyphicon glyphicon-plus-sign', 'label'=>'Add Product', 'url'=>array('create')),
 	array('icon' => 'glyphicon glyphicon-list', 'label'=>'Categories', 'url'=>array('category/admin')),
 );
-$this->page_heading = 'Suppiler Products';
+$this->page_heading = 'Products';
 
 Yii::app()->clientScript->registerScript('initPageSize',<<<EOD
 	$('.change-pageSize').live('change', function() {

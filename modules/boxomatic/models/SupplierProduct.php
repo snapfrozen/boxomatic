@@ -14,6 +14,7 @@
  * @property string $available_to
  * @property string $customer_available_from
  * @property string $customer_available_to
+ * @property boolean $available_in_shop
  * @property string $price
  * @property string $wholesale_price
  * @property string $item_sales_price
@@ -81,12 +82,12 @@ class SupplierProduct extends BoxomaticActiveRecord
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
+            array('name, supplier_id', 'required'),
             array('packing_station_id, supplier_id', 'numerical', 'integerOnly' => true),
-            array('item_sales_price', 'numerical'),
+            array('item_sales_price, value', 'numerical'),
             array('name', 'length', 'max' => 45, 'min' => 3),
-            array('value', 'length', 'max' => 7),
             array('unit', 'length', 'max' => 5),
-            array('limited_stock', 'boolean'),
+            array('available_in_shop, limited_stock', 'boolean'),
             array('description, available_from, available_to', 'safe'),
             array('customer_available_from, customer_available_to', 'date', 'format' => self::dateFormat),
             array('image_ext', 'length', 'max' => 20),
@@ -311,6 +312,7 @@ class SupplierProduct extends BoxomaticActiveRecord
         $c = new CDbCriteria;
         $c->addCondition(":date > customer_available_from");
         $c->addCondition(":date < customer_available_to");
+        $c->addCondition("available_in_shop = 1");
         $c->params = array(
             ':date' => $DeliveryDate->date,
         );

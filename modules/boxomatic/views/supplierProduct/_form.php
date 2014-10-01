@@ -7,7 +7,6 @@
         'htmlOptions' => array('enctype' => 'multipart/form-data', 'class' => 'row')
     ));
     ?>
-
     <div class="col-lg-9 clearfix">
 
         <?php echo $form->textFieldControlGroup($model, 'name', array('size' => 45, 'maxlength' => 45)); ?>
@@ -17,14 +16,15 @@
 
         <?php echo $form->textFieldControlGroup($model, 'value', array('size' => 7, 'maxlength' => 7)); ?>
         <?php echo $form->dropDownListControlGroup($model, 'unit', $model->getUnitList()); ?>
-        <?php echo $form->textFieldControlGroup($model, 'quantity_options', array('help' => 'A comma separated list of values. Leave blank to allow the user to define any quantity they like.')); ?>
 
         <?php echo $form->dropDownListControlGroup($model, 'available_from', $model->getMonthList()); ?>
         <?php echo $form->dropDownListControlGroup($model, 'available_to', $model->getMonthList()); ?>
+        <?php echo $form->textFieldControlGroup($model, 'item_sales_price'); ?>
+        <?php echo $form->checkBoxControlGroup($model, 'available_in_shop'); ?>
 
         <?php echo $form->imageField($model, 'image'); ?>
         <?php echo $form->textAreaControlGroup($model, 'description'); ?>
-        <?php echo $form->textFieldControlGroup($model, 'item_sales_price'); ?>
+        
         
         <?php echo $form->dateFieldControlGroup($model, 'customer_available_from', array(), array('yearRange'=>date('Y').':2050')); ?>
         <?php echo $form->dateFieldControlGroup($model, 'customer_available_to', array(), array('yearRange'=>date('Y').':2050')); ?>

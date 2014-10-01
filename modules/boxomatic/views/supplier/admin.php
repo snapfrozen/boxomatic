@@ -60,6 +60,14 @@ $this->beginWidget('bootstrap.widgets.BsPanel', array(
 		),
 		array(
 			'class'=>'bootstrap.widgets.BsButtonColumn',
+            'template' => '{update}{delete}{purchase}',
+            'buttons' => array(
+                'purchase' => array(
+                    'url' => 'array("supplierPurchase/create","supplier"=>$data->id)',
+                    'label'=>'<i class="glyphicon glyphicon glyphicon-list-alt"></i>',
+                    'options'=>array('title'=>'Create Purchase'),
+                ),
+            )
 		),
 	),
 )); ?>

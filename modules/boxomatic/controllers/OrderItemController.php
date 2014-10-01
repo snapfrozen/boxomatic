@@ -135,7 +135,6 @@ class OrderItemController extends BoxomaticController
 		if($model->Order->user_id != Yii::app()->user->user_id) {
 			throw new CHttpException(403,'Access Denied. This item does not belong to you.');	
 		}
-		$model->inventory->delete();
 		$model->delete();
 		
 		$this->redirect(array('order','date'=>$date));
@@ -357,15 +356,9 @@ class OrderItemController extends BoxomaticController
 				$model = $this->loadModel($id);
 				if($model->Order->user_id == Yii::app()->user->user_id) 
 				{
-					$inventory = $model->inventory;
 					if($quantity == 0) {
 						$model->delete();
-						if($inventory) {
-							$inventory->delete();
-						}
-					} 
-					else 
-					{
+					} else {
 						$model->quantity=$quantity;
 						$model->save();		
 						$updatedOrders[$model->id] = $model;
@@ -400,19 +393,6 @@ class OrderItemController extends BoxomaticController
 				$extra->unit = $SupplierProduct->unit;
 				$updatedExtras[$extra->supplier_purchase_id] = $extra;
 				$extra->save();
-				
-				/*
-				if($extra->save())
-				{
-					//decrease inventory quantity;
-					$inventory->quantity = -abs($extra->quantity);
-					$inventory->supplier_product_id = $Purchase->supplier_product_id;
-					$inventory->supplier_purchase_id = $purchaseId;
-					$inventory->order_item_id = $extra->id;
-					$inventory->notes = 'Order: '.$extra->id.', Customer: '.$customerId;
-					$inventory->save();
-				}
-				 */
 			}
 		}
 		
@@ -456,10 +436,6 @@ class OrderItemController extends BoxomaticController
 			}
 		}
 		
-		$inventory = Inventory::model()->getAvailableItems($date, $cat);
-		$dpInventory = new CActiveDataProvider('Inventory');
-		$dpInventory->setData($inventory);
-		
 		$orderedExtras = OrderItem::findCustomerExtras($customerId, $date);
 		$dpOrderedExtras = new CActiveDataProvider('OrderItem');
 		$dpOrderedExtras->setData($orderedExtras);
@@ -471,7 +447,6 @@ class OrderItemController extends BoxomaticController
 		
 		$this->render('order',array(
 			'pastDeadline'=>$pastDeadline,
-			'availableInventory'=>$dpInventory,
 			'orderedExtras'=>$dpOrderedExtras,
 			'updatedExtras'=>$updatedExtras,
 			'updatedOrders'=>$updatedOrders,

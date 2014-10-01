@@ -25,7 +25,6 @@
             (<?php echo $data->unit_label ?>)
         </span>
 
-        <?php //echo CHtml::dropDownList('supplier_purchases['.$purchase->id.']',1,Inventory::$quantityOptions); ?>
         <?php echo $data->getQuantityInput($form, null, 1); ?>
         <?php echo CHtml::submitButton('Add to cart', array('class' => 'btn btn-default btn-xs', 'name' => 'add_to_cart')); ?>
     <?php $this->endWidget(); ?>

@@ -117,14 +117,6 @@ $form = $this->beginWidget('application.widgets.SnapActiveForm', array(
                             'value' => 'SnapFormat::getMonthName($data->available_from,"M") . " to " . SnapFormat::getMonthName($data->available_to,"M")',
                             'filter' => SnapUtil::config('boxomatic/months'),
                         ),
-                        /*
-                          array(
-                          'name'=>'in_inventory',
-                          'type'=>'raw',
-                          'value'=>'empty($data->Inventory) ? "No" : "Yes"',
-                          'filter'=>array(1=>'Yes',0=>'No'),
-                          ),
-                         */
                         array(
                             'class' => 'bootstrap.widgets.BsButtonColumn',
                             'template' => '{update}{delete}',

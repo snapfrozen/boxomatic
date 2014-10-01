@@ -358,6 +358,8 @@ class BoxoCart extends CComponent
         
         $balance = $this->Customer->balance;
         $lastDate = null;
+        
+        $DD = false;
         foreach($DDs as $DD) 
         {
             $balance -= $this->getTotal($DD->id);

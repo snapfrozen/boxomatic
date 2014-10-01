@@ -59,18 +59,14 @@ class SupplierPurchaseController extends BoxomaticController
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
-	public function actionCreate()
+	public function actionCreate($supplier)
 	{
 		$model=new SupplierPurchase;
-		$model->proposed_delivery_date=date('Y-m-d H:i:s');
-		$model->delivery_date=date('Y-m-d H:i:s');
-		
-		$this->_doUpdate($model);
-
-		$this->layout='//layouts/column1';
-		$this->render('create',array(
-			'model'=>$model,
-		));
+		$model->delivery_date = date('Y-m-d H:i:s');
+        $model->supplier_id = $supplier;
+		$model->save();
+        
+        $this->redirect(array('supplierPurchase/update','id'=>$model->id));
 	}
 
 	/**
@@ -81,11 +77,69 @@ class SupplierPurchaseController extends BoxomaticController
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
-		$this->_doUpdate($model);
+		//$this->_doUpdate($model);
+        
+        if(isset($_POST['SupplierPurchaseProducts'])) 
+        {
+            foreach($_POST['SupplierPurchaseProducts'] as $id => $data) 
+            {
+                $SPP = SupplierPurchaseProduct::model()->findByPk($id);
+                $SPP->attributes = $data;
+                $SPP->save();
+            }
+        }
+        
+        if(isset($_POST['SupplierProducts'])) 
+        {
+            foreach($_POST['SupplierProducts'] as $id => $data) 
+            {
+                $SP = SupplierProduct::model()->findByPk($id);
+                $SP->attributes = $data;
+                $SP->save();
+            }
+        }
+        
+        $SupplierProduct = new SupplierProduct;
+        if(isset($_POST['SupplierProduct']) && isset($_POST['new_product'])) 
+        {
+            $SupplierProduct = new SupplierProduct;
+            $SupplierProduct->attributes = $_POST['SupplierProduct'];
+            $SupplierProduct->supplier_id = $model->supplier_id;
+            $SupplierProduct->save();
+        }
+        
+        if(isset($_POST['delete'])) 
+        {
+            $SPP = SupplierPurchaseProduct::model()->findByPk($_POST['delete']);
+            $SPP->delete();
+        } 
+        else if(isset($_POST['add_product'])) 
+        {
+            $SPP = new SupplierPurchaseProduct;
+            $SPP->supplier_product_id = $_POST['supplier_product_id'];
+            $SPP->supplier_purchase_id = $model->id;
+            $SPP->save();
+            $model->refresh();
+        }
+        else if(isset($_POST['new_product']) && $SupplierProduct->validate())
+        {
+            $SPP = new SupplierPurchaseProduct;
+            $SPP->supplier_product_id = $SupplierProduct->id;
+            $SPP->supplier_purchase_id = $model->id;
+            $SPP->save();
+            $model->refresh();
+        }
+        
+        if(isset($_POST['SupplierPurchase']))
+        {
+            $model->attributes = $_POST['SupplierPurchase'];
+            $model->save();
+        }
 
 		$this->layout='//layouts/column1';
 		$this->render('update',array(
-			'model'=>$model,
+			'model' => $model,
+            'SupplierProduct' => $SupplierProduct,
 		));
 	}
 	
@@ -107,27 +161,7 @@ class SupplierPurchaseController extends BoxomaticController
 				$model->supplier_product_id = $SupplierProduct->id;
 			}
 			
-			if($model->save()) 
-			{
-				if(!empty($model->delivery_date))
-				{
-					$inventory = null;
-					if($model->inventory) {
-						$inventory = $model->inventory;
-					} else {
-						$inventory = new Inventory();
-						$inventory->supplier_purchase_id = $model->id;
-					}
-
-					$inventory->quantity = $model->delivered_quantity;
-					$inventory->supplier_product_id = $model->supplier_product_id;
-					$inventory->delivery_date = $model->delivery_date;
-
-					if(!$inventory->save()) {
-						Yii::app()->user->setFlash('error','There was a problem updating inventory');
-						print_r($inventory->errors);exit;
-					}
-				}
+			if($model->save()) {
 				$this->redirect(array('admin','id'=>$model->id));
 			}
 		}

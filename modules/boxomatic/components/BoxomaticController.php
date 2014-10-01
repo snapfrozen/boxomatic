@@ -46,14 +46,8 @@ class BoxomaticController extends Controller
 			'items'=>array(
 				array('label'=>'Suppliers','url'=>array('/snapcms/boxomatic/supplier/admin')),
 				array('label'=>'Products','url'=>array('/snapcms/boxomatic/supplierProduct/admin')),
-				array('label'=>'Orders','url'=>array('/snapcms/boxomatic/supplierPurchase/admin')),
+				array('label'=>'Purchases','url'=>array('/snapcms/boxomatic/supplierPurchase/admin')),
 				array('label'=>'Supplier Map','url'=>array('/snapcms/boxomatic/supplier/map')),
-			)
-		),
-		array('label'=>'Inventory','url'=>array('/snapcms/boxomatic/inventory/index'),
-			'items'=>array(
-				array('label'=>'Inventory','url'=>array('/snapcms/boxomatic/inventory/index')),
-				array('label'=>'Log','url'=>array('/snapcms/boxomatic/inventory/admin')),
 			)
 		),
 		array('label'=>'Reports','url'=>'#',

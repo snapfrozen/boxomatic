@@ -151,6 +151,11 @@
 }
 
 /* Checkout */
+h1 small a {
+	font-size:16px;
+	margin-top:16px;
+	display:inline-block;
+}
 #checkout-cart .row.before {
 	margin-top:10px;
 }

@@ -1,21 +1,13 @@
-$('select#supplier_id').change(function(){
-	var url = $('input#update_url').val();
-	var $supplierProducts = $('select#SupplierPurchase_supplier_product_id');
-	
-	$.ajax({
-		type: 'GET',
-		url: url,
-		dataType:'json',
-		data: {
-			supplierId:$(this).val()
-		},
-		success: function(data,status) {
-			$supplierProducts.html(' ');
-			$supplierProducts.append('<option value=""> - Select - </option>');
-			$.each(data, function(i,v) {
-				$supplierProducts.append('<option value="' + i + '">' + v + '</option>');
-			});
-			$supplierProducts.trigger("liszt:updated");
-		}
-	});
+/*
+var $blankAddProductForm = $('div#add-product-form').clone();
+var $productsToAdd = $('div#products-to-add');
+$('form#supplier-purchase-form').on('click', 'button.add-product', function(){
+	console.log($productsToAdd);
+	var $tmpForm = $('div#add-product-form div.form-group');
+	$tmpForm.find('button').remove();
+	$productsToAdd.append($tmpForm);
+	$productsToAdd.after($blankAddProductForm.clone());
 });
+
+console.log($productsToAdd);
+*/

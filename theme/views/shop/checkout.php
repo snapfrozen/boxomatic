@@ -6,20 +6,22 @@ $themeUrl = $baseUrl . Yii::app()->theme->baseUrl;
 $Paypal = Yii::app()->getModule('payPal');
 $minDays = SnapUtil::config('boxomatic/minimumAdvancePayment');
 $daysToLastDate = $BoxoCart->getDaysToLastDate(); 
+$ddId = $DeliveryDate ? $DeliveryDate->id : null;
 ?>
 
 <div class="row">
     <div class="col-md-8 col-md-offset-2 products order">
         <div class="page-header">
-            <h1>Your Orders</h1>
+            <h1>Orders
+            <small class="pull-right"><?php echo CHtml::link('<span class="glyphicon glyphicon-time"></span> Past Orders',array('user/pastOrders')) ?></small>
+            </h1>
         </div>
-
         <div id="checkout-cart" class="items list-view panel-group">
             <?php
             /* @todo: get Order objects instead $BoxoCart->getOrders() */
             foreach($BoxoCart->getDeliveryDates(true) as $DD): ?>
             <?php $BoxoCart->delivery_date_id = $DD->id; ?>
-            <div class="panel panel-default <?php echo $BoxoCart->currentOrderExists() ? '' : 'panel-success' ?> <?php echo $BoxoCart->currentOrderRemoved() ? 'panel-danger' : '' ?> <?php echo $DD->id == $DeliveryDate->id ? 'selected' : '' ?>">
+            <div class="panel panel-default <?php echo $BoxoCart->currentOrderExists() ? '' : 'panel-success' ?> <?php echo $BoxoCart->currentOrderRemoved() ? 'panel-danger' : '' ?> <?php echo $DD->id == $ddId ? 'selected' : '' ?>">
                 <a class="panel-heading" data-toggle="collapse" data-parent="#checkout-cart" href="#collapse-<?php echo $DD->id ?>">
                     <h3>
                         <?php echo SnapFormat::date($BoxoCart->DeliveryDate->date, 'full') ?>
@@ -29,7 +31,7 @@ $daysToLastDate = $BoxoCart->getDaysToLastDate();
                         </span>
                     </h3>
                 </a>
-                <div id="collapse-<?php echo $DD->id ?>" class="panel-collapse collapse <?php echo $DD->id == $DeliveryDate->id ? 'in' : '' ?>">
+                <div id="collapse-<?php echo $DD->id ?>" class="panel-collapse collapse <?php echo $DD->id == $ddId ? 'in' : '' ?>">
                     <div class="panel-body">
                         
                         <div class="row">
@@ -92,7 +94,6 @@ $daysToLastDate = $BoxoCart->getDaysToLastDate();
                                 <div class="col-md-3">
                                     <?php echo BsHtml::dropDownListControlGroup('every', 1, array('week' => 'week', 'fortnight' => 'fortnight'), array(
                                         'label' => 'Every',
-                                        'prompt' => '- Select -',
                                     )); ?>
                                 </div>
                                 <div class="col-md-2">
@@ -102,7 +103,9 @@ $daysToLastDate = $BoxoCart->getDaysToLastDate();
                                 </div>
                             </div>
                         </div>
-                        <p class="help-block">This form will copy your order from <strong><?php echo SnapFormat::date($BoxoCart->DeliveryDate->date, 'full') ?></strong></p>
+                        <?php if($BoxoCart->DeliveryDate): ?>
+                            <p class="help-block">This form will copy your order from <strong><?php echo SnapFormat::date($BoxoCart->DeliveryDate->date, 'full') ?></strong></p>
+                        <?php endif; ?>
                         <?php $this->endWidget() ?>    
                     </div>
                 </div>

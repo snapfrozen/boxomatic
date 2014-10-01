@@ -97,7 +97,7 @@ class SupplierProductController extends BoxomaticController
 			}
 
 			if($model->save()) {
-				$this->redirect(Yii::app()->user->getReturnUrl($this->createUrl('inventory/index')));
+				$this->redirect(Yii::app()->user->getReturnUrl($this->createUrl('supplierProduct/index')));
 			}
 		}
 

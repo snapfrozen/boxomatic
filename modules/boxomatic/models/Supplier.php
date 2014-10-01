@@ -133,7 +133,7 @@ class Supplier extends BoxomaticActiveRecord
 		$criteria=new CDbCriteria;
 		//$criteria->with=array('SupplierProducts');
 		$tablePrefix=SnapUtil::config('boxomatic/tablePrefix');
-		$criteria->select='t.*, GROUP_CONCAT(SupplierProducts.name) as supplier_products';
+		$criteria->select='t.*, GROUP_CONCAT(SupplierProducts.name SEPARATOR ", ") as supplier_products';
 		$criteria->join="LEFT JOIN {$tablePrefix}supplier_products SupplierProducts ON SupplierProducts.supplier_id = t.id";
 		$criteria->group='t.id';
 		

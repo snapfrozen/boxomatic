@@ -2,13 +2,13 @@
 $this->breadcrumbs=array(
 	'Box-O-Matic'=>array('/snapcms/boxomatic/index'),
 	'Suppliers'=>array('supplier/admin'),
-	'Orders',
+	'Purchases',
 );
 $this->menu=array(
-	array('icon' => 'glyphicon glyphicon-plus-sign', 'label'=>'Create Order', 'url'=>array('create')),
+	//array('icon' => 'glyphicon glyphicon-plus-sign', 'label'=>'Create Purchase', 'url'=>array('create')),
 	array('icon' => 'glyphicon glyphicon-stats', 'label'=>'Reports', 'url'=>array('report')),
 );
-$this->page_heading = 'Orders';
+$this->page_heading = 'Purchases';
 ?>
 <?php
 $this->beginWidget('bootstrap.widgets.BsPanel', array(
@@ -22,6 +22,7 @@ $this->beginWidget('bootstrap.widgets.BsPanel', array(
 	'filter'=>$model,
 	'columns'=>array(
 		'id',
+        /*
 		array(
 			'name' => 'supplier_cert_search',
 			'type'=>'raw',
@@ -37,9 +38,13 @@ $this->beginWidget('bootstrap.widgets.BsPanel', array(
 			'type'=>'raw',
 			'value' => 'CHtml::value($data,"supplierProduct.Supplier.name")',
 		),
-		'propsed_quantity',
-		'propsed_price:currency',
-		'proposed_delivery_date_formatted',
+         */
+        'Supplier.name',
+		'delivery_date_formatted',
+        array(
+            'name' => 'total',
+            'value' => 'SnapFormat::currency($data->total)',
+        ),
 		//'order_notes',
 		/*
 		'delivered_quantity',

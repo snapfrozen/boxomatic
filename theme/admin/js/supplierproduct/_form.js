@@ -1,3 +1,4 @@
+/*
 $('select#supplier_id').change(function(){
 	var url = $('input#update_url').val();
 	var $supplierProducts = $('select#Inventory_supplier_product_id');
@@ -19,3 +20,4 @@ $('select#supplier_id').change(function(){
 		}
 	});
 });
+*/

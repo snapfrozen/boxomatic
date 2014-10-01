@@ -10,16 +10,13 @@ $this->menu=array(
 	array('label'=>'Create SupplierPurchase', 'url'=>array('create')),
 	array('label'=>'Manage SupplierPurchase', 'url'=>array('admin')),
 );
-?>
-<div class="row">
-	<div class="large-12 columns">
 
-<h1>Supplier Purchases</h1>
+$this->page_heading = 'Supplier Purchases';
+$this->page_heading_subtext = 'Order';
+
+?>
 
 <?php $this->widget('zii.widgets.CListView', array(
-	'dataProvider'=>$dataProvider,
-	'itemView'=>'_view',
+    'dataProvider'=>$dataProvider,
+    'itemView'=>'_view',
 )); ?>
-
-	</div>
-</div>
