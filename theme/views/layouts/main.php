@@ -47,7 +47,7 @@ $cs
                 </p>
             </div>
             <?php
-            $items = [];
+            $items = array();
             $items []= array(
                 'label' => 'Shop',
                 'url' => array('shop/index'),
