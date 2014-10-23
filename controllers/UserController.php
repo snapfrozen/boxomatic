@@ -481,7 +481,7 @@ class UserController extends BoxomaticController
 
         if (isset($_POST['User']))
         {
-            $model->scenario = 'changePassword';
+            $model->scenario = 'create';
             $model->attributes = $_POST['User'];
             $model->password = $_POST['User']['password'];
             if ($model->validate())
@@ -492,6 +492,9 @@ class UserController extends BoxomaticController
                 $model->update();
 
                 $updateComplete = true;
+            }else
+            {
+                CVarDumper::dump($model->getErrors());
             }
         }
 
