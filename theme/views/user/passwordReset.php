@@ -4,7 +4,7 @@
 	
 	<?php if(!$model): ?>
 	
-	<p>The reset password url is no longer valid, please <?php echo CHtml::link('generate',array('core/forgottenPassword')) ?> a new one.</p>
+	<p>The reset password url is no longer valid, please <?php echo CHtml::link('generate',array('user/forgottenPassword')) ?> a new one.</p>
 	
 	<?php else: ?>
 	
