@@ -9,7 +9,9 @@ Yii::setPathOfAlias('backend', '../backend');
 Yii::setPathOfAlias('frontend', '../frontend');
 Yii::setPathOfAlias('web', '../public_html');
 Yii::setPathOfAlias('vendor', '../vendor');
-
+Yii::setPathOfAlias('Omnipay', '../vendor/Omnipay/');
+Yii::setPathOfAlias('Guzzle', '../vendor/Guzzle/');
+Yii::setPathOfAlias('Symfony', '../vendor/Symfony/');
 // This is the main Web application configuration. Any writable
 // CWebApplication properties can be configured here.
 return array(
@@ -120,4 +122,9 @@ return array(
             ),
         ),
     ),
+    'params'=>array(
+        'Pin'=>array(
+            'secret_key'=>''
+        )
+    )
 );
