@@ -135,7 +135,7 @@ $ddId = $DeliveryDate ? $DeliveryDate->id : null;
                             <select id="payment-amount" name="amount" class="form-control">
                             <?php if($BoxoCart->getNextTotal($minDays) == 0): ?>
                                 <option value="0">
-                                    <?php echo SnapFormat::date($BoxoCart->getPaidUntilDate()->date, 'full'); ?> (No payment required)
+                                    <?php echo SnapFormat::date(isset($BoxoCart->getPaidUntilDate()->date) ? $BoxoCart->getPaidUntilDate()->date:date('Y-m-d'), 'full'); ?> (No payment required)
                                 </option>
                             <?php endif; ?>
                             <?php foreach($BoxoCart->getDeliveryDates(true) as $DD): 
