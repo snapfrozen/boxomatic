@@ -124,7 +124,7 @@ return array(
     ),
     'params'=>array(
         'Pin'=>array(
-            'secret_key'=>''
+            'secret_key'=>'nCf9Yl-dAVxv0hDL1hEw4A'
         )
     )
 );
