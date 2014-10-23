@@ -444,6 +444,7 @@ class UserController extends BoxomaticController
             {
                 $User = $model->User;
                 $User->password_retrieval_key = $User->generatePassword(50, 4);
+                $User->update_time = new CDbExpression('NOW()');
                 $User->update();
 
                 $adminEmail = SnapUtil::config('boxomatic/adminEmail');
@@ -487,6 +488,7 @@ class UserController extends BoxomaticController
             {
                 //clear our key so it can't be used again.
                 $model->password_retrieval_key = '';
+                $model->update_time = new CDbExpression('NOW()');
                 $model->update();
 
                 $updateComplete = true;
