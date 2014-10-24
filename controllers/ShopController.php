@@ -76,6 +76,9 @@ class ShopController extends Controller {
         if (isset($_POST['Order']) && isset($_POST['add_to_cart'])) {
             if ($BoxoCart->addItems($_POST['Order'])) {
                 Yii::app()->user->setFlash('success', 'Item added to cart.');
+                #redirect to category
+                if ($cat == 'box')
+                    $this->redirect(array('shop/index', 'date' => Yii::app()->request->getParam('date'), 'cat' => SnapUtil::config('boxomatic/redirectBoxCategory')));
             }
             $this->refresh();
         }
@@ -353,15 +356,15 @@ class ShopController extends Controller {
                             $model = new UserPayment();
                             $model->payment_date = new CDbExpression('NOW()');
                             $model->payment_type = "CREDIT-PIN";
-                            $model->payment_value = number_format($data2['response']['amount']/100,2);
+                            $model->payment_value = number_format($data2['response']['amount'] / 100, 2);
                             $model->user_id = Yii::app()->user->id;
                             $model->staff_id = null;
                             $model->payment_note = $data2['response']['token'];
                             $model->save();
-                            
+
                             $BoxoCart = new BoxoCart;
                             $BoxoCart->confirmOrder();
-                            
+
                             $this->redirect(array('user/payments'));
                         } elseif ($response->isRedirect()) {
                             // redirect to offsite payment gateway
@@ -371,7 +374,6 @@ class ShopController extends Controller {
                             Yii::app()->user->setFlash('warning', $response->getMessage());
                         }
                         unset($data['card']);
-                            
                     }
 
                     $this->render('_pin', array('data' => $data));
