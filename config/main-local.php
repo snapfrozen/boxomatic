@@ -7,7 +7,7 @@
 return array(
 	// application components
 	'components'=>array(
-		'db'=>require('../db.php'),
+		'db'=>require(__DIR__.'/../../db.php'),
 	),
 	// application-level parameters that can be accessed
 	// using Yii::app()->params['paramName']

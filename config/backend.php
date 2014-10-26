@@ -24,7 +24,7 @@ return array(
         ),
     ),
     'components' => array(
-        'db' => require('../../db.php'),
+        'db' => require(__DIR__.'/../../db.php'),
     /*
       'log'=>array(
       'class'=>'CLogRouter',

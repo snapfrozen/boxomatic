@@ -76,6 +76,9 @@ class ShopController extends Controller {
         if (isset($_POST['Order']) && isset($_POST['add_to_cart'])) {
             if ($BoxoCart->addItems($_POST['Order'])) {
                 Yii::app()->user->setFlash('success', 'Item added to cart.');
+                #redirect to category
+                if ($cat == 'box')
+                    $this->redirect(array('shop/index', 'date' => Yii::app()->request->getParam('date'), 'cat' => SnapUtil::config('boxomatic/redirectBoxCategory')));
             }
             $this->refresh();
         }
@@ -341,6 +344,7 @@ class ShopController extends Controller {
                  * validate email? @toantv
                  */
                 case 1:
+<<<<<<< HEAD
                     unset(Yii::app()->session['errors']);
                     $model = new PinPaymentForm();
                     if(isset($_POST['PinPaymentForm']))
@@ -369,6 +373,39 @@ class ShopController extends Controller {
                                 $this->redirect(array('user/payments'));
                             }
                         }
+=======
+                    if (isset($_POST['card'])) {
+                        $data = $_POST;
+                        $data['amount'] = number_format($data['amount'], 2, '.', '');
+                        $gateway = \Omnipay\Common\GatewayFactory::create('Pin');
+                        $gateway->setSecretKey(Yii::app()->params['Pin']['secret_key']);
+                        $gateway->setTestMode(true); // remove this line in production
+                        $response = $gateway->purchase($data)->send();
+                        if ($response->isSuccessful()) {
+                            // payment was successful: update database
+                            $data2 = $response->getData();
+                            $model = new UserPayment();
+                            $model->payment_date = new CDbExpression('NOW()');
+                            $model->payment_type = "CREDIT-PIN";
+                            $model->payment_value = number_format($data2['response']['amount'] / 100, 2);
+                            $model->user_id = Yii::app()->user->id;
+                            $model->staff_id = null;
+                            $model->payment_note = $data2['response']['token'];
+                            $model->save();
+
+                            $BoxoCart = new BoxoCart;
+                            $BoxoCart->confirmOrder();
+
+                            $this->redirect(array('user/payments'));
+                        } elseif ($response->isRedirect()) {
+                            // redirect to offsite payment gateway
+                            $response->redirect();
+                        } else {
+                            // payment failed: display message to customer
+                            Yii::app()->user->setFlash('warning', $response->getMessage());
+                        }
+                        unset($data['card']);
+>>>>>>> e8c1f0c228fb7f9e33f58d29179397720133d2fb
                     }
 
                     $this->render('_pin', array(

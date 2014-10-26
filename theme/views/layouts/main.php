@@ -50,7 +50,8 @@ $cs
             $items = array();
             $items []= array(
                 'label' => 'Shop',
-                'url' => array('shop/index'),
+                'url' => array('shop/index','cat'=>'box'),
+//                'url' => array('shop/index'),
             );
             $items []= array(
                 'label' => 'Orders',

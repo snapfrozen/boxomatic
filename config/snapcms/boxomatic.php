@@ -48,6 +48,7 @@ return array(
     ),
     'orderDeadlineDays' => 4, //orders must be placed within 7 days of delivery 
     'minimumAdvancePayment' => 7, //in days
+    'redirectBoxCategory' => 3,
     'deliveryDateLocations' => array( //Would be nice to move this to the admin interface eventually
         'Monday' => array(1),
         'Tuesday' => array(2),
@@ -61,5 +62,5 @@ return array(
     'defaultImages' => array(
         'BoxItem' => 'frontend/data/boxitem/default.jpg',
         'BoxSize' => 'frontend/data/boxsize/default.jpg',
-    )
+    ),
 );
