@@ -338,43 +338,44 @@ class ShopController extends Controller {
                 /**
                  * @todo use Pin paymant
                  * Cac tham so gui tu from
+                 * validate email? @toantv
                  */
                 case 1:
-                    if (isset($_POST['card'])) {
-                        $data = $_POST;
-                        $data['amount'] = number_format($data['amount'], 2, '.', '');
-                        $gateway = \Omnipay\Common\GatewayFactory::create('Pin');
-                        $gateway->setSecretKey(Yii::app()->params['Pin']['secret_key']);
-                        $gateway->setTestMode(true); // remove this line in production
-                        $response = $gateway->purchase($data)->send();
-                        if ($response->isSuccessful()) {
-                            // payment was successful: update database
-                            $data2 = $response->getData();
-                            $model = new UserPayment();
-                            $model->payment_date = new CDbExpression('NOW()');
-                            $model->payment_type = "CREDIT-PIN";
-                            $model->payment_value = number_format($data2['response']['amount']/100,2);
-                            $model->user_id = Yii::app()->user->id;
-                            $model->staff_id = null;
-                            $model->payment_note = $data2['response']['token'];
-                            $model->save();
-                            
-                            $BoxoCart = new BoxoCart;
-                            $BoxoCart->confirmOrder();
-                            
-                            $this->redirect(array('user/payments'));
-                        } elseif ($response->isRedirect()) {
-                            // redirect to offsite payment gateway
-                            $response->redirect();
-                        } else {
-                            // payment failed: display message to customer
-                            Yii::app()->user->setFlash('warning', $response->getMessage());
+                    unset(Yii::app()->session['errors']);
+                    $model = new PinPaymentForm();
+                    if(isset($_POST['PinPaymentForm']))
+                    {
+                        $model->attributes=$_POST['PinPaymentForm'];
+                        if($model->validate())
+                        {
+                            $reponse = $model->pinPayMent();
+                            if(isset($reponse['error']))
+                            {
+                                Yii::app()->session['errors'] = $reponse;
+                            } elseif(isset($reponse['response'])) {
+                                var_dump($reponse['response']);
+                                $model_pay = new UserPayment();
+                                $model_pay->payment_date = new CDbExpression('NOW()');
+                                $model_pay->payment_type = 'CREDIT-PIN';
+                                $model_pay->payment_value = number_format($reponse['response']['amount'] / 100, 2);
+                                $model_pay->user_id = Yii::app()->user->id;
+                                $model_pay->staff_id = null;
+                                $model_pay->payment_note = $reponse['response']['token'];
+                                $model_pay->save();
+
+                                $BoxoCart = new BoxoCart;
+                                $BoxoCart->confirmOrder();
+
+                                $this->redirect(array('user/payments'));
+                            }
                         }
-                        unset($data['card']);
-                            
                     }
 
-                    $this->render('_pin', array('data' => $data));
+                    $this->render('_pin', array(
+                        'model' => $model,
+                        'paymentMethod'=>$data['payment-method'],
+                        'amount'=>$data['amount'],
+                    ));
                     break;
             }
     }
