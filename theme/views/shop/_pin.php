@@ -20,9 +20,9 @@ $form = $this->beginWidget('CActiveForm', array(
 
     <?php if(Yii::app()->user->hasFlash('errors')): ?>
     <div class="alert alert-block alert-danger" id="pin-errors">
-        <p><?php $errors = Yii::app()->user->getFlashes('errors')['errors']; echo $errors['error_description']; ?></p>
+        <p><?php $errors = Yii::app()->user->getFlashes('errors'); echo $errors['errors']['error_description']; ?></p>
         <ul>
-        <?php foreach($errors['messages'] as $messages): ?>
+        <?php foreach($errors['errors']['messages'] as $messages): ?>
             <li><?php echo $messages['message']; ?></li>
         <?php endforeach; ?>
         </ul>
