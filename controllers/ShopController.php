@@ -379,6 +379,22 @@ class ShopController extends Controller {
                  * @todo Bank Transfer
                  */
                 case 2:
+//                    CVarDumper::dump($data,10,1);
+//                    exit();
+                    //Send email
+                    $adminEmail = SnapUtil::config('boxomatic/adminEmail');
+                    $adminEmailFromName = SnapUtil::config('boxomatic/adminEmailFromName');
+                    $message = new YiiMailMessage('Transfer information of ' . Yii::app()->name);
+                    $message->view = 'bank_transfer';
+                    $message->setBody($data, 'text/html');
+                    $message->addTo($adminEmail);
+                    $message->addTo($data['email']);
+                    $message->setFrom(array($adminEmail => $adminEmailFromName));
+
+                    if (!@Yii::app()->mail->send($message)) {
+                        $mailError = true;
+                    }
+
                     $this->render('_bank_transfer', array('data' => $data));
                     break;
             }
