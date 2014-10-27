@@ -86,6 +86,7 @@ return array(
         'user' => array(
             // enable cookie-based authentication
             'class' => 'backend.components.SnapWebUser',
+            'allowAutoLogin'=>true,
         ),
         // uncomment the following to enable URLs in path-format
         'urlManager' => array(
