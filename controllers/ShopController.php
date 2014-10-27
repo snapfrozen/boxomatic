@@ -345,16 +345,13 @@ class ShopController extends Controller {
                  */
                 case 1:
                     $model = new PinPaymentForm();
-                    if(isset($_POST['PinPaymentForm']))
-                    {
-                        $model->attributes=$_POST['PinPaymentForm'];
-                        if($model->validate())
-                        {
+                    if (isset($_POST['PinPaymentForm'])) {
+                        $model->attributes = $_POST['PinPaymentForm'];
+                        if ($model->validate()) {
                             $reponse = $model->pinPayMent();
-                            if(isset($reponse['error']))
-                            {
+                            if (isset($reponse['error'])) {
                                 Yii::app()->user->setFlash('errors', $reponse);
-                            } elseif(isset($reponse['response'])) {
+                            } elseif (isset($reponse['response'])) {
                                 $model_pay = new UserPayment();
                                 $model_pay->payment_date = new CDbExpression('NOW()');
                                 $model_pay->payment_type = 'CREDIT-PIN';
@@ -374,9 +371,15 @@ class ShopController extends Controller {
 
                     $this->render('_pin', array(
                         'model' => $model,
-                        'paymentMethod'=>$data['payment-method'],
-                        'amount'=>$data['amount'],
+                        'paymentMethod' => $data['payment-method'],
+                        'amount' => $data['amount'],
                     ));
+                    break;
+                /**
+                 * @todo Bank Transfer
+                 */
+                case 2:
+                    $this->render('_bank_transfer', array('data' => $data));
                     break;
             }
     }
