@@ -391,9 +391,7 @@ class ShopController extends Controller {
                     $message->addTo($data['email']);
                     $message->setFrom(array($adminEmail => $adminEmailFromName));
 
-                    if (!@Yii::app()->mail->send($message)) {
-                        $mailError = true;
-                    }
+                    @Yii::app()->mail->send($message);
 
                     $this->render('_bank_transfer', array('data' => $data));
                     break;
