@@ -18,9 +18,9 @@ $form = $this->beginWidget('CActiveForm', array(
 
     <?php echo $form->errorSummary($model, null, null, array('class'=>'alert alert-block alert-danger')); ?>
 
-    <?php if(isset(Yii::app()->session['errors'])): ?>
+    <?php if(Yii::app()->user->hasFlash('errors')): ?>
     <div class="alert alert-block alert-danger" id="pin-errors">
-        <p><?php $errors = Yii::app()->session['errors']; echo $errors['error_description']; ?></p>
+        <p><?php $errors = Yii::app()->user->getFlashes('errors')['errors']; echo $errors['error_description']; ?></p>
         <ul>
         <?php foreach($errors['messages'] as $messages): ?>
             <li><?php echo $messages['message']; ?></li>
@@ -64,7 +64,7 @@ $form = $this->beginWidget('CActiveForm', array(
                 <div class="col-xs-3">
                     <?php
                     $cr = 2014;
-                    $years = [];
+                    $years = array();
                     for($i = $cr;$i < $cr+20; $i++) {
                         $years[$i] = $i;
                     }

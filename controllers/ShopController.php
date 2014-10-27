@@ -344,7 +344,6 @@ class ShopController extends Controller {
                  * validate email? @toantv
                  */
                 case 1:
-                    unset(Yii::app()->session['errors']);
                     $model = new PinPaymentForm();
                     if(isset($_POST['PinPaymentForm']))
                     {
@@ -354,7 +353,7 @@ class ShopController extends Controller {
                             $reponse = $model->pinPayMent();
                             if(isset($reponse['error']))
                             {
-                                Yii::app()->session['errors'] = $reponse;
+                                Yii::app()->user->setFlash('errors', $reponse);
                             } elseif(isset($reponse['response'])) {
                                 $model_pay = new UserPayment();
                                 $model_pay->payment_date = new CDbExpression('NOW()');
