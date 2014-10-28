@@ -333,8 +333,7 @@ class ShopController extends Controller {
                 default :
                 case 0:
                     #Delete $ data ['payment-method'] because it is not for paypal
-                    unset($data['paymenok'
-                            . 't-method']);
+                    unset($data['payment-method']);
                     #The variable $data obtained from the form sent to
                     header('Location: https://www.paypal.com/cgi-bin/webscr?' . http_build_query($data));
                     break;
