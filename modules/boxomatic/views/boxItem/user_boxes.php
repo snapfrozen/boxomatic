@@ -41,28 +41,43 @@ Yii::app()->clientScript->registerScript('initPageSize', <<<EOD
 	});
 EOD
         , CClientScript::POS_READY);
+/*
+  ?>
+  <div id="calendar-dropdown" class="page-header dropdown">
+  <h1>Orders	<small class="dropdown-toggle" data-toggle="dropdown" data-target="#calendar-dropdown"><?php echo 'for ' . SnapFormat::date($SelectedDeliveryDate->date) ?> <b class="caret"></b></small></h1>
+  <div class="dropdown-menu" aria-labelledby="dLabel" role="menu">
+  <li>
+  <div class="calendar">
+  <script type="text/javascript">
+  var curUrl = "<?php echo $this->createUrl('boxItem/userBoxes'); ?>";
+  var selectedDate =<?php echo $SelectedDeliveryDate ? "'$SelectedDeliveryDate->date'" : 'null' ?>;
+  var availableDates =<?php echo json_encode(SnapUtil::makeArray($DeliveryDates)) ?>;
+  </script>
+  <div class="delivery-date-picker"></div>
+  <noscript>
+  <?php foreach ($DeliveryDates as $DeliveryDate): ?>
+  <?php echo CHtml::link($DeliveryDate->date, array('boxItem/userBoxes', 'date' => $DeliveryDate->id)) ?>,
+  <?php endforeach; ?>
+  </noscript>
+  </div>
+  </li>
+  </div>
+  </div>
+ */
 ?>
-<div id="calendar-dropdown" class="page-header dropdown">
-    <h1>Orders	<small class="dropdown-toggle" data-toggle="dropdown" data-target="#calendar-dropdown"><?php echo 'for ' . SnapFormat::date($SelectedDeliveryDate->date) ?> <b class="caret"></b></small></h1>
-    <div class="dropdown-menu" aria-labelledby="dLabel" role="menu">
-        <li>
-            <div class="calendar">
-                <script type="text/javascript">
-                    var curUrl = "<?php echo $this->createUrl('boxItem/userBoxes'); ?>";
-                    var selectedDate =<?php echo $SelectedDeliveryDate ? "'$SelectedDeliveryDate->date'" : 'null' ?>;
-                    var availableDates =<?php echo json_encode(SnapUtil::makeArray($DeliveryDates)) ?>;
-                </script>
-                <div class="delivery-date-picker"></div>
-                <noscript>
-                <?php foreach ($DeliveryDates as $DeliveryDate): ?>
-                    <?php echo CHtml::link($DeliveryDate->date, array('boxItem/userBoxes', 'date' => $DeliveryDate->id)) ?>, 
-                <?php endforeach; ?>
-                </noscript>
-            </div>
-        </li>
+<div class="page-header">
+    <div class="row">
+        <div class="col-sm-1"><h1>Orders</h1></div>
+        <div class="col-sm-2">
+            <input type="text" id="find-by-date" value="<?php echo date("d-m-Y") ?>" class="form-control" style="background-color:#f8f8f8;border:none;border-bottom: 1px solid"/>
+        </div>
     </div>
+    <script type="text/javascript">
+        var curUrl = "<?php echo $this->createUrl('boxItem/userBoxes'); ?>";
+        var selectedDate =<?php echo $SelectedDeliveryDate ? "'$SelectedDeliveryDate->date'" : 'null' ?>;
+        var availableDates =<?php echo json_encode(SnapUtil::makeArray($DeliveryDates)) ?>;
+    </script>
 </div>
-
 <div class="row">
     <div id="customerList" class="col-md-9">
         <?php
@@ -242,21 +257,21 @@ EOD
 
     <div class="col-md-3">
         <div class="sticky">
-<?php
-$this->beginWidget('bootstrap.widgets.BsPanel', array(
-    'title' => 'Menu',
-    'contentCssClass' => '',
-    'htmlOptions' => array(
-        'class' => 'panel',
-    ),
-    'type' => BsHtml::PANEL_TYPE_PRIMARY,
-));
-$this->widget('application.widgets.SnapMenu', array(
-    'items' => $this->menu,
-    'htmlOptions' => array('class' => 'nav nav-stacked'),
-));
-$this->endWidget();
-?>
+            <?php
+            $this->beginWidget('bootstrap.widgets.BsPanel', array(
+                'title' => 'Menu',
+                'contentCssClass' => '',
+                'htmlOptions' => array(
+                    'class' => 'panel',
+                ),
+                'type' => BsHtml::PANEL_TYPE_PRIMARY,
+            ));
+            $this->widget('application.widgets.SnapMenu', array(
+                'items' => $this->menu,
+                'htmlOptions' => array('class' => 'nav nav-stacked'),
+            ));
+            $this->endWidget();
+            ?>
         </div>
     </div>
 </div>
