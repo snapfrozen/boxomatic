@@ -379,8 +379,6 @@ class ShopController extends Controller {
                  * @todo Bank Transfer
                  */
                 case 2:
-//                    CVarDumper::dump($data,10,1);
-//                    exit();
                     //Send email
                     $adminEmail = SnapUtil::config('boxomatic/adminEmail');
                     $adminEmailFromName = SnapUtil::config('boxomatic/adminEmailFromName');
@@ -391,7 +389,10 @@ class ShopController extends Controller {
                     $message->addTo($data['email']);
                     $message->setFrom(array($adminEmail => $adminEmailFromName));
 
-                    @Yii::app()->mail->send($message);
+                    if (Yii::app()->mail->send($message)) {
+                        $BoxoCart = new BoxoCart;
+                        $BoxoCart->confirmOrder();
+                    }
 
                     $this->render('_bank_transfer', array('data' => $data));
                     break;
